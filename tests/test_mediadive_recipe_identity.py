@@ -11,9 +11,12 @@ from unittest import mock
 
 import pytest
 
+from kg_microbe.transform_utils.mediadive import endpoint_outcomes
 from kg_microbe.transform_utils.mediadive import mediadive as mod
 from kg_microbe.transform_utils.mediadive import recipe_identity as identity
+from kg_microbe.transform_utils.mediadive.bulk_inputs import _unique_native_object
 from kg_microbe.utils.source_finalization import SourceFinalizationRequired, graph_rows, verify_finalized_source_files
+from tests.mediadive_consumer_fixtures import seal_consumer_fixture
 
 RESOURCE = Path(__file__).parent / "resources"
 FIXTURE = RESOURCE / "mediadive_recipe_identity"
@@ -71,7 +74,7 @@ def test_genuine_compound_route_not_disabled_by_nested_rule():
     assert value.get_solution_recipe_occurrences("1")[0]["id"] == "CHEBI:17234"
 
 
-def _build(tmp_path, monkeypatch, raw_mutator=None):
+def _build(tmp_path, monkeypatch, raw_mutator=None, *, generation_mutator=None, writer_control=None):
     """Real producer reads/writer using complete native excerpts and offline authority closure."""
     raw = tmp_path / "raw"
     shutil.copytree(FIXTURE / "raw", raw)
@@ -80,6 +83,9 @@ def _build(tmp_path, monkeypatch, raw_mutator=None):
         assert hashlib.sha256((raw / relative).read_bytes()).hexdigest() == record["fixture_sha256"]
     if raw_mutator is not None:
         raw_mutator(raw)
+    generation = seal_consumer_fixture(raw, monkeypatch)
+    if generation_mutator is not None:
+        generation_mutator(generation)
     native = json.loads((RESOURCE / "ingredient_bundle/native/legacy-closure-statements.json").read_text())
     with sqlite3.connect(raw / "chebi.db") as connection:
         connection.execute("CREATE TABLE statements(stanza,subject,predicate,object,value,datatype,language,graph)")
@@ -94,6 +100,8 @@ def _build(tmp_path, monkeypatch, raw_mutator=None):
     ):
         value = mod.MediaDiveTransform(raw, tmp_path / "transformed")
     monkeypatch.setattr(value, "_get_mediadive_json", lambda *args: pytest.fail("network fallback"))
+    if writer_control is not None:
+        writer_control(value)
     value.run(show_status=False)
     return value
 
@@ -123,7 +131,7 @@ def test_actual_writer_retains_all_six_and_missing_children(produced):
     assert len(value._recipe_identity_guard.rows["oatmeal"]) == 5
     assert len(value._recipe_identity_guard.rows["substrate"]) == 1
     assert len(value._recipe_identity_guard.rows["missing"]) == 3
-    assert value.producer_native_inputs["version"] == 2
+    assert value.producer_native_inputs["version"] == 3
 
 
 @pytest.mark.parametrize("cohort", ["oatmeal", "substrate"])
@@ -249,7 +257,12 @@ def test_native_concept_access_is_not_globally_denied():
 
 def test_medium_display_cleaning_does_not_mutate_native_list(produced):
     """Real native names exercise cleanup; original admitted source records stay identical (#1320)."""
-    original = json.loads((produced.input_base_dir / "mediadive.json").read_text())
+    selected = produced._endpoint_consumer.native_paths["mediadive_media_list"]
+    original = json.loads(selected.read_text())
+    historical = json.loads((produced.input_base_dir / "mediadive.json").read_text())
+    assert original["count"] == len(original["data"]) == 20
+    assert historical["count"] == 3338
+    assert original["data"] == historical["data"]
     assert produced._bulk_parsed_payloads["mediadive_media_list"] == original
     assert any(
         row["name"] != row["name"].translate(produced.translation_table).replace('""', "").strip()
@@ -264,7 +277,10 @@ def test_medium_display_cleaning_does_not_mutate_native_list(produced):
 def test_strain_writer_is_linear_and_preserves_native_observations(tmp_path, monkeypatch, synthetic_controls):
     """Actual writer retains order/true duplicates without accumulated-prefix rewrites."""
     original_writer = mod.tsv_writer
-    written = []
+    written, injected = [], {}
+
+    class WriterBoundaryReached(RuntimeError):
+        """Stop synthetic lookup controls before they can claim source completion."""
 
     def spy(stream):
         """Observe emitted BacDive growth rows while preserving the real writer."""
@@ -283,15 +299,18 @@ def test_strain_writer_is_linear_and_preserves_native_observations(tmp_path, mon
                 and row[1] in (mod.NCBI_TO_MEDIUM_EDGE, mod.NCBI_TO_MEDIUM_NEGATIVE_EDGE)
             )
             actual.writerows(rows)
+            if synthetic_controls and written:
+                raise WriterBoundaryReached("Synthetic strain writer boundary reached")
 
         return SimpleNamespace(writerow=actual.writerow, writerows=writerows)
 
-    def controls(raw):
-        """Create explicit synthetic growth controls without changing native recipes."""
+    def controls(value):
+        """Exercise only the writer with explicitly unadmitted synthetic observations."""
         # Explicitly synthetic growth controls, separate from the intact native
         # recipe/material witnesses: preserve a real duplicate, both polarities,
         # and do not emit unknown-growth or absent-BacDive observations.
-        medium = str(json.loads((raw / "mediadive.json").read_text())["data"][0]["id"])
+        catalogue = value._endpoint_consumer.native_paths["mediadive_media_list"]
+        medium = str(json.loads(catalogue.read_text())["data"][0]["id"])
         positive = {"bacdive_id": 12345678, "species": "Synthetic test strain", "growth": 1}
         observations = [
             positive,
@@ -300,14 +319,48 @@ def test_strain_writer_is_linear_and_preserves_native_observations(tmp_path, mon
             {**positive, "growth": None},
             {**positive, "bacdive_id": None},
         ]
-        (raw / "mediadive/media_strains.json").write_text(json.dumps({medium: observations}))
+        # These historical writer controls deliberately have no native strain ID.
+        # They remain invalid acquisition evidence; do not invent distinct IDs to
+        # make repeated observations of the same strain appear unrelated.
+        url = endpoint_outcomes.BASE_URL + "medium-strains/" + medium
+        result = endpoint_outcomes.classify_observation(
+            {
+                "url": url,
+                "request": {"url": url, "method": "GET"},
+                "response": {"url": url, "status": 200, "headers": {"Content-Type": "application/json"}},
+            },
+            endpoint_outcomes.canonical({"status": 200, "count": len(observations), "data": observations}),
+        )
+        assert result["state"] == "malformed" and result["reason"] == "Invalid native strain ID"
+        injected.update(value=value, strains={medium: observations})
+        original_lookup = value.get_json_object
+
+        def writer_lookup(fn, url_extension, target_dir):
+            """Inject at the writer boundary only; every other native read remains real."""
+            if url_extension == "medium-strains/" + medium:
+                return observations
+            return original_lookup(fn, url_extension, target_dir)
+
+        monkeypatch.setattr(value, "get_json_object", writer_lookup)
 
     monkeypatch.setattr(mod, "tsv_writer", spy)
-    value = _build(tmp_path, monkeypatch, controls if synthetic_controls else None)
-    selected = [str(row["id"]) for row in json.loads((value.input_base_dir / "mediadive.json").read_text())["data"]]
+    if synthetic_controls:
+        with pytest.raises(WriterBoundaryReached, match="Synthetic strain writer boundary reached"):
+            _build(tmp_path, monkeypatch, writer_control=controls)
+        value = injected["value"]
+        assert value._endpoint_consumer.contract()["sealed"] is False
+        assert not (value.output_dir / "source_finalization.json").exists()
+        with pytest.raises(SourceFinalizationRequired):
+            value.verify_consumed_inputs()
+        strains = injected["strains"]
+    else:
+        value = _build(tmp_path, monkeypatch)
+        strains = value.media_strains
+    catalogue = value._endpoint_consumer.native_paths["mediadive_media_list"]
+    selected = [str(row["id"]) for row in json.loads(catalogue.read_text())["data"]]
     expected = []
     for medium in selected:
-        for strain in value.media_strains.get(medium, []):
+        for strain in strains.get(medium, []):
             if strain.get("bacdive_id") and strain.get("growth") in (0, 1):
                 predicate = mod.NCBI_TO_MEDIUM_EDGE if strain["growth"] == 1 else mod.NCBI_TO_MEDIUM_NEGATIVE_EDGE
                 expected.append(
@@ -387,7 +440,7 @@ def test_fresh_checkpoint_never_erases_existing_conflicts(produced, mutation):
     elif mutation == "role":
         fresh._consumed_input_snapshots["mediadive_solutions"]["sha256"] = "0" * 64
     elif mutation == "source_file":
-        path = fresh.input_base_dir / "mediadive/solutions.json"
+        path = fresh._endpoint_consumer.native_paths["mediadive_solutions"]
         path.write_text(path.read_text() + "\n")
     else:
         (fresh.output_dir / identity.AUDITS["oatmeal"]).unlink()
@@ -515,9 +568,10 @@ def test_native_metadata_is_not_replaceable_by_restamped_output(
 def test_native_duplicate_keys_fail_before_graph_output(tmp_path, monkeypatch, relative, nested):
     """Neither duplicate catalog IDs nor ambiguous record fields are silently collapsed (#1319)."""
 
-    def duplicate(raw):
-        """Add an explicit synthetic ambiguity to otherwise intact immutable native excerpts."""
-        path = raw / relative
+    def duplicate(generation):
+        """Corrupt the selected generation rather than its preserved historical root export."""
+        name = "catalogue.json" if relative == "mediadive.json" else Path(relative).name
+        path = generation.generation_dir / name
         text = path.read_text()
         if nested:
             # A duplicate field in a nested record is equally ambiguous even if
@@ -531,9 +585,13 @@ def test_native_duplicate_keys_fail_before_graph_output(tmp_path, monkeypatch, r
             payload = json.loads(text)
             key = next(iter(payload))
             text = "{" + json.dumps(key) + ":" + json.dumps(payload[key]) + "," + text.lstrip()[1:]
+        # The native parser still rejects the ambiguity itself. The sealed
+        # generation also refuses the changed source before opening graph output.
+        with pytest.raises(SourceFinalizationRequired, match="duplicate JSON key"):
+            json.loads(text, object_pairs_hook=_unique_native_object)
         path.write_text(text)
 
-    with pytest.raises(SourceFinalizationRequired, match="duplicate JSON key"):
-        _build(tmp_path, monkeypatch, duplicate)
+    with pytest.raises(SourceFinalizationRequired, match="Generation member changed"):
+        _build(tmp_path, monkeypatch, generation_mutator=duplicate)
     assert not (tmp_path / "transformed/mediadive/nodes.tsv").exists()
     assert not (tmp_path / "transformed/mediadive/edges.tsv").exists()

@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "status": "pass",
+  "recorded_at": "2026-11-05T22:11:01.318948+00:00",
+  "scope": "Narrow independent review of the two final #1762 synthetic fixture repairs, without running tests or producers",
+  "repair_record": {
+    "path": "data/rebuild-evidence/20261105/mediadive-resolution-1734/remaining-fixture-repairs-r1.json",
+    "bytes": 1033,
+    "sha256": "466f0eb32796f3e54d5241a2b1ed5b454716b3405c49b4e25afed608cd91558c"
+  },
+  "files": [
+    {
+      "before": {
+        "path": "data/rebuild-evidence/20261105/mediadive-resolution-1734/format-before-r1/files/tests/test_mediadive_recipe_occurrences.py",
+        "bytes": 12316,
+        "sha256": "e69c43fb287d2c8019fa541ceeeb52fad2fec1a29fd2136a96e0aa049c1908a1"
+      },
+      "current": {
+        "path": "tests/test_mediadive_recipe_occurrences.py",
+        "bytes": 12622,
+        "sha256": "f9228c3be3ab41f4e1729bdf9d7ca906d726e8a4be8b0dd333a00f3bb1582ded"
+      },
+      "old_assertions": 29,
+      "current_assertions": 29,
+      "removed_or_changed_original_assertions": 0
+    },
+    {
+      "before": {
+        "path": "data/rebuild-evidence/20261105/mediadive-resolution-1734/format-before-r1/files/tests/test_mediadive_catalase_scope.py",
+        "bytes": 16624,
+        "sha256": "104cb4aaeb43df65ae975b66d6f936865d5971493e7c4fffa09847edaeefb501"
+      },
+      "current": {
+        "path": "tests/test_mediadive_catalase_scope.py",
+        "bytes": 17180,
+        "sha256": "3f4d0440c610d1e647a6567017160539f610dc317c7f2a888c0f8cecb8ff172a"
+      },
+      "old_assertions": 57,
+      "current_assertions": 60,
+      "removed_or_changed_original_assertions": 0
+    }
+  ],
+  "immutable_native_fixtures_unchanged": [
+    {
+      "path": "tests/resources/mediadive_solution_5787.json",
+      "bytes": 1725,
+      "sha256": "11e1e3869b3159eece0ef50361d3a0f0e29e870ea374cb4093201b129b32c521"
+    },
+    {
+      "path": "tests/resources/mediadive_recipe_alternatives.json",
+      "bytes": 722,
+      "sha256": "054b0b05b494cdaccd3aa35c043a3d030a1bcd702e9b2995f67dacd55631e350"
+    },
+    {
+      "path": "tests/resources/mediadive/catalase_scope.json",
+      "bytes": 7147,
+      "sha256": "9508981c607e26e93747c7ef8fd939d6048bbbf398dbcf17a0ca299c2886823d"
+    }
+  ],
+  "production_and_curated_mapping_files_unchanged_since_preserved_preparation": 242,
+  "findings": [],
+  "assessment": {
+    "occurrences": "Only missing synthetic solution id/name are supplied before sealing. Original recipe occurrence content is retained and all29 existing assertions, including equality of actual native solutions, finalization and archive evidence, are unchanged.",
+    "catalase": "The separately constructed catalogue carrier is checked for exactly one edge, its exact source_assertion_id and exact native catalogue body before exclusion from the historical cohort. The original eight native source IDs, records, material identity,88 audit rows, provenance and retention assertions remain intact; all57 prior assertions remain and3 carrier assertions are added.",
+    "scientific_scope": "No historical resource is relabeled, no native observation is removed or renumbered, and no production/scientific policy change is introduced."
+  },
+  "focused_validation": {
+    "log": {
+      "path": "data/rebuild-evidence/20261105/mediadive-resolution-1734/remaining-fixture-focused-r1.log",
+      "bytes": 4188,
+      "sha256": "59e9103b334c50056e57d9892a953a330842b6ecf7523ac05249401705fbc796"
+    },
+    "result": "27 passed,20 warnings in5.16s",
+    "executed_by": "Root-coordinated pytest"
+  },
+  "review_operations": {
+    "pytest_runs": 0,
+    "http_requests": 0,
+    "source_edits": 0,
+    "producer_runs": 0
+  }
+}

@@ -63,7 +63,9 @@ def build(tmp_path, monkeypatch):
 
 def read_lookup(value):
     """Consume genuine empty native/audit contracts without simulating a nonempty producer run."""
-    media_list = mod.load_bulk_payload(value, "mediadive_media_list", value.input_base_dir / "mediadive.json")
+    media_list = mod.load_bulk_payload(
+        value, "mediadive_media_list", value._endpoint_consumer.native_paths["mediadive_media_list"]
+    )
     with value.consume_input("bacdive_taxon_lookup", mod.BACDIVE_TMP_DIR / "bacdive.tsv") as reader:
         reader.read()
     assert media_list["data"] == []

@@ -246,16 +246,51 @@ def test_manifest_tampering_is_refused(scenario, transport):
     assert not transport[2]
 
 
-def test_preexisting_selected_cache_is_refused(scenario, transport):
-    """Even a valid preexisting target response cannot substitute for this retry's HTTP."""
-    _, output, args = scenario
+@pytest.mark.parametrize("journal_mode", ["delete", "wal"])
+def test_preexisting_selected_cache_is_refused(scenario, transport, journal_mode):
+    """Reject a selected cached response in DELETE mode or with a live empty WAL."""
+    import sqlite3
+    from contextlib import closing
+
+    root, output, _ = scenario
+    # Verify the sealed baseline before deliberately adding an unapproved response.
+    # Calling run() afterwards would stop at the changed preservation manifest,
+    # before reaching the selected-response guard this control must exercise.
+    baseline = retry.baseline(root, production)
     production.setup_cache(output)
     production.download_medium_strains([{"id": 1366}], **retry.SETTINGS)
     production._reset_sessions()
     transport[2].clear()
-    with pytest.raises(ValueError, match="Input changed|Preexisting target"):
-        retry.run(args)
+    cache = output / refresh.CACHE_NAME
+    phase_dir = root / "preexisting-cache-phase"
+    with closing(sqlite3.connect(cache)) as lifecycle:
+        assert lifecycle.execute("PRAGMA wal_checkpoint(TRUNCATE)").fetchone()[0] == 0
+        assert lifecycle.execute("PRAGMA journal_mode=DELETE").fetchone() == ("delete",)
+        if journal_mode == "wal":
+            assert lifecycle.execute("PRAGMA journal_mode=WAL").fetchone() == ("wal",)
+            lifecycle.execute("BEGIN IMMEDIATE")
+            lifecycle.commit()
+            lifecycle.execute("SELECT count(*) FROM responses").fetchone()
+            assert lifecycle.execute("PRAGMA wal_checkpoint(TRUNCATE)").fetchone() == (0, 0, 0)
+        wal = cache.with_name(cache.name + "-wal")
+        shm = cache.with_name(cache.name + "-shm")
+        assert wal.exists() == (journal_mode == "wal")
+        if journal_mode == "wal":
+            assert shm.exists()
+            assert wal.stat().st_size == 0
+        # SQLite may retain SHM after switching to DELETE mode. Its presence
+        # carries no pending writes without WAL; preserve its bytes if present.
+        records = retry.read_cache(cache, empty_sidecars=True)
+        selected_url = refresh.BASE_URL + "medium-strains/1366"
+        assert records[selected_url]["valid"]
+        before_refusal = fingerprints(output)
+        with pytest.raises(ValueError, match="^Preexisting selected target cache entry$"):
+            retry.phase(
+                phase_dir, [{"id": 1366}], output, baseline["accepted"], baseline["ids"], production, lambda: None
+            )
+        assert fingerprints(output) == before_refusal
     assert not transport[2]
+    assert not (phase_dir / "started.json").exists()
 
 
 def test_runtime_drift_prevents_batch(scenario, transport, monkeypatch):

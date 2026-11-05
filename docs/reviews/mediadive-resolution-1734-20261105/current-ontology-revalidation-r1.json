@@ -1,0 +1,162 @@
+{
+  "admitted_file_count": 194,
+  "checks": {
+    "all_graphs_positive": true,
+    "all_persisted_verification_equal": true,
+    "finalization_preserved": true,
+    "finalizer_fingerprint_unchanged": true,
+    "graph_count_28": true,
+    "historical_receipt_preserved": true,
+    "marker_preserved": true,
+    "mediadive-resolution-current-plan-r1_exit_zero": true,
+    "mediadive-resolution-current-plan-r1_loaded_origins_still_current": true,
+    "mediadive-resolution-ontology-admission-r1_exit_zero": true,
+    "mediadive-resolution-ontology-admission-r1_loaded_origins_still_current": true,
+    "ontology_admission_pass": true,
+    "planner_pass": true,
+    "planner_scope_unchanged": true,
+    "producer_fingerprint_unchanged": true,
+    "schema_identity_unchanged": true,
+    "unknown_policy_remains_source_specific": true
+  },
+  "evidence": [
+    {
+      "bytes": 17923,
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/ontology-admission.json",
+      "sha256": "c619d60ed893e09684862cfcf48577ce8c87f44c11e74fa0a9401de78c9575e5"
+    },
+    {
+      "bytes": 17923,
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/mediadive-resolution-1734/ontology-admission-r1.json",
+      "sha256": "6d258408d22885a952674ee3f30a90e872df57ef365f059b3f0fd1fe3f4e863d"
+    },
+    {
+      "bytes": 10317,
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/mediadive-resolution-1734/current-planner-r1.json",
+      "sha256": "c2787e3bdbc3f0f28fef9da9c50e8dff3aa6acad6d072e025cccbf6efeaade30"
+    },
+    {
+      "bytes": 4385,
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies/source_fingerprint.json",
+      "sha256": "3c73c1f6450ceeb61f5772b9d92a99b0fcf34638a1aae04e4431da57cae17d60"
+    },
+    {
+      "bytes": 48779,
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies/source_finalization.json",
+      "sha256": "99f0aa27a0b7653c479f1bd96af3dd248d72ac3e57cb671828ad30e3c73a34f9"
+    },
+    {
+      "bytes": 15000,
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/scripts/adhoc/kgm_rebuild_20261105.py",
+      "sha256": "cef7f21abb810ec3b95bba4221c3cd2d43326b550c7d5295d1cd4e0841196103"
+    },
+    {
+      "bytes": 19112,
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/scripts/adhoc/kgm_rebuild_admission_20261105.py",
+      "sha256": "d4bfb37c20379ccb0db77a53b34524ca79b3bf7d75881bc7062abf5884d6aae0"
+    },
+    {
+      "bytes": 590,
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/stages/mediadive-resolution-current-plan-r1/plan.json",
+      "sha256": "eccf3a55a18483b7e32fbb4b8eb23f055a04217ad8a020f308dc392e034ef0ee"
+    },
+    {
+      "bytes": 2314,
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/stages/mediadive-resolution-current-plan-r1/started.json",
+      "sha256": "53a3a7a361ff46f5b23820abc81e37932490a05f08f71f4f0010a443aabf1bcc"
+    },
+    {
+      "bytes": 40190,
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/stages/mediadive-resolution-current-plan-r1/result.json",
+      "sha256": "da5e6f6f6f9ee50e3d7caeaaa778bbb2b0ac7137c8292b528bbec2b455ab3999"
+    },
+    {
+      "bytes": 11198,
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/stages/mediadive-resolution-current-plan-r1/process.log",
+      "sha256": "6ff3f7345fe8cb599a43cbf316cbcb10603380c808ee1f1a4e576766952ee36e"
+    },
+    {
+      "bytes": 606,
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/stages/mediadive-resolution-ontology-admission-r1/plan.json",
+      "sha256": "65847546b995ed8e1d02fd825ef795e91edc21614158fb3b5fe9dc9c3e5b608a"
+    },
+    {
+      "bytes": 2329,
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/stages/mediadive-resolution-ontology-admission-r1/started.json",
+      "sha256": "a73063719e0e990c9fcc60a568272b4fdbc352643258e543b5038f226cf4db6f"
+    },
+    {
+      "bytes": 44127,
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/stages/mediadive-resolution-ontology-admission-r1/result.json",
+      "sha256": "454f6bf26eb8e9f95f1a208dfea7e68fb41c8badc04b94ac9b2145d9a07a6ff9"
+    },
+    {
+      "bytes": 18804,
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/stages/mediadive-resolution-ontology-admission-r1/process.log",
+      "sha256": "560998af7906d4a4bd3072322025ebe42ec012a59b448b3f8e6ea051adae4202"
+    }
+  ],
+  "excluded": [
+    "bakta",
+    "cog",
+    "kegg"
+  ],
+  "fingerprints": {
+    "finalizer_current": "ff2fc2cdb2ff2f596ca12cd15f2a6b093f1ce1c712057ef131ec7ae4fd9e329e",
+    "finalizer_recorded": "ff2fc2cdb2ff2f596ca12cd15f2a6b093f1ce1c712057ef131ec7ae4fd9e329e",
+    "producer_current": "8bb5a18c7d9482129a54fe669519dbd5d00381365c3f5105fa2ab41a62d60d0c",
+    "producer_recorded": "8bb5a18c7d9482129a54fe669519dbd5d00381365c3f5105fa2ab41a62d60d0c",
+    "schema_current": {
+      "digest": "7620ddfba2fb9d6d25be7d45d5c874ca08433e38964883a264e2d9d8af333e3f",
+      "version": "4.4.6"
+    },
+    "schema_recorded": {
+      "digest": "7620ddfba2fb9d6d25be7d45d5c874ca08433e38964883a264e2d9d8af333e3f",
+      "version": "4.4.6"
+    }
+  },
+  "limitations": "This revalidates only the persisted ontology prerequisite and current canonical plan. It does not admit MediaDive or any unrun downstream source or merged graph.",
+  "method": "New read-only plan and persisted ontology admission through saved production launcher; inspected completed stage result, current module identities, marker/finalizer/schema fingerprints and exact prior/new verification equality. No producers, tests, HTTP, or Git writes.",
+  "phases": [
+    [
+      "ontologies"
+    ],
+    [
+      "ontologies_stubs",
+      "bacdive",
+      "gtdb",
+      "madin_etal",
+      "metatraits",
+      "rhea_mappings",
+      "prego"
+    ],
+    [
+      "lpsn",
+      "mediadive",
+      "metatraits_gtdb",
+      "bactotraits",
+      "gold"
+    ],
+    [
+      "lpsn_api",
+      "microbedecoder"
+    ]
+  ],
+  "recorded_at": "2026-11-05T21:36:50.452538+00:00",
+  "schema_version": 1,
+  "stages": {
+    "mediadive-resolution-current-plan-r1": {
+      "changed_origins": [],
+      "elapsed_seconds": 1.78,
+      "exit_code": 0,
+      "loaded_origin_count": 130
+    },
+    "mediadive-resolution-ontology-admission-r1": {
+      "changed_origins": [],
+      "elapsed_seconds": 72.831,
+      "exit_code": 0,
+      "loaded_origin_count": 144
+    }
+  },
+  "status": "pass"
+}

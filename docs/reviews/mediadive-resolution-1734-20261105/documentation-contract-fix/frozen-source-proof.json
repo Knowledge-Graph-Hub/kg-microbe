@@ -1,0 +1,15 @@
+{
+  "kg_microbe/transform_utils/mediadive/endpoint_outcomes.py": "4829dd7719172ecf6ce1b87f78b59b07b488395b2e68921ed8f87de0004938e6",
+  "kg_microbe/transform_utils/mediadive/acquisition.py": "4052142e440bcda181d2c106de8c405cacb545be18792740f869b36a1509ac9e",
+  "tests/mediadive_generation_fixtures.py": "10ab6dc60b925db0c85ea17d091a3fce65783f31565866218d1c770cc619fca1",
+  "tests/test_mediadive_endpoint_outcomes.py": "6b2bf8b624872fbf581662a232229238684109a9b51207411a902ac4b0d38666",
+  "tests/resources/mediadive_medium_strains_official_endpoint.js": "76980f8b87f857b43e3dfe7259a6220d2a3f6ebd7d1b29ac63456e4074557af2",
+  "tests/resources/mediadive_medium_strains_official_endpoint.origin.json": "4da0295faa65c381337d8c0ec2575544b327c3e63959c67406f9fd158422c80f",
+  "old_reader_sha256": "aee8286eebf40a2a26ff4585623af930cd2305f48a6bb26e6266b480f3e81168",
+  "changed_existing_definitions": [
+    "qualify"
+  ],
+  "wire_classifier_ast_unchanged": true,
+  "tests_run": false,
+  "http_requests": 0
+}

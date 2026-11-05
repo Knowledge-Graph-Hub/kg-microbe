@@ -1,0 +1,95 @@
+{
+  "schema_version": 1,
+  "recorded_at": "2026-11-05T21:35:15.799164+00:00",
+  "purpose": "Prospective independent criteria for a finite latest-observation unknown policy and qualified final artifacts; not an actual case disposition",
+  "evidence": [
+    {
+      "path": "data/rebuild-evidence/20261105/mediadive-resolution-1734/official-review/official-source-assessment.json",
+      "bytes": 17468,
+      "sha256": "b93e85d094eefc9d7ffc2e8d8252d3e42ccef53a507de136b309075a931a3318"
+    },
+    {
+      "path": "data/rebuild-evidence/20261105/mediadive-resolution-1734/identity-comparison-1.json",
+      "bytes": 8970,
+      "sha256": "ad51dd3ea92e506899a0c6fc57f7a44e83eda9a61eab581141dabd5ceeca97d3"
+    },
+    {
+      "path": "data/rebuild-evidence/20261105/mediadive-resolution-1734/control-r2-scientific-comparison-1.json",
+      "bytes": 8899,
+      "sha256": "3b436135eacb90e2e8d016fc37c365de35650871f01b82e38275ca4f431aaff2"
+    },
+    {
+      "path": "data/rebuild-evidence/20261105/mediadive-resolution-1734/unknown-r2-scientific-assessment-1.json",
+      "bytes": 2531,
+      "sha256": "f4c4dd9dbccf1400662e60113f3096d1a273e992899b0d27a48661e8b5c34479"
+    },
+    {
+      "path": "data/rebuild-evidence/20261105/mediadive-resolution-1734/production-acquisition-independent-review-2.json",
+      "bytes": 6567,
+      "sha256": "517cfe47977e09035886cf50953f30c2ffbeb6729e07452d39e9ad0b66eacb81"
+    },
+    {
+      "path": "data/rebuild-evidence/20261105/mediadive-resolution-1734/production-consumer-independent-review-2.json",
+      "bytes": 4160,
+      "sha256": "9dcc21f733f751106507227182e2c72af72ba082a432d174645e88c2831c618d"
+    }
+  ],
+  "official_error_contract": {
+    "path": "data/rebuild-evidence/20261105/mediadive-retry-1734/official-review/api-doc-bundle.body",
+    "bytes": 415299,
+    "sha256": "96865da402f36fa0d27a0b80e84fa9b3f0ae05f73b6bafb0a6c690571b6ebc0a"
+  },
+  "reviewed_packaging_code": {
+    "path": "kg_microbe/merge_utils/source_qualifications.py",
+    "bytes": 3787,
+    "sha256": "e7e6246389d889dd56c5e0c02499919eb771f491a7dc24ac95d94124713f139f"
+  },
+  "candidate_not_yet_reviewed": true,
+  "policy_admission_granted": false,
+  "finite_scope_criteria": [
+    "Use the exact pinned catalogue and its ordered3344 IDs; require the exact6688 canonical endpoints, one medium and one medium-strains endpoint perID. No renamed, normalized-to-another-ID, wildcard or extra cases.",
+    "Preserve all6056 prior successful endpoint responses and their native cache blobs/JSON assertions. The earlier583 final404s remain historical observations, not freshly queried responses.",
+    "Wait for the actual final sealed generation after the one fresh transport canary and any authorized48-endpoint sibling batch. Recompute every endpoint head from preserved chained observations and durable request intents; do not construct cases from the old632 failure list or the union of all historical404s.",
+    "Each of the49 formerly transport endpoints must have subsequent validated evidence before admission. Its actual latest state controls: successful nonempty/explicit_empty is not a policy case; documented404 may be a case; transport/malformed/missing remains an unresolved blocker.",
+    "Set policy.cases exactly to all latest unknown_unavailable strain endpoints across the complete final generation. Each case must bind medium_id, exact observation_id and body_sha256. Bind the exact catalogue_sha256, retained official-contract documentation URL/hash and version.",
+    "Require the strict official HTTP404 JSON envelope: native integer status404, integer count0, errorDataNotFound, and exact messageMedium does not exist or composition was not calculated. Preserve requested/response URL equality, methodGET, JSON content type, actual source timestamp and raw body.",
+    "Keep all earlier failed receipts, source responses, intermediate generation manifests and observation timestamps unchanged. Create a new policy/version and candidate generation; do not relabel the historical failed run."
+  ],
+  "required_scientific_text": {
+    "scientific_impact": "These exact source-declared unavailable strain-association endpoints leave medium-specific association data unknown. Existing medium recipes and independently observed strain associations remain usable; absence of an association response does not establish absence of strains, growth, or a medium.",
+    "downstream_handling": "For each exact unknown endpoint, omit source-local positive and negative strain-growth/absence claims and do not invent a strain row or substitute[]. Retain a typedunknown audit row, observation/body provenance, exact case policy identity and incomplete association coverage in producer/admission/release artifacts. Assertions established independently by other sources are not negated by this unknown state.",
+    "source_freshness_limitations": "Retain each actual acquisition timestamp. Mixed preserved and fresh observations do not establish a simultaneous source snapshot or underlying record freshness. REST documentation/code dates, HTTPDate, QLever response time and schema versions do not establish dataset update cadence or completeness."
+  },
+  "alternative_source_limits": [
+    "The identity query positively returned exact medium1366 despite its REST association404. Do not label that medium absent.",
+    "Positive controls establish two actual growth conditions for strain8/BacDive683/DSM9 on220 andJ22 with typedbooleanhasGrowthIndicatortrue; they do not establish complete RDF association coverage, all polarity encodings or dataset freshness.",
+    "The medium220 modification471 URI is retained context; its descriptive equivalence to RESTurea text has not been independently established by the saved query. Temperature26 has no reviewed unit claim.",
+    "Unknown-r2 HTTP200/statusOK/zero rows for exact1366 establishes query-specific no matches only. It must not upgrade RESTunknown to explicitempty, negative growth or complete association coverage. No SPARQL substitution is authorized by these criteria."
+  ],
+  "production_replay_gate": [
+    "Independently replay the exact candidate generation and current curated policy under frozen recorded code. Require exact immutable member identities, raw-body/event/source-ledger chain, request-intent linkage, cache successful-URL union and protected original blobs.",
+    "Require all3344 detail endpoints nonempty, no transport/malformed/missing heads, exact finite policy scope, exact native outputs and source ordering. endpoint_accounting_complete may be true even for recorded failures; it is not sufficient for admission.",
+    "Require recipe_coverage_complete=true, unresolved_endpoints=[], policy_applied=true ifunknowns exist, admissible=true only after actual policy validation. association_coverage_complete must equal(unknown_count==0) and remainfalse whenever anyunknown remains.",
+    "Verify mandatory consumed roles for pointer, generation manifest, endpoint outcomes, generation policy and current curated policy; require exact native contractv3 and current source completion generated by the corrected producer.",
+    "Regenerate the endpoint audit from native heads and require exact byte equality. Scan source edges to forbid both growth predicates for explicit_empty/unknown medium endpoints; bind edge bytes before semantic inspection and retain the admission guard through downstream use."
+  ],
+  "independent_final_artifact_gate": [
+    "Identify every selected direct source and admitted dependency. A selected or dependency MediaDive generation must carry exactly one consistent source_qualifications record; retain participationgraph_input versusadmitted_dependency without dropping inherited limitations.",
+    "Verify release/tar mandatory endpoint audit member hash/bytes/row count against the admitted audit and artifact manifest. Require unique exact canonical endpoint URLs and IDs, the exact6688 endpoint scope, and no unresolved state rows.",
+    "Recompute audit state counts and compare them with source qualification state_counts, expected_endpoint_count and endpoint_state_counts. Require3344 detail/nonempty rows; association-state counts sum3344. Check observation/body hashes and original timestamps against the sealed generation.",
+    "Require exact booleanassociation_coverage_complete=false whenunknown_count>0, endpoint_accounting_complete=true and recipe_coverage_complete=true for the admitted candidate. Preserve unknown endpoint list and explicit omitted-assertion interpretation.",
+    "Bind generation, manifest, policy and curated-policy identities to the actual producer completion and archived qualification record. Recheck admitted inputs before publication; a restamped audit or outer manifest must not replace native replay.",
+    "Check positive/negative growth omissions on the actual source graph before merge. A graph-release qualification describes source-specific missing association knowledge; do not infer global negative facts or erase independently sourced claims."
+  ],
+  "zero_cohort_packaging_assessment": {
+    "finding": null,
+    "assessment": "The removed unconditional nonempty-audit check is valid when the trusted source-admission path has already replayed an explicit count0/data[] catalogue with exact zero endpoint scope. Packaging continues to bind audit bytes and checks strict boolean association coverage against unknown counts.",
+    "boundary": "This does not authorize an empty audit for the actual3344-medium source. Independent final validation must recompute exact catalogue/audit scope rather than relying only on unknown_count0 or treating the packaging helper as standalone source admission."
+  },
+  "review_operations": {
+    "http_requests": 0,
+    "tests": 0,
+    "source_edits": 0,
+    "actual_policy_writes": 0
+  }
+}

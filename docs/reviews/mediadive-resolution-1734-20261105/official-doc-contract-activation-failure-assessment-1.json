@@ -1,0 +1,83 @@
+{
+  "schema_version": 1,
+  "recorded_at": "2026-11-05T21:52:51.220816+00:00",
+  "status": "validator_representation_mismatch_confirmed",
+  "finding": "The finite-unknown qualifier requires the exact observed HTTP wire message to appear literally in the API documentation bundle. The authoritative endpoint documentation uses a different description of the same ambiguous404 condition, so valid reviewed evidence fails activation.",
+  "failure_evidence": {
+    "result.json": {
+      "path": "data/rebuild-evidence/20261105/stages/mediadive-resolution-admission-r1/result.json",
+      "bytes": 15841,
+      "sha256": "2f69548c8ed6a22a59be6efaff291a29e938b801d029c6fbb4c00c8e7d12522a"
+    },
+    "process.log": {
+      "path": "data/rebuild-evidence/20261105/stages/mediadive-resolution-admission-r1/process.log",
+      "bytes": 2866,
+      "sha256": "6ff446e7a9c6cae7507d78fc21a8928f1bacb2dfce0fdd85b36cd9a8217aa5f8"
+    }
+  },
+  "documentation_copies": [
+    {
+      "path": "data/rebuild-evidence/20261105/mediadive-retry-1734/official-review/api-doc-bundle.body",
+      "bytes": 415299,
+      "sha256": "96865da402f36fa0d27a0b80e84fa9b3f0ae05f73b6bafb0a6c690571b6ebc0a"
+    },
+    {
+      "path": "data/raw/mediadive/generations/resolution-batch-r1/official-documentation.body",
+      "bytes": 415299,
+      "sha256": "96865da402f36fa0d27a0b80e84fa9b3f0ae05f73b6bafb0a6c690571b6ebc0a"
+    },
+    {
+      "path": "data/raw/mediadive/.staging/resolution-admitted-r1/official-documentation.body",
+      "bytes": 415299,
+      "sha256": "96865da402f36fa0d27a0b80e84fa9b3f0ae05f73b6bafb0a6c690571b6ebc0a"
+    }
+  ],
+  "official_endpoint_evidence": {
+    "url": "https://mediadive.dsmz.de/doc/assets/main.bundle.js",
+    "endpoint": "/medium-strains/:id",
+    "record": "GetMediumStrains",
+    "error_status": "Error 404",
+    "error_class": "DataNotFound",
+    "description": "The medium could not be found or has no calculated composition",
+    "endpoint_block_sha256": "76980f8b87f857b43e3dfe7259a6220d2a3f6ebd7d1b29ac63456e4074557af2",
+    "endpoint_block_characters": 1855
+  },
+  "observed_native_wire_message": "Medium does not exist or composition was not calculated",
+  "literal_presence": {
+    "wire_message_in_documentation": false,
+    "error_class_in_scoped_endpoint_record": true,
+    "ambiguous_description_in_scoped_endpoint_record": true
+  },
+  "independent_source_evidence": {
+    "path": "data/rebuild-evidence/20261105/mediadive-resolution-1734/seed-canary-batch-independent-audit-1.json",
+    "bytes": 30877,
+    "sha256": "6476c469189bdc29b9193ce1bfbb461b952d0810b59490a767c54f035eac01dc"
+  },
+  "policy_candidate": {
+    "path": "data/rebuild-evidence/20261105/mediadive-resolution-1734/unknown-policy-candidate-r1.json",
+    "bytes": 176020,
+    "sha256": "2e1915efda265be4cbaea8921f126a7a1ea04e7c8110194ead915cfc1cecbd08"
+  },
+  "failed_child_policy": {
+    "path": "data/raw/mediadive/.staging/resolution-admitted-r1/unknown-policy.json",
+    "bytes": 176020,
+    "sha256": "2e1915efda265be4cbaea8921f126a7a1ea04e7c8110194ead915cfc1cecbd08"
+  },
+  "failed_child_state": {
+    "directory": "data/raw/mediadive/.staging/resolution-admitted-r1",
+    "manifest_present": false,
+    "seal_present": false,
+    "current_pointer_present": false,
+    "admission_receipt_present": false
+  },
+  "diagnosis": "The original, sealed batch and failed child documentation bytes agree exactly. No transport, body-copy or candidate-policy corruption was found. The failure is an incorrect documentation representation check, not evidence that unknown should mean empty or negative.",
+  "minimal_repair": "Validate the exact pinned official medium-strains endpoint record, including its Error404/DataNotFound declaration and ambiguous description. Keep actual raw-response classification independently strict against the reviewed wire envelope. Preserve the policy hash, all response bodies and old receipts; use a new activation child after the corrected reader is reviewed.",
+  "regression_requirement": "Use an immutable source-derived excerpt of the actual official documentation with origin/full-document hash. Reject changed/absent error records, wrong endpoint scope and documentation hash drift. Keep strict malformed/unknown response controls. Synthetic documentation assembled from the wire message alone did not exercise the real representation.",
+  "prior_review_limitation": "The previous independent policy review established exact cases, documentation identity and scientific interpretation but missed this operational literal check. Its scientific candidate assessment remains unchanged; a new production-reader review is required before activation.",
+  "review_operations": {
+    "http_requests": 0,
+    "tests": 0,
+    "source_edits": 0,
+    "evidence_rewrites": 0
+  }
+}

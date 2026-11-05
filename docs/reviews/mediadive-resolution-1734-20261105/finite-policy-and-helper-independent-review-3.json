@@ -1,0 +1,241 @@
+{
+  "schema_version": 1,
+  "status": "pass",
+  "policy_sha256": "2e1915efda265be4cbaea8921f126a7a1ea04e7c8110194ead915cfc1cecbd08",
+  "recorded_at": "2026-11-05T22:04:57.651155+00:00",
+  "reviewer": "Independent environment/scientific evidence reviewer",
+  "review_scope": [
+    "Exact unchanged finite 632-case scientific policy",
+    "Current #1772 documentation parser against full retained official bundle and exact source-derived excerpt",
+    "Current production replay and real applied-policy qualify branch without publication",
+    "Reviewed activation helper and current owned interpreter/module origins",
+    "Root-coordinated focused validation; broader consumer failures reported separately"
+  ],
+  "policy": {
+    "path": "data/rebuild-evidence/20261105/mediadive-resolution-1734/unknown-policy-candidate-r1.json",
+    "bytes": 176020,
+    "sha256": "2e1915efda265be4cbaea8921f126a7a1ea04e7c8110194ead915cfc1cecbd08"
+  },
+  "bound_code_and_controls": {
+    "scripts/adhoc/kgm_mediadive_disposition_20261105.py": {
+      "path": "scripts/adhoc/kgm_mediadive_disposition_20261105.py",
+      "bytes": 10378,
+      "sha256": "1817582a7c00e2d4899300f933fc19aa5a767a90b0315eb5b509754661993a4e"
+    },
+    "kg_microbe/transform_utils/mediadive/endpoint_outcomes.py": {
+      "path": "kg_microbe/transform_utils/mediadive/endpoint_outcomes.py",
+      "bytes": 34745,
+      "sha256": "4829dd7719172ecf6ce1b87f78b59b07b488395b2e68921ed8f87de0004938e6"
+    },
+    "kg_microbe/transform_utils/mediadive/acquisition.py": {
+      "path": "kg_microbe/transform_utils/mediadive/acquisition.py",
+      "bytes": 30012,
+      "sha256": "4052142e440bcda181d2c106de8c405cacb545be18792740f869b36a1509ac9e"
+    },
+    "tests/test_mediadive_disposition_20261105.py": {
+      "path": "tests/test_mediadive_disposition_20261105.py",
+      "bytes": 4053,
+      "sha256": "792bccc581da84cc7496b19c34b38daa05cbc6d9fbf358345d0b10a0208efb26"
+    },
+    "tests/test_mediadive_endpoint_outcomes.py": {
+      "path": "tests/test_mediadive_endpoint_outcomes.py",
+      "bytes": 14043,
+      "sha256": "c7e10da3f32b92f5ed01628df2d069fd34a2b4d491851ff0e40f621abd330ff9"
+    },
+    "tests/mediadive_generation_fixtures.py": {
+      "path": "tests/mediadive_generation_fixtures.py",
+      "bytes": 8067,
+      "sha256": "10ab6dc60b925db0c85ea17d091a3fce65783f31565866218d1c770cc619fca1"
+    },
+    "tests/resources/mediadive_medium_strains_official_endpoint.js": {
+      "path": "tests/resources/mediadive_medium_strains_official_endpoint.js",
+      "bytes": 1854,
+      "sha256": "ffe932840eb9c67827664195d3ff783db777be83ee68e173041a48b52cd89ceb"
+    },
+    "tests/resources/mediadive_medium_strains_official_endpoint.origin.json": {
+      "path": "tests/resources/mediadive_medium_strains_official_endpoint.origin.json",
+      "bytes": 603,
+      "sha256": "6338959d1c99c16536e78df1b4f9451faf75fca2be03d3e6cfe71d205653d569"
+    }
+  },
+  "findings": [],
+  "prior_review_and_resolved_finding": {
+    "review": {
+      "path": "data/rebuild-evidence/20261105/mediadive-resolution-1734/finite-policy-and-helper-independent-review-1.json",
+      "bytes": 4245,
+      "sha256": "4d2ac1cbfeab6bd3d18dbe5cebacf2da4d46363c78399efc8cfaf684ed902931"
+    },
+    "issue": 1769,
+    "resolution": "Reviewed policy and independent review are captured before parsing, their original admission guard is verified after checkpoint and before publication, and both sealed policy and current curated-policy SHA must equal the approved policy SHA. Real-generation controls pass for unchanged activation, post-check policy/review mutation refusal, and wrong-policy review refusal before staging."
+  },
+  "multiplicity_assessment": {
+    "issue": 1770,
+    "official_evidence": {
+      "path": "data/rebuild-evidence/20261105/mediadive-resolution-1734/native-strain-id-multiplicity-official-assessment-1.json",
+      "bytes": 3398,
+      "sha256": "5fd50601d1bd2e69ef87ca1eb10a6b770a5e0c2daf462b38e826b309c59ab296"
+    },
+    "exact_one_line_removal_verified": true,
+    "previous_reader_sha256": "9b181ef25ff9d9eaed8b6f83234c97b63d05f319b635b5f09459774efb77e3ee",
+    "meaning": "Native strain identity is not an observation identifier. The corrected reader preserves repeated native IDs, original list order, exact duplicate and opposite-polarity observations; strict ID shape, source count and body/typed native replay remain enforced.",
+    "new_fixture": {
+      "path": "tests/resources/mediadive_repeated_strain_observations.json",
+      "bytes": 315,
+      "sha256": "c5318afe315792424b1a26209c9ec82fe25c0c83809ef7f2e02e71a4bb622b9d"
+    }
+  },
+  "actual_evidence": {
+    "independent_three_generation_audit": {
+      "path": "data/rebuild-evidence/20261105/mediadive-resolution-1734/seed-canary-batch-independent-audit-1.json",
+      "bytes": 30877,
+      "sha256": "6476c469189bdc29b9193ce1bfbb461b952d0810b59490a767c54f035eac01dc"
+    },
+    "current_reader_production_replay": {
+      "path": "data/rebuild-evidence/20261105/mediadive-resolution-1734/current-reader-batch-replay-1.json",
+      "bytes": 41584,
+      "sha256": "309f1932d4b12e024dd0da0509a23d71ff06ec495e63169c7794900451c60ef7"
+    },
+    "historical_receipts_restamped": false,
+    "original_cache_blobs_unchanged": 6056,
+    "four_native_json_files_unchanged": true,
+    "protected_original_files_checked": 69,
+    "current_reader_documentation_and_policy_proof": {
+      "path": "data/rebuild-evidence/20261105/mediadive-resolution-1734/current-documentation-policy-proof-1.json",
+      "bytes": 44789,
+      "sha256": "2eaa5f694ce4d32ad806dd312e2d4e702a33dc07acc2adf5609632d072ed72f2"
+    },
+    "earlier_current_reader_replay_is_historical": true
+  },
+  "finite_policy_case_checks": {
+    "exact_latest_unknown_cases": 632,
+    "historical_unknown_heads_preserved": 583,
+    "fresh_unknown_heads_after_transport": 49,
+    "extra_or_missing_cases": 0,
+    "unknown_ID_family_counts": {
+      "numeric-leading": 215,
+      "C": 47,
+      "J": 359,
+      "P": 11
+    },
+    "catalogue_digest_matches": true,
+    "basis_generation_matches": true,
+    "official_document_digest_matches": true,
+    "all_supporting_review_digests_match": true,
+    "association_coverage_complete": false,
+    "endpoint_accounting_complete": true,
+    "official_applied_policy_branch_executed": true,
+    "source_policy_qualification_admissible_without_publication": true,
+    "generation_published_by_reviewer": false
+  },
+  "scientific_conclusion": {
+    "approved_disposition": "The exact 632 latest source-declared unknown/unavailable strain-association cases may be admitted with this reviewed policy, preserving their uncertainty and provenance.",
+    "latest_case_basis": "583 unchanged historical unknown observations plus 49 subsequent actual documented 404 observations resolving former transport failures. No older 404 substitutes for a later transport failure.",
+    "native_evidence_retained": "All 3344 recipe endpoints and 2712 nonempty strain endpoints retain their original response support. No explicit-empty responses or newly recovered associations were observed.",
+    "omitted_assertions": "Unknown endpoints support no inferred strain association, positive growth, negative growth, absence or nonexistent-medium assertion. Other independently evidenced sources keep their own claims.",
+    "association_coverage_complete": false,
+    "endpoint_accounting_complete": true,
+    "dataset_freshness_established": false,
+    "alternative_source_admission": false,
+    "source_limits": "Limited SPARQL identity/positive controls and the zero-row query for medium 1366 do not establish complete association data or a fresh atomic source snapshot."
+  },
+  "required_downstream_handling": "Preserve exact consumed policy/generation identities, current producer completion and native replay; retain the mandatory per-endpoint audit, incomplete association coverage and omitted-assertion interpretation in direct and inherited release qualifications.",
+  "focused_validation": {
+    "evidence": {
+      "path": "data/rebuild-evidence/20261105/mediadive-resolution-1734/documentation-and-remaining-consumer-focused-r2.log",
+      "bytes": 9740,
+      "sha256": "d8ed231158c7f7fadcddb64966ff8036383f1cd62e411f55ea9ea49f27dd0143"
+    },
+    "result": "312 passed, 2 failed, 36 warnings in 96.88s; endpoint documentation, acquisition and disposition controls passed. Two legacy consumer fixture assertions remain unresolved in this run.",
+    "remaining_failed_tests": [
+      "FAILED tests/test_mediadive_recipe_occurrences.py::test_actual_emission_finalization_and_archive_preserve_equal_occurrences",
+      "FAILED tests/test_mediadive_catalase_scope.py::test_all_eight_native_observations_keep_source_owned_identity_and_full_evidence"
+    ],
+    "artifact_controls": {
+      "evidence": {
+        "path": "data/rebuild-evidence/20261105/mediadive-resolution-1734/artifact-focused-r2.log",
+        "bytes": 2712,
+        "sha256": "cedae24ff41927fb202f74a09880ce865b81466cf587eb333ad6044c5a5bd12d"
+      },
+      "result": "15 passed"
+    },
+    "preparation": {
+      "path": "data/rebuild-evidence/20261105/mediadive-resolution-1734/format-preservation-r1.json",
+      "bytes": 248,
+      "sha256": "3069a02bfe93b021c6f0607520728a36c2a9b77314ae31e18b3958f594182a10"
+    },
+    "executed_by": "Root-coordinated focused pytest; no tests executed by this reviewer",
+    "full_final_validation_passed": false
+  },
+  "activation_scope": "Pass authorizes only the exact 2e1915 policy bytes with this reviewed reader and helper for a newly sealed qualified child. The prospective read-only qualify result is not itself sealed admission or pointer publication. Final graph/release validation remains separate and is not approved by this record; the two legacy consumer failures remain explicit.",
+  "current_pointer_absent_at_review": true,
+  "review_operations": {
+    "http_requests": 0,
+    "pytest_runs": 0,
+    "source_edits": 0,
+    "raw_writes": 0,
+    "policy_activation": false
+  },
+  "prior_review_2": {
+    "path": "data/rebuild-evidence/20261105/mediadive-resolution-1734/finite-policy-and-helper-independent-review-2.json",
+    "bytes": 7362,
+    "sha256": "be91c7e219230c538fe9007e99de0c6295d8e744b31de1f140c763a36f6d81a4"
+  },
+  "prior_review_2_limitation": "Review 2 checked the scientific policy, evidence digests and actual batch replay but did not execute the applied-policy official-documentation branch. Its historical pass is preserved; actual activation failed on an incorrect literal expectation. Review 3 explicitly closes that operational gap without changing policy meaning or original source bytes.",
+  "documentation_fix": {
+    "issue": 1772,
+    "activation_failure_assessment": {
+      "path": "data/rebuild-evidence/20261105/mediadive-resolution-1734/official-doc-contract-activation-failure-assessment-1.json",
+      "bytes": 4793,
+      "sha256": "410d49937258c09e6dcd0435bdc0653f9a6a1bafc1e6fff673f7e48887ccd6c8"
+    },
+    "source_change_scope": {
+      "changed_existing_definitions": [
+        "qualify"
+      ],
+      "added_definitions": [
+        "_documentation_fields",
+        "_documentation_records",
+        "_javascript_value_end",
+        "validate_official_error_contract"
+      ],
+      "other_ast_unchanged": true,
+      "wire_classifier_unchanged": true
+    },
+    "actual_official_bundle": {
+      "path": "data/rebuild-evidence/20261105/mediadive-retry-1734/official-review/api-doc-bundle.body",
+      "bytes": 415299,
+      "sha256": "96865da402f36fa0d27a0b80e84fa9b3f0ae05f73b6bafb0a6c690571b6ebc0a"
+    },
+    "actual_scoped_endpoint_proof": {
+      "endpoint": "/medium-strains/:id",
+      "name": "GetMediumStrains",
+      "error": "DataNotFound",
+      "description": "<p>The medium could not be found or has no calculated composition</p>",
+      "record_sha256": "ffe932840eb9c67827664195d3ff783db777be83ee68e173041a48b52cd89ceb"
+    },
+    "full_bundle_and_exact_excerpt_equal": true,
+    "description_vs_wire_message": "The official Error 404/DataNotFound description says the medium could not be found or has no calculated composition. The native wire message uses different wording. The scoped documentation parser validates the former; the strict native response classifier remains unchanged.",
+    "guard_review": "Select the direct /medium-strains/:id record with get/GetMediumStrains and exact sample URL, then its direct Error 404/DataNotFound entry. Other endpoint records or nested example text cannot supply the contract. Wrong meaning, missing error and seven scoped negative mutations remain rejection controls.",
+    "first_fixture_boundary_failure_preserved": {
+      "path": "data/rebuild-evidence/20261105/mediadive-resolution-1734/documentation-and-artifact-focused-r1.log",
+      "bytes": 9612,
+      "sha256": "2198485f274a9547473c625651badfd5f6984aa479a22df7b6395152c4b2d4a7"
+    },
+    "exact_source_boundary_correction": {
+      "path": "data/rebuild-evidence/20261105/mediadive-resolution-1734/documentation-contract-fix/fixture-boundary-correction.json",
+      "bytes": 1160,
+      "sha256": "7918f32e99737e7e7ed1ae24bd716a896a402b075f3b775b76dc9f60b9d4705a"
+    },
+    "correction_meaning": "Only the source-array separator comma was excluded from the complete immutable endpoint object. Original fixture/origin remain preserved; actual official bundle and production parser bytes were not changed by the fixture correction."
+  },
+  "actual_current_reader_and_policy_proof": {
+    "path": "data/rebuild-evidence/20261105/mediadive-resolution-1734/current-documentation-policy-proof-1.json",
+    "bytes": 44789,
+    "sha256": "2eaa5f694ce4d32ad806dd312e2d4e702a33dc07acc2adf5609632d072ed72f2"
+  },
+  "proof_executable": {
+    "path": "data/rebuild-evidence/20261105/mediadive-resolution-1734/current-documentation-policy-proof-1.py",
+    "bytes": 8645,
+    "sha256": "6e331427e9dffb5f0859e66cc93d676bcf9810d7193bfe085f3bb19884a6fcfc"
+  }
+}

@@ -9,6 +9,10 @@ import pytest
 import yaml
 
 from kg_microbe.transform_utils.mediadive import mediadive as mod
+from kg_microbe.transform_utils.mediadive.endpoint_consumer import EndpointConsumer
+from kg_microbe.transform_utils.transform import Transform
+from kg_microbe.utils.source_finalization import SourceFinalizationRequired
+from tests.mediadive_generation_fixtures import seal_fixture_raw
 
 
 @pytest.fixture
@@ -46,6 +50,30 @@ def bulk_source(tmp_path, monkeypatch):
     return source
 
 
+def _bind_strain_evidence(source, tmp_path, monkeypatch, associations, *, unknown=False):
+    """Give lookup-only assertions a genuinely validated synthetic generation, never a fake state flag."""
+    from kg_microbe.transform_utils.mediadive import endpoint_outcomes
+
+    raw = tmp_path / "raw"
+    raw.mkdir(exist_ok=True)
+    bulk = raw / "mediadive"
+    bulk.mkdir(exist_ok=True)
+    (raw / "mediadive.json").write_text(json.dumps({"data": [{"id": "P1"}]}))
+    values = {
+        "media_detailed.json": {"P1": {"medium": {"id": "P1"}}},
+        "media_strains.json": {"P1": associations} if associations else {},
+        "solutions.json": {},
+        "compounds.json": {},
+    }
+    for name, payload in values.items():
+        (bulk / name).write_text(json.dumps(payload))
+    generation = seal_fixture_raw(raw, missing_strains="explicit_empty", unknown_ids=("P1",) if unknown else ())
+    monkeypatch.setattr(endpoint_outcomes, "CURATED_UNKNOWN_POLICY", generation.curated_policy_path)
+    owner = Transform("mediadive", raw, tmp_path / "lookup-owner")
+    owner.bulk_data_dir = bulk
+    source._endpoint_consumer = EndpointConsumer(owner)
+
+
 @pytest.mark.parametrize("medium_id", ["P11", "123"])
 @pytest.mark.parametrize("cached", [False, True])
 def test_missing_medium_detail_fails_before_cache_or_http(bulk_source, tmp_path, medium_id, cached):
@@ -78,16 +106,29 @@ def test_present_medium_detail_preserves_its_actual_shape(bulk_source, tmp_path,
 
 
 @pytest.mark.parametrize("associations", [None, [], [{"id": 7, "growth": 0}, {"id": 8, "growth": 1}]])
-def test_strain_lookup_retains_absence_and_original_polarity(bulk_source, tmp_path, associations):
-    """Absent strain keys already mean no bulk associations, never a cache request."""
+def test_strain_lookup_retains_absence_and_original_polarity(bulk_source, tmp_path, monkeypatch, associations):
+    """Only explicit successful evidence permits an empty list; original growth polarity stays unchanged."""
     original = copy.deepcopy(associations)
-    if associations is not None:
-        bulk_source.media_strains["P1"] = associations
+    if associations is None:
+        with pytest.raises(SourceFinalizationRequired, match="endpoint outcome evidence"):
+            bulk_source.get_json_object(tmp_path / "P1.yaml", mod.MEDIUM_STRAINS + "P1", tmp_path)
+        assert bulk_source.api_calls_made == bulk_source.api_calls_avoided == 0
+        return
+    _bind_strain_evidence(bulk_source, tmp_path, monkeypatch, associations)
+    bulk_source.media_strains["P1"] = associations
     actual = bulk_source.get_json_object(tmp_path / "P1.yaml", mod.MEDIUM_STRAINS + "P1", tmp_path)
-    assert actual == ([] if original is None else original)
-    assert bulk_source.media_strains == ({} if original is None else {"P1": original})
+    assert actual == original
+    assert bulk_source.media_strains == {"P1": original}
     assert bulk_source.api_calls_avoided == 1
     assert bulk_source.api_calls_made == 0
+
+
+def test_reviewed_unknown_lookup_is_distinct_from_explicit_empty(bulk_source, tmp_path, monkeypatch):
+    """A reviewed source-unavailable endpoint remains None and produces no absence claim."""
+    _bind_strain_evidence(bulk_source, tmp_path, monkeypatch, None, unknown=True)
+    assert bulk_source.get_json_object(tmp_path / "P1.yaml", mod.MEDIUM_STRAINS + "P1", tmp_path) is None
+    assert bulk_source.media_strains == {}
+    assert bulk_source._endpoint_consumer.view.qualification["association_coverage_complete"] is False
 
 
 @pytest.mark.parametrize("method", ["get_solution_recipe_occurrences", "get_compounds_of_solution"])

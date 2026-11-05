@@ -1,0 +1,103 @@
+{
+  "schema_version": 1,
+  "recorded_at": "2026-11-05T21:32:59.133390+00:00",
+  "review_type": "Independent read-only re-review of corrected frozen acquisition/outcome generation code and offline controls",
+  "reviewed_files": {
+    "kg_microbe/transform_utils/mediadive/endpoint_outcomes.py": {
+      "bytes": 29488,
+      "sha256": "9b181ef25ff9d9eaed8b6f83234c97b63d05f319b635b5f09459774efb77e3ee"
+    },
+    "kg_microbe/transform_utils/mediadive/acquisition.py": {
+      "bytes": 30012,
+      "sha256": "4052142e440bcda181d2c106de8c405cacb545be18792740f869b36a1509ac9e"
+    },
+    "tests/mediadive_generation_fixtures.py": {
+      "bytes": 8085,
+      "sha256": "04f6ac9144d595d109c9c7f0a47ade48231eb061afb416a0c1232aea63861126"
+    },
+    "tests/test_mediadive_endpoint_outcomes.py": {
+      "bytes": 9702,
+      "sha256": "67d5f4e80e99c6fb2b122044db6b4c84f7de88d7c4a24472478aa78e417dc282"
+    },
+    "tests/test_mediadive_acquisition_generations.py": {
+      "bytes": 16234,
+      "sha256": "3d803c0e2fd056c490465cd40663ae024980e5c0b51a262d94df6b1d6531d58d"
+    },
+    "mappings/mediadive_unknown_dispositions.json": {
+      "bytes": 82,
+      "sha256": "5137d3110c861fa37103f913bcaafeeb494792d928aacf2d3605c9d21abc8744"
+    },
+    "scripts/adhoc/kgm_mediadive_resolution_20261105.py": {
+      "bytes": 14297,
+      "sha256": "dd0195953676e5bdab90b1b09866bae2eabff22042990ec3abb109719a629caa"
+    }
+  },
+  "previous_review": {
+    "bytes": 6604,
+    "sha256": "ca0386897a7762c77ea6a1e8363fa48cc4ef780c14c4afd9a7d272f22b00040a"
+  },
+  "status": "static_review_pass_no_new_findings",
+  "new_findings": [],
+  "issue_assessments": {
+    "1763": {
+      "result": "addressed",
+      "evidence": [
+        "Replay tracks every intent/completion and permits only the latest uncompleted request for an endpoint to force missing_evidence.",
+        "Offline controls separately exercise an older uncompleted intent followed by a new completed response, and a later uncompleted request after an earlier404. The former resolves without deleting the old intent; the latter remains missing and inadmissible."
+      ]
+    },
+    "1764": {
+      "result": "addressed",
+      "evidence": [
+        "Publication takes the shared nonblocking lock before validating expected current pointer and destination; exact existing pending pointer bytes may be reused, while differing bytes remain retained and refused.",
+        "Offline controls exercise before-pointer interruption/recovery, mismatched pending evidence and competing publisher locks. Generation writer ownership and wrong recovery-plan identity are also checked."
+      ]
+    },
+    "1765": {
+      "result": "acquisition/native portion addressed",
+      "evidence": [
+        "Native payload replay and preserved seed comparison now use strict canonical JSON bytes, distinguishing boolean/integer/float values while retaining the separate detail catalogue-order check.",
+        "An exact integer HTTP status check precedes all response branches, including404.",
+        "Offline restamped-native controls change real source growth integer1 totrue or1.0, update outer manifest/seal/pointer, and require rejection from persisted replay. Another control verifies404.0 is malformed.",
+        "Exact accepted seed bytes remain preserved, and baseline imported successes remain bound to their source ledger and original cache blobs."
+      ]
+    },
+    "1766": {
+      "result": "addressed",
+      "evidence": [
+        "Replay now compares parsed timezone-aware datetime instants rather than their ISO string spellings, retaining the original strings in events and endpoint audit.",
+        "Offline controls reject a lexically later but chronologically older timestamp across offsets; the reversed chronological-valid ordering is accepted and retains the original final spelling."
+      ]
+    }
+  },
+  "additional_controls_reviewed": [
+    "Actual Requests sessions and cache serialization remain in acquisition tests; only the offline HTTP adapter is replaced. Controls verify fresh sessions, terminal404, retries for transport/429, and no follow-through of redirects.",
+    "Five interruption boundaries cover after_observation,after_cache,before_json,after_json,before_seal. Recovery sends no HTTP, leaves the old active pointer and all old generation identities unchanged, preserves both response observations and then permits explicit publication.",
+    "An import control reconstructs original real fixture responses with exact bodies/headers, binds original ledger lines, verifies no unnecessary per-row cache persistence and proves exact baseline serialized blob identities after checkpoint.",
+    "Source states remain nonempty,explicit_empty,unknown_unavailable,transport_error,malformed,missing_evidence. Unknown default policy remains inadmissible and association coverage false. Zero catalogue has explicitly counted zero scope.",
+    "Applied nonempty curated policy now additionally requires nonblank scientific_impact,downstream_handling,source_freshness_limitations. Synthetic fixture policies describe those limits explicitly. Production curated policy remains the empty no-disposition policy.",
+    "_rebuild_staging now verifies already-present cache entries in one snapshot and persists only missing actual successes; final exact native/cache validation remains mandatory.",
+    "Bounded resolution helper remains unchanged from its prior independent review; runtime evidence will bind the corrected production modules at execution."
+  ],
+  "root_coordinated_tests": {
+    "evidence": {
+      "bytes": 2101,
+      "sha256": "7b1d419d568b5d7c73e9b91285a0ec37c482f6afb1be972a300d4f57338ef421"
+    },
+    "path": "data/rebuild-evidence/20261105/mediadive-resolution-1734/generation-contract-focused-r1.log",
+    "observed_result": "61 passed,3 warnings in9.56s",
+    "reviewer_executed_tests": false
+  },
+  "admission_limits": [
+    "This review supports the planned offline seed and one bounded live transport canary under root coordination; it is not a finite unknown-policy disposition or source graph admission.",
+    "Current empty curated policy still prevents admitting source-declared unknowns. Transport failures, malformed responses and incomplete intents remain unresolved.",
+    "Association coverage and source freshness are not established by successful mechanics; those remain explicit scientific limitations."
+  ],
+  "review_operations": {
+    "tests": 0,
+    "http_requests": 0,
+    "source_edits": 0,
+    "git_writes": 0
+  },
+  "reviewed_source_hashes_match_requested_freeze": true
+}

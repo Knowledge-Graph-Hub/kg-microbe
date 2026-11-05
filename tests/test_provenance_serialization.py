@@ -31,16 +31,25 @@ def _media_raw_inputs(tmp_path):
     if raw.exists():
         return raw
     bulk = raw / "mediadive"
+    if (bulk / "current.json").exists():
+        return raw
     bulk.mkdir(parents=True)
     shutil.copyfile(FIXTURES / "mediadive.json", raw / "mediadive.json")
-    strains = json.loads((FIXTURES / "medium_strains.json").read_text())
+    strains = [
+        {"id": number, **row}
+        for number, row in enumerate(json.loads((FIXTURES / "medium_strains.json").read_text()), 1)
+    ]
+    # These are explicitly synthetic native IDs; immutable historical rows remain unchanged.
     for filename, payload in (
-        ("media_detailed.json", {"1": {}}),
+        ("media_detailed.json", {"1": {"medium": {"id": 1}}}),
         ("media_strains.json", {"1": strains}),
         ("solutions.json", {}),
         ("compounds.json", {}),
     ):
         (bulk / filename).write_text(json.dumps(payload, sort_keys=True) + "\n")
+    from tests.mediadive_generation_fixtures import seal_fixture_raw
+
+    seal_fixture_raw(raw)
     return raw
 
 

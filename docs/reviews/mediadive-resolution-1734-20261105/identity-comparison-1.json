@@ -1,0 +1,230 @@
+{
+  "comparisons": {
+    "1366": {
+      "checks": {
+        "class_declarations": true,
+        "complex_flag_agrees": true,
+        "exact_collection_source": true,
+        "exact_identifier_iri": true,
+        "exact_label": true,
+        "exact_native_medium_id": true,
+        "exact_solution_ids": true,
+        "exact_source_link": true,
+        "max_pH_agrees": true,
+        "min_pH_agrees": true
+      },
+      "native_rdf_terms": {
+        "<http://purl.org/dc/terms/identifier>": [
+          "<https://identifiers.org/mediadive.medium:1366>"
+        ],
+        "<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>": [
+          "<https://purl.dsmz.de/schema/CultureMedium>",
+          "<https://purl.dsmz.de/schema/Medium>"
+        ],
+        "<http://www.w3.org/2000/01/rdf-schema#label>": [
+          "\"GAUZE 1 WITH ADDITIONAL YEAST EXTRACT\""
+        ],
+        "<https://purl.dsmz.de/schema/belongsToGroup>": [
+          "\"GAUZE 1 WITH ADDITIONAL YEAST EXTRACT\""
+        ],
+        "<https://purl.dsmz.de/schema/fromSource>": [
+          "\"DSMZ\""
+        ],
+        "<https://purl.dsmz.de/schema/hasFinalPH>": [
+          "\"7.0\""
+        ],
+        "<https://purl.dsmz.de/schema/hasLinkToSource>": [
+          "<https://www.dsmz.de/microorganisms/medium/pdf/DSMZ_Medium1366.pdf>"
+        ],
+        "<https://purl.dsmz.de/schema/hasMainSolution>": [
+          "<https://purl.dsmz.de/mediadive/solution/2753>"
+        ],
+        "<https://purl.dsmz.de/schema/hasMaxPH>": [
+          "\"7\"^^<http://www.w3.org/2001/XMLSchema#decimal>"
+        ],
+        "<https://purl.dsmz.de/schema/hasMinPH>": [
+          "\"7\"^^<http://www.w3.org/2001/XMLSchema#decimal>"
+        ],
+        "<https://purl.dsmz.de/schema/includesSolution>": [
+          "<https://purl.dsmz.de/mediadive/solution/2753>"
+        ],
+        "<https://purl.dsmz.de/schema/isComplex>": [
+          "\"true\"^^<http://www.w3.org/2001/XMLSchema#boolean>"
+        ]
+      },
+      "rdf_identifier": "<https://identifiers.org/mediadive.medium:1366>",
+      "rdf_resource": "<https://purl.dsmz.de/mediadive/medium/1366>",
+      "rdf_triple_count": 13,
+      "rest_medium": {
+        "complex_medium": "yes",
+        "id": 1366,
+        "link": "https://www.dsmz.de/microorganisms/medium/pdf/DSMZ_Medium1366.pdf",
+        "max_pH": 7,
+        "min_pH": 7,
+        "name": "GAUZE 1 WITH ADDITIONAL YEAST EXTRACT",
+        "source": "DSMZ"
+      }
+    },
+    "220": {
+      "checks": {
+        "class_declarations": true,
+        "complex_flag_agrees": true,
+        "exact_collection_source": true,
+        "exact_identifier_iri": true,
+        "exact_label": true,
+        "exact_native_medium_id": true,
+        "exact_solution_ids": true,
+        "exact_source_link": true,
+        "max_pH_agrees": true,
+        "min_pH_agrees": true
+      },
+      "native_rdf_terms": {
+        "<http://purl.org/dc/terms/identifier>": [
+          "<https://identifiers.org/mediadive.medium:220>"
+        ],
+        "<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>": [
+          "<https://purl.dsmz.de/schema/CultureMedium>",
+          "<https://purl.dsmz.de/schema/Medium>"
+        ],
+        "<http://www.w3.org/2000/01/rdf-schema#label>": [
+          "\"CASO AGAR (Merck 105458)\""
+        ],
+        "<https://purl.dsmz.de/schema/belongsToGroup>": [
+          "\"CASO AGAR (Merck 105458)\""
+        ],
+        "<https://purl.dsmz.de/schema/fromSource>": [
+          "\"DSMZ\""
+        ],
+        "<https://purl.dsmz.de/schema/hasFinalPH>": [
+          "\"7.3\""
+        ],
+        "<https://purl.dsmz.de/schema/hasLinkToSource>": [
+          "<https://www.dsmz.de/microorganisms/medium/pdf/DSMZ_Medium220.pdf>"
+        ],
+        "<https://purl.dsmz.de/schema/hasMainSolution>": [
+          "<https://purl.dsmz.de/mediadive/solution/477>"
+        ],
+        "<https://purl.dsmz.de/schema/hasMaxPH>": [
+          "\"7.3\"^^<http://www.w3.org/2001/XMLSchema#decimal>"
+        ],
+        "<https://purl.dsmz.de/schema/hasMinPH>": [
+          "\"7.3\"^^<http://www.w3.org/2001/XMLSchema#decimal>"
+        ],
+        "<https://purl.dsmz.de/schema/includesSolution>": [
+          "<https://purl.dsmz.de/mediadive/solution/477>"
+        ],
+        "<https://purl.dsmz.de/schema/isComplex>": [
+          "\"true\"^^<http://www.w3.org/2001/XMLSchema#boolean>"
+        ]
+      },
+      "rdf_identifier": "<https://identifiers.org/mediadive.medium:220>",
+      "rdf_resource": "<https://purl.dsmz.de/mediadive/medium/220>",
+      "rdf_triple_count": 13,
+      "rest_medium": {
+        "complex_medium": "yes",
+        "id": 220,
+        "link": "https://www.dsmz.de/microorganisms/medium/pdf/DSMZ_Medium220.pdf",
+        "max_pH": 7.3,
+        "min_pH": 7.3,
+        "name": "CASO AGAR (Merck 105458)",
+        "source": "DSMZ"
+      }
+    },
+    "J22": {
+      "checks": {
+        "class_declarations": true,
+        "complex_flag_agrees": true,
+        "exact_collection_source": true,
+        "exact_identifier_iri": true,
+        "exact_label": true,
+        "exact_native_medium_id": true,
+        "exact_solution_ids": true,
+        "exact_source_link": true,
+        "max_pH_agrees": true,
+        "min_pH_agrees": true
+      },
+      "native_rdf_terms": {
+        "<http://purl.org/dc/terms/identifier>": [
+          "<https://identifiers.org/mediadive.medium:J22>"
+        ],
+        "<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>": [
+          "<https://purl.dsmz.de/schema/CultureMedium>",
+          "<https://purl.dsmz.de/schema/Medium>"
+        ],
+        "<http://www.w3.org/2000/01/rdf-schema#label>": [
+          "\"NUTRIENT AGAR NO. 2\""
+        ],
+        "<https://purl.dsmz.de/schema/fromSource>": [
+          "\"JCM\""
+        ],
+        "<https://purl.dsmz.de/schema/hasFinalPH>": [
+          "\"7.1\""
+        ],
+        "<https://purl.dsmz.de/schema/hasLinkToSource>": [
+          "<https://www.jcm.riken.jp/cgi-bin/jcm/jcm_grmd?GRMD=22>"
+        ],
+        "<https://purl.dsmz.de/schema/hasMainSolution>": [
+          "<https://purl.dsmz.de/mediadive/solution/3645>"
+        ],
+        "<https://purl.dsmz.de/schema/hasMaxPH>": [
+          "\"7.1\"^^<http://www.w3.org/2001/XMLSchema#decimal>"
+        ],
+        "<https://purl.dsmz.de/schema/hasMinPH>": [
+          "\"7.1\"^^<http://www.w3.org/2001/XMLSchema#decimal>"
+        ],
+        "<https://purl.dsmz.de/schema/includesSolution>": [
+          "<https://purl.dsmz.de/mediadive/solution/3645>"
+        ],
+        "<https://purl.dsmz.de/schema/isComplex>": [
+          "\"true\"^^<http://www.w3.org/2001/XMLSchema#boolean>"
+        ]
+      },
+      "rdf_identifier": "<https://identifiers.org/mediadive.medium:J22>",
+      "rdf_resource": "<https://purl.dsmz.de/mediadive/medium/J22>",
+      "rdf_triple_count": 12,
+      "rest_medium": {
+        "complex_medium": "yes",
+        "id": "J22",
+        "link": "https://www.jcm.riken.jp/cgi-bin/jcm/jcm_grmd?GRMD=22",
+        "max_pH": 7.1,
+        "min_pH": 7.1,
+        "name": "NUTRIENT AGAR NO. 2",
+        "source": "JCM"
+      }
+    }
+  },
+  "identifier_representation": "Actual dcterms:identifier values are identifiers.org IRIs, not plain ID literals. Their exact embedded collection/suffix identifiers match the native REST IDs.",
+  "inputs": [
+    {
+      "bytes": 8829,
+      "path": "data/rebuild-evidence/20261105/mediadive-resolution-1734/sparql-probes/identity-1/response.body",
+      "sha256": "0a64f4d48ab67c2aab32b4a0e8646bddd9822ebc9ed57f311319115fc76f54da"
+    },
+    {
+      "bytes": 12757,
+      "path": "data/rebuild-evidence/20261105/mediadive-resolution-1734/sparql-probes/identity-1/parsed.json",
+      "sha256": "4ebacc7b1be1eb376d8314dd5382fcdb5d6b7bc2229bffb28622b28f2f028904"
+    },
+    {
+      "bytes": 941,
+      "path": "data/rebuild-evidence/20261105/mediadive-resolution-1734/sparql-probes/identity-1/receipt.json",
+      "sha256": "cd3102211eab7f68601c034ece546fe899fe08d2552a22002373eb5d02f83d13"
+    },
+    {
+      "bytes": 20814573,
+      "path": "data/rebuild-evidence/20261105/mediadive/attempts/sequence-1/full/artifacts/media_detailed.json",
+      "sha256": "82a7d02a5a85378d6acaa535c5d4e07a2fe3ede5c5cb743bee0892eed738bb81"
+    }
+  ],
+  "interpretation": [
+    "Medium1366 is positively present as the exact recipe resource despite its REST strain404. Do not assert missing medium, successful empty associations or biological absence.",
+    "Identity agreement supports the already bounded DSM9/BacDive683 positive-control discovery; it does not establish growth polarity or dataset freshness.",
+    "No source date/version predicate was returned among these38exact outgoing triples. Observation time is not dataset generation time."
+  ],
+  "next_known_control_query_justified": true,
+  "reviewed_at": "2026-11-05T21:20:03.377666+00:00",
+  "row_count": 38,
+  "scope": "Bounded local comparison only; no HTTP, tests or source edits.",
+  "source_association_admission": false,
+  "status": "passed_exact_medium_identity_comparison"
+}

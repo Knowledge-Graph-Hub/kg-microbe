@@ -1,0 +1,636 @@
+{
+  "schema_version": 1,
+  "recorded_at": "2026-11-05T21:39:19.688692+00:00",
+  "status": "independent_evidence_checks_passed",
+  "audit_script": {
+    "bytes": 19024,
+    "sha256": "df0737a34ecef1d8b91809ea2e9e8453175b31b3e4a9631381d4a20833224a47"
+  },
+  "generations": {
+    "resolution-seed-r1": {
+      "receipt": {
+        "bytes": 40739,
+        "sha256": "0af71098c42a2ea4ea51a675e537140ca694729c6143e9d2a6399f0523d3f216"
+      },
+      "manifest": {
+        "bytes": 2570735,
+        "sha256": "ee099decbe116506f9bdf1c80ba04efd4a10162dea18bfcc0abf1d63a6f2955d"
+      },
+      "generation_members": 14404,
+      "observations": 6688,
+      "live_observations": 0,
+      "intents": 0,
+      "state_counts": {
+        "nonempty": 6056,
+        "unknown_unavailable": 583,
+        "transport_error": 49
+      },
+      "cache_blobs": 6056,
+      "four_native_json_byte_identical_to_original": true
+    },
+    "resolution-canary-r1": {
+      "receipt": {
+        "bytes": 40802,
+        "sha256": "083c59cbd5cc548a0356c59b3eb80e50239e2265e8432dfe659fba87609a348d"
+      },
+      "manifest": {
+        "bytes": 2571303,
+        "sha256": "6fb8071c39e05890ee43a60ea2462ddeb5ce559330a699a5cea44ee20ad2ad5c"
+      },
+      "generation_members": 14407,
+      "observations": 6689,
+      "live_observations": 1,
+      "intents": 1,
+      "state_counts": {
+        "nonempty": 6056,
+        "unknown_unavailable": 584,
+        "transport_error": 48
+      },
+      "cache_blobs": 6056,
+      "four_native_json_byte_identical_to_original": true
+    },
+    "resolution-batch-r1": {
+      "receipt": {
+        "bytes": 43527,
+        "sha256": "f1570d0b78f85d760bee496cc546815d2a1fbbeb85b5bc28231f50a92e2df823"
+      },
+      "manifest": {
+        "bytes": 2580167,
+        "sha256": "155d98e2bd927c5c7be7527f6e42219c9f15490e55cee7cf815d77d478201ff9"
+      },
+      "generation_members": 14457,
+      "observations": 6737,
+      "live_observations": 49,
+      "intents": 49,
+      "state_counts": {
+        "nonempty": 6056,
+        "unknown_unavailable": 632
+      },
+      "cache_blobs": 6056,
+      "four_native_json_byte_identical_to_original": true
+    }
+  },
+  "preservation_manifest": {
+    "bytes": 13619,
+    "sha256": "d63d0a6be750bc6f1f436aeb82e22d04c2d457fb0a3dac670d1f5b44f9990368"
+  },
+  "protected_original_files_checked": 69,
+  "original_cache_blob_count": 6056,
+  "original_cache_blobs_unchanged": true,
+  "raw_four_native_json_unchanged": true,
+  "prior_observations_preserved": true,
+  "fresh_transport_resolution_count": 49,
+  "fresh_association_recovery_count": 0,
+  "fresh_evidence": [
+    {
+      "url": "https://mediadive.dsmz.de/rest/medium-strains/1154",
+      "observation_id": "d8ad5ee495ec856f4e200a745dcf92ccb81208c0cc256cd1c2878b7cdc2d3b91",
+      "observed_at": "2026-11-05T21:35:01.804579+00:00",
+      "body": {
+        "bytes": 136,
+        "path": "bodies/f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340.body",
+        "sha256": "f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340"
+      },
+      "prior_transport_observation_id": "ea5d5b0a49eeb49e2d017e7270f215731f6f4717a36221d4de07c2a47b294c03"
+    },
+    {
+      "url": "https://mediadive.dsmz.de/rest/medium-strains/1444",
+      "observation_id": "28bc184feff8fceba2ff6cba70fb5635cb37072e17befdfc25f8979b8043344d",
+      "observed_at": "2026-11-05T21:36:22.092863+00:00",
+      "body": {
+        "bytes": 136,
+        "path": "bodies/f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340.body",
+        "sha256": "f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340"
+      },
+      "prior_transport_observation_id": "47512fe6d8ad782b21ea5f9b35d47cfa6f5ebcf9f0d219e505fb8f2b1b3d96a0"
+    },
+    {
+      "url": "https://mediadive.dsmz.de/rest/medium-strains/1546",
+      "observation_id": "d210c8548a17c4405db28ef08e860f45a438669c010ce7fed34ecca33c7b1677",
+      "observed_at": "2026-11-05T21:36:22.096325+00:00",
+      "body": {
+        "bytes": 136,
+        "path": "bodies/f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340.body",
+        "sha256": "f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340"
+      },
+      "prior_transport_observation_id": "a3fb9f4e277d6e5af186c06cf6b83864c281e95cc692b0a38cb9c5f1de3ccd6c"
+    },
+    {
+      "url": "https://mediadive.dsmz.de/rest/medium-strains/1267a",
+      "observation_id": "c637219fe2390b037ff27fa3ede56bd2052c8c33c893276bc441b0a0e7006299",
+      "observed_at": "2026-11-05T21:36:22.103636+00:00",
+      "body": {
+        "bytes": 136,
+        "path": "bodies/f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340.body",
+        "sha256": "f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340"
+      },
+      "prior_transport_observation_id": "03a8438910e05b9087ec0732cde00c9273d4962a1e6f9e7c067a832e5a058c78"
+    },
+    {
+      "url": "https://mediadive.dsmz.de/rest/medium-strains/1179",
+      "observation_id": "36ad75c1cd782f19704ee809800d7afe064f6a917ca9972afbcf82b93c5dffe3",
+      "observed_at": "2026-11-05T21:36:22.115271+00:00",
+      "body": {
+        "bytes": 136,
+        "path": "bodies/f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340.body",
+        "sha256": "f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340"
+      },
+      "prior_transport_observation_id": "10643ea8355455cae78ac2632755f1f649eaeb4009d487f90cca20c56388fd2f"
+    },
+    {
+      "url": "https://mediadive.dsmz.de/rest/medium-strains/1644",
+      "observation_id": "7c370dd9b3b424b59f01d47b2f95489b460a4fff55d5df4facc2317734e83ed4",
+      "observed_at": "2026-11-05T21:36:22.139795+00:00",
+      "body": {
+        "bytes": 136,
+        "path": "bodies/f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340.body",
+        "sha256": "f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340"
+      },
+      "prior_transport_observation_id": "9dcca657fb17cf0d7e3ba8d62c0288ce782cdc0b3622b63b97a19aae67d33d37"
+    },
+    {
+      "url": "https://mediadive.dsmz.de/rest/medium-strains/608",
+      "observation_id": "eab3d74776f4972015d16266e58b7dcb67c4f08a76477c2af0007c02ba31526e",
+      "observed_at": "2026-11-05T21:36:22.604550+00:00",
+      "body": {
+        "bytes": 136,
+        "path": "bodies/f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340.body",
+        "sha256": "f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340"
+      },
+      "prior_transport_observation_id": "fc26bd68b23d5647607db7df41ab3a7f3776b58242c210afa6e68fea7873ab0a"
+    },
+    {
+      "url": "https://mediadive.dsmz.de/rest/medium-strains/1875",
+      "observation_id": "5e7fc99d74f68c500dc87d39a8f33ba7c46e1f576b68cc4ae53d81355015bf06",
+      "observed_at": "2026-11-05T21:36:22.606384+00:00",
+      "body": {
+        "bytes": 136,
+        "path": "bodies/f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340.body",
+        "sha256": "f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340"
+      },
+      "prior_transport_observation_id": "9572294d80a23cfaf4ee7440274270ea3e20a8e2648e8d169d3580f2861a1417"
+    },
+    {
+      "url": "https://mediadive.dsmz.de/rest/medium-strains/C108",
+      "observation_id": "b3db8762db3e0330e9fb54f00e33b6c09da61043ab010d21daa98b01eae41e26",
+      "observed_at": "2026-11-05T21:36:22.630689+00:00",
+      "body": {
+        "bytes": 136,
+        "path": "bodies/f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340.body",
+        "sha256": "f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340"
+      },
+      "prior_transport_observation_id": "19d1212519fdd0f234d53be50b0a12513d059c1edc649a16f9532b8bfecb9942"
+    },
+    {
+      "url": "https://mediadive.dsmz.de/rest/medium-strains/C110",
+      "observation_id": "d3d744a67eaf141a5cf5d6356df798e456b63ff089a87ebb7cb40327681d625c",
+      "observed_at": "2026-11-05T21:36:22.645957+00:00",
+      "body": {
+        "bytes": 136,
+        "path": "bodies/f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340.body",
+        "sha256": "f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340"
+      },
+      "prior_transport_observation_id": "19d99960f6f9f2c2014ff7e0e6dc1bb61e352d8ae838ecb5ef052a19d5136dc7"
+    },
+    {
+      "url": "https://mediadive.dsmz.de/rest/medium-strains/615",
+      "observation_id": "88319cf615b442f30e4334f639ca281d69b082022b6d352262c867110d140537",
+      "observed_at": "2026-11-05T21:36:22.659465+00:00",
+      "body": {
+        "bytes": 136,
+        "path": "bodies/f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340.body",
+        "sha256": "f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340"
+      },
+      "prior_transport_observation_id": "d47a87a641afa01429c7d9d7001cda806e6f5e1aeddaa4b93463732f0591fa6c"
+    },
+    {
+      "url": "https://mediadive.dsmz.de/rest/medium-strains/C19",
+      "observation_id": "5d01065dad8792f9ce94a56420bc4456426ad19bb29f5fc8f2ccfcf497f50c72",
+      "observed_at": "2026-11-05T21:36:23.119735+00:00",
+      "body": {
+        "bytes": 136,
+        "path": "bodies/f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340.body",
+        "sha256": "f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340"
+      },
+      "prior_transport_observation_id": "2cf916638f58a1188b728ad1c3f2801d401abb707377871dafb95d96160ad138"
+    },
+    {
+      "url": "https://mediadive.dsmz.de/rest/medium-strains/C84",
+      "observation_id": "54edb489c75948a73295c8bb0078bc07b30ef199774ea5387d43d534dc83bdc6",
+      "observed_at": "2026-11-05T21:36:23.122983+00:00",
+      "body": {
+        "bytes": 136,
+        "path": "bodies/f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340.body",
+        "sha256": "f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340"
+      },
+      "prior_transport_observation_id": "7fac3deae8457f21b5875940b80fbadd33710ec2cc5a1a94ad267238750e1e75"
+    },
+    {
+      "url": "https://mediadive.dsmz.de/rest/medium-strains/C87",
+      "observation_id": "d911d2e45880c65dc80cfa49d81cdfadef3c58a2c472f33cd2c49981488e1d75",
+      "observed_at": "2026-11-05T21:36:23.147316+00:00",
+      "body": {
+        "bytes": 136,
+        "path": "bodies/f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340.body",
+        "sha256": "f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340"
+      },
+      "prior_transport_observation_id": "d009fc1497a9e7cc302a1e04ed1d56b8a14a46d51e2d40149253982818370726"
+    },
+    {
+      "url": "https://mediadive.dsmz.de/rest/medium-strains/J1051",
+      "observation_id": "774531e251acc43457ba44ab54afc156479a564308c7fe7454227947347bf787",
+      "observed_at": "2026-11-05T21:36:23.164603+00:00",
+      "body": {
+        "bytes": 136,
+        "path": "bodies/f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340.body",
+        "sha256": "f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340"
+      },
+      "prior_transport_observation_id": "fcc20df436abe8eeb33e94ebb15a467c57468d9c8e960427b06da083de5c0d0a"
+    },
+    {
+      "url": "https://mediadive.dsmz.de/rest/medium-strains/C96",
+      "observation_id": "997350e8500f598f93bd9b327a00b291dd1575641eebf20efd2a3334f3e0ee54",
+      "observed_at": "2026-11-05T21:36:23.180442+00:00",
+      "body": {
+        "bytes": 136,
+        "path": "bodies/f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340.body",
+        "sha256": "f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340"
+      },
+      "prior_transport_observation_id": "d8ca80ec46d42ba0380bc96fd47e957bf01223552ea1b79472571b44ac4ddd2e"
+    },
+    {
+      "url": "https://mediadive.dsmz.de/rest/medium-strains/J1114",
+      "observation_id": "72e498b3fafb0225d0d476a3af519569d89a2496e836ec7253e90e83c95c98f8",
+      "observed_at": "2026-11-05T21:36:23.627401+00:00",
+      "body": {
+        "bytes": 136,
+        "path": "bodies/f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340.body",
+        "sha256": "f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340"
+      },
+      "prior_transport_observation_id": "a8f5b5a27346892ae539a3f6e3afab702269332bf8783e9d7092ea6cd69fe48f"
+    },
+    {
+      "url": "https://mediadive.dsmz.de/rest/medium-strains/J1070",
+      "observation_id": "6ee41e78e8f8080d7db8cfb096035a14d5b331c1b9a73aff093deb05ee6be322",
+      "observed_at": "2026-11-05T21:36:23.640555+00:00",
+      "body": {
+        "bytes": 136,
+        "path": "bodies/f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340.body",
+        "sha256": "f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340"
+      },
+      "prior_transport_observation_id": "f76d6f2abeb202f357f264cbb68e40106a444a40a09d91457ca0d20fc4501bad"
+    },
+    {
+      "url": "https://mediadive.dsmz.de/rest/medium-strains/J1121",
+      "observation_id": "ee25e15b3e6fe03165a9234a999d5c535c6a7fc09ba9eed65a4a1b11a1a79aaf",
+      "observed_at": "2026-11-05T21:36:23.685136+00:00",
+      "body": {
+        "bytes": 136,
+        "path": "bodies/f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340.body",
+        "sha256": "f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340"
+      },
+      "prior_transport_observation_id": "11e2de3e3f076621b95a4c09f07d17186c356540051177ed614f95b90c33a14b"
+    },
+    {
+      "url": "https://mediadive.dsmz.de/rest/medium-strains/J1205",
+      "observation_id": "bd581c4c7a5c52a56dff826d85f1515e27d8e8d11a4e81d4d7e93aab810b5368",
+      "observed_at": "2026-11-05T21:36:23.696114+00:00",
+      "body": {
+        "bytes": 136,
+        "path": "bodies/f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340.body",
+        "sha256": "f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340"
+      },
+      "prior_transport_observation_id": "f04763baae6843fb800c81ca889ed1c7a92e4d507235284917bfb8fd9aaa018e"
+    },
+    {
+      "url": "https://mediadive.dsmz.de/rest/medium-strains/J1163",
+      "observation_id": "f66da4f95b860a951be1ec43d8edddf96766a0c6b2b9912cc5f18b0ccca619a6",
+      "observed_at": "2026-11-05T21:36:23.702821+00:00",
+      "body": {
+        "bytes": 136,
+        "path": "bodies/f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340.body",
+        "sha256": "f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340"
+      },
+      "prior_transport_observation_id": "8a4802db1fe1e5e32f78acf5821afe14459afb2b7acd7517ffb8718977df2e90"
+    },
+    {
+      "url": "https://mediadive.dsmz.de/rest/medium-strains/J1239",
+      "observation_id": "32847602993ea72911bdd478927c34d833669de23cef470475d3e40b6d330dbf",
+      "observed_at": "2026-11-05T21:36:24.136089+00:00",
+      "body": {
+        "bytes": 136,
+        "path": "bodies/f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340.body",
+        "sha256": "f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340"
+      },
+      "prior_transport_observation_id": "c6847a100d3be8ae1ed2edd308a64624260f9f9da2620f7345bfd00d9a4b6c20"
+    },
+    {
+      "url": "https://mediadive.dsmz.de/rest/medium-strains/J1293",
+      "observation_id": "9574b980e5296612fbbf23cd4f4e66d59947cbdcbd9650a90d052820ba6c626c",
+      "observed_at": "2026-11-05T21:36:24.181619+00:00",
+      "body": {
+        "bytes": 136,
+        "path": "bodies/f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340.body",
+        "sha256": "f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340"
+      },
+      "prior_transport_observation_id": "ad48793941017672ce413fcd6fa3301cc0b897909be8929eec18b68a3837bed5"
+    },
+    {
+      "url": "https://mediadive.dsmz.de/rest/medium-strains/J1310",
+      "observation_id": "d38bf66194cd07c751dcacd9ea9423931e3de1581426dbe7a3a26e4d4ca351f9",
+      "observed_at": "2026-11-05T21:36:24.203994+00:00",
+      "body": {
+        "bytes": 136,
+        "path": "bodies/f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340.body",
+        "sha256": "f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340"
+      },
+      "prior_transport_observation_id": "255f023c3b4f83f81433f42badcf20cf61e185ce37fdfabae35b137cc4605592"
+    },
+    {
+      "url": "https://mediadive.dsmz.de/rest/medium-strains/J193",
+      "observation_id": "1c3afc56fe64442388f634709b025fd0198ad63acc794c114d27fa7d0fde3604",
+      "observed_at": "2026-11-05T21:36:24.212109+00:00",
+      "body": {
+        "bytes": 136,
+        "path": "bodies/f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340.body",
+        "sha256": "f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340"
+      },
+      "prior_transport_observation_id": "3f61344b889be64e9d8b536b912f1be26e560a1e69d54bf2493e522f950b1594"
+    },
+    {
+      "url": "https://mediadive.dsmz.de/rest/medium-strains/J1317",
+      "observation_id": "207d86685f81c1d84f8b793896706a47f8e9ab24854d615a5857c11a5ca11206",
+      "observed_at": "2026-11-05T21:36:24.229168+00:00",
+      "body": {
+        "bytes": 136,
+        "path": "bodies/f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340.body",
+        "sha256": "f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340"
+      },
+      "prior_transport_observation_id": "2aae51dcaebbbb8f2cffc1750f616f1da793d51f2805501a67967d7217554590"
+    },
+    {
+      "url": "https://mediadive.dsmz.de/rest/medium-strains/J201",
+      "observation_id": "f2c7437cedb65e1c596f93e00650c07e210818bf775d76470c9c6393812b7dc8",
+      "observed_at": "2026-11-05T21:36:24.643192+00:00",
+      "body": {
+        "bytes": 136,
+        "path": "bodies/f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340.body",
+        "sha256": "f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340"
+      },
+      "prior_transport_observation_id": "2c493c526490afc8e2af3e188dfbb02077812dbe6ee2294020ced17796f449f5"
+    },
+    {
+      "url": "https://mediadive.dsmz.de/rest/medium-strains/J248",
+      "observation_id": "6f496922d0ad7c3eae6d379e6c74d5d5c3282dc23bf9b484f22d23f233d0b3ee",
+      "observed_at": "2026-11-05T21:36:24.719338+00:00",
+      "body": {
+        "bytes": 136,
+        "path": "bodies/f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340.body",
+        "sha256": "f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340"
+      },
+      "prior_transport_observation_id": "66b4d5c8d66d4c98338714c42ec895200997ae69e7c72177df6502a7c7c0942c"
+    },
+    {
+      "url": "https://mediadive.dsmz.de/rest/medium-strains/J401",
+      "observation_id": "9ed767209a105ed75948b20d2ddb21896210713f27dfb59ca99f7a3e2f05d600",
+      "observed_at": "2026-11-05T21:36:24.731068+00:00",
+      "body": {
+        "bytes": 136,
+        "path": "bodies/f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340.body",
+        "sha256": "f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340"
+      },
+      "prior_transport_observation_id": "00a5055c55711e2a982b22a1b358ff79911136508668591571204e484a6ed1bd"
+    },
+    {
+      "url": "https://mediadive.dsmz.de/rest/medium-strains/J209",
+      "observation_id": "78b4197f93a0631938471c3fe65de17716cda9f8a28fa312bdc83d7bd542d757",
+      "observed_at": "2026-11-05T21:36:24.736773+00:00",
+      "body": {
+        "bytes": 136,
+        "path": "bodies/f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340.body",
+        "sha256": "f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340"
+      },
+      "prior_transport_observation_id": "a4ea0d7d0367af86d0abc192f036c20d845c2a59f813b28259fb90c3528bb5f4"
+    },
+    {
+      "url": "https://mediadive.dsmz.de/rest/medium-strains/J473",
+      "observation_id": "d2f0bf3c756b956dd1abe6f074377ce671a48abc3bcfca6059d574666f1be553",
+      "observed_at": "2026-11-05T21:36:24.754457+00:00",
+      "body": {
+        "bytes": 136,
+        "path": "bodies/f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340.body",
+        "sha256": "f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340"
+      },
+      "prior_transport_observation_id": "b3e9d9e531093610c4a30f5f336f7dc1c58142932da1f92b39c263eba53a6a63"
+    },
+    {
+      "url": "https://mediadive.dsmz.de/rest/medium-strains/J570",
+      "observation_id": "35fc530075982462181701c9a0ea492ab5305761dfecd0975c9665e0a34d5b8f",
+      "observed_at": "2026-11-05T21:36:25.155276+00:00",
+      "body": {
+        "bytes": 136,
+        "path": "bodies/f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340.body",
+        "sha256": "f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340"
+      },
+      "prior_transport_observation_id": "311b3f1f9d3d4526b889a1089ba19464bf46b185f3c169267c5cf7412344b18b"
+    },
+    {
+      "url": "https://mediadive.dsmz.de/rest/medium-strains/J630",
+      "observation_id": "90aaf42501e9aa3112ed42716e9e4614373d63d3aabdac223ccd5742ecf2f302",
+      "observed_at": "2026-11-05T21:36:25.245810+00:00",
+      "body": {
+        "bytes": 136,
+        "path": "bodies/f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340.body",
+        "sha256": "f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340"
+      },
+      "prior_transport_observation_id": "e430c8f546ae8cf4a4b2da3de1147477efff2a3e6cf623ce51015ed7ee617fac"
+    },
+    {
+      "url": "https://mediadive.dsmz.de/rest/medium-strains/J588",
+      "observation_id": "51284b59cfb1e993cb15fd82b2e2b3fa7adb4c26f8bcf75d985d8e844e359fc6",
+      "observed_at": "2026-11-05T21:36:25.254061+00:00",
+      "body": {
+        "bytes": 136,
+        "path": "bodies/f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340.body",
+        "sha256": "f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340"
+      },
+      "prior_transport_observation_id": "de942fabadce3f9269db068492da69aa28b02701f53b187d2f7972b1c02124d8"
+    },
+    {
+      "url": "https://mediadive.dsmz.de/rest/medium-strains/J635",
+      "observation_id": "6988d86a21a3d59208400d8497436dc2b04686d69119844da4cf95a0579dbcaa",
+      "observed_at": "2026-11-05T21:36:25.265602+00:00",
+      "body": {
+        "bytes": 136,
+        "path": "bodies/f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340.body",
+        "sha256": "f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340"
+      },
+      "prior_transport_observation_id": "cc1890bbcf41fc8f8912567a481a7042ea9a2588d4bbf9ddca4a1e88af1340e7"
+    },
+    {
+      "url": "https://mediadive.dsmz.de/rest/medium-strains/J638",
+      "observation_id": "252049fef6704b7c302fbac242d132aa7be45a6c1e99355a3c5bb45fd3be0272",
+      "observed_at": "2026-11-05T21:36:25.288023+00:00",
+      "body": {
+        "bytes": 136,
+        "path": "bodies/f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340.body",
+        "sha256": "f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340"
+      },
+      "prior_transport_observation_id": "e9f4a98475688fc5f7acf4828e2bffcdf941acf81189322c43f9a83d33057a76"
+    },
+    {
+      "url": "https://mediadive.dsmz.de/rest/medium-strains/J642",
+      "observation_id": "263d95c8d5ece301dfbd8237b72c09c72f9d200a2bf7a9692df05830d01f7c62",
+      "observed_at": "2026-11-05T21:36:25.665800+00:00",
+      "body": {
+        "bytes": 136,
+        "path": "bodies/f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340.body",
+        "sha256": "f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340"
+      },
+      "prior_transport_observation_id": "ee83a76f1ac64bce15500ebe49930cba7f7c295b808c334a301adb16106ab67a"
+    },
+    {
+      "url": "https://mediadive.dsmz.de/rest/medium-strains/J663",
+      "observation_id": "88b84bbe0fb40757345cca5895086b5d7e2571e9de1fd6fa7507be0ea8629828",
+      "observed_at": "2026-11-05T21:36:25.750111+00:00",
+      "body": {
+        "bytes": 136,
+        "path": "bodies/f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340.body",
+        "sha256": "f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340"
+      },
+      "prior_transport_observation_id": "bf0c9a2422bace5cd97302a6db9aef6731e4052435005abaef410442b40247ea"
+    },
+    {
+      "url": "https://mediadive.dsmz.de/rest/medium-strains/J715",
+      "observation_id": "0e52e70fb733d4cac6801da88189a44f387ff520d18d773fb7e47f9b25ce1d63",
+      "observed_at": "2026-11-05T21:36:25.771360+00:00",
+      "body": {
+        "bytes": 136,
+        "path": "bodies/f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340.body",
+        "sha256": "f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340"
+      },
+      "prior_transport_observation_id": "6edb4fd950614bd15446035651f088b05a544cf72596fc951264b24f36b49cfd"
+    },
+    {
+      "url": "https://mediadive.dsmz.de/rest/medium-strains/J726",
+      "observation_id": "f236ef90a5a593dabbd0eb8047e2cc7477763b432ae28b0c6a78aa44656a2741",
+      "observed_at": "2026-11-05T21:36:25.783721+00:00",
+      "body": {
+        "bytes": 136,
+        "path": "bodies/f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340.body",
+        "sha256": "f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340"
+      },
+      "prior_transport_observation_id": "bafe855754db97f8bcb6d78654bf3665a0e4a5b2c3296179f27eee08035ea169"
+    },
+    {
+      "url": "https://mediadive.dsmz.de/rest/medium-strains/J737",
+      "observation_id": "5acb975c979434ad1e51159f58c53b7dee56054225a0c4db62061764b64abe4d",
+      "observed_at": "2026-11-05T21:36:25.804060+00:00",
+      "body": {
+        "bytes": 136,
+        "path": "bodies/f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340.body",
+        "sha256": "f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340"
+      },
+      "prior_transport_observation_id": "19711ac4cae9d7409a9292b8a614fb4c0835157c7bddf4aeab3685e3cbabe8f5"
+    },
+    {
+      "url": "https://mediadive.dsmz.de/rest/medium-strains/J738",
+      "observation_id": "b3f0b2d8755a32c0fdbe1890c4a14d80bc36b384ebd3fda00a99b1e8a0fbaacf",
+      "observed_at": "2026-11-05T21:36:26.176063+00:00",
+      "body": {
+        "bytes": 136,
+        "path": "bodies/f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340.body",
+        "sha256": "f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340"
+      },
+      "prior_transport_observation_id": "ed3836ffa10de1805a0632edcb5c2457e5d73efaa37cff6f0e019f308ae1b082"
+    },
+    {
+      "url": "https://mediadive.dsmz.de/rest/medium-strains/J780",
+      "observation_id": "1747810919b7613ea2356a951ee89a0c1a95eb4125d3dfe706348c8afea42377",
+      "observed_at": "2026-11-05T21:36:26.262870+00:00",
+      "body": {
+        "bytes": 136,
+        "path": "bodies/f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340.body",
+        "sha256": "f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340"
+      },
+      "prior_transport_observation_id": "e0b20242ddca1c38441f0cd755608745af4393f189e030bfca8df4a76df5d10d"
+    },
+    {
+      "url": "https://mediadive.dsmz.de/rest/medium-strains/J854",
+      "observation_id": "7d91e3715f5d99fe8e556307b687ad6821e4b3584020f6ba519fa1b0efef25fb",
+      "observed_at": "2026-11-05T21:36:26.290139+00:00",
+      "body": {
+        "bytes": 136,
+        "path": "bodies/f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340.body",
+        "sha256": "f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340"
+      },
+      "prior_transport_observation_id": "00523bf0a7f17724b702f08854fef3dabe2fd875963e091dd63e1bbaa83f0d23"
+    },
+    {
+      "url": "https://mediadive.dsmz.de/rest/medium-strains/J871",
+      "observation_id": "b855774bf97045350f996cd275a64faed590b8133fbf18af30648f2dd0206aad",
+      "observed_at": "2026-11-05T21:36:26.314214+00:00",
+      "body": {
+        "bytes": 136,
+        "path": "bodies/f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340.body",
+        "sha256": "f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340"
+      },
+      "prior_transport_observation_id": "d71a2d896d5395eb77c52dfb993bd50742a316a7d6496cbd7f273be5e7dbddb7"
+    },
+    {
+      "url": "https://mediadive.dsmz.de/rest/medium-strains/J821",
+      "observation_id": "a4b9d52cfadc72baa01a6d3fe14c2cfa923f71f8dc11caad0619cd0aa20495a1",
+      "observed_at": "2026-11-05T21:36:26.325014+00:00",
+      "body": {
+        "bytes": 136,
+        "path": "bodies/f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340.body",
+        "sha256": "f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340"
+      },
+      "prior_transport_observation_id": "0285550b30ccae0e84eef807df0b44b43a4576e869624c2bf25687dac18ac996"
+    },
+    {
+      "url": "https://mediadive.dsmz.de/rest/medium-strains/J888",
+      "observation_id": "42cc98d47e06dbe38f84e584536d0a6ff9b5fbdd9197f75cae3b6727f1278303",
+      "observed_at": "2026-11-05T21:36:26.690454+00:00",
+      "body": {
+        "bytes": 136,
+        "path": "bodies/f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340.body",
+        "sha256": "f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340"
+      },
+      "prior_transport_observation_id": "2fe7ce2763f4c92d2b114f6a5e7e84366a4ac0d4c3870e30d911411d4cdef537"
+    },
+    {
+      "url": "https://mediadive.dsmz.de/rest/medium-strains/J951",
+      "observation_id": "41623eb793f01322beda2859c162d02d97522ea91770c7aa1b0d24d5a50c2ae7",
+      "observed_at": "2026-11-05T21:36:26.784038+00:00",
+      "body": {
+        "bytes": 136,
+        "path": "bodies/f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340.body",
+        "sha256": "f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340"
+      },
+      "prior_transport_observation_id": "529b538edf463238f35e6a853a200b3f25c747aa3f64410cd78a1844d31f5fbc"
+    },
+    {
+      "url": "https://mediadive.dsmz.de/rest/medium-strains/J997",
+      "observation_id": "ad96f352acea1ec94396368c1001c19e15987339e7e707617a14fec990ffb51f",
+      "observed_at": "2026-11-05T21:36:26.806990+00:00",
+      "body": {
+        "bytes": 136,
+        "path": "bodies/f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340.body",
+        "sha256": "f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340"
+      },
+      "prior_transport_observation_id": "d003f60a609a8534bdb11a9c8f05a57be6ff4a658fcbdc0ed3eacd049ddbeb2c"
+    }
+  ],
+  "current_pointer_absent": true,
+  "curated_policy_applied": false,
+  "source_association_admission": false,
+  "policy_review_ready": true,
+  "scientific_interpretation": "All 49 former transport endpoints now have actual subsequent documented HTTP404 observations. The final 632 unknown heads support a finite case-policy review, not explicit empty associations, negative growth, complete association coverage or source freshness. The 583 other unknown heads remain preserved historical observations.",
+  "review_operations": {
+    "http_requests": 0,
+    "tests": 0,
+    "production_module_calls": 0,
+    "source_writes": 0
+  }
+}

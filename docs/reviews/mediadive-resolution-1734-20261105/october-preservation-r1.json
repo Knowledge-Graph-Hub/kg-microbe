@@ -1,0 +1,54 @@
+{
+  "checked_at": "2026-11-05T22:07:45.586117+00:00",
+  "command": "preserve",
+  "result": {
+    "files": {
+      "data/merged/merged-kg.tar.gz": {
+        "copy": {
+          "bytes": 196352730,
+          "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/october-baseline/original/data/merged/merged-kg.tar.gz",
+          "sha256": "3d529dd0024843f9278ecfbfc8703413061ef9c4c7474805ecec03aa8cfdfd4c"
+        },
+        "original": {
+          "bytes": 196352730,
+          "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe/data/merged/merged-kg.tar.gz",
+          "sha256": "3d529dd0024843f9278ecfbfc8703413061ef9c4c7474805ecec03aa8cfdfd4c"
+        }
+      },
+      "data/transformed/mediadive/edges.tsv": {
+        "copy": {
+          "bytes": 22124764,
+          "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/october-baseline/original/data/transformed/mediadive/edges.tsv",
+          "sha256": "4e933d1e2412fb1aad74e60719a6a64dfa34862ff0a6b84e93d78da5ce13dd8b"
+        },
+        "original": {
+          "bytes": 22124764,
+          "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe/data/transformed/mediadive/edges.tsv",
+          "sha256": "4e933d1e2412fb1aad74e60719a6a64dfa34862ff0a6b84e93d78da5ce13dd8b"
+        }
+      },
+      "merged_graph_stats.yaml": {
+        "copy": {
+          "bytes": 206075,
+          "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/october-baseline/original/merged_graph_stats.yaml",
+          "sha256": "11ff01d01b2e273f5c557483e8c55e01342a183522ad8927210be89ed30242e4"
+        },
+        "original": {
+          "bytes": 206075,
+          "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe/merged_graph_stats.yaml",
+          "sha256": "11ff01d01b2e273f5c557483e8c55e01342a183522ad8927210be89ed30242e4"
+        }
+      }
+    },
+    "helper": {
+      "bytes": 15102,
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/scripts/adhoc/kgm_rebuild_comparison_20261105.py",
+      "sha256": "0077fb45b31613bd03c4c5df33bd4e424df4223d7fa85644316365a486ed82eb"
+    },
+    "recorded_at": "2026-11-05T22:07:45.795171+00:00",
+    "schema_version": 1,
+    "status": "preserved"
+  },
+  "root": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105",
+  "status": "preserved"
+}

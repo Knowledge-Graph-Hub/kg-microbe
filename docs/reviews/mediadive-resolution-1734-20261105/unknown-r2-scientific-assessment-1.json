@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "recorded_at": "2026-11-05T21:24:13.959517+00:00",
+  "review": "Independent local scientific assessment of exact-medium 1366 unknown-r2 discovery",
+  "inputs": {
+    "receipt.json": {
+      "path": "data/rebuild-evidence/20261105/mediadive-resolution-1734/sparql-probes/unknown-r2/receipt.json",
+      "sha256": "a209575688aaf12b023bd834f8b1b8492b068399533776bdce54f6edf596cfc6",
+      "bytes": 999
+    },
+    "parsed.json": {
+      "path": "data/rebuild-evidence/20261105/mediadive-resolution-1734/sparql-probes/unknown-r2/parsed.json",
+      "sha256": "2738902987139d135d0eeba018c1ec24a19c989530557fef1145826276fe1907",
+      "bytes": 28405
+    },
+    "response.body": {
+      "path": "data/rebuild-evidence/20261105/mediadive-resolution-1734/sparql-probes/unknown-r2/response.body",
+      "sha256": "d2fa754064dfc46c5506702dc43a89bb89262c92cfb5aa4aa1837697e0af791a",
+      "bytes": 11776
+    }
+  },
+  "query": {
+    "path": "data/rebuild-evidence/20261105/mediadive-resolution-1734/official-review/03-unresolved-1366-native-terms-r2.rq",
+    "sha256": "d0ec0bdad18907d963bc2cf0a02f6de11a10c21e45f2df1533c9b54eef7cd2a8",
+    "bytes": 727
+  },
+  "observations": {
+    "http_status": 200,
+    "qlever_status": "OK",
+    "warnings": [],
+    "rows": 0,
+    "resultsize": 0,
+    "scope": "Exact medium IRI https://purl.dsmz.de/mediadive/medium/1366; GrowthCondition type and partOfMedium patterns with local property/strain branches; LIMIT 201"
+  },
+  "conclusion": "No matches for this exact query in the endpoint response at the recorded time. This is not an explicit empty association list, a negative growth observation, proof of complete association coverage, or evidence that medium 1366 is absent. Earlier identity discovery positively returned the exact medium resource.",
+  "rest_1366_disposition": "Retain source-declared unknown_unavailable; no REST outcome upgraded by this SPARQL result.",
+  "dataset_freshness_established": false,
+  "source_association_admission": false,
+  "coverage_inference_permitted": false,
+  "limitations": [
+    "Data snapshot/version/update cadence unestablished.",
+    "Positive controls establish one live positive predicate pattern; they do not prove complete graph modeling or a closed-world interpretation.",
+    "A zero-row match cannot distinguish absent modeled growth conditions, different modeling, incomplete RDF coverage, or absent underlying observations."
+  ],
+  "review_operations": {
+    "http_requests": 0,
+    "tests": 0,
+    "source_edits": 0
+  }
+}

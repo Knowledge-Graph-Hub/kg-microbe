@@ -1,0 +1,39 @@
+{
+  "findings": [
+    {
+      "control": "Start from real finalized unknown-generation evidence; inject an edge mutation in the semantic scan boundary, and require recorded replay to refuse rather than return a qualified view. Preserve the prior source report and raw generation.",
+      "function": "verify_recorded_endpoints",
+      "issue": 1767,
+      "line": 234,
+      "minimal_fix": "Capture the selected edge file with the same admission before scanning it, then retain the existing guard verification. Do not bind writable producer outputs into the raw-generation guard before legitimate source finalization.",
+      "observation": "Recorded replay currently scans the source edge file with _check_omitted_assertions but does not itself capture that edge file in its SourceAdmission before the semantic read.",
+      "risk": "This helper relies on surrounding generic graph-member checks instead of retaining an explicit identity for the exact graph bytes whose unknown/empty omission semantics it inspects. A mutation during that local semantic-read window is not necessarily observed by this helper's own guard.verify. No production false-admission bypass has been demonstrated."
+    },
+    {
+      "control": "From a real run, replace cached audit bytes to relabel unknown_unavailable as explicit_empty (or alter a head identity), then require verify_native_inputs/finalization/write to fail without emitting a new completed audit or receipt.",
+      "function": "EndpointConsumer._verify_cache",
+      "issue": 1768,
+      "line": 187,
+      "minimal_fix": "Regenerate _audit_bytes(_rows(view)) inside _verify_cache and require exact equality to the original cached _audit. Retain exact view/record/state checks and replay.",
+      "observation": "The consumer retains canonical generation/qualification/record identities, but private cached _audit bytes are used by write()/contract() without regenerating and comparing them to validated endpoint records at each boundary.",
+      "risk": "Replacing cached audit bytes can influence producer-written audit and its contract hash even while endpoint evidence remains unchanged. Independent public replay already regenerates the audit and rejects a semantic mismatch, but producer completion should refuse the mutation first."
+    }
+  ],
+  "method": "Static read-only review of current consumer draft while coordinated tests run; these new controls have not been executed by this reviewer.",
+  "recorded_at": "2026-11-05T21:29:09.142359+00:00",
+  "related_strict_type_finding": {
+    "classification": "Strict contract-integrity defect; no new source-body or scientific bypass evidence invented.",
+    "functions": [
+      "EndpointConsumer.restore",
+      "verify_recorded_endpoints",
+      "MediaDiveTransform.producer_native_inputs setter"
+    ],
+    "issue": 1765,
+    "observation": "Python dictionary equality can equate JSON boolean/integer or integer/float contract values. Use canonical strict JSON comparisons, not value-coercing container equality, and add sealed1/coverage-count-type controls."
+  },
+  "source": {
+    "bytes": 12653,
+    "path": "kg_microbe/transform_utils/mediadive/endpoint_consumer.py",
+    "sha256": "3aa90be413dcf8fa62f8ced8127cd550f5c77ff1e248a2daf3fe3d0f4e21f5c4"
+  }
+}

@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "recorded_at": "2026-11-05T21:40:31.888951+00:00",
+  "status": "changes_required_before_activation",
+  "policy_sha256": "2e1915efda265be4cbaea8921f126a7a1ea04e7c8110194ead915cfc1cecbd08",
+  "policy": {
+    "path": "data/rebuild-evidence/20261105/mediadive-resolution-1734/unknown-policy-candidate-r1.json",
+    "bytes": 176020,
+    "sha256": "2e1915efda265be4cbaea8921f126a7a1ea04e7c8110194ead915cfc1cecbd08"
+  },
+  "helper": {
+    "path": "scripts/adhoc/kgm_mediadive_disposition_20261105.py",
+    "bytes": 9857,
+    "sha256": "e19898e951f20d2af7862d58d16733d7f896eab5a61d977b42f4624842f3ceed"
+  },
+  "independent_actual_generation_audit": {
+    "path": "data/rebuild-evidence/20261105/mediadive-resolution-1734/seed-canary-batch-independent-audit-1.json",
+    "bytes": 30877,
+    "sha256": "6476c469189bdc29b9193ce1bfbb461b952d0810b59490a767c54f035eac01dc"
+  },
+  "scientific_policy_assessment": "pass for exact candidate bytes; activation helper guard remains blocking",
+  "case_checks": {
+    "exact_latest_unknown_cases": 632,
+    "historical_unknown_heads_preserved": 583,
+    "fresh_unknown_heads_after_transport": 49,
+    "extra_or_missing_cases": 0,
+    "unknown_ID_family_counts": {
+      "numeric-leading": 215,
+      "C": 47,
+      "J": 359,
+      "P": 11
+    },
+    "catalogue_digest_matches": true,
+    "basis_generation_matches": true,
+    "official_document_digest_matches": true,
+    "all_supporting_review_digests_match": true,
+    "association_coverage_complete": false,
+    "endpoint_accounting_complete": true
+  },
+  "scientific_assessment": [
+    "Case membership and observation/body hashes equal the independently replayed final632 unknown heads; all49 former transports require their actual later responses, and583 prior unknown heads retain their original observations.",
+    "The exact official DataNotFound404 supports only ambiguous source-declared unknown/unavailable strain associations. Policy explicitly excludes empty-list, nonexistent-medium, negative-growth and completeness interpretations.",
+    "All3344 recipe responses and2712 nonempty strain responses remain byte-supported; zero explicit-empty responses were observed.",
+    "Policy explicitly requires no source-local strain/growth/absence assertions from unknown endpoints, retains other independently supported source claims, and carries incomplete association coverage through producer/replay/qualified artifacts including dependencies.",
+    "Freshness text distinguishes observed times and server headers from an atomic dataset version. The limited SPARQL controls and zero1366 query result are not promoted to alternative association authority."
+  ],
+  "blocking_helper_finding": {
+    "location": "scripts/adhoc/kgm_mediadive_disposition_20261105.py:137,153,156",
+    "finding": "Reviewed curated policy digest is checked only before cloning. checkpoint_generation later reads the mutable policy path and captures whichever bytes exist then. A policy change between the initial digest check and checkpoint can pass exact current-policy equality and structural case checks, then publish unreviewed scientific text while the returned receipt still claims the old reviewed policy SHA.",
+    "reproduction": "Keep exact valid632 cases but change the scientific_impact text after admit line137 and before checkpoint_generation reads unknown_policy. Both generation policy and current curated policy then contain the changed bytes, so production qualify succeeds although the independent review approved the prior bytes.",
+    "repair": "Capture reviewed policy and review file bytes/identities in an admission guard before parsing; verify that original guard after checkpoint and immediately before publication; require the sealed child policy and current curated-policy SHA to equal the reviewed args.policy_sha256.",
+    "acceptance": "A controlled mutation after the initial reviewed-policy check must refuse without publishing current.json. Unchanged reviewed bytes may publish only the newly sealed child with incomplete association coverage retained."
+  },
+  "current_pointer_absent": true,
+  "review_operations": {
+    "http_requests": 0,
+    "tests": 0,
+    "source_edits": 0,
+    "policy_activation": false
+  }
+}

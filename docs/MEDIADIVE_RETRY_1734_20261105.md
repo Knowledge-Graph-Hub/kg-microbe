@@ -1,5 +1,9 @@
 # MediaDive targeted retry for #1734 — 2026-11-05
 
+Historical retry checkpoint: this report and its blocked receipt are preserved.
+The subsequent [resolution report](MEDIADIVE_RESOLUTION_1734_20261105.md) records
+the new production outcome contract and qualified source admission.
+
 The targeted production retry recovered **zero associations**. All 632 strain
 endpoints remain unresolved: **583 final documented HTTP 404 responses and 49
 final connection errors**. Complete association admission remains false; dependent

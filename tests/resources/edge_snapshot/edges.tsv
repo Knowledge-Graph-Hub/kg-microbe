@@ -1,0 +1,4 @@
+subject	predicate	object	relation	primary_knowledge_source	knowledge_level	agent_type	negated	qualifier	extra
+NCBITaxon:1	biolink:related_to	CHEBI:1	RO:1	infores:fixture	knowledge_assertion	manual_agent	false	"literal"\text	café|alpha
+NCBITaxon:1	biolink:related_to	CHEBI:1	RO:1	infores:fixture	knowledge_assertion	manual_agent	false	"literal"\text	café|alpha
+NCBITaxon:1	biolink:related_to	CHEBI:1	RO:2	infores:fixture	knowledge_assertion	manual_agent	true	context-specific	

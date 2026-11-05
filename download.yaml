@@ -252,9 +252,9 @@
   local_name: upa.owl
   tag: ontologies
 
-# Native Rhea acquisition quarantine. The archived release 142 tarball is an
+# Native Rhea acquisition quarantine. The archived release 143 tarball is an
 # immutable location: its two reviewed members are byte-identical to the pins in
-# mappings/rhea_release.json (#1420), unlike the rolling tsv/ and rdf/ paths,
+# mappings/rhea_release.json (reviewed 2026-11-05), unlike rolling tsv/ and rdf/ paths,
 # which move with every Rhea release. Nothing here writes the admitted raw/rhea
 # inputs. After download, explicitly extract and promote the pair:
 # poetry run python -m kg_microbe.transform_utils.rhea_mappings.stage_snapshot \

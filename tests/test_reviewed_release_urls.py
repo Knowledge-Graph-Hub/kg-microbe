@@ -8,7 +8,7 @@ import yaml
 REPO_ROOT = Path(__file__).resolve().parents[1]
 DOWNLOAD_YAML = REPO_ROOT / "download.yaml"
 
-# Each URL was downloaded on 2026-10-12 and serves exactly the bytes the reviewed
+# Ontology URLs were downloaded on 2026-10-12 and serve exactly the bytes the reviewed
 # policies pin. For mondo.json that is the pristine release: the native RO policy
 # was first reviewed against an in-place rewrite of it, and was re-bound to the
 # release whose reviewed content it shares (#1420). A rolling URL serves whatever
@@ -34,9 +34,10 @@ REVIEWED_RELEASE_URLS = {
         "https://raw.githubusercontent.com/Planteome/plant-ontology/fb1d146b95d6bfe141992d6a219b891fdef2dc54/po.owl"
     ),
     "mondo.json": "http://purl.obolibrary.org/obo/mondo/releases/2026-07-06/mondo.json",
+    # Rhea 143 was independently acquired and reviewed on 2026-11-05.
     # The archive itself is not pinned: its two members are, byte for byte, by
     # mappings/rhea_release.json, and stage_snapshot extracts only those.
-    "rhea_download/142.tar.bz2": "https://ftp.expasy.org/databases/rhea/old_releases/142.tar.bz2",
+    "rhea_download/143.tar.bz2": "https://ftp.expasy.org/databases/rhea/old_releases/143.tar.bz2",
 }
 
 # A dated release directory or tag, a 40-hex commit, or a numbered release

@@ -12,7 +12,14 @@ from kg_microbe.transform_utils.constants import CATEGORY_COLUMN, ID_COLUMN, NAM
 from kg_microbe.utils import ncit_eight_categories as finite
 from kg_microbe.utils.source_finalization import graph_rows, verify_finalized_source_files
 from tests.go_subject_restrictions_fixtures import write_rows
-from tests.ncit_eight_fixtures import FIXTURE, NATIVE, POLICY, SOURCE_ROWS, prepare
+from tests.ncit_eight_fixtures import (
+    CURRENT_MODEL_FIXTURE,
+    FIXTURE,
+    NATIVE,
+    POLICY,
+    SOURCE_ROWS,
+    prepare,
+)
 
 NEW_THIRTEEN = frozenset(
     {
@@ -134,7 +141,10 @@ def test_lesion_secondary_native_sense_cannot_be_dropped_by_a_new_database(tmp_p
 def test_all_new_model_categories_must_remain_concrete_even_with_fixture_policy_repin(key, flag):
     """Model receipt agreement cannot authorize a mixin/abstract/deprecated target."""
     policy = copy.deepcopy(POLICY)
-    model = json.loads((FIXTURE / "biolink.json").read_text())
+    model = json.loads((CURRENT_MODEL_FIXTURE / "ncit_eight_categories-classes.json").read_text())
+    # Start from the independently retained current model so this control reaches
+    # concrete-class rejection, while historical 4.4.2 evidence stays unchanged.
+    finite.validate_model(model, policy)
     model["classes"][key][flag] = True
     policy["model_classes"][key] = model["classes"][key]
     with pytest.raises(ValueError, match="active concrete"):

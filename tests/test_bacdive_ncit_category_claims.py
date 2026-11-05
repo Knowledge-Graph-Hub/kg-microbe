@@ -11,9 +11,11 @@ from pathlib import Path
 import pytest
 
 from kg_microbe.merge_utils.source_admission import SourceAdmission
+from kg_microbe.transform_utils.bacdive import bacdive as bacdive_module
 from kg_microbe.transform_utils.bacdive import isolation_categories as pride
 from kg_microbe.transform_utils.bacdive import ncit_category_claims as claims
 from kg_microbe.transform_utils.bacdive.bacdive import BacDiveTransform, load_metpo_metabolite_production_mappings
+from kg_microbe.transform_utils.bacdive.source_declaration_evidence import SELECTED_ROLE
 from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.isolation_source_mapping_utils import load_isolation_source_mappings
 from kg_microbe.utils.source_finalization import SourceFinalizationRequired, graph_rows, verify_finalized_source_files
@@ -47,6 +49,9 @@ def run_native(tmp_path, monkeypatch, native):
 
     def context(transform, policy):
         """Supply only the offline context needed by the native category fixture."""
+        # The empty label cache and explicit label misses require an absent
+        # selected authority, independent of persisted checkout canary outputs.
+        monkeypatch.setattr(bacdive_module, "NCBITAXON_NODES_FILE", tmp_path / "absent-selected-ncbitaxon.tsv")
         if native:
             # These already declared taxa need retirement evidence, not new
             # biological classification. Keep the empty-source control unbound.
@@ -58,11 +63,36 @@ def run_native(tmp_path, monkeypatch, native):
     return _run(tmp_path, monkeypatch, native, during_prepare=context)
 
 
-def test_complete_native_run_retains_four_observations_and_existing_pride_coordinates(tmp_path, monkeypatch):
-    """Run all four complete records through the real producer with only unrelated ontology context stubbed."""
+@pytest.mark.parametrize("external_taxonomy_exists", [False, True])
+def test_complete_native_run_retains_four_observations_and_existing_pride_coordinates(
+    tmp_path, monkeypatch, external_taxonomy_exists
+):
+    """Retain the complete native observations regardless of an external selected taxonomy file."""
+    external = tmp_path / "external-ncbitaxon.tsv"
+    if external_taxonomy_exists:
+        # Literal selected rows observed in the completed ontology canary. This
+        # unrelated file must not become the fixture's private authority.
+        external.write_text(
+            "id\tname\n"
+            "NCBITaxon:1673609\tAcinetobacter albensis\n"
+            "NCBITaxon:29446\tXanthomonas sp.\n"
+            "NCBITaxon:306\tPseudomonas sp.\n"
+            "NCBITaxon:317\tPseudomonas syringae\n"
+        )
+    external_before = external.read_bytes() if external.exists() else None
+    monkeypatch.setattr(bacdive_module, "NCBITAXON_NODES_FILE", external)
     native = records()
     before = copy.deepcopy(native)
     transform, edges, nodes, pride_audit = run_native(tmp_path, monkeypatch, native)
+    selected = transform._taxonomy_evidence_guard.contract["source_declarations"]["selected_input"]
+    assert selected == {
+        "locator": str(tmp_path / "absent-selected-ncbitaxon.tsv"),
+        "identity": None,
+        "role": None,
+    }
+    assert SELECTED_ROLE not in transform.consumed_input_snapshots
+    assert all(snapshot["path"] != str(external.resolve()) for snapshot in transform.consumed_input_snapshots.values())
+    assert (external.read_bytes() if external.exists() else None) == external_before
     nodes = list(graph_rows(transform.output_node_file, quoting=csv.QUOTE_MINIMAL))
     audit = list(graph_rows(transform.output_dir / claims.AUDIT_FILE))
     assert native == before

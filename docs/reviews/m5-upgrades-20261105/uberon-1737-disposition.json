@@ -1,0 +1,82 @@
+{
+  "version": 1,
+  "issue": 1737,
+  "issue_url": "https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1737",
+  "status": "recorded_preexisting_omission",
+  "review5_sha256": "011a413ce69ef54ca7d12c0e93f4e56df0555ab4284159f53876a689f241052b",
+  "review5_inputs_sha256": "e141d7459b6bfd760a8f1e72b2bd85236b2e053c4f4c407f98694b2afcf65cea",
+  "source_owl_sha256": "938f51e7c3fc9fcbe5a2863eb346da8033737e568af5836958891c4c6bfb1192",
+  "source_owl": {
+    "bytes": 95887167,
+    "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/upgrades/robot-conversions/uberon.owl",
+    "sha256": "938f51e7c3fc9fcbe5a2863eb346da8033737e568af5836958891c4c6bfb1192"
+  },
+  "baseline_json": {
+    "bytes": 39224568,
+    "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe/data/raw/uberon.json",
+    "sha256": "87a892da0544a82f41f0a8b2b52f7ee705ec6d5ca2c102e7d439a7086d79f428"
+  },
+  "candidate_json": {
+    "bytes": 55150735,
+    "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/upgrades/robot-conversions/uberon.json",
+    "sha256": "d782c47c13f486047f82b48f831c3e248a12ff036d6a5ed6bd7f0ee161e1a932"
+  },
+  "completeness_assessment_sha256": "3ae1594f824ca0885385fe8034925bbcabe08d058511c3c0463558432f856d67",
+  "exception": {
+    "all_added_values_source_backed": true,
+    "annotated_property": "http://xmlns.com/foaf/0.1/depiction",
+    "annotated_target": "http://purl.obolibrary.org/obo/cl/images/Small-intestine-cells.png",
+    "node": "http://purl.obolibrary.org/obo/CL_0009080",
+    "property_path": [
+      "meta",
+      "basicPropertyValues",
+      1
+    ],
+    "source_annotations_newly_lost": [],
+    "source_annotations_still_unserialized_in_candidate": [
+      [
+        "http://www.geneontology.org/formats/oboInOwl#hasDbXref",
+        "doi:10.1186/s13619-020-00061-5"
+      ]
+    ],
+    "source_annotations_unserialized_in_original": [
+      [
+        "http://purl.org/dc/terms/license",
+        "http://creativecommons.org/licenses/by/4.0/"
+      ],
+      [
+        "http://www.geneontology.org/formats/oboInOwl#hasDbXref",
+        "doi:10.1186/s13619-020-00061-5"
+      ],
+      [
+        "http://www.w3.org/2000/01/rdf-schema#comment",
+        "Figure depicts a cross section of intestinal villi in the small intestine, including the crypts of Lieberkuhn (seen here as \u2018crypt\u2019), as well as the layer specific locations of cells that exist within the gastrointestinal tract. Layers depicted here include epithelium (rows of cells bordering villus), submucosa (white space below the epithelium containing networks of neurons and ganglia depicted in pink), muscularis mucosae (blue layer), muscularis propria (referred to here as muscle layer).\n\nISC: Intestinal Stem Cell \nTA: Transit Amplifying Cells"
+      ]
+    ],
+    "source_owl_annotation_details": [
+      {
+        "axiom_ordinal_one_based": 6382,
+        "predicate": "http://purl.org/dc/terms/license",
+        "value": "http://creativecommons.org/licenses/by/4.0/",
+        "xml_attributes": {}
+      },
+      {
+        "axiom_ordinal_one_based": 6382,
+        "predicate": "http://www.geneontology.org/formats/oboInOwl#hasDbXref",
+        "value": "doi:10.1186/s13619-020-00061-5",
+        "xml_attributes": {}
+      },
+      {
+        "axiom_ordinal_one_based": 6382,
+        "predicate": "http://www.w3.org/2000/01/rdf-schema#comment",
+        "value": "Figure depicts a cross section of intestinal villi in the small intestine, including the crypts of Lieberkuhn (seen here as \u2018crypt\u2019), as well as the layer specific locations of cells that exist within the gastrointestinal tract. Layers depicted here include epithelium (rows of cells bordering villus), submucosa (white space below the epithelium containing networks of neurons and ganglia depicted in pink), muscularis mucosae (blue layer), muscularis propria (referred to here as muscle layer).\n\nISC: Intestinal Stem Cell \nTA: Transit Amplifying Cells",
+        "xml_attributes": {}
+      }
+    ]
+  },
+  "all_added_annotation_values_source_backed": true,
+  "complete_source_annotation_equality": false,
+  "unchanged_omission_acknowledged": true,
+  "release_ready": false,
+  "scope": "Records exactly one unchanged DOI annotation omission as follow-up; permits current binding verification and the staged ontology canary. Does not waive production source admission, permit new omissions, or authorize graph merge. Scientific dispositions remain unchanged."
+}

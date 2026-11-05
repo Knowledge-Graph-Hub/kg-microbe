@@ -1,0 +1,2674 @@
+{
+  "candidate": {
+    "RHEA:15929": [
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}datatype": "http://www.w3.org/2001/XMLSchema#boolean"
+        },
+        "literal": "false",
+        "predicate": "{http://rdf.rhea-db.org/}isTransport"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}datatype": "http://www.w3.org/2001/XMLSchema#boolean"
+        },
+        "literal": "true",
+        "predicate": "{http://rdf.rhea-db.org/}isChemicallyBalanced"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}datatype": "http://www.w3.org/2001/XMLSchema#long"
+        },
+        "literal": "15929",
+        "predicate": "{http://rdf.rhea-db.org/}id"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.obolibrary.org/obo/GO_0047424"
+        },
+        "literal": null,
+        "predicate": "{http://www.w3.org/2000/01/rdf-schema#}seeAlso"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.uniprot.org/enzyme/3.5.1.141"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}ec"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/15929_L"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}side"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/15929_R"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}side"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/15930"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}directionalReaction"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/15931"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}directionalReaction"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/15932"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}bidirectionalReaction"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/Approved"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}status"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/Reaction"
+        },
+        "literal": null,
+        "predicate": "{http://www.w3.org/2000/01/rdf-schema#}subClassOf"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://www.w3.org/2000/01/rdf-schema#Class"
+        },
+        "literal": null,
+        "predicate": "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}type"
+      },
+      {
+        "attributes": {},
+        "literal": "Multi-step reaction: RHEA:22240 + RHEA:11704 + RHEA:13901 + RHEA:87283\n\nPublished in: \nJahns, T., Schepp, R., Kaltwasser, H. Purification and characterisation of an enzyme from a strain of <ital>Ochrobactrum anthro\u03c0</ital> that degrades condensation products of urea and formaldehyde (ureaform). <ital>Can. J. Microbiol.</ital> 43 (1997) 1111\u20131117.\nDOI: 10.1139/m97-159\nKoivunen, M.E., Morisseau, C., Newman, J.W., Horwath, W.R. and Hammock, B.D. Purification and characterization of a methylene urea-hydrolyzing enzyme from Rhizobium radiobacter (Agrobacterium tumefaciens). Soil Biol. Biochem. 35 (2003) 1433\u20131442.\nDOI: 10.1016/S0038-0717(03)00237-2",
+        "predicate": "{http://www.w3.org/2000/01/rdf-schema#}comment"
+      },
+      {
+        "attributes": {},
+        "literal": "RHEA:15929",
+        "predicate": "{http://rdf.rhea-db.org/}accession"
+      },
+      {
+        "attributes": {},
+        "literal": "methylenediurea + 2 H2O + 2 H(+) = urea + formaldehyde + 2 NH4(+) + CO2",
+        "predicate": "{http://rdf.rhea-db.org/}equation"
+      },
+      {
+        "attributes": {},
+        "literal": "methylenediurea + 2 H2O + 2 H(+) = urea + formaldehyde + 2 NH4(+) + CO2",
+        "predicate": "{http://www.w3.org/2000/01/rdf-schema#}label"
+      },
+      {
+        "attributes": {},
+        "literal": "methylenediurea + 2 H<small><sub>2</sub></small>O + 2 H<small><sup>+</small></sup> = urea + formaldehyde + 2 NH<small><sub>4</sub></small><small><sup>+</small></sup> + CO<small><sub>2</sub></small>",
+        "predicate": "{http://rdf.rhea-db.org/}htmlEquation"
+      }
+    ],
+    "RHEA:16185": [
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}datatype": "http://www.w3.org/2001/XMLSchema#boolean"
+        },
+        "literal": "false",
+        "predicate": "{http://rdf.rhea-db.org/}isTransport"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}datatype": "http://www.w3.org/2001/XMLSchema#boolean"
+        },
+        "literal": "true",
+        "predicate": "{http://rdf.rhea-db.org/}isChemicallyBalanced"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}datatype": "http://www.w3.org/2001/XMLSchema#long"
+        },
+        "literal": "16185",
+        "predicate": "{http://rdf.rhea-db.org/}id"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://identifiers.org/biocyc/METACYC:ALDEHYDE-DEHYDROGENASE-NADORNOP%252b-RXN"
+        },
+        "literal": null,
+        "predicate": "{http://www.w3.org/2000/01/rdf-schema#}seeAlso"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.obolibrary.org/obo/GO_0004029"
+        },
+        "literal": null,
+        "predicate": "{http://www.w3.org/2000/01/rdf-schema#}seeAlso"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.uniprot.org/enzyme/1.2.1.3"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}ec"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.uniprot.org/enzyme/1.2.1.5"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}ec"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.ncbi.nlm.nih.gov/pubmed/23063486"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}citation"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.ncbi.nlm.nih.gov/pubmed/25286108"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}citation"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.ncbi.nlm.nih.gov/pubmed/2831537"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}citation"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.ncbi.nlm.nih.gov/pubmed/9473035"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}citation"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/16185_L"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}side"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/16185_R"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}side"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/16186"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}directionalReaction"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/16187"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}directionalReaction"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/16188"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}bidirectionalReaction"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/56856"
+        },
+        "literal": null,
+        "predicate": "{http://www.w3.org/2000/01/rdf-schema#}subClassOf"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/Approved"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}status"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/Reaction"
+        },
+        "literal": null,
+        "predicate": "{http://www.w3.org/2000/01/rdf-schema#}subClassOf"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://www.w3.org/2000/01/rdf-schema#Class"
+        },
+        "literal": null,
+        "predicate": "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}type"
+      },
+      {
+        "attributes": {},
+        "literal": "RHEA:16185",
+        "predicate": "{http://rdf.rhea-db.org/}accession"
+      },
+      {
+        "attributes": {},
+        "literal": "an aldehyde + NAD(+) + H2O = a carboxylate + NADH + 2 H(+)",
+        "predicate": "{http://rdf.rhea-db.org/}equation"
+      },
+      {
+        "attributes": {},
+        "literal": "an aldehyde + NAD(+) + H2O = a carboxylate + NADH + 2 H(+)",
+        "predicate": "{http://www.w3.org/2000/01/rdf-schema#}label"
+      },
+      {
+        "attributes": {},
+        "literal": "an aldehyde + NAD<small><sup>+</small></sup> + H<small><sub>2</sub></small>O = a carboxylate + NADH + 2 H<small><sup>+</small></sup>",
+        "predicate": "{http://rdf.rhea-db.org/}htmlEquation"
+      }
+    ],
+    "RHEA:19441": [
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}datatype": "http://www.w3.org/2001/XMLSchema#boolean"
+        },
+        "literal": "false",
+        "predicate": "{http://rdf.rhea-db.org/}isTransport"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}datatype": "http://www.w3.org/2001/XMLSchema#boolean"
+        },
+        "literal": "true",
+        "predicate": "{http://rdf.rhea-db.org/}isChemicallyBalanced"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}datatype": "http://www.w3.org/2001/XMLSchema#long"
+        },
+        "literal": "19441",
+        "predicate": "{http://rdf.rhea-db.org/}id"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/19441_L"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}side"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/19441_R"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}side"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/19442"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}directionalReaction"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/19443"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}directionalReaction"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/19444"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}bidirectionalReaction"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/Approved"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}status"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/Reaction"
+        },
+        "literal": null,
+        "predicate": "{http://www.w3.org/2000/01/rdf-schema#}subClassOf"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://www.w3.org/2000/01/rdf-schema#Class"
+        },
+        "literal": null,
+        "predicate": "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}type"
+      },
+      {
+        "attributes": {},
+        "literal": "RHEA:19441 part of RHEA:35595 \n\nPublished in \n\"Discovery of Novel p-Hydroxybenzoate-m-hydroxylase, Protocatechuate 3,4 Ring-Cleavage Dioxygenase, and Hydroxyquinol 1,2 Ring-Cleavage Dioxygenase from the Filamentous Fungus Aspergillus niger\"\nACS Sustainable Chem. Eng. 2019, 7, 23, 19081\u201319089\nhttps://doi.org/10.1021/acssuschemeng.9b04918",
+        "predicate": "{http://www.w3.org/2000/01/rdf-schema#}comment"
+      },
+      {
+        "attributes": {},
+        "literal": "RHEA:19441",
+        "predicate": "{http://rdf.rhea-db.org/}accession"
+      },
+      {
+        "attributes": {},
+        "literal": "benzene-1,2,4-triol + O2 = 3-hydroxy-cis,cis-muconate + 2 H(+)",
+        "predicate": "{http://rdf.rhea-db.org/}equation"
+      },
+      {
+        "attributes": {},
+        "literal": "benzene-1,2,4-triol + O2 = 3-hydroxy-cis,cis-muconate + 2 H(+)",
+        "predicate": "{http://www.w3.org/2000/01/rdf-schema#}label"
+      },
+      {
+        "attributes": {},
+        "literal": "benzene-1,2,4-triol + O<small><sub>2</sub></small> = 3-hydroxy-<em>cis,cis</em>-muconate + 2 H<small><sup>+</small></sup>",
+        "predicate": "{http://rdf.rhea-db.org/}htmlEquation"
+      }
+    ],
+    "RHEA:22140": [
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}datatype": "http://www.w3.org/2001/XMLSchema#boolean"
+        },
+        "literal": "false",
+        "predicate": "{http://rdf.rhea-db.org/}isTransport"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}datatype": "http://www.w3.org/2001/XMLSchema#boolean"
+        },
+        "literal": "true",
+        "predicate": "{http://rdf.rhea-db.org/}isChemicallyBalanced"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}datatype": "http://www.w3.org/2001/XMLSchema#long"
+        },
+        "literal": "22140",
+        "predicate": "{http://rdf.rhea-db.org/}id"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.obolibrary.org/obo/GO_0008253"
+        },
+        "literal": null,
+        "predicate": "{http://www.w3.org/2000/01/rdf-schema#}seeAlso"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.ncbi.nlm.nih.gov/pubmed/5699060"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}citation"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/15017"
+        },
+        "literal": null,
+        "predicate": "{http://www.w3.org/2000/01/rdf-schema#}subClassOf"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/22140_L"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}side"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/22140_R"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}side"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/22141"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}directionalReaction"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/22142"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}directionalReaction"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/22143"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}bidirectionalReaction"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/Approved"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}status"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/Reaction"
+        },
+        "literal": null,
+        "predicate": "{http://www.w3.org/2000/01/rdf-schema#}subClassOf"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://www.w3.org/2000/01/rdf-schema#Class"
+        },
+        "literal": null,
+        "predicate": "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}type"
+      },
+      {
+        "attributes": {},
+        "literal": "RHEA:22140",
+        "predicate": "{http://rdf.rhea-db.org/}accession"
+      },
+      {
+        "attributes": {},
+        "literal": "a nucleoside 5'-phosphate + H2O = a nucleoside + phosphate",
+        "predicate": "{http://rdf.rhea-db.org/}equation"
+      },
+      {
+        "attributes": {},
+        "literal": "a nucleoside 5'-phosphate + H2O = a nucleoside + phosphate",
+        "predicate": "{http://www.w3.org/2000/01/rdf-schema#}label"
+      },
+      {
+        "attributes": {},
+        "literal": "a nucleoside 5'-phosphate + H<small><sub>2</sub></small>O = a nucleoside + phosphate",
+        "predicate": "{http://rdf.rhea-db.org/}htmlEquation"
+      }
+    ],
+    "RHEA:28338": [
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}datatype": "http://www.w3.org/2001/XMLSchema#boolean"
+        },
+        "literal": "false",
+        "predicate": "{http://rdf.rhea-db.org/}isTransport"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}datatype": "http://www.w3.org/2001/XMLSchema#boolean"
+        },
+        "literal": "true",
+        "predicate": "{http://rdf.rhea-db.org/}isChemicallyBalanced"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}datatype": "http://www.w3.org/2001/XMLSchema#long"
+        },
+        "literal": "28338",
+        "predicate": "{http://rdf.rhea-db.org/}id"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.obolibrary.org/obo/GO_0140427"
+        },
+        "literal": null,
+        "predicate": "{http://www.w3.org/2000/01/rdf-schema#}seeAlso"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.uniprot.org/enzyme/4.2.1.149"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}ec"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.ncbi.nlm.nih.gov/pubmed/11409545"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}citation"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.ncbi.nlm.nih.gov/pubmed/11551212"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}citation"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.ncbi.nlm.nih.gov/pubmed/15731894"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}citation"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/28338_L"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}side"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/28338_R"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}side"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/28339"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}directionalReaction"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/28340"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}directionalReaction"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/28341"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}bidirectionalReaction"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/Approved"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}status"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/Reaction"
+        },
+        "literal": null,
+        "predicate": "{http://www.w3.org/2000/01/rdf-schema#}subClassOf"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://www.w3.org/2000/01/rdf-schema#Class"
+        },
+        "literal": null,
+        "predicate": "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}type"
+      },
+      {
+        "attributes": {},
+        "literal": "(<i>R</i>)-carnitinyl-CoA = crotonobetainyl-CoA + H<small><sub>2</sub></small>O",
+        "predicate": "{http://rdf.rhea-db.org/}htmlEquation"
+      },
+      {
+        "attributes": {},
+        "literal": "(R)-carnitinyl-CoA = crotonobetainyl-CoA + H2O",
+        "predicate": "{http://rdf.rhea-db.org/}equation"
+      },
+      {
+        "attributes": {},
+        "literal": "(R)-carnitinyl-CoA = crotonobetainyl-CoA + H2O",
+        "predicate": "{http://www.w3.org/2000/01/rdf-schema#}label"
+      },
+      {
+        "attributes": {},
+        "literal": "RHEA:28338",
+        "predicate": "{http://rdf.rhea-db.org/}accession"
+      }
+    ],
+    "RHEA:28526": [
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}datatype": "http://www.w3.org/2001/XMLSchema#boolean"
+        },
+        "literal": "false",
+        "predicate": "{http://rdf.rhea-db.org/}isTransport"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}datatype": "http://www.w3.org/2001/XMLSchema#boolean"
+        },
+        "literal": "true",
+        "predicate": "{http://rdf.rhea-db.org/}isChemicallyBalanced"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}datatype": "http://www.w3.org/2001/XMLSchema#long"
+        },
+        "literal": "28526",
+        "predicate": "{http://rdf.rhea-db.org/}id"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.obolibrary.org/obo/GO_0008735"
+        },
+        "literal": null,
+        "predicate": "{http://www.w3.org/2000/01/rdf-schema#}seeAlso"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.uniprot.org/enzyme/2.8.3.21"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}ec"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.ncbi.nlm.nih.gov/pubmed/11551212"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}citation"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.ncbi.nlm.nih.gov/pubmed/12081978"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}citation"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/28526_L"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}side"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/28526_R"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}side"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/28527"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}directionalReaction"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/28528"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}directionalReaction"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/28529"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}bidirectionalReaction"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/Approved"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}status"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/Reaction"
+        },
+        "literal": null,
+        "predicate": "{http://www.w3.org/2000/01/rdf-schema#}subClassOf"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://www.w3.org/2000/01/rdf-schema#Class"
+        },
+        "literal": null,
+        "predicate": "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}type"
+      },
+      {
+        "attributes": {},
+        "literal": "RHEA:28526",
+        "predicate": "{http://rdf.rhea-db.org/}accession"
+      },
+      {
+        "attributes": {},
+        "literal": "crotonobetainyl-CoA + (<i>R</i>)-carnitine = crotonobetaine + (<i>R</i>)-carnitinyl-CoA",
+        "predicate": "{http://rdf.rhea-db.org/}htmlEquation"
+      },
+      {
+        "attributes": {},
+        "literal": "crotonobetainyl-CoA + (R)-carnitine = crotonobetaine + (R)-carnitinyl-CoA",
+        "predicate": "{http://rdf.rhea-db.org/}equation"
+      },
+      {
+        "attributes": {},
+        "literal": "crotonobetainyl-CoA + (R)-carnitine = crotonobetaine + (R)-carnitinyl-CoA",
+        "predicate": "{http://www.w3.org/2000/01/rdf-schema#}label"
+      }
+    ],
+    "RHEA:35595": [
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}datatype": "http://www.w3.org/2001/XMLSchema#boolean"
+        },
+        "literal": "false",
+        "predicate": "{http://rdf.rhea-db.org/}isTransport"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}datatype": "http://www.w3.org/2001/XMLSchema#boolean"
+        },
+        "literal": "true",
+        "predicate": "{http://rdf.rhea-db.org/}isChemicallyBalanced"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}datatype": "http://www.w3.org/2001/XMLSchema#long"
+        },
+        "literal": "35595",
+        "predicate": "{http://rdf.rhea-db.org/}id"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.obolibrary.org/obo/GO_0047074"
+        },
+        "literal": null,
+        "predicate": "{http://www.w3.org/2000/01/rdf-schema#}seeAlso"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.uniprot.org/enzyme/1.13.11.37"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}ec"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.ncbi.nlm.nih.gov/pubmed/15772073"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}citation"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.ncbi.nlm.nih.gov/pubmed/16232466"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}citation"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.ncbi.nlm.nih.gov/pubmed/16348446"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}citation"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.ncbi.nlm.nih.gov/pubmed/6539772"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}citation"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.ncbi.nlm.nih.gov/pubmed/9141483"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}citation"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/35595_L"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}side"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/35595_R"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}side"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/35596"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}directionalReaction"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/35597"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}directionalReaction"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/35598"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}bidirectionalReaction"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/Approved"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}status"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/Reaction"
+        },
+        "literal": null,
+        "predicate": "{http://www.w3.org/2000/01/rdf-schema#}subClassOf"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://www.w3.org/2000/01/rdf-schema#Class"
+        },
+        "literal": null,
+        "predicate": "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}type"
+      },
+      {
+        "attributes": {},
+        "literal": "Multi-step reaction: RHEA:19441 + RHEA:42432\n\nPublished in \n\"Discovery of Novel p-Hydroxybenzoate-m-hydroxylase, Protocatechuate 3,4 Ring-Cleavage Dioxygenase, and Hydroxyquinol 1,2 Ring-Cleavage Dioxygenase from the Filamentous Fungus Aspergillus niger\"\nACS Sustainable Chem. Eng. 2019, 7, 23, 19081\u201319089\nhttps://doi.org/10.1021/acssuschemeng.9b04918",
+        "predicate": "{http://www.w3.org/2000/01/rdf-schema#}comment"
+      },
+      {
+        "attributes": {},
+        "literal": "RHEA:35595",
+        "predicate": "{http://rdf.rhea-db.org/}accession"
+      },
+      {
+        "attributes": {},
+        "literal": "benzene-1,2,4-triol + O2 = maleylacetate + 2 H(+)",
+        "predicate": "{http://rdf.rhea-db.org/}equation"
+      },
+      {
+        "attributes": {},
+        "literal": "benzene-1,2,4-triol + O2 = maleylacetate + 2 H(+)",
+        "predicate": "{http://www.w3.org/2000/01/rdf-schema#}label"
+      },
+      {
+        "attributes": {},
+        "literal": "benzene-1,2,4-triol + O<small><sub>2</sub></small> = maleylacetate + 2 H<small><sup>+</small></sup>",
+        "predicate": "{http://rdf.rhea-db.org/}htmlEquation"
+      }
+    ],
+    "RHEA:47152": [
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}datatype": "http://www.w3.org/2001/XMLSchema#boolean"
+        },
+        "literal": "false",
+        "predicate": "{http://rdf.rhea-db.org/}isTransport"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}datatype": "http://www.w3.org/2001/XMLSchema#boolean"
+        },
+        "literal": "true",
+        "predicate": "{http://rdf.rhea-db.org/}isChemicallyBalanced"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}datatype": "http://www.w3.org/2001/XMLSchema#long"
+        },
+        "literal": "47152",
+        "predicate": "{http://rdf.rhea-db.org/}id"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.obolibrary.org/obo/GO_0044104"
+        },
+        "literal": null,
+        "predicate": "{http://www.w3.org/2000/01/rdf-schema#}seeAlso"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.ncbi.nlm.nih.gov/pubmed/16835232"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}citation"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.ncbi.nlm.nih.gov/pubmed/24831290"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}citation"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.ncbi.nlm.nih.gov/pubmed/31917558"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}citation"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/16185"
+        },
+        "literal": null,
+        "predicate": "{http://www.w3.org/2000/01/rdf-schema#}subClassOf"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/47152_L"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}side"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/47152_R"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}side"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/47153"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}directionalReaction"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/47154"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}directionalReaction"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/47155"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}bidirectionalReaction"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/Approved"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}status"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/Reaction"
+        },
+        "literal": null,
+        "predicate": "{http://www.w3.org/2000/01/rdf-schema#}subClassOf"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://www.w3.org/2000/01/rdf-schema#Class"
+        },
+        "literal": null,
+        "predicate": "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}type"
+      },
+      {
+        "attributes": {},
+        "literal": "2,5-dioxopentanoate + NAD(+) + H2O = 2-oxoglutarate + NADH + 2 H(+)",
+        "predicate": "{http://rdf.rhea-db.org/}equation"
+      },
+      {
+        "attributes": {},
+        "literal": "2,5-dioxopentanoate + NAD(+) + H2O = 2-oxoglutarate + NADH + 2 H(+)",
+        "predicate": "{http://www.w3.org/2000/01/rdf-schema#}label"
+      },
+      {
+        "attributes": {},
+        "literal": "2,5-dioxopentanoate + NAD<small><sup>+</small></sup> + H<small><sub>2</sub></small>O = 2-oxoglutarate + NADH + 2 H<small><sup>+</small></sup>",
+        "predicate": "{http://rdf.rhea-db.org/}htmlEquation"
+      },
+      {
+        "attributes": {},
+        "literal": "RHEA:47152",
+        "predicate": "{http://rdf.rhea-db.org/}accession"
+      }
+    ],
+    "RHEA:58868": [
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}datatype": "http://www.w3.org/2001/XMLSchema#boolean"
+        },
+        "literal": "false",
+        "predicate": "{http://rdf.rhea-db.org/}isTransport"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}datatype": "http://www.w3.org/2001/XMLSchema#boolean"
+        },
+        "literal": "true",
+        "predicate": "{http://rdf.rhea-db.org/}isChemicallyBalanced"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}datatype": "http://www.w3.org/2001/XMLSchema#long"
+        },
+        "literal": "58868",
+        "predicate": "{http://rdf.rhea-db.org/}id"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.obolibrary.org/obo/GO_0102177"
+        },
+        "literal": null,
+        "predicate": "{http://www.w3.org/2000/01/rdf-schema#}seeAlso"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.uniprot.org/enzyme/1.14.18.11"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}ec"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.ncbi.nlm.nih.gov/pubmed/11707264"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}citation"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.ncbi.nlm.nih.gov/pubmed/14653780"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}citation"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.ncbi.nlm.nih.gov/pubmed/8505296"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}citation"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.ncbi.nlm.nih.gov/pubmed/9240456"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}citation"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/58868_L"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}side"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/58868_R"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}side"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/58869"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}directionalReaction"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/58870"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}directionalReaction"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/58871"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}bidirectionalReaction"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/Approved"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}status"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/Reaction"
+        },
+        "literal": null,
+        "predicate": "{http://www.w3.org/2000/01/rdf-schema#}subClassOf"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://www.w3.org/2000/01/rdf-schema#Class"
+        },
+        "literal": null,
+        "predicate": "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}type"
+      },
+      {
+        "attributes": {},
+        "literal": "24-methylidenelophenol + 6 Fe(II)-[cytochrome <em>b</em><small><sub>5</sub></small>] + 3 O<small><sub>2</sub></small> + 5 H<small><sup>+</small></sup> = 4\u03b1-carboxy-ergosta-7,24(24<small><sup>1</small></sup>)-dien-3\u03b2-ol + 6 Fe(III)-[cytochrome <em>b</em><small><sub>5</sub></small>] + 4 H<small><sub>2</sub></small>O",
+        "predicate": "{http://rdf.rhea-db.org/}htmlEquation"
+      },
+      {
+        "attributes": {},
+        "literal": "24-methylidenelophenol + 6 Fe(II)-[cytochrome b5] + 3 O2 + 5 H(+) = 4alpha-carboxy-ergosta-7,24(24(1))-dien-3beta-ol + 6 Fe(III)-[cytochrome b5] + 4 H2O",
+        "predicate": "{http://rdf.rhea-db.org/}equation"
+      },
+      {
+        "attributes": {},
+        "literal": "24-methylidenelophenol + 6 Fe(II)-[cytochrome b5] + 3 O2 + 5 H(+) = 4alpha-carboxy-ergosta-7,24(24(1))-dien-3beta-ol + 6 Fe(III)-[cytochrome b5] + 4 H2O",
+        "predicate": "{http://www.w3.org/2000/01/rdf-schema#}label"
+      },
+      {
+        "attributes": {},
+        "literal": "Multi-step reaction: RHEA:58872 + RHEA:58876 + RHEA:58880",
+        "predicate": "{http://www.w3.org/2000/01/rdf-schema#}comment"
+      },
+      {
+        "attributes": {},
+        "literal": "RHEA:58868",
+        "predicate": "{http://rdf.rhea-db.org/}accession"
+      }
+    ],
+    "RHEA:58872": [
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}datatype": "http://www.w3.org/2001/XMLSchema#boolean"
+        },
+        "literal": "false",
+        "predicate": "{http://rdf.rhea-db.org/}isTransport"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}datatype": "http://www.w3.org/2001/XMLSchema#boolean"
+        },
+        "literal": "true",
+        "predicate": "{http://rdf.rhea-db.org/}isChemicallyBalanced"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}datatype": "http://www.w3.org/2001/XMLSchema#long"
+        },
+        "literal": "58872",
+        "predicate": "{http://rdf.rhea-db.org/}id"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.ncbi.nlm.nih.gov/pubmed/11707264"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}citation"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.ncbi.nlm.nih.gov/pubmed/14653780"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}citation"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.ncbi.nlm.nih.gov/pubmed/8505296"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}citation"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.ncbi.nlm.nih.gov/pubmed/9240456"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}citation"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/58872_L"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}side"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/58872_R"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}side"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/58873"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}directionalReaction"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/58874"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}directionalReaction"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/58875"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}bidirectionalReaction"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/Approved"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}status"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/Reaction"
+        },
+        "literal": null,
+        "predicate": "{http://www.w3.org/2000/01/rdf-schema#}subClassOf"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://www.w3.org/2000/01/rdf-schema#Class"
+        },
+        "literal": null,
+        "predicate": "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}type"
+      },
+      {
+        "attributes": {},
+        "literal": "24-methylidenelophenol + 2 Fe(II)-[cytochrome <em>b</em><small><sub>5</sub></small>] + O<small><sub>2</sub></small> + 2 H<small><sup>+</small></sup> = 4\u03b1-hydroxymethyl-ergosta-7,24(24<small><sup>1</small></sup>)-dien-3\u03b2-ol + 2 Fe(III)-[cytochrome <em>b</em><small><sub>5</sub></small>] + H<small><sub>2</sub></small>O",
+        "predicate": "{http://rdf.rhea-db.org/}htmlEquation"
+      },
+      {
+        "attributes": {},
+        "literal": "24-methylidenelophenol + 2 Fe(II)-[cytochrome b5] + O2 + 2 H(+) = 4alpha-hydroxymethyl-ergosta-7,24(24(1))-dien-3beta-ol + 2 Fe(III)-[cytochrome b5] + H2O",
+        "predicate": "{http://rdf.rhea-db.org/}equation"
+      },
+      {
+        "attributes": {},
+        "literal": "24-methylidenelophenol + 2 Fe(II)-[cytochrome b5] + O2 + 2 H(+) = 4alpha-hydroxymethyl-ergosta-7,24(24(1))-dien-3beta-ol + 2 Fe(III)-[cytochrome b5] + H2O",
+        "predicate": "{http://www.w3.org/2000/01/rdf-schema#}label"
+      },
+      {
+        "attributes": {},
+        "literal": "RHEA:58872 part of RHEA:58868",
+        "predicate": "{http://www.w3.org/2000/01/rdf-schema#}comment"
+      },
+      {
+        "attributes": {},
+        "literal": "RHEA:58872",
+        "predicate": "{http://rdf.rhea-db.org/}accession"
+      }
+    ]
+  },
+  "complete_selected_contexts_identical": false,
+  "helper_sha256": "de886fac5418645876b05431bab31ed0714ef886efc62b64c984735584d5b2ee",
+  "inputs": {
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/upgrades/candidates/rhea143/rhea.rdf.gz": "8f858aff8d984d8e882b90fac0d81d6980589fb819b460da388ccb796195fa25",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/mappings/rhea_legacy_xref_dispositions.json": "1f12a77c8f2efac001e5aa444b00e42075f0b92e926b7a87cf61a253bc75f74b",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe/data/raw/rhea/rhea.rdf.gz": "8ee48d7044cf3eef1001fa730dae2a491902ab25b259b519d6826796bb8acedf"
+  },
+  "old": {
+    "RHEA:15929": [
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}datatype": "http://www.w3.org/2001/XMLSchema#boolean"
+        },
+        "literal": "false",
+        "predicate": "{http://rdf.rhea-db.org/}isTransport"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}datatype": "http://www.w3.org/2001/XMLSchema#boolean"
+        },
+        "literal": "true",
+        "predicate": "{http://rdf.rhea-db.org/}isChemicallyBalanced"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}datatype": "http://www.w3.org/2001/XMLSchema#long"
+        },
+        "literal": "15929",
+        "predicate": "{http://rdf.rhea-db.org/}id"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.obolibrary.org/obo/GO_0047424"
+        },
+        "literal": null,
+        "predicate": "{http://www.w3.org/2000/01/rdf-schema#}seeAlso"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.uniprot.org/enzyme/3.5.1.141"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}ec"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/15929_L"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}side"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/15929_R"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}side"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/15930"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}directionalReaction"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/15931"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}directionalReaction"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/15932"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}bidirectionalReaction"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/Approved"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}status"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/Reaction"
+        },
+        "literal": null,
+        "predicate": "{http://www.w3.org/2000/01/rdf-schema#}subClassOf"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://www.w3.org/2000/01/rdf-schema#Class"
+        },
+        "literal": null,
+        "predicate": "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}type"
+      },
+      {
+        "attributes": {},
+        "literal": "Multi-step reaction: RHEA:22240 + RHEA:11704 + RHEA:13901 + RHEA:87283\n\nPublished in: \nJahns, T., Schepp, R., Kaltwasser, H. Purification and characterisation of an enzyme from a strain of <ital>Ochrobactrum anthro\u03c0</ital> that degrades condensation products of urea and formaldehyde (ureaform). <ital>Can. J. Microbiol.</ital> 43 (1997) 1111\u20131117.\nDOI: 10.1139/m97-159\nKoivunen, M.E., Morisseau, C., Newman, J.W., Horwath, W.R. and Hammock, B.D. Purification and characterization of a methylene urea-hydrolyzing enzyme from Rhizobium radiobacter (Agrobacterium tumefaciens). Soil Biol. Biochem. 35 (2003) 1433\u20131442.\nDOI: 10.1016/S0038-0717(03)00237-2",
+        "predicate": "{http://www.w3.org/2000/01/rdf-schema#}comment"
+      },
+      {
+        "attributes": {},
+        "literal": "RHEA:15929",
+        "predicate": "{http://rdf.rhea-db.org/}accession"
+      },
+      {
+        "attributes": {},
+        "literal": "methylenediurea + 2 H2O + 2 H(+) = urea + formaldehyde + 2 NH4(+) + CO2",
+        "predicate": "{http://rdf.rhea-db.org/}equation"
+      },
+      {
+        "attributes": {},
+        "literal": "methylenediurea + 2 H2O + 2 H(+) = urea + formaldehyde + 2 NH4(+) + CO2",
+        "predicate": "{http://www.w3.org/2000/01/rdf-schema#}label"
+      },
+      {
+        "attributes": {},
+        "literal": "methylenediurea + 2 H<small><sub>2</sub></small>O + 2 H<small><sup>+</sup></small> = urea + formaldehyde + 2 NH<small><sub>4</sub></small><small><sup>+</sup></small> + CO<small><sub>2</sub></small>",
+        "predicate": "{http://rdf.rhea-db.org/}htmlEquation"
+      }
+    ],
+    "RHEA:16185": [
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}datatype": "http://www.w3.org/2001/XMLSchema#boolean"
+        },
+        "literal": "false",
+        "predicate": "{http://rdf.rhea-db.org/}isTransport"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}datatype": "http://www.w3.org/2001/XMLSchema#boolean"
+        },
+        "literal": "true",
+        "predicate": "{http://rdf.rhea-db.org/}isChemicallyBalanced"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}datatype": "http://www.w3.org/2001/XMLSchema#long"
+        },
+        "literal": "16185",
+        "predicate": "{http://rdf.rhea-db.org/}id"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://identifiers.org/biocyc/METACYC:ALDEHYDE-DEHYDROGENASE-NADORNOP%252b-RXN"
+        },
+        "literal": null,
+        "predicate": "{http://www.w3.org/2000/01/rdf-schema#}seeAlso"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.obolibrary.org/obo/GO_0004029"
+        },
+        "literal": null,
+        "predicate": "{http://www.w3.org/2000/01/rdf-schema#}seeAlso"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.uniprot.org/enzyme/1.2.1.3"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}ec"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.uniprot.org/enzyme/1.2.1.5"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}ec"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.ncbi.nlm.nih.gov/pubmed/23063486"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}citation"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.ncbi.nlm.nih.gov/pubmed/25286108"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}citation"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.ncbi.nlm.nih.gov/pubmed/2831537"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}citation"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.ncbi.nlm.nih.gov/pubmed/9473035"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}citation"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/16185_L"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}side"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/16185_R"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}side"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/16186"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}directionalReaction"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/16187"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}directionalReaction"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/16188"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}bidirectionalReaction"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/56856"
+        },
+        "literal": null,
+        "predicate": "{http://www.w3.org/2000/01/rdf-schema#}subClassOf"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/Approved"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}status"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/Reaction"
+        },
+        "literal": null,
+        "predicate": "{http://www.w3.org/2000/01/rdf-schema#}subClassOf"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://www.w3.org/2000/01/rdf-schema#Class"
+        },
+        "literal": null,
+        "predicate": "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}type"
+      },
+      {
+        "attributes": {},
+        "literal": "RHEA:16185",
+        "predicate": "{http://rdf.rhea-db.org/}accession"
+      },
+      {
+        "attributes": {},
+        "literal": "an aldehyde + NAD(+) + H2O = a carboxylate + NADH + 2 H(+)",
+        "predicate": "{http://rdf.rhea-db.org/}equation"
+      },
+      {
+        "attributes": {},
+        "literal": "an aldehyde + NAD(+) + H2O = a carboxylate + NADH + 2 H(+)",
+        "predicate": "{http://www.w3.org/2000/01/rdf-schema#}label"
+      },
+      {
+        "attributes": {},
+        "literal": "an aldehyde + NAD<small><sup>+</sup></small> + H<small><sub>2</sub></small>O = a carboxylate + NADH + 2 H<small><sup>+</sup></small>",
+        "predicate": "{http://rdf.rhea-db.org/}htmlEquation"
+      }
+    ],
+    "RHEA:19441": [
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}datatype": "http://www.w3.org/2001/XMLSchema#boolean"
+        },
+        "literal": "false",
+        "predicate": "{http://rdf.rhea-db.org/}isTransport"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}datatype": "http://www.w3.org/2001/XMLSchema#boolean"
+        },
+        "literal": "true",
+        "predicate": "{http://rdf.rhea-db.org/}isChemicallyBalanced"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}datatype": "http://www.w3.org/2001/XMLSchema#long"
+        },
+        "literal": "19441",
+        "predicate": "{http://rdf.rhea-db.org/}id"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/19441_L"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}side"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/19441_R"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}side"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/19442"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}directionalReaction"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/19443"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}directionalReaction"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/19444"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}bidirectionalReaction"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/Approved"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}status"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/Reaction"
+        },
+        "literal": null,
+        "predicate": "{http://www.w3.org/2000/01/rdf-schema#}subClassOf"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://www.w3.org/2000/01/rdf-schema#Class"
+        },
+        "literal": null,
+        "predicate": "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}type"
+      },
+      {
+        "attributes": {},
+        "literal": "RHEA:19441 part of RHEA:35595 \n\nPublished in \n\"Discovery of Novel p-Hydroxybenzoate-m-hydroxylase, Protocatechuate 3,4 Ring-Cleavage Dioxygenase, and Hydroxyquinol 1,2 Ring-Cleavage Dioxygenase from the Filamentous Fungus Aspergillus niger\"\nACS Sustainable Chem. Eng. 2019, 7, 23, 19081\u201319089\nhttps://doi.org/10.1021/acssuschemeng.9b04918",
+        "predicate": "{http://www.w3.org/2000/01/rdf-schema#}comment"
+      },
+      {
+        "attributes": {},
+        "literal": "RHEA:19441",
+        "predicate": "{http://rdf.rhea-db.org/}accession"
+      },
+      {
+        "attributes": {},
+        "literal": "benzene-1,2,4-triol + O2 = 3-hydroxy-cis,cis-muconate + 2 H(+)",
+        "predicate": "{http://rdf.rhea-db.org/}equation"
+      },
+      {
+        "attributes": {},
+        "literal": "benzene-1,2,4-triol + O2 = 3-hydroxy-cis,cis-muconate + 2 H(+)",
+        "predicate": "{http://www.w3.org/2000/01/rdf-schema#}label"
+      },
+      {
+        "attributes": {},
+        "literal": "benzene-1,2,4-triol + O<small><sub>2</sub></small> = 3-hydroxy-<i>cis,cis</i>-muconate + 2 H<small><sup>+</sup></small>",
+        "predicate": "{http://rdf.rhea-db.org/}htmlEquation"
+      }
+    ],
+    "RHEA:22140": [
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}datatype": "http://www.w3.org/2001/XMLSchema#boolean"
+        },
+        "literal": "false",
+        "predicate": "{http://rdf.rhea-db.org/}isTransport"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}datatype": "http://www.w3.org/2001/XMLSchema#boolean"
+        },
+        "literal": "true",
+        "predicate": "{http://rdf.rhea-db.org/}isChemicallyBalanced"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}datatype": "http://www.w3.org/2001/XMLSchema#long"
+        },
+        "literal": "22140",
+        "predicate": "{http://rdf.rhea-db.org/}id"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.obolibrary.org/obo/GO_0008253"
+        },
+        "literal": null,
+        "predicate": "{http://www.w3.org/2000/01/rdf-schema#}seeAlso"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.ncbi.nlm.nih.gov/pubmed/5699060"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}citation"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/15017"
+        },
+        "literal": null,
+        "predicate": "{http://www.w3.org/2000/01/rdf-schema#}subClassOf"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/22140_L"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}side"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/22140_R"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}side"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/22141"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}directionalReaction"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/22142"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}directionalReaction"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/22143"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}bidirectionalReaction"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/Approved"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}status"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/Reaction"
+        },
+        "literal": null,
+        "predicate": "{http://www.w3.org/2000/01/rdf-schema#}subClassOf"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://www.w3.org/2000/01/rdf-schema#Class"
+        },
+        "literal": null,
+        "predicate": "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}type"
+      },
+      {
+        "attributes": {},
+        "literal": "RHEA:22140",
+        "predicate": "{http://rdf.rhea-db.org/}accession"
+      },
+      {
+        "attributes": {},
+        "literal": "a nucleoside 5'-phosphate + H2O = a nucleoside + phosphate",
+        "predicate": "{http://rdf.rhea-db.org/}equation"
+      },
+      {
+        "attributes": {},
+        "literal": "a nucleoside 5'-phosphate + H2O = a nucleoside + phosphate",
+        "predicate": "{http://www.w3.org/2000/01/rdf-schema#}label"
+      },
+      {
+        "attributes": {},
+        "literal": "a nucleoside 5'-phosphate + H<small><sub>2</sub></small>O = a nucleoside + phosphate",
+        "predicate": "{http://rdf.rhea-db.org/}htmlEquation"
+      }
+    ],
+    "RHEA:28338": [
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}datatype": "http://www.w3.org/2001/XMLSchema#boolean"
+        },
+        "literal": "false",
+        "predicate": "{http://rdf.rhea-db.org/}isTransport"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}datatype": "http://www.w3.org/2001/XMLSchema#boolean"
+        },
+        "literal": "true",
+        "predicate": "{http://rdf.rhea-db.org/}isChemicallyBalanced"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}datatype": "http://www.w3.org/2001/XMLSchema#long"
+        },
+        "literal": "28338",
+        "predicate": "{http://rdf.rhea-db.org/}id"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.obolibrary.org/obo/GO_0140427"
+        },
+        "literal": null,
+        "predicate": "{http://www.w3.org/2000/01/rdf-schema#}seeAlso"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.uniprot.org/enzyme/4.2.1.149"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}ec"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.ncbi.nlm.nih.gov/pubmed/11409545"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}citation"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.ncbi.nlm.nih.gov/pubmed/11551212"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}citation"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.ncbi.nlm.nih.gov/pubmed/15731894"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}citation"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/28338_L"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}side"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/28338_R"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}side"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/28339"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}directionalReaction"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/28340"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}directionalReaction"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/28341"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}bidirectionalReaction"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/Approved"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}status"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/Reaction"
+        },
+        "literal": null,
+        "predicate": "{http://www.w3.org/2000/01/rdf-schema#}subClassOf"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://www.w3.org/2000/01/rdf-schema#Class"
+        },
+        "literal": null,
+        "predicate": "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}type"
+      },
+      {
+        "attributes": {},
+        "literal": "(<i>R</i>)-carnitinyl-CoA = crotonobetainyl-CoA + H<small><sub>2</sub></small>O",
+        "predicate": "{http://rdf.rhea-db.org/}htmlEquation"
+      },
+      {
+        "attributes": {},
+        "literal": "(R)-carnitinyl-CoA = crotonobetainyl-CoA + H2O",
+        "predicate": "{http://rdf.rhea-db.org/}equation"
+      },
+      {
+        "attributes": {},
+        "literal": "(R)-carnitinyl-CoA = crotonobetainyl-CoA + H2O",
+        "predicate": "{http://www.w3.org/2000/01/rdf-schema#}label"
+      },
+      {
+        "attributes": {},
+        "literal": "RHEA:28338",
+        "predicate": "{http://rdf.rhea-db.org/}accession"
+      }
+    ],
+    "RHEA:28526": [
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}datatype": "http://www.w3.org/2001/XMLSchema#boolean"
+        },
+        "literal": "false",
+        "predicate": "{http://rdf.rhea-db.org/}isTransport"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}datatype": "http://www.w3.org/2001/XMLSchema#boolean"
+        },
+        "literal": "true",
+        "predicate": "{http://rdf.rhea-db.org/}isChemicallyBalanced"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}datatype": "http://www.w3.org/2001/XMLSchema#long"
+        },
+        "literal": "28526",
+        "predicate": "{http://rdf.rhea-db.org/}id"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.obolibrary.org/obo/GO_0008735"
+        },
+        "literal": null,
+        "predicate": "{http://www.w3.org/2000/01/rdf-schema#}seeAlso"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.uniprot.org/enzyme/2.8.3.21"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}ec"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.ncbi.nlm.nih.gov/pubmed/11551212"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}citation"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.ncbi.nlm.nih.gov/pubmed/12081978"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}citation"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/28526_L"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}side"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/28526_R"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}side"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/28527"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}directionalReaction"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/28528"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}directionalReaction"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/28529"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}bidirectionalReaction"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/Approved"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}status"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/Reaction"
+        },
+        "literal": null,
+        "predicate": "{http://www.w3.org/2000/01/rdf-schema#}subClassOf"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://www.w3.org/2000/01/rdf-schema#Class"
+        },
+        "literal": null,
+        "predicate": "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}type"
+      },
+      {
+        "attributes": {},
+        "literal": "RHEA:28526",
+        "predicate": "{http://rdf.rhea-db.org/}accession"
+      },
+      {
+        "attributes": {},
+        "literal": "crotonobetainyl-CoA + (<i>R</i>)-carnitine = crotonobetaine + (<i>R</i>)-carnitinyl-CoA",
+        "predicate": "{http://rdf.rhea-db.org/}htmlEquation"
+      },
+      {
+        "attributes": {},
+        "literal": "crotonobetainyl-CoA + (R)-carnitine = crotonobetaine + (R)-carnitinyl-CoA",
+        "predicate": "{http://rdf.rhea-db.org/}equation"
+      },
+      {
+        "attributes": {},
+        "literal": "crotonobetainyl-CoA + (R)-carnitine = crotonobetaine + (R)-carnitinyl-CoA",
+        "predicate": "{http://www.w3.org/2000/01/rdf-schema#}label"
+      }
+    ],
+    "RHEA:35595": [
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}datatype": "http://www.w3.org/2001/XMLSchema#boolean"
+        },
+        "literal": "false",
+        "predicate": "{http://rdf.rhea-db.org/}isTransport"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}datatype": "http://www.w3.org/2001/XMLSchema#boolean"
+        },
+        "literal": "true",
+        "predicate": "{http://rdf.rhea-db.org/}isChemicallyBalanced"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}datatype": "http://www.w3.org/2001/XMLSchema#long"
+        },
+        "literal": "35595",
+        "predicate": "{http://rdf.rhea-db.org/}id"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.obolibrary.org/obo/GO_0047074"
+        },
+        "literal": null,
+        "predicate": "{http://www.w3.org/2000/01/rdf-schema#}seeAlso"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.uniprot.org/enzyme/1.13.11.37"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}ec"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.ncbi.nlm.nih.gov/pubmed/15772073"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}citation"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.ncbi.nlm.nih.gov/pubmed/16232466"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}citation"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.ncbi.nlm.nih.gov/pubmed/16348446"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}citation"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.ncbi.nlm.nih.gov/pubmed/6539772"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}citation"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.ncbi.nlm.nih.gov/pubmed/9141483"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}citation"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/35595_L"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}side"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/35595_R"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}side"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/35596"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}directionalReaction"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/35597"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}directionalReaction"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/35598"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}bidirectionalReaction"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/Approved"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}status"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/Reaction"
+        },
+        "literal": null,
+        "predicate": "{http://www.w3.org/2000/01/rdf-schema#}subClassOf"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://www.w3.org/2000/01/rdf-schema#Class"
+        },
+        "literal": null,
+        "predicate": "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}type"
+      },
+      {
+        "attributes": {},
+        "literal": "Multi-step reaction: RHEA:19441 + RHEA:42432\n\nPublished in \n\"Discovery of Novel p-Hydroxybenzoate-m-hydroxylase, Protocatechuate 3,4 Ring-Cleavage Dioxygenase, and Hydroxyquinol 1,2 Ring-Cleavage Dioxygenase from the Filamentous Fungus Aspergillus niger\"\nACS Sustainable Chem. Eng. 2019, 7, 23, 19081\u201319089\nhttps://doi.org/10.1021/acssuschemeng.9b04918",
+        "predicate": "{http://www.w3.org/2000/01/rdf-schema#}comment"
+      },
+      {
+        "attributes": {},
+        "literal": "RHEA:35595",
+        "predicate": "{http://rdf.rhea-db.org/}accession"
+      },
+      {
+        "attributes": {},
+        "literal": "benzene-1,2,4-triol + O2 = maleylacetate + 2 H(+)",
+        "predicate": "{http://rdf.rhea-db.org/}equation"
+      },
+      {
+        "attributes": {},
+        "literal": "benzene-1,2,4-triol + O2 = maleylacetate + 2 H(+)",
+        "predicate": "{http://www.w3.org/2000/01/rdf-schema#}label"
+      },
+      {
+        "attributes": {},
+        "literal": "benzene-1,2,4-triol + O<small><sub>2</sub></small> = maleylacetate + 2 H<small><sup>+</sup></small>",
+        "predicate": "{http://rdf.rhea-db.org/}htmlEquation"
+      }
+    ],
+    "RHEA:47152": [
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}datatype": "http://www.w3.org/2001/XMLSchema#boolean"
+        },
+        "literal": "false",
+        "predicate": "{http://rdf.rhea-db.org/}isTransport"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}datatype": "http://www.w3.org/2001/XMLSchema#boolean"
+        },
+        "literal": "true",
+        "predicate": "{http://rdf.rhea-db.org/}isChemicallyBalanced"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}datatype": "http://www.w3.org/2001/XMLSchema#long"
+        },
+        "literal": "47152",
+        "predicate": "{http://rdf.rhea-db.org/}id"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.obolibrary.org/obo/GO_0044104"
+        },
+        "literal": null,
+        "predicate": "{http://www.w3.org/2000/01/rdf-schema#}seeAlso"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.ncbi.nlm.nih.gov/pubmed/16835232"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}citation"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.ncbi.nlm.nih.gov/pubmed/24831290"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}citation"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.ncbi.nlm.nih.gov/pubmed/31917558"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}citation"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/16185"
+        },
+        "literal": null,
+        "predicate": "{http://www.w3.org/2000/01/rdf-schema#}subClassOf"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/47152_L"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}side"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/47152_R"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}side"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/47153"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}directionalReaction"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/47154"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}directionalReaction"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/47155"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}bidirectionalReaction"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/Approved"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}status"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/Reaction"
+        },
+        "literal": null,
+        "predicate": "{http://www.w3.org/2000/01/rdf-schema#}subClassOf"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://www.w3.org/2000/01/rdf-schema#Class"
+        },
+        "literal": null,
+        "predicate": "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}type"
+      },
+      {
+        "attributes": {},
+        "literal": "2,5-dioxopentanoate + NAD(+) + H2O = 2-oxoglutarate + NADH + 2 H(+)",
+        "predicate": "{http://rdf.rhea-db.org/}equation"
+      },
+      {
+        "attributes": {},
+        "literal": "2,5-dioxopentanoate + NAD(+) + H2O = 2-oxoglutarate + NADH + 2 H(+)",
+        "predicate": "{http://www.w3.org/2000/01/rdf-schema#}label"
+      },
+      {
+        "attributes": {},
+        "literal": "2,5-dioxopentanoate + NAD<small><sup>+</sup></small> + H<small><sub>2</sub></small>O = 2-oxoglutarate + NADH + 2 H<small><sup>+</sup></small>",
+        "predicate": "{http://rdf.rhea-db.org/}htmlEquation"
+      },
+      {
+        "attributes": {},
+        "literal": "RHEA:47152",
+        "predicate": "{http://rdf.rhea-db.org/}accession"
+      }
+    ],
+    "RHEA:58868": [
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}datatype": "http://www.w3.org/2001/XMLSchema#boolean"
+        },
+        "literal": "false",
+        "predicate": "{http://rdf.rhea-db.org/}isTransport"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}datatype": "http://www.w3.org/2001/XMLSchema#boolean"
+        },
+        "literal": "true",
+        "predicate": "{http://rdf.rhea-db.org/}isChemicallyBalanced"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}datatype": "http://www.w3.org/2001/XMLSchema#long"
+        },
+        "literal": "58868",
+        "predicate": "{http://rdf.rhea-db.org/}id"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.obolibrary.org/obo/GO_0102177"
+        },
+        "literal": null,
+        "predicate": "{http://www.w3.org/2000/01/rdf-schema#}seeAlso"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.uniprot.org/enzyme/1.14.18.11"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}ec"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.ncbi.nlm.nih.gov/pubmed/11707264"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}citation"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.ncbi.nlm.nih.gov/pubmed/14653780"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}citation"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.ncbi.nlm.nih.gov/pubmed/8505296"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}citation"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.ncbi.nlm.nih.gov/pubmed/9240456"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}citation"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/58868_L"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}side"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/58868_R"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}side"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/58869"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}directionalReaction"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/58870"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}directionalReaction"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/58871"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}bidirectionalReaction"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/Approved"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}status"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/Reaction"
+        },
+        "literal": null,
+        "predicate": "{http://www.w3.org/2000/01/rdf-schema#}subClassOf"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://www.w3.org/2000/01/rdf-schema#Class"
+        },
+        "literal": null,
+        "predicate": "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}type"
+      },
+      {
+        "attributes": {},
+        "literal": "24-methylidenelophenol + 6 Fe(<small>II</small>)-[cytochrome <i>b</i><small><sub>5</sub></small>] + 3 O<small><sub>2</sub></small> + 5 H<small><sup>+</sup></small> = 4&#945;-carboxy-ergosta-7,24(24<small><sup>1</sup></small>)-dien-3&#946;-ol + 6 Fe(<small>III</small>)-[cytochrome <i>b</i><small><sub>5</sub></small>] + 4 H<small><sub>2</sub></small>O",
+        "predicate": "{http://rdf.rhea-db.org/}htmlEquation"
+      },
+      {
+        "attributes": {},
+        "literal": "24-methylidenelophenol + 6 Fe(II)-[cytochrome b5] + 3 O2 + 5 H(+) = 4alpha-carboxy-ergosta-7,24(24(1))-dien-3beta-ol + 6 Fe(III)-[cytochrome b5] + 4 H2O",
+        "predicate": "{http://rdf.rhea-db.org/}equation"
+      },
+      {
+        "attributes": {},
+        "literal": "24-methylidenelophenol + 6 Fe(II)-[cytochrome b5] + 3 O2 + 5 H(+) = 4alpha-carboxy-ergosta-7,24(24(1))-dien-3beta-ol + 6 Fe(III)-[cytochrome b5] + 4 H2O",
+        "predicate": "{http://www.w3.org/2000/01/rdf-schema#}label"
+      },
+      {
+        "attributes": {},
+        "literal": "Multi-step reaction: RHEA:58872 + RHEA:58876 + RHEA:58880",
+        "predicate": "{http://www.w3.org/2000/01/rdf-schema#}comment"
+      },
+      {
+        "attributes": {},
+        "literal": "RHEA:58868",
+        "predicate": "{http://rdf.rhea-db.org/}accession"
+      }
+    ],
+    "RHEA:58872": [
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}datatype": "http://www.w3.org/2001/XMLSchema#boolean"
+        },
+        "literal": "false",
+        "predicate": "{http://rdf.rhea-db.org/}isTransport"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}datatype": "http://www.w3.org/2001/XMLSchema#boolean"
+        },
+        "literal": "true",
+        "predicate": "{http://rdf.rhea-db.org/}isChemicallyBalanced"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}datatype": "http://www.w3.org/2001/XMLSchema#long"
+        },
+        "literal": "58872",
+        "predicate": "{http://rdf.rhea-db.org/}id"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.ncbi.nlm.nih.gov/pubmed/11707264"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}citation"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.ncbi.nlm.nih.gov/pubmed/14653780"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}citation"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.ncbi.nlm.nih.gov/pubmed/8505296"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}citation"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.ncbi.nlm.nih.gov/pubmed/9240456"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}citation"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/58872_L"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}side"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/58872_R"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}side"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/58873"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}directionalReaction"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/58874"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}directionalReaction"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/58875"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}bidirectionalReaction"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/Approved"
+        },
+        "literal": null,
+        "predicate": "{http://rdf.rhea-db.org/}status"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://rdf.rhea-db.org/Reaction"
+        },
+        "literal": null,
+        "predicate": "{http://www.w3.org/2000/01/rdf-schema#}subClassOf"
+      },
+      {
+        "attributes": {
+          "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://www.w3.org/2000/01/rdf-schema#Class"
+        },
+        "literal": null,
+        "predicate": "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}type"
+      },
+      {
+        "attributes": {},
+        "literal": "24-methylidenelophenol + 2 Fe(<small>II</small>)-[cytochrome <i>b</i><small><sub>5</sub></small>] + O<small><sub>2</sub></small> + 2 H<small><sup>+</sup></small> = 4&#945;-hydroxymethyl-ergosta-7,24(24<small><sup>1</sup></small>)-dien-3&#946;-ol + 2 Fe(<small>III</small>)-[cytochrome <i>b</i><small><sub>5</sub></small>] + H<small><sub>2</sub></small>O",
+        "predicate": "{http://rdf.rhea-db.org/}htmlEquation"
+      },
+      {
+        "attributes": {},
+        "literal": "24-methylidenelophenol + 2 Fe(II)-[cytochrome b5] + O2 + 2 H(+) = 4alpha-hydroxymethyl-ergosta-7,24(24(1))-dien-3beta-ol + 2 Fe(III)-[cytochrome b5] + H2O",
+        "predicate": "{http://rdf.rhea-db.org/}equation"
+      },
+      {
+        "attributes": {},
+        "literal": "24-methylidenelophenol + 2 Fe(II)-[cytochrome b5] + O2 + 2 H(+) = 4alpha-hydroxymethyl-ergosta-7,24(24(1))-dien-3beta-ol + 2 Fe(III)-[cytochrome b5] + H2O",
+        "predicate": "{http://www.w3.org/2000/01/rdf-schema#}label"
+      },
+      {
+        "attributes": {},
+        "literal": "RHEA:58872 part of RHEA:58868",
+        "predicate": "{http://www.w3.org/2000/01/rdf-schema#}comment"
+      },
+      {
+        "attributes": {},
+        "literal": "RHEA:58872",
+        "predicate": "{http://rdf.rhea-db.org/}accession"
+      }
+    ]
+  },
+  "scope": "Complete direct RDF descriptions for all ten selected-context reactions, including comments and subclass predicates excluded from the production compact index. Historical141 and GO authority not revalidated."
+}

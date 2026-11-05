@@ -29,7 +29,7 @@ from kg_microbe.utils.source_finalization import SourceFinalizationRequired
 from kg_microbe.utils.sqlite_read import read_only_sqlite
 
 POLICY_FILE = Path(__file__).resolve().parents[2] / "mappings/upa_reaction_projection_dispositions.json"
-POLICY_SHA256 = "6cffa6d569ae82f4c5f4ea3aaf4bca5b495e2915ebf89ddff8fa98343a6bedf2"
+POLICY_SHA256 = "ab580f64000589dc00a54910019fdc4ac6e0a452cd967f1b1744a91f460ed3d9"
 AUDIT_FILE = "upa_route_review.tsv"
 POLICY_ROLE = "upa_route_policy"
 JSON_ROLE = "upa_route_native_json"

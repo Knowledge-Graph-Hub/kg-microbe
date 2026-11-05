@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "expected_count": 6,
-  "scope_note": "Six reviewed historical exclusions only. Local snapshot labels are not independently verified tagged releases. Runtime validates selected indexed labels, statuses, cross-references and explicit variant side roles, not historical comments, subclass axioms or a global EC/GO retirement rule.",
+  "scope_note": "Six reviewed historical exclusions only. The historical 141 local-cache identity is preserved; selected 143 files are bound to the verified archived release. Runtime validates selected indexed labels, statuses, cross-references and explicit variant side roles, not historical comments, subclass axioms or a global EC/GO retirement rule. Selected 143 comments and subclass context were independently compared with 142; the separate historical GO normalization authority is not revalidated by the Rhea upgrade.",
   "historical_snapshot": {
     "snapshot_id": "rhea-local-cache-141",
     "rdf": {
@@ -10,10 +10,10 @@
     }
   },
   "selected_snapshot": {
-    "snapshot_id": "rhea-cache-142-20260907",
+    "snapshot_id": "rhea-release-143-20261105",
     "rdf": {
-      "bytes": 8718726,
-      "sha256": "8ee48d7044cf3eef1001fa730dae2a491902ab25b259b519d6826796bb8acedf"
+      "sha256": "8f858aff8d984d8e882b90fac0d81d6980589fb819b460da388ccb796195fa25",
+      "bytes": 8875804
     }
   },
   "legacy_sources": {
@@ -37,7 +37,7 @@
       "reason": "reaction_definition_and_annotation_changed",
       "historical_label": "methylenediurea + 2 H2O + 2 H(+) = N-(hydroxymethyl)urea + 2 NH4(+) + CO2",
       "historical_context": "141 native comment: Multi-step reaction: RHEA:22240 + RHEA:11704 + RHEA:13901.",
-      "selected_context": "142 adds RHEA:87283 to that native multistep comment and changes the reaction product and EC annotation. This is not a global EC identifier replacement.",
+      "selected_context": "143 retains the 142 addition of RHEA:87283 to the native multistep comment, along with the changed product and EC annotation relative to 141. This is not a global EC identifier replacement.",
       "required_native_assertions": [
         {
           "subject": "RHEA:15929",
@@ -72,7 +72,7 @@
       "reason": "subreaction_annotation_removed",
       "historical_label": "benzene-1,2,4-triol + O2 = 3-hydroxy-cis,cis-muconate + 2 H(+)",
       "historical_context": "141 explicitly annotates the subreaction with GO:0018581, not GO:0047074. Both RDF snapshots comment: RHEA:19441 part of RHEA:35595. GO:0018581 is deprecated with exact replacement GO:0047074; prior finalization applied that separate GO authority decision.",
-      "selected_context": "142 has no GO annotation on RHEA:19441. Complete reaction RHEA:35595 retains GO:0047074; its native comment names the multistep composition RHEA:19441 + RHEA:42432. Do not replace the reaction subject or invalidate the independent GO retirement decision.",
+      "selected_context": "143 retains the 142 context: it has no GO annotation on RHEA:19441. Complete reaction RHEA:35595 retains GO:0047074; its native comment names the multistep composition RHEA:19441 + RHEA:42432. Do not replace the reaction subject or invalidate the independent GO retirement decision.",
       "required_native_assertions": [
         {
           "subject": "RHEA:19441",
@@ -119,7 +119,7 @@
       "reason": "more_specific_native_annotation",
       "historical_label": "a nucleoside 5'-phosphate + H2O = a nucleoside + phosphate",
       "historical_context": "141 asserts the generic nucleotidase GO:0008252 annotation.",
-      "selected_context": "142 explicitly asserts GO:0008253 (5'-nucleotidase activity). Reviewed local GO authority has GO:0008253 subclass_of GO:0008252 and exact match RHEA:22140. The broader biological relationship is not declared false; no new direct annotation is inferred from hierarchy.",
+      "selected_context": "143 retains the 142 explicit assertion of GO:0008253 (5'-nucleotidase activity). Reviewed local GO authority has GO:0008253 subclass_of GO:0008252 and exact match RHEA:22140. The broader biological relationship is not declared false; no new direct annotation is inferred from hierarchy.",
       "required_native_assertions": [
         {
           "subject": "RHEA:22140",
@@ -149,7 +149,7 @@
       "reason": "different_activity_annotation",
       "historical_label": "(R)-carnitinyl-CoA = crotonobetainyl-CoA + H2O",
       "historical_context": "141 asserts GO:0008735 (L-carnitine CoA-transferase activity) on this EC:4.2.1.149 reaction.",
-      "selected_context": "142 instead asserts GO:0140427 (crotonobetainyl-CoA hydratase activity). RHEA:28526 retains the CoA-transferase annotation GO:0008735 and EC:2.8.3.21. No general GO identifier replacement is inferred.",
+      "selected_context": "143 retains the 142 assertion of GO:0140427 (crotonobetainyl-CoA hydratase activity). RHEA:28526 retains the CoA-transferase annotation GO:0008735 and EC:2.8.3.21. No general GO identifier replacement is inferred.",
       "required_native_assertions": [
         {
           "subject": "RHEA:28338",
@@ -204,7 +204,7 @@
       "reason": "more_specific_native_annotation",
       "historical_label": "2,5-dioxopentanoate + NAD(+) + H2O = 2-oxoglutarate + NADH + 2 H(+)",
       "historical_context": "141 asserts generic aldehyde dehydrogenase GO:0004029. Both RDF snapshots have RHEA:47152 subClassOf RHEA:16185.",
-      "selected_context": "142 asserts GO:0044104 for the specific substrate. Reviewed GO authority has GO:0044104 subclass_of GO:0004029. Generic parent reaction RHEA:16185 retains GO:0004029; neither reaction identity nor a new direct annotation is inferred.",
+      "selected_context": "143 retains the 142 assertion of GO:0044104 for the specific substrate. Reviewed GO authority has GO:0044104 subclass_of GO:0004029. Generic parent reaction RHEA:16185 retains GO:0004029; neither reaction identity nor a new direct annotation is inferred.",
       "required_native_assertions": [
         {
           "subject": "RHEA:47152",
@@ -249,7 +249,7 @@
       "reason": "subreaction_annotation_removed",
       "historical_label": "24-methylidenelophenol + 2 Fe(II)-[cytochrome b5] + O2 + 2 H(+) = 4alpha-hydroxymethyl-ergosta-7,24(24(1))-dien-3beta-ol + 2 Fe(III)-[cytochrome b5] + H2O",
       "historical_context": "141 asserts GO:0102177 on RHEA:58872, not RHEA:58868. Both snapshots comment: RHEA:58872 part of RHEA:58868; complete-reaction composition is RHEA:58872 + RHEA:58876 + RHEA:58880.",
-      "selected_context": "142 asserts GO:0102177 on complete reaction RHEA:58868, not subreaction RHEA:58872. The complete reaction consumes six Fe(II)-cytochromes and three O2 and produces the carboxy product. Do not collapse the two native reaction identities.",
+      "selected_context": "143 retains the 142 assertion of GO:0102177 on complete reaction RHEA:58868, not subreaction RHEA:58872. The complete reaction consumes six Fe(II)-cytochromes and three O2 and produces the carboxy product. Do not collapse the two native reaction identities.",
       "required_native_assertions": [
         {
           "subject": "RHEA:58872",

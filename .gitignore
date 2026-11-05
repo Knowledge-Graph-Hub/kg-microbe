@@ -97,6 +97,7 @@ ipython_config.py
 /data/processed/
 # Local rebuild-driver state (caches, raw staging, lock); not produced by repository code.
 /data/runtime-cache/
+/data/rebuild-evidence/
 /data/.raw-stage.*/
 /data/.rebuild.lock
 /data/bacdive_media_links__crbip.txt

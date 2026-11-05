@@ -2,7 +2,7 @@
   "full_sources": {
     "upa.json": {
       "release": "http://purl.obolibrary.org/obo/upa/releases/2024-03-06/upa.owl",
-      "sha256": "cff92938a092dcc2e4e2e1a17266417edeacba8e7b9f51b3f183066a80fdb8bd"
+      "sha256": "28fcde5326b8856bd51a2b6df2b9bcb7e550347dda6a43fa53350947522ccfa8"
     },
     "upa.owl": "1ea0465c2222592bdeea3197a687ba26c74818263e1e6c5e8838baafcb6838ce",
     "go.db": {
@@ -13,12 +13,13 @@
       }
     }
   },
-  "reviewed_policy_semantic_sha256": "6cffa6d569ae82f4c5f4ea3aaf4bca5b495e2915ebf89ddff8fa98343a6bedf2",
+  "reviewed_policy_semantic_sha256": "ab580f64000589dc00a54910019fdc4ac6e0a452cd967f1b1744a91f460ed3d9",
   "fixtures": {
-    "upa.json": "8880cbcc1535d1d376b3b3ea058592e6ea662b65452078ddd30a36cce6bbd665",
+    "upa.json": "51be92425d03fd32b713e38ccee399a033478d423e69996d88ddbbf734a68761",
     "upa.owl": "47c5870dc8560608a48454f69e6a2eeafd04e424c3d605feb4519154aba5baef",
     "go_statements.json": "da439d71011074ff5c35e182e716d1e615bd62682840ad64b2d4d949ca9dd282",
-    "positive_route_origins.json": "12b38ea2504fc75521917954c6ec13dc8e27d8e10732a32280fb12dbd47479f1"
+    "positive_route_origins.json": "0a1626a4849aaf22f6248b380140e2f29a399f1604e9958f985ffe15fbad0f2a",
+    "conversion_review.json": "073374b7101efc62ee7114042b338f2c620fc67bb814fda82d3c637454da0ae4"
   },
   "finite_native_nodes": 21,
   "finite_native_path_occurrences": 14,
@@ -35,5 +36,11 @@
       "go.db": "a3903d4ce168ac79b877891a595fc4ca1dda122e45d969e7b2948126090aa07a"
     },
     "note": "Version 2 pinned upa.json and the locally built go.db by whole-file SHA-256. Version 3 binds go.db by its release and the go.owl it was built from (#1420), and keeps the upa.json byte pin, which the pinned ROBOT reproduces from the pinned upa.owl, alongside its release (#1516)."
+  },
+  "prior_robot_fixture_epoch": {
+    "directory": "history/robot-1.9.8",
+    "origin_sha256": "69e07fc3add324da6f4732de3d615de78534d3cb73e604d3b5dd549840b61263",
+    "policy_semantic_sha256": "6cffa6d569ae82f4c5f4ea3aaf4bca5b495e2915ebf89ddff8fa98343a6bedf2",
+    "note": "Historical complete fixture and policy bytes are preserved; only current 1.9.11 native records are used for current conversion tests."
   }
 }

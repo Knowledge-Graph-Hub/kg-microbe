@@ -75,7 +75,7 @@ def test_curated_policy_has_six_historical_records_and_seven_variant_annotations
         "c5ece10984a2f7c4c95c241cde134b108f0dc865335b232bdd77e67e5f074078"
     )
     assert policy["selected_snapshot"]["rdf"]["sha256"] == (
-        "8ee48d7044cf3eef1001fa730dae2a491902ab25b259b519d6826796bb8acedf"
+        "8f858aff8d984d8e882b90fac0d81d6980589fb819b460da388ccb796195fa25"
     )
 
 
@@ -367,3 +367,39 @@ def test_no_history_contract_does_not_depend_on_test_prefixes(tmp_path):
     policy = empty_legacy_policy(prepared[2])
     prepared[1].write_text(json.dumps(policy), encoding="utf-8")
     assert _run(prepared) == ()
+
+
+@pytest.mark.parametrize(
+    "field,value",
+    [
+        ("snapshot_id", "rhea-cache-142-20260907"),
+        ("sha256", "8ee48d7044cf3eef1001fa730dae2a491902ab25b259b519d6826796bb8acedf"),
+        ("snapshot_id", "rhea-release-143-20261105"),
+        ("sha256", "8f858aff8d984d8e882b90fac0d81d6980589fb819b460da388ccb796195fa25"),
+    ],
+)
+def test_both_reviewed_release_identities_refuse_empty_history(tmp_path, field, value):
+    """Changing either identity field cannot turn either reviewed production epoch into a fixture."""
+    policy = empty_legacy_policy(_prepare(tmp_path)[2])
+    target = policy["selected_snapshot"] if field == "snapshot_id" else policy["selected_snapshot"]["rdf"]
+    target[field] = value
+    with pytest.raises(ValueError, match="different snapshot"):
+        read_legacy_policy(io.StringIO(json.dumps(policy)))
+
+
+def test_release143_retains_historical141_go_and_finite_scientific_decisions():
+    """The actual143 review updates selected provenance, never the prior history or GO retirement evidence."""
+    historical = Path(__file__).parent / "resources/rhea/reviewed_release_142/rhea_legacy_xref_dispositions.json"
+    old, current = json.loads(historical.read_text()), _policy()
+    assert old["selected_snapshot"]["snapshot_id"] == "rhea-cache-142-20260907"
+    assert current["selected_snapshot"]["snapshot_id"] == "rhea-release-143-20261105"
+    for key in ("historical_snapshot", "legacy_sources", "preserved_directional_go_annotations", "expected_count"):
+        assert current[key] == old[key]
+    for before, after in zip(old["exclusions"], current["exclusions"], strict=True):
+        assert {key: value for key, value in before.items() if key != "selected_context"} == {
+            key: value for key, value in after.items() if key != "selected_context"
+        }
+        assert "143" in after["selected_context"]
+    release = json.loads((POLICY_PATH.parent / "rhea_release.json").read_text())
+    assert release["snapshot_id"] == current["selected_snapshot"]["snapshot_id"]
+    assert release["files"]["rhea.rdf.gz"] == current["selected_snapshot"]["rdf"]

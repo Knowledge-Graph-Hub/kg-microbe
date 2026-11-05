@@ -124,10 +124,19 @@ def _xml_record(element):
     }
 
 
+def _owl_tree(stream):
+    """Parse one complete local native OWL snapshot without external resource resolution."""
+    binary = getattr(stream, "buffer", stream)
+    return etree.parse(binary, etree.XMLParser(resolve_entities="internal", no_network=True, load_dtd=False))
+
+
 def owl_evidence(stream, policy):
     """Independently validate full native OWL selected declarations and named-parent closure."""
-    binary = getattr(stream, "buffer", stream)
-    tree = etree.parse(binary, etree.XMLParser(resolve_entities="internal", no_network=True, load_dtd=False))
+    return _owl_evidence(_owl_tree(stream), policy)
+
+
+def _owl_evidence(tree, policy):
+    """Validate the complete finite native witnesses against the parsed source tree."""
     selected = set(policy["cohort"]) | set(policy["controls"])
     evidence, children = {}, defaultdict(set)
     for element in tree.iter(_OWL + "Class"):
@@ -156,6 +165,80 @@ def owl_evidence(stream, policy):
     return evidence
 
 
+def _live_hierarchy(graphs, tree):
+    """
+    Project source-proven retirements only after inspecting complete native declarations.
+
+    The producer retains the original JSON/OWL snapshots. This classification
+    view matches its later private deprecation preparation; it does not replace
+    the complete finite witnesses or relax the ordinary live-class validator.
+    """
+    from kg_microbe.utils.ontology_metadata import obograph_is_deprecated
+
+    declarations = {}
+    for graph in graphs:
+        for node in graph.get("nodes", []):
+            identifier = compact(node["id"])
+            declaration = (node.get("type", ""), obograph_is_deprecated(node))
+            if identifier in declarations and declarations[identifier] != declaration:
+                raise ValueError(f"Conflicting FOODON declarations: {identifier}")
+            declarations[identifier] = declaration
+    retired = {identifier for identifier, (_, obsolete) in declarations.items() if obsolete}
+    supported, source_parents = set(), set()
+    source_types = {
+        _OWL + "Class": "CLASS",
+        _OWL + "ObjectProperty": "PROPERTY",
+        _OWL + "DatatypeProperty": "PROPERTY",
+        _OWL + "AnnotationProperty": "PROPERTY",
+        _OWL + "NamedIndividual": "INDIVIDUAL",
+        _RDF + "Description": "",
+    }
+    for element in tree.iter():
+        if not isinstance(element.tag, str):
+            continue
+        identifier = compact(element.get(_RDF + "about", ""))
+        if not identifier:
+            continue
+        if identifier in retired:
+            for flag in element.findall(_OWL + "deprecated"):
+                if (flag.text or "").strip() not in {"true", "1"}:
+                    raise ValueError(f"Conflicting FOODON native OWL retirement: {identifier}")
+                if source_types.get(element.tag) != declarations[identifier][0]:
+                    raise ValueError(f"Conflicting FOODON native OWL declaration: {identifier}")
+                supported.add(identifier)
+        if element.tag == _OWL + "Class":
+            for parent in element.findall(_RDFS + "subClassOf"):
+                target = parent.get(_RDF + "resource")
+                if target:
+                    source_parents.add((identifier, "is_a", compact(target)))
+    if retired != supported:
+        raise ValueError(f"FOODON retirement lacks native OWL evidence: {sorted(retired - supported)}")
+    for graph in graphs:
+        for edge in graph.get("edges", []):
+            child, predicate, parent = triple = _triple(edge)
+            if predicate == "is_a":
+                # Check both original endpoints before dropping incidence. A
+                # retired endpoint must never hide a missing/nonclass peer.
+                for identifier in (child, parent):
+                    if declarations.get(identifier, (None,))[0] != "CLASS":
+                        raise ValueError(f"Invalid FOODON subclass evidence: {identifier} lacks a CLASS declaration")
+            if child in retired or parent in retired:
+                if triple not in source_parents:
+                    raise ValueError(f"FOODON retired incidence lacks native OWL named-parent evidence: {triple}")
+    return [
+        {
+            **graph,
+            "nodes": [node for node in graph.get("nodes", []) if compact(node["id"]) not in retired],
+            "edges": [
+                edge
+                for edge in graph.get("edges", [])
+                if compact(edge["sub"]) not in retired and compact(edge["obj"]) not in retired
+            ],
+        }
+        for graph in graphs
+    ]
+
+
 @dataclass(frozen=True)
 class KernelEvidence:
     """Finite category scope and original native witnesses, never a replacement ontology identity."""
@@ -166,7 +249,7 @@ class KernelEvidence:
 
 
 def reviewed_hierarchy(graphs, policy, *, native_owl=None):
-    """Return a caller-owned view excluding one exact parent, leaving every other native axiom intact."""
+    """Validate pristine witnesses, then exclude retired incidence and one exact parent from a live view."""
     if digest(policy) != POLICY_SHA256:
         raise ValueError("Unreviewed FOODON kernel policy")
     records = json_evidence(graphs, policy)
@@ -174,17 +257,19 @@ def reviewed_hierarchy(graphs, policy, *, native_owl=None):
         return graphs, None
     if native_owl is None:
         raise ValueError("FOODON kernel native OWL evidence is required")
-    xml = owl_evidence(native_owl, policy)
+    tree = _owl_tree(native_owl)
+    xml = _owl_evidence(tree, policy)
+    live = _live_hierarchy(graphs, tree)
     removed = [edge for graph in graphs for edge in graph.get("edges", []) if _triple(edge) == REJECTED_TRIPLE]
     if len(removed) != 1:
         raise ValueError("FOODON kernel must quarantine exactly one native named parent")
     view = [
         {**graph, "edges": [edge for edge in graph.get("edges", []) if _triple(edge) != REJECTED_TRIPLE]}
-        for graph in graphs
+        for graph in live
     ]
     from kg_microbe.utils.foodon_classification import organism_classes
 
-    original, retained = organism_classes(graphs), organism_classes(view)
+    original, retained = organism_classes(live), organism_classes(view)
     cohort = frozenset(policy["cohort"])
     if original - retained != cohort or retained - original:
         raise ValueError("FOODON kernel hierarchy correction changes an unreviewed category cohort")

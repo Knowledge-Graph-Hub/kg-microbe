@@ -24,8 +24,9 @@ and by its selected content, not by bytes. `upa.json` keeps its byte pin, becaus
 the pinned ROBOT reproduces it from the pinned `upa.owl`, and must also declare the
 reviewed release (#1516). So the excerpt `upa.json` carries its real
 `meta.version`, and the fixture database records the reviewed GO release.
-All seven scientific rules, native record content and the finite identity guard
-remain unchanged. It builds a real SQLite authority and
+All seven scientific rules and the finite identity guard remain unchanged.
+The current complete native records include the source-verified xref annotation
+metadata newly serialized by ROBOT 1.9.11; no fields are ignored by the guard. It builds a real SQLite authority and
 runs the real converter, legacy writer, source finalizer and public admission;
 only the external GO database bootstrap is replaced by the already-populated
 local fixture database. Output and xref export paths are test-owned temporary
@@ -58,3 +59,12 @@ complete, origin-pinned Biolink 4.4.2 model, predicate map and attributes under
 objects from unrelated minimal-schema tests from removing OBO namespaces or
 native BFO predicate mappings. It does not alter native identifiers, source
 relations, converter code, writer logic, or finalization/admission guards.
+
+The 2026-11-05 ROBOT 1.9.11 conversion review proved all 6,874 added xref metadata
+occurrences against the unchanged source OWL. Fourteen of the 21 finite native
+records changed only by these existing source annotations. The complete prior
+fixture and policy epoch is preserved byte-for-byte under `history/robot-1.9.8/`;
+its origin retains the old full JSON and policy identities. `conversion_review.json`
+retains every added annotation occurrence in this excerpt, full-input coordinates,
+source axiom ordinals and the executable proof identity. Neither fixture epoch
+changes the seven exclusions, historical rows, GO evidence, edge order or route order.

@@ -1,0 +1,32 @@
+{
+  "foodon": {
+    "candidate_json_bytes": 43822440,
+    "candidate_json_sha256": "55fc1392b6852559295eab62a9ae01948ed3989ab4fc1d98550ca3f35565a9ab",
+    "fixture_sha256": "eae1184394aeabaf626ff3b51f93eeb9be815973b96499c445e5b7155ee71a3d",
+    "native_input": {
+      "bytes": 40429965,
+      "sha256": "1e11fc50283c6498697a7aca9606c9d914f1cda71cc5510e006d949c32df7db0",
+      "source": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw/foodon.owl"
+    },
+    "robot_sha256": "53cd275c8e4c0dad1fc2c1c34174876795cd7d6b6926e1444adcbb0cb3c7ab26",
+    "robot_wrapper_sha256": "0f2c4bb7dc25be9fb1dad37f2b8c07336d0e2c0ef3d3983e952c23d8b180a5b0",
+    "selected_edges": 2,
+    "selected_nodes": 3,
+    "selection": "First exact source edge for each reviewed native annotation predicate, and each distinct evidence value; FOODON includes both native axiom labels. Complete original selected edge/node records; no invented endpoints or facts."
+  },
+  "uberon": {
+    "candidate_json_bytes": 55150735,
+    "candidate_json_sha256": "d782c47c13f486047f82b48f831c3e248a12ff036d6a5ed6bd7f0ee161e1a932",
+    "fixture_sha256": "3ab203ee1a895e8e7170c2edae9ded8cfda653bce0686f0031640f50b293057f",
+    "native_input": {
+      "bytes": 95887167,
+      "sha256": "938f51e7c3fc9fcbe5a2863eb346da8033737e568af5836958891c4c6bfb1192",
+      "source": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw/uberon.owl"
+    },
+    "robot_sha256": "53cd275c8e4c0dad1fc2c1c34174876795cd7d6b6926e1444adcbb0cb3c7ab26",
+    "robot_wrapper_sha256": "0f2c4bb7dc25be9fb1dad37f2b8c07336d0e2c0ef3d3983e952c23d8b180a5b0",
+    "selected_edges": 10,
+    "selected_nodes": 20,
+    "selection": "First exact source edge for each reviewed native annotation predicate, and each distinct evidence value; FOODON includes both native axiom labels. Complete original selected edge/node records; no invented endpoints or facts."
+  }
+}

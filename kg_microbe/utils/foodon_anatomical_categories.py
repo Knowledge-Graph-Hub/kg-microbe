@@ -15,7 +15,7 @@ from kg_microbe.utils import ontology_parent_quarantine as native
 from kg_microbe.utils.graph_canonicalization import compact_identifier
 
 POLICY_FILE = Path(__file__).resolve().parents[2] / "mappings/foodon_anatomical_category_dispositions.json"
-POLICY_SHA256 = "a9c1df3686f4c459fdb1b10a3d1403558a91ce7445b298bc45348135dc0cfb24"
+POLICY_SHA256 = "ad9cf10287b81cb436d3388dd5f9acd4c85f2bdfe34344261404377904947dd0"
 POD_IDS = frozenset(
     "FOODON:" + local
     for local in (

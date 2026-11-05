@@ -1,0 +1,270 @@
+{
+  "classes": {
+    "chemical entity": {
+      "broad_mappings": [
+        "STY:T167"
+      ],
+      "description": "A chemical entity is a physical entity that pertains to chemistry or biochemistry.",
+      "exact_mappings": [
+        "CHEBI:24431",
+        "SIO:010004",
+        "WIKIDATA:Q79529",
+        "STY:T103"
+      ],
+      "id_prefixes": [
+        "CHEBI",
+        "UNII",
+        "PUBCHEM.COMPOUND",
+        "CHEMBL.COMPOUND",
+        "DRUGBANK",
+        "MESH",
+        "CAS",
+        "DrugCentral",
+        "GTOPDB",
+        "HMDB",
+        "KEGG.COMPOUND",
+        "PHARMGKB.DRUG",
+        "ChemBank",
+        "PUBCHEM.SUBSTANCE",
+        "SIDER.DRUG",
+        "INCHI",
+        "INCHIKEY",
+        "BIGG.METABOLITE",
+        "foodb.compound",
+        "KEGG.GLYCAN",
+        "KEGG.DRUG",
+        "KEGG.ENVIRON",
+        "KEGG",
+        "UMLS"
+      ],
+      "in_subset": [
+        "translator_minimal"
+      ],
+      "is_a": "named thing",
+      "mixins": [
+        "physical essence",
+        "chemical or drug or treatment",
+        "chemical entity or gene or gene product",
+        "chemical entity or protein or polypeptide"
+      ],
+      "narrow_mappings": [
+        "WIKIDATA:Q43460564",
+        "STY:T123",
+        "STY:T131"
+      ],
+      "slots": [
+        "trade name",
+        "available from",
+        "max tolerated dose",
+        "is toxic",
+        "has chemical role",
+        "routes of delivery",
+        "chembl prodrug",
+        "chembl black box warning",
+        "chembl natural product",
+        "chembl availability type",
+        "chembl chirality",
+        "chembl drug warning"
+      ]
+    },
+    "chemical mixture": {
+      "close_mappings": [
+        "dcid:ChemicalCompound"
+      ],
+      "description": "A chemical mixture is a chemical entity composed of two or more molecular entities.",
+      "id_prefixes": [
+        "CHEBI",
+        "UNII",
+        "PUBCHEM.COMPOUND",
+        "CHEMBL.COMPOUND",
+        "DRUGBANK",
+        "MESH",
+        "CAS",
+        "DrugCentral",
+        "GTOPDB",
+        "HMDB",
+        "KEGG.COMPOUND",
+        "PHARMGKB.DRUG",
+        "ChemBank",
+        "PUBCHEM.SUBSTANCE",
+        "SIDER.DRUG",
+        "INCHI",
+        "INCHIKEY",
+        "BIGG.METABOLITE",
+        "foodb.compound",
+        "KEGG.GLYCAN",
+        "KEGG.DRUG",
+        "KEGG.ENVIRON",
+        "KEGG",
+        "UMLS"
+      ],
+      "in_subset": [
+        "translator_minimal"
+      ],
+      "is_a": "chemical entity",
+      "mixins": [
+        "ontology class"
+      ],
+      "narrow_mappings": [
+        "NCIT:C20401",
+        "SNOMEDCT:49616005"
+      ],
+      "slots": [
+        "is supplement",
+        "highest FDA approval status",
+        "drug regulatory status world wide"
+      ]
+    },
+    "environmental feature": {
+      "description": "A system or entity in the natural environment that has the disposition to environ one or more material entities.",
+      "exact_mappings": [
+        "ENVO:01000254"
+      ],
+      "is_a": "planetary entity"
+    },
+    "food": {
+      "description": "A substance of plant, animal, or artificial origin consumed by a living organism to provide essential nutrients, energy, and support growth and the processes of life, or to satisfy other health needs or provide a social or organoleptic experience.",
+      "exact_mappings": [
+        "CHEBI:33290",
+        "FOODON:00002403"
+      ],
+      "id_prefixes": [
+        "foodb.food",
+        "foodb.compound",
+        "FOODON",
+        "CHEBI",
+        "UNII",
+        "PUBCHEM.COMPOUND",
+        "CHEMBL.COMPOUND",
+        "DRUGBANK",
+        "MESH",
+        "CAS",
+        "DrugCentral",
+        "GTOPDB",
+        "HMDB",
+        "KEGG.COMPOUND",
+        "PHARMGKB.DRUG",
+        "ChemBank",
+        "PUBCHEM.SUBSTANCE",
+        "SIDER.DRUG",
+        "INCHI",
+        "INCHIKEY",
+        "BIGG.METABOLITE",
+        "KEGG.GLYCAN",
+        "KEGG.DRUG",
+        "KEGG.ENVIRON",
+        "KEGG",
+        "UMLS"
+      ],
+      "is_a": "chemical mixture"
+    },
+    "molecular mixture": {
+      "description": "A molecular mixture is a chemical mixture composed of two or more molecular entities with known concentration and stoichiometry.",
+      "id_prefixes": [
+        "CHEBI",
+        "UNII",
+        "PUBCHEM.COMPOUND",
+        "CHEMBL.COMPOUND",
+        "DRUGBANK",
+        "MESH",
+        "CAS",
+        "DrugCentral",
+        "GTOPDB",
+        "HMDB",
+        "KEGG.COMPOUND",
+        "PHARMGKB.DRUG",
+        "ChemBank",
+        "PUBCHEM.SUBSTANCE",
+        "SIDER.DRUG",
+        "INCHI",
+        "INCHIKEY",
+        "BIGG.METABOLITE",
+        "foodb.compound",
+        "KEGG.GLYCAN",
+        "KEGG.DRUG",
+        "KEGG.ENVIRON",
+        "KEGG",
+        "UMLS"
+      ],
+      "in_subset": [
+        "translator_minimal"
+      ],
+      "is_a": "chemical mixture"
+    },
+    "organism taxon": {
+      "aliases": [
+        "taxon",
+        "taxonomic classification"
+      ],
+      "description": "A classification of a set of organisms. Example instances: NCBITaxon:9606 (Homo sapiens), NCBITaxon:2 (Bacteria). Can also be used to represent strains or subspecies.",
+      "exact_mappings": [
+        "WIKIDATA:Q16521",
+        "STY:T001",
+        "bioschemas:Taxon"
+      ],
+      "id_prefixes": [
+        "NCBITaxon",
+        "MESH",
+        "UMLS"
+      ],
+      "in_subset": [
+        "model_organism_database"
+      ],
+      "is_a": "named thing",
+      "narrow_mappings": [
+        "dcid:BiologicalSpecies"
+      ],
+      "slot_usage": {
+        "has taxonomic rank": {
+          "mappings": [
+            "WIKIDATA:P105"
+          ],
+          "multivalued": false,
+          "range": "taxonomic rank"
+        }
+      },
+      "slots": [
+        "has taxonomic rank"
+      ],
+      "values_from": [
+        "NCBITaxon"
+      ]
+    },
+    "physical entity": {
+      "description": "An entity that has material reality (a.k.a. physical essence).",
+      "exact_mappings": [
+        "STY:T072"
+      ],
+      "is_a": "named thing",
+      "mixins": [
+        "physical essence"
+      ],
+      "narrow_mappings": [
+        "STY:T073"
+      ]
+    },
+    "population of individual organisms": {
+      "description": "A collection of individuals from the same taxonomic class distinguished by one or more characteristics.  Characteristics can include, but are not limited to, shared geographic location, genetics, phenotypes.",
+      "exact_mappings": [
+        "PCO:0000001",
+        "SIO:001061",
+        "STY:T098",
+        "OBI:0000181"
+      ],
+      "id_prefixes": [
+        "HANCESTRO"
+      ],
+      "in_subset": [
+        "model_organism_database"
+      ],
+      "is_a": "organismal entity",
+      "local_names": {
+        "ga4gh": "population"
+      },
+      "mixins": [
+        "subject of investigation"
+      ]
+    }
+  },
+  "version": "4.4.6"
+}

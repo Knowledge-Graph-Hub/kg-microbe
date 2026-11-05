@@ -58,49 +58,169 @@
             ],
             "xrefs": [
               {
-                "val": "KEGG:map00071"
+                "val": "KEGG:map00071",
+                "meta": {
+                  "basicPropertyValues": [
+                    {
+                      "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                      "val": "Fatty acid metabolism"
+                    }
+                  ]
+                }
               },
               {
-                "val": "KEGG:map00072"
+                "val": "KEGG:map00072",
+                "meta": {
+                  "basicPropertyValues": [
+                    {
+                      "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                      "val": "Synthesis and degradation of ketone bodies"
+                    }
+                  ]
+                }
               },
               {
-                "val": "KEGG:map00280"
+                "val": "KEGG:map00280",
+                "meta": {
+                  "basicPropertyValues": [
+                    {
+                      "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                      "val": "Valine, leucine and isoleucine degradation"
+                    }
+                  ]
+                }
               },
               {
-                "val": "KEGG:map00310"
+                "val": "KEGG:map00310",
+                "meta": {
+                  "basicPropertyValues": [
+                    {
+                      "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                      "val": "Lysine degradation"
+                    }
+                  ]
+                }
               },
               {
-                "val": "KEGG:map00362"
+                "val": "KEGG:map00362",
+                "meta": {
+                  "basicPropertyValues": [
+                    {
+                      "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                      "val": "Benzoate degradation"
+                    }
+                  ]
+                }
               },
               {
-                "val": "KEGG:map00380"
+                "val": "KEGG:map00380",
+                "meta": {
+                  "basicPropertyValues": [
+                    {
+                      "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                      "val": "Tryptophan metabolism"
+                    }
+                  ]
+                }
               },
               {
-                "val": "KEGG:map00620"
+                "val": "KEGG:map00620",
+                "meta": {
+                  "basicPropertyValues": [
+                    {
+                      "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                      "val": "Pyruvate metabolism"
+                    }
+                  ]
+                }
               },
               {
-                "val": "KEGG:map00630"
+                "val": "KEGG:map00630",
+                "meta": {
+                  "basicPropertyValues": [
+                    {
+                      "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                      "val": "Glyoxylate and dicarboxylate metabolism"
+                    }
+                  ]
+                }
               },
               {
-                "val": "KEGG:map00640"
+                "val": "KEGG:map00640",
+                "meta": {
+                  "basicPropertyValues": [
+                    {
+                      "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                      "val": "Propanoate metabolism"
+                    }
+                  ]
+                }
               },
               {
-                "val": "KEGG:map00650"
+                "val": "KEGG:map00650",
+                "meta": {
+                  "basicPropertyValues": [
+                    {
+                      "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                      "val": "Butanoate metabolism"
+                    }
+                  ]
+                }
               },
               {
-                "val": "KEGG:map00720"
+                "val": "KEGG:map00720",
+                "meta": {
+                  "basicPropertyValues": [
+                    {
+                      "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                      "val": "Carbon fixation pathways in prokaryotes"
+                    }
+                  ]
+                }
               },
               {
-                "val": "KEGG:map00900"
+                "val": "KEGG:map00900",
+                "meta": {
+                  "basicPropertyValues": [
+                    {
+                      "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                      "val": "Terpenoid backbone biosynthesis"
+                    }
+                  ]
+                }
               },
               {
-                "val": "KEGG:map01100"
+                "val": "KEGG:map01100",
+                "meta": {
+                  "basicPropertyValues": [
+                    {
+                      "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                      "val": "Metabolic pathways"
+                    }
+                  ]
+                }
               },
               {
-                "val": "KEGG:map01110"
+                "val": "KEGG:map01110",
+                "meta": {
+                  "basicPropertyValues": [
+                    {
+                      "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                      "val": "Biosynthesis of secondary metabolites"
+                    }
+                  ]
+                }
               },
               {
-                "val": "KEGG:map01120"
+                "val": "KEGG:map01120",
+                "meta": {
+                  "basicPropertyValues": [
+                    {
+                      "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                      "val": "Microbial metabolism in diverse environments"
+                    }
+                  ]
+                }
               }
             ],
             "basicPropertyValues": [
@@ -131,7 +251,15 @@
                 "val": "EC:1.1.1.34"
               },
               {
-                "val": "GO:0004420"
+                "val": "GO:0004420",
+                "meta": {
+                  "basicPropertyValues": [
+                    {
+                      "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                      "val": "molecular_function:hydroxymethylglutaryl-CoA reductase (NADPH) activity"
+                    }
+                  ]
+                }
               }
             ],
             "basicPropertyValues": [
@@ -235,7 +363,15 @@
             ],
             "xrefs": [
               {
-                "val": "GO:0033353"
+                "val": "GO:0033353",
+                "meta": {
+                  "basicPropertyValues": [
+                    {
+                      "pred": "http://www.geneontology.org/formats/oboInOwl#source",
+                      "val": "rdfmatch"
+                    }
+                  ]
+                }
               }
             ],
             "basicPropertyValues": [

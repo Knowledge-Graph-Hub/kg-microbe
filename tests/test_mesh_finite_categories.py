@@ -43,8 +43,10 @@ def prepare(tmp_path, monkeypatch):
     raw.mkdir(exist_ok=True)
     native = gzip.compress(NATIVE, mtime=0)
     (raw / "mesh2026.nt.gz").write_bytes(native)
-    model = {"version": POLICY["model_version"], "classes": POLICY["model_classes"]}
-    (raw / "biolink-model.yaml").write_text(json.dumps(model))
+    model_fixture = FIXTURE.parent / "biolink_4_4_6/mesh_finite_category_dispositions-classes.json"
+    fixture_origin = json.loads((model_fixture.parent / "origin.json").read_text())
+    assert finite.digest(model_fixture.read_bytes()) == fixture_origin["excerpts"][model_fixture.name]["sha256"]
+    shutil.copyfile(model_fixture, raw / "biolink-model.yaml")
     policy = copy.deepcopy(POLICY)
     policy["model_sha256"] = finite.digest((raw / "biolink-model.yaml").read_bytes())
     policy_path = tmp_path / "mesh_finite_category_dispositions.json"

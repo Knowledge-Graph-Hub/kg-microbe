@@ -1,0 +1,336 @@
+{
+  "checked_at": "2026-11-05T08:16:38.068683+00:00",
+  "command": "verify-ontologies",
+  "plan": {
+    "excluded": [
+      "bakta",
+      "cog",
+      "kegg"
+    ],
+    "merge_config": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/merge.yaml",
+    "merged_directory": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/merged",
+    "phases": [
+      [
+        "ontologies"
+      ],
+      [
+        "ontologies_stubs",
+        "bacdive",
+        "gtdb",
+        "madin_etal",
+        "metatraits",
+        "rhea_mappings",
+        "prego"
+      ],
+      [
+        "lpsn",
+        "mediadive",
+        "metatraits_gtdb",
+        "bactotraits",
+        "gold"
+      ],
+      [
+        "lpsn_api",
+        "microbedecoder"
+      ]
+    ],
+    "raw_directory": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw",
+    "sources": {
+      "bacdive": [
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/bacdive/nodes.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/bacdive/edges.tsv"
+      ],
+      "bactotraits": [
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/bactotraits/nodes.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/bactotraits/edges.tsv"
+      ],
+      "gold": [
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/gold/nodes.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/gold/edges.tsv"
+      ],
+      "gtdb": [
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/gtdb/nodes.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/gtdb/edges.tsv"
+      ],
+      "lpsn": [
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/lpsn/nodes.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/lpsn/edges.tsv"
+      ],
+      "lpsn_api": [
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/lpsn_api/nodes.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/lpsn_api/edges.tsv"
+      ],
+      "madin_etal": [
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/madin_etal/nodes.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/madin_etal/edges.tsv"
+      ],
+      "mediadive": [
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/mediadive/nodes.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/mediadive/edges.tsv"
+      ],
+      "metatraits": [
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/metatraits/nodes.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/metatraits/edges.tsv"
+      ],
+      "metatraits_gtdb": [
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/metatraits_gtdb/nodes.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/metatraits_gtdb/edges.tsv"
+      ],
+      "microbedecoder": [
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/microbedecoder/nodes.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/microbedecoder/edges.tsv"
+      ],
+      "ontologies": [
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies/chebi_nodes.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies/chebi_edges.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies/ec_nodes.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies/ec_edges.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies/envo_nodes.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies/envo_edges.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies/foodon_nodes.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies/foodon_edges.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies/go_nodes.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies/go_edges.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies/hp_nodes.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies/hp_edges.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies/metpo_nodes.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies/metpo_edges.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies/mondo_nodes.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies/mondo_edges.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies/ncbitaxon_nodes.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies/ncbitaxon_edges.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies/pato_nodes.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies/pato_edges.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies/ro_nodes.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies/ro_edges.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies/taxrank_nodes.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies/taxrank_edges.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies/uberon_nodes.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies/uberon_edges.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies/upa_nodes.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies/upa_edges.tsv"
+      ],
+      "ontologies_stubs": [
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies_stubs/ncit_nodes.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies_stubs/ncit_edges.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies_stubs/mesh_nodes.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies_stubs/mesh_edges.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies_stubs/bto_nodes.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies_stubs/po_nodes.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies_stubs/po_edges.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies_stubs/micro_nodes.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies_stubs/micro_edges.tsv"
+      ],
+      "prego": [
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/prego_habitat/nodes.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/prego_habitat/edges.tsv"
+      ],
+      "rhea_mappings": [
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/rhea_mappings/nodes.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/rhea_mappings/edges.tsv"
+      ]
+    },
+    "transformed_directory": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed"
+  },
+  "root": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105",
+  "status": "pass",
+  "verification": {
+    "admitted_file_count": 194,
+    "sources": {
+      "ontologies": {
+        "audits": {
+          "foodon_kernel_quarantine.tsv": {
+            "bytes": 94987,
+            "sha256": "c8dcd4fdec884a4f8f43c25efa71e8d21d6c98d19196731df18439d181019b15"
+          },
+          "go_reference_resolution.tsv": {
+            "bytes": 51121937,
+            "sha256": "f42ed541dd1467a683bbbb3743d14eaa75cc702d13f16142ef6b2d1acb8e24f8"
+          },
+          "native_relation_dispositions.tsv": {
+            "bytes": 1198494,
+            "sha256": "8f5d8ff5ab56f217a88a0d4d2d5f0c4b2b38e56096390a1263ec8499f2940b05"
+          },
+          "ontology_metadata_exclusions.tsv": {
+            "bytes": 847486,
+            "sha256": "5f87736bdaed9ed4b234a306b03fe1882a31ab8bee794011051e60d1806021f5"
+          },
+          "ontology_parent_dispositions.tsv": {
+            "bytes": 15480625,
+            "sha256": "3d6dc70d95cdcb162247c50c4805db3dd2996d5f4880a60a9704bf81316e78bb"
+          },
+          "source_canonicalization.tsv": {
+            "bytes": 25524472,
+            "sha256": "c3e9b35325164fd3d015c59e3536f67fc98454bed2a071ab8220a99c6214ce29"
+          },
+          "source_metadata_exclusions.tsv": {
+            "bytes": 62,
+            "sha256": "f0bfb347a870f737dd13e48920e6eda693bc99db3f081a4326bc76efdd538564"
+          },
+          "source_reference_resolution.tsv": {
+            "bytes": 579409,
+            "sha256": "d4eae582a3a5a5e88fa58984610c4ffaf35ccce0297bab3530b7fb61ef0c8d4d"
+          },
+          "upa_route_review.tsv": {
+            "bytes": 23692164,
+            "sha256": "347f30dec4ce3cfff617f6080095ef2a612e2f4b51f07156fbcd38b3c58107ed"
+          }
+        },
+        "finalization": {
+          "bytes": 48779,
+          "sha256": "99f0aa27a0b7653c479f1bd96af3dd248d72ac3e57cb671828ad30e3c73a34f9"
+        },
+        "graphs": {
+          "chebi_edges.tsv": {
+            "bytes": 46268462,
+            "rows": 417073,
+            "sha256": "9a74dd1a3d92a5f82fd7361c58d1ba971abde1f8ebb5c8f2ed0c77990544e1e1"
+          },
+          "chebi_nodes.tsv": {
+            "bytes": 66294335,
+            "rows": 218284,
+            "sha256": "02024ca0a29cafaac16b43a06a786edd0368a8a646b75ab1002b6239c1219f60"
+          },
+          "ec_edges.tsv": {
+            "bytes": 1260656,
+            "rows": 12021,
+            "sha256": "e82f101c54b8864e5d22cba492ef770867b5751907d533f4870b628b737c1dbe"
+          },
+          "ec_nodes.tsv": {
+            "bytes": 2065473,
+            "rows": 11835,
+            "sha256": "84418ecbd7f46a4d08e63c90d4c5f2a6bb1f3ba88b0b564d8e02053c7a1a0ca1"
+          },
+          "envo_edges.tsv": {
+            "bytes": 1215225,
+            "rows": 10824,
+            "sha256": "e7b0528ef3eafa7ec252ba04a7934c4ffb6c6b84cf9a81105b8019c8ef923d41"
+          },
+          "envo_nodes.tsv": {
+            "bytes": 1292759,
+            "rows": 6696,
+            "sha256": "ff195ed17339df155c90e3af7677f6f6c6a02a0a4b8222f86d7665c68641db0a"
+          },
+          "foodon_edges.tsv": {
+            "bytes": 6566906,
+            "rows": 55358,
+            "sha256": "6a3aaaea4bbcca4ced871f6f09b81719ceda73ffb1ba23948552df050770c035"
+          },
+          "foodon_nodes.tsv": {
+            "bytes": 7066415,
+            "rows": 39215,
+            "sha256": "9c3d62584031d908a58fb1916759588b9cdab1ac4d6135ce38d261fbf21630b5"
+          },
+          "go_edges.tsv": {
+            "bytes": 7735534,
+            "rows": 74033,
+            "sha256": "dfa175a58b2317e112b3d920aee93eab4046bb76af2a3b03b3e4f28b3a180125"
+          },
+          "go_nodes.tsv": {
+            "bytes": 15147094,
+            "rows": 38254,
+            "sha256": "23df80dbbbc80cf7a6ac411eff2265b9c0b1cc5c15793ec8495ca74fb59d6ac3"
+          },
+          "hp_edges.tsv": {
+            "bytes": 2584221,
+            "rows": 24378,
+            "sha256": "0adb692f275158d3d1d35eff6b0239315dfb7f52d320ecc7fbf7a1eb8b4a4c88"
+          },
+          "hp_nodes.tsv": {
+            "bytes": 5094035,
+            "rows": 19843,
+            "sha256": "2eedfe6bb7c1bed2a5d96a7af9837e10c155cf608ff9002d2321ce0d20e9768c"
+          },
+          "metpo_edges.tsv": {
+            "bytes": 34308,
+            "rows": 297,
+            "sha256": "57dfb68fa09db5e7b9284470df4c717b9b3f9830e151a731cbed5a1c91abf8cb"
+          },
+          "metpo_nodes.tsv": {
+            "bytes": 65883,
+            "rows": 405,
+            "sha256": "6483bee2d730fb55ab58830aa1a87106fbf2531192a4018324a8579169f48266"
+          },
+          "mondo_edges.tsv": {
+            "bytes": 12725676,
+            "rows": 113325,
+            "sha256": "49ded69d2f533c4ec8dddfa448c4f8171f2207f5fa212b1f6197b83f7b33ed84"
+          },
+          "mondo_nodes.tsv": {
+            "bytes": 17218340,
+            "rows": 59002,
+            "sha256": "137e016f3a80718ffafda5c4bcaeabbc26ea675f046c45d22f93edc1616a1777"
+          },
+          "ncbitaxon_edges.tsv": {
+            "bytes": 116396910,
+            "rows": 925267,
+            "sha256": "43ce719b5ef439cdb3b4e7c3f86033845383a3024db1ec9aa7b9aeba7f6bd178"
+          },
+          "ncbitaxon_nodes.tsv": {
+            "bytes": 104641219,
+            "rows": 924872,
+            "sha256": "f76fdbed252beeba9f48fe9780efa39afb40df3e19b036317a73fe94e6d5da56"
+          },
+          "pato_edges.tsv": {
+            "bytes": 2065504,
+            "rows": 18895,
+            "sha256": "ddd87acf3c8d9163c2b3dfa7c62f56d6dbe61f50883d3561e233214e38671743"
+          },
+          "pato_nodes.tsv": {
+            "bytes": 2341468,
+            "rows": 7870,
+            "sha256": "45734a73037daa50601d4262c704129b7488f88ed93d7d56bbc54037573747c8"
+          },
+          "ro_edges.tsv": {
+            "bytes": 9271,
+            "rows": 85,
+            "sha256": "015699c43eede656b82759b30ae68ee873b59dd910cf62306fe54bc78772b9ca"
+          },
+          "ro_nodes.tsv": {
+            "bytes": 177483,
+            "rows": 880,
+            "sha256": "94a72f26e170a9fb28e00712ecc1f09551273f18dcbb0ff749dcc5bbc365efe9"
+          },
+          "taxrank_edges.tsv": {
+            "bytes": 9228,
+            "rows": 75,
+            "sha256": "0a6d62353510003c438a82d66eb4fafd5c0be9e034ae771686512334fa81ff11"
+          },
+          "taxrank_nodes.tsv": {
+            "bytes": 9046,
+            "rows": 77,
+            "sha256": "b4ded9e2479674558e8c3100fbd07fcc27b6690ea46feb79fb159640c873973e"
+          },
+          "uberon_edges.tsv": {
+            "bytes": 8351905,
+            "rows": 74852,
+            "sha256": "1eec392d80d6da6a05988b06f2a5f406f5053b58bb70136d1e3a216da36cf416"
+          },
+          "uberon_nodes.tsv": {
+            "bytes": 8122603,
+            "rows": 25541,
+            "sha256": "23f96f9a513b081b0ef24a22d9f4c7d662489bfbac014679fe4492196f04586a"
+          },
+          "upa_edges.tsv": {
+            "bytes": 308154,
+            "rows": 2770,
+            "sha256": "b1462bdf16f434494ba84b2201f9eb7db546a355f56cad6a31816dda0ae90d7f"
+          },
+          "upa_nodes.tsv": {
+            "bytes": 398234,
+            "rows": 2049,
+            "sha256": "4cb2b06ffe73eed9a66e6c1f29e4afd3010eb9a667cbdef412e488d3e30c9fd2"
+          }
+        },
+        "ncbi_authority": {
+          "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw/taxdump.tar.gz",
+          "sha256": "8f784a79de31b8b134e5bd34b0432e33a3b776da88e7209dd5307cd1caf3a9d5"
+        },
+        "producer_marker": {
+          "bytes": 4385,
+          "sha256": "3c73c1f6450ceeb61f5772b9d92a99b0fcf34638a1aae04e4431da57cae17d60"
+        }
+      }
+    }
+  }
+}

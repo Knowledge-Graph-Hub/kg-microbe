@@ -1,0 +1,1 @@
+Synthetic immutable offline controls for exact annotation source/property/target matching. Two identical xref occurrences intentionally exercise multiplicity. Existing definition/synonym xrefs and synonym type remain explicit source-verified facts. No fixture claims to be an upstream release excerpt.

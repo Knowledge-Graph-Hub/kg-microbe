@@ -1,0 +1,30 @@
+<?xml version='1.0' encoding='utf-8'?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:owl="http://www.w3.org/2002/07/owl#" xmlns:oio="http://www.geneontology.org/formats/oboInOwl#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+  <owl:Axiom>
+    <owl:annotatedSource rdf:resource="http://example.test/Term"/>
+    <owl:annotatedProperty rdf:resource="http://purl.obolibrary.org/obo/IAO_0000115"/>
+    <owl:annotatedTarget>Definition text</owl:annotatedTarget>
+    <ns0:source xmlns:ns0="http://example.test/">Definition source</ns0:source>
+    <oio:hasDbXref>PMID:1</oio:hasDbXref>
+  </owl:Axiom>
+  <owl:Axiom>
+    <owl:annotatedSource rdf:resource="http://example.test/Term"/>
+    <owl:annotatedProperty rdf:resource="http://www.geneontology.org/formats/oboInOwl#hasExactSynonym"/>
+    <owl:annotatedTarget>Alias</owl:annotatedTarget>
+    <ns1:contributor xmlns:ns1="http://example.test/">Contributor</ns1:contributor>
+    <oio:hasDbXref>PMID:2</oio:hasDbXref>
+    <oio:hasSynonymType>http://example.test/type</oio:hasSynonymType>
+  </owl:Axiom>
+  <owl:Axiom>
+    <owl:annotatedSource rdf:resource="http://example.test/Term"/>
+    <owl:annotatedProperty rdf:resource="http://www.geneontology.org/formats/oboInOwl#hasDbXref"/>
+    <owl:annotatedTarget>TEST:1</owl:annotatedTarget>
+    <rdfs:label>Xref label</rdfs:label>
+  </owl:Axiom>
+  <owl:Axiom>
+    <owl:annotatedSource rdf:resource="http://example.test/Term"/>
+    <owl:annotatedProperty rdf:resource="http://example.test/property"/>
+    <owl:annotatedTarget>Original value</owl:annotatedTarget>
+    <ns2:license xmlns:ns2="http://example.test/">License</ns2:license>
+  </owl:Axiom>
+</rdf:RDF>

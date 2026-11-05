@@ -1,0 +1,48 @@
+{
+  "graphs": [
+    {
+      "id": "http://example.test/graph",
+      "nodes": [
+        {
+          "id": "http://example.test/Term",
+          "meta": {
+            "definition": {
+              "val": "Definition text",
+              "xrefs": [
+                "PMID:1"
+              ]
+            },
+            "synonyms": [
+              {
+                "pred": "hasExactSynonym",
+                "val": "Alias",
+                "xrefs": [
+                  "PMID:2"
+                ],
+                "synonymType": "http://example.test/type"
+              }
+            ],
+            "xrefs": [
+              {
+                "val": "TEST:1"
+              },
+              {
+                "val": "TEST:1"
+              }
+            ],
+            "basicPropertyValues": [
+              {
+                "pred": "http://example.test/property",
+                "val": "Original value"
+              }
+            ]
+          }
+        },
+        {
+          "id": "http://example.test/Other"
+        }
+      ],
+      "edges": []
+    }
+  ]
+}

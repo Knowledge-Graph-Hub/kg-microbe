@@ -147,7 +147,7 @@ def test_prior_graph_operations_invalidate_eligibility(where):
 def test_unknown_kgx_version_and_non_tsv_inputs_fall_back(monkeypatch):
     """The optimization promises the inspected locked interface, not other installed versions."""
     config = {"merged_graph": {"source": {"one": {"input": {"format": "tsv"}}}}}
-    monkeypatch.setattr(kgx_source, "version", lambda name: "2.8.0")
+    monkeypatch.setattr(kgx_source, "version", lambda name: "0.0.0-unreviewed")
     assert not kgx_source._eligible_merge_configuration(config)
     monkeypatch.setattr(kgx_source, "version", lambda name: "2.7.0")
     config["merged_graph"]["source"]["one"]["input"]["format"] = "graph"
@@ -289,7 +289,19 @@ def test_earlier_mutating_operation_is_rejected_before_merge(tmp_path, monkeypat
 
 
 @pytest.mark.parametrize(
-    "change", ["unregistered", "backend", "operations", "filters", "prefix", "missing", "inspector", "parallel"]
+    "change",
+    [
+        "unregistered",
+        "backend",
+        "operations",
+        "filters",
+        "prefix",
+        "missing",
+        "inspector",
+        "parallel",
+        "exclude_node_properties",
+        "exclude_edge_properties",
+    ],
 )
 def test_destination_eligibility_rejects_unsupported_inputs(tmp_path, monkeypatch, change):
     """Identity, full inventories and unmodified graph-reader semantics are all required."""
@@ -316,6 +328,8 @@ def test_destination_eligibility_rejects_unsupported_inputs(tmp_path, monkeypatc
             inputs["edge_filters"] = {"object_category": ["biolink:ChemicalEntity"]}
         elif change == "prefix":
             outputs["reverse_prefix_map"] = {"fixture": "https://example.org/"}
+        elif change in {"exclude_node_properties", "exclude_edge_properties"}:
+            outputs[change] = ["description"]
         elif change == "missing":
             del outputs["edge_properties"]
         elif change == "inspector":
@@ -359,6 +373,9 @@ def test_direct_writer_refuses_invalid_fields_and_closes_files(tmp_path, monkeyp
     transformer = kgx_source.ProvenancePreservingTransformer()
     previous = (object(), {"old": "node"}, {"old": "edge"})
     transformer.inspector, transformer.node_filters, transformer.edge_filters = previous
+    excluded_nodes, excluded_edges = {"name", "deprecated"}, {"lost_extension", "primary_knowledge_source"}
+    transformer.exclude_node_properties = excluded_nodes
+    transformer.exclude_edge_properties = excluded_edges
     sinks = []
     real_sink = transformer.get_sink
 
@@ -381,6 +398,8 @@ def test_direct_writer_refuses_invalid_fields_and_closes_files(tmp_path, monkeyp
         )
     assert all(sink.NFH.closed and sink.EFH.closed for sink in sinks)
     assert (transformer.inspector, transformer.node_filters, transformer.edge_filters) == previous
+    assert transformer.exclude_node_properties is excluded_nodes
+    assert transformer.exclude_edge_properties is excluded_edges
 
 
 @pytest.mark.parametrize("node_only", [False, True])
@@ -453,3 +472,42 @@ def test_arbitrary_preexisting_graph_retains_normalization_dedup(tmp_path, monke
     with (tmp_path / "arbitrary_edges.tsv").open(newline="") as stream:
         rows = list(csv.DictReader(stream, delimiter="\t", quoting=csv.QUOTE_NONE))
     assert len(rows) == 2
+
+
+@pytest.mark.parametrize("reviewed_version", ["2.7.0", "2.8.0"])
+def test_only_explicitly_reviewed_kgx_versions_are_eligible(monkeypatch, reviewed_version):
+    """The source-reviewed releases share the guarded direct-export contract."""
+    monkeypatch.setattr(kgx_source, "version", lambda name: reviewed_version)
+    config = {"merged_graph": {"source": {"one": {"input": {"format": "tsv"}}}}}
+    assert kgx_source._eligible_merge_configuration(config)
+
+
+def test_reused_exporter_does_not_inherit_prior_property_exclusions(tmp_path, monkeypatch):
+    """KGX2.8 prior-call exclusion state cannot silently remove current export metadata."""
+    from importlib.metadata import version
+
+    if version("kgx") != "2.8.0":
+        pytest.skip("The property-exclusion API was introduced in KGX2.8")
+    monkeypatch.setattr(merge_kg, "_repo_root", lambda: tmp_path)
+    baseline = configuration(tmp_path / "baseline")
+    merge_kg.load_and_merge(str(baseline))
+    expected, _ = archive_rows(baseline.parent / "out/result.tar.gz")
+    original = kgx_source.ProvenancePreservingTransformer.transform
+    restored = []
+
+    def reused(self, input_args, output_args=None, inspector=None, parallel=1):
+        """Represent prior exclusion state on the actual public graph export instance."""
+        if input_args.get("format") != "graph":
+            return original(self, input_args, output_args, inspector, parallel)
+        old_nodes, old_edges = {"description"}, {"source_record"}
+        self.exclude_node_properties, self.exclude_edge_properties = old_nodes, old_edges
+        result = original(self, input_args, output_args, inspector, parallel)
+        restored.append(self.exclude_node_properties is old_nodes and self.exclude_edge_properties is old_edges)
+        return result
+
+    monkeypatch.setattr(kgx_source.ProvenancePreservingTransformer, "transform", reused)
+    candidate = configuration(tmp_path / "reused")
+    merge_kg.load_and_merge(str(candidate))
+    actual, _ = archive_rows(candidate.parent / "out/result.tar.gz")
+    assert restored == [True]
+    assert actual == expected

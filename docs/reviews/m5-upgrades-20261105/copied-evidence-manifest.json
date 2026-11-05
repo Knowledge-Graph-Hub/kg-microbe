@@ -1,0 +1,80 @@
+{
+  "activation-independent-review.json": {
+    "bytes": 3937,
+    "copied_unchanged": true,
+    "sha256": "cbd17c844d2da70a15bca1b7132fa4a91950bce4ed18a2c9f83f50dbe609eff5",
+    "source_relative_to_run_evidence": "upgrades/activation-independent-review-03.json"
+  },
+  "failed-ontology-source-admission.json": {
+    "bytes": 10540,
+    "copied_unchanged": true,
+    "sha256": "e2370c3a20831aaf962d8eb2407f0f60b1bec6bdf4ff338a314e2155c26f5d28",
+    "source_relative_to_run_evidence": "upgrades/foodon-lifecycle/failed-source-admission.json"
+  },
+  "foodon-cold-conversion-comparison.json": {
+    "bytes": 10587,
+    "copied_unchanged": true,
+    "sha256": "b5f73c8e7f0391d39d162becad2a32e66aa40c835ce3c2480c0aae80da1fd7c7",
+    "source_relative_to_run_evidence": "upgrades/foodon-lifecycle/actual-closure-review-1/comparison.json"
+  },
+  "foodon-source-backed-retirements.json": {
+    "bytes": 1372635,
+    "copied_unchanged": true,
+    "sha256": "3bd741c4cd66fa6fddb3361c1fda497fe33ba36ddaa6c0fb9f8155fce5fce2ec",
+    "source_relative_to_run_evidence": "upgrades/foodon-lifecycle/actual-closure-review-1/source-backed-retirements.json"
+  },
+  "independent-biolink-policy-audit.json": {
+    "bytes": 15958,
+    "copied_unchanged": true,
+    "sha256": "e9ca6d8dff0465910d6f31158a4b579215dd035b2264fd9b81905a1654696697",
+    "source_relative_to_run_evidence": "upgrades/independent-biolink-policy-audit-20261105.json"
+  },
+  "independent-pin-upgrade-audit.md": {
+    "bytes": 5765,
+    "copied_unchanged": true,
+    "sha256": "fd7009f4c207439d9056fa59401757e21c5af4bf360fb298bca5fed49e544fe7",
+    "source_relative_to_run_evidence": "upgrades/independent-pin-upgrade-audit-20261105.md"
+  },
+  "independent-uberon-disposition-audit.json": {
+    "bytes": 1779,
+    "copied_unchanged": true,
+    "sha256": "00e36584f929fa465ee13eb558fa576fb62ed7cde5afeadfe5549facdd20ffa9",
+    "source_relative_to_run_evidence": "upgrades/independent-uberon-1737-disposition-audit-20261105.json"
+  },
+  "ontology-admission.json": {
+    "bytes": 17923,
+    "copied_unchanged": true,
+    "sha256": "c619d60ed893e09684862cfcf48577ce8c87f44c11e74fa0a9401de78c9575e5",
+    "source_relative_to_run_evidence": "ontology-admission.json"
+  },
+  "rhea143-current-policy-check.json": {
+    "bytes": 20793,
+    "copied_unchanged": true,
+    "sha256": "f9aefe755818cd069bb09283acd329de42c0c6dc3bc23e6a9bfc30d3e000e83e",
+    "source_relative_to_run_evidence": "upgrades/robot-rhea/current-reviewed-policy-check/result.json"
+  },
+  "rhea143-finite-legacy-assessment.json": {
+    "bytes": 8335,
+    "copied_unchanged": true,
+    "sha256": "3568b9040ff670a177b71c0e6374f0771c606f907dcbf59c1b330aae32977892",
+    "source_relative_to_run_evidence": "upgrades/robot-rhea/rhea143-review-1/rhea143-finite-legacy-assessment.json"
+  },
+  "rhea143-label-gap-delta.json": {
+    "bytes": 7840,
+    "copied_unchanged": true,
+    "sha256": "3e478b93caff3fc192d303172d9e9e9f3083022fe54612e7cd7db6beddc58a4e",
+    "source_relative_to_run_evidence": "upgrades/robot-rhea/rhea143-review-1/label-gap-delta-142-to143.json"
+  },
+  "rhea143-selected-context-comparison.json": {
+    "bytes": 98615,
+    "copied_unchanged": true,
+    "sha256": "828c0cb7effd0779c4c14de637458b60fe65e3578da6254081399c30b5d6ea8d",
+    "source_relative_to_run_evidence": "upgrades/robot-rhea/rhea143-review-1/complete-selected-context-comparison.json"
+  },
+  "uberon-1737-disposition.json": {
+    "bytes": 4579,
+    "copied_unchanged": true,
+    "sha256": "135f5acac2897b470b34cd834844136ebe026ca47804516247ca16700acf6ace",
+    "source_relative_to_run_evidence": "upgrades/robot-bindings/uberon-1737-disposition.json"
+  }
+}

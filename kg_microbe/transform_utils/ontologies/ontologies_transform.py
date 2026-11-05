@@ -31,7 +31,14 @@ from kg_microbe.transform_utils.constants import (
     MONDO_XREFS_FILEPATH,
     NAME_COLUMN,
     NCBITAXON_PREFIX,
+    NOTES_COLUMN,
     OBJECT_COLUMN,
+    OBO_ANNOTATIONS_COLUMN,
+    OBO_AXIOM_EVIDENCE_COLUMN,
+    OBO_COMMENT_COLUMN,
+    OBO_SEE_ALSO_COLUMN,
+    OBO_SOURCE_ANNOTATION_COLUMN,
+    OBO_TERM_TRACKER_COLUMN,
     ONTOLOGIES,
     ONTOLOGIES_XREFS_DIR,
     PART_OF_PREDICATE,
@@ -210,8 +217,9 @@ def _run_kgx_transform(*, inputs, input_format, output, output_format) -> None:
         raise ValueError("Ontology conversion requires an uncompressed .json input")
     prepare_kgx()
     from kgx.sink.tsv_sink import DEFAULT_EDGE_COLUMNS, DEFAULT_NODE_COLUMNS, TsvSink
+    from kgx.source.obograph_source import ObographSource
     from kgx.transformer import Transformer
-    from kgx.utils.kgx_utils import GraphEntityType, knowledge_provenance_properties
+    from kgx.utils.kgx_utils import GraphEntityType, build_export_row, knowledge_provenance_properties
 
     # KGX's default streaming node columns omit several OBO reader outputs.
     node_columns = set(DEFAULT_NODE_COLUMNS) | {
@@ -233,15 +241,20 @@ def _run_kgx_transform(*, inputs, input_format, output, output_format) -> None:
     }
     allowed_raw = {"sub", "pred", "obj"} | base_edge_columns | optional_edge_columns
     present = set()
-    # Preserve absent-vs-blank semantics: declaring empty KL/AT/PKS columns
-    # would suppress the existing ontology metadata defaults/legacy rename.
-    with source.open("rb") as stream:
-        for edge in ijson.items(stream, "graphs.item.edges.item"):
-            unknown = set(edge) - allowed_raw
-            if unknown:
-                raise ValueError(f"Undeclared OBOJSON edge fields in {source}: {sorted(unknown)}")
-            present.update(edge)
-    edge_columns = base_edge_columns | (present & optional_edge_columns)
+    annotation_columns = set()
+    reviewed_annotation_columns = {
+        OBO_ANNOTATIONS_COLUMN,
+        OBO_AXIOM_EVIDENCE_COLUMN,
+        OBO_COMMENT_COLUMN,
+        OBO_SEE_ALSO_COLUMN,
+        OBO_TERM_TRACKER_COLUMN,
+        NOTES_COLUMN,
+        OBO_SOURCE_ANNOTATION_COLUMN,
+        PUBLICATIONS_COLUMN,
+        XREF_COLUMN,
+        KNOWLEDGE_LEVEL_COLUMN,
+        AGENT_TYPE_COLUMN,
+    }
 
     def inspect_columns(kind, record):
         """Abort before a streaming sink could silently discard an emitted property."""
@@ -250,15 +263,107 @@ def _run_kgx_transform(*, inputs, input_format, output, output_format) -> None:
         if unknown:
             raise ValueError(f"Undeclared KGX {kind.value} fields in {source}: {sorted(unknown)}")
 
+    class MetadataPreservingObographSource(ObographSource):
+        """Retain the source axiom payload alongside KGX's reviewed derived fields."""
+
+        def parse_edge_meta(self, meta):
+            """Keep heterogeneous native evidence values as text, never inferred evidence entities."""
+            parser = getattr(super(), "parse_edge_meta", None)
+            if parser is None:
+                # KGX 2.7 has no annotation projection API. Its source payload
+                # remains intact in meta; do not backport inferred semantics.
+                return {}
+            properties = parser(meta)
+            if "has_evidence" in properties:
+                values = [
+                    item["val"]
+                    for item in meta.get("basicPropertyValues", [])
+                    if item.get("pred") == "http://www.geneontology.org/formats/oboInOwl#evidence"
+                    and item.get("val") is not None
+                ]
+                if not values:
+                    raise ValueError("KGX evidence projection lacks its reviewed native annotation")
+                # The reviewed UBERON values include 'definitional', 'cjm' and
+                # 'NAS', as well as citation-shaped values. The source property
+                # does not establish Biolink InformationContentEntity objects.
+                properties.pop("has_evidence")
+                properties[OBO_AXIOM_EVIDENCE_COLUMN] = json.dumps(values, ensure_ascii=False, separators=(",", ":"))
+            if OBO_ANNOTATIONS_COLUMN in properties:
+                properties[OBO_ANNOTATIONS_COLUMN] = json.dumps(
+                    properties[OBO_ANNOTATIONS_COLUMN], ensure_ascii=False, separators=(",", ":")
+                )
+            return properties
+
+        def read_edge(self, edge):
+            """KGX 2.8 expands some annotations but must not discard the original metadata."""
+            record = super().read_edge(edge)
+            if record is not None:
+                if "meta" in edge:
+                    record[-1]["meta"] = edge["meta"]
+                # A new annotation-derived header must not blank unrelated
+                # assertions. Existing raw columns, including explicit blanks,
+                # retain the established absent-versus-blank contract.
+                for column, default in (
+                    (KNOWLEDGE_LEVEL_COLUMN, KNOWLEDGE_ASSERTION),
+                    (AGENT_TYPE_COLUMN, MANUAL_AGENT),
+                ):
+                    if column in annotation_columns and column not in present:
+                        record[-1].setdefault(column, default)
+            return record
+
+    class AnnotationPreservingTsvSink(TsvSink):
+        """Keep structured annotation escapes intact at the first TSV serialization."""
+
+        def write_edge(self, record):
+            """Retain native export behavior except for the reviewed exact-text payloads."""
+            row = build_export_row(record, list_delimiter=self.list_delimiter)
+            # Native KGX removes backslash-escaped quotes. That would corrupt
+            # JSON strings and the original metadata representation. These
+            # payloads already escape embedded controls as literal text.
+            for column in ("meta", OBO_ANNOTATIONS_COLUMN, OBO_AXIOM_EVIDENCE_COLUMN):
+                if column in record:
+                    value = str(record[column])
+                    if any(character in value for character in "\t\r\n\x00"):
+                        raise ValueError(f"Unencoded control in native axiom payload {column}")
+                    row[column] = value
+            self.EFH.write(self.delimiter.join(str(row.get(column, "")) for column in self.ordered_edge_columns) + "\n")
+
     with local_prefix_context():
         transformer = Transformer(stream=True)
+        native_source = MetadataPreservingObographSource(transformer)
+        parse_annotations = getattr(native_source, "parse_edge_meta", None)
+        # Discover native emitted fields before opening output, using the same
+        # pinned reader and local prefix context as conversion. A closed set
+        # permits reviewed projections only; no arbitrary field admission.
+        with source.open("rb") as stream:
+            for edge in ijson.items(stream, "graphs.item.edges.item"):
+                unknown = set(edge) - allowed_raw
+                if unknown:
+                    raise ValueError(f"Undeclared OBOJSON edge fields in {source}: {sorted(unknown)}")
+                present.update(edge)
+                if parse_annotations is not None and "meta" in edge:
+                    derived = parse_annotations(edge["meta"])
+                    unknown = set(derived) - reviewed_annotation_columns
+                    if unknown:
+                        raise ValueError(f"Undeclared KGX edge annotation fields in {source}: {sorted(unknown)}")
+                    annotation_columns.update(derived)
+        edge_columns = base_edge_columns | (present & optional_edge_columns) | annotation_columns
+        original_get_source = transformer.get_source
+
+        def owned_source(source_format):
+            """Use the metadata adapter only for this converter's OBOJSON reader."""
+            if source_format == "obojson":
+                return native_source
+            return original_get_source(source_format)
+
+        transformer.get_source = owned_source
         owned_sinks = []
 
         def capture_sink(**sink_args):
             """Capture this instance's native sink before initialization can open either handle."""
             if sink_args.get("format") != "tsv" or sink_args.get("compression"):
                 raise ValueError("Ontology conversion requires an uncompressed TSV sink")
-            sink = TsvSink.__new__(TsvSink)
+            sink = AnnotationPreservingTsvSink.__new__(AnnotationPreservingTsvSink)
             owned_sinks.append(sink)
             TsvSink.__init__(sink, transformer, **sink_args)
             return sink

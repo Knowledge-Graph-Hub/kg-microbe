@@ -111,7 +111,7 @@ _SOURCE_MAP_LOCK = RLock()
 # register the resulting object. Empty destination operations alone say nothing
 # about earlier graph mutations. Never attach a reusable permission to a graph.
 _DIRECT_EXPORT = ContextVar("kgm_direct_export", default=None)
-_DIRECT_EXPORT_KGX_VERSION = "2.7.0"
+_DIRECT_EXPORT_KGX_VERSIONS = frozenset({"2.7.0", "2.8.0"})
 _RELATION_IRI_PREFIXES = {
     "http://www.w3.org/2000/01/rdf-schema#": "rdfs:",
     "http://www.w3.org/1999/02/22-rdf-syntax-ns#": "rdf:",
@@ -236,7 +236,7 @@ def merge_assertion_graphs(graphs, preserve=True):
 
 
 def _read_only_operations(operations):
-    """Permit only the inspected KGX 2.7 statistics operation, never arbitrary callbacks."""
+    """Permit only the inspected KGX statistics operation, never arbitrary callbacks."""
     return isinstance(operations, list) and all(
         isinstance(operation, dict)
         and set(operation) <= {"name", "args"}
@@ -254,7 +254,7 @@ def _eligible_merge_configuration(config, selected_sources=None):
         # Optimization is optional. A usable imported KGX may lack readable
         # distribution metadata; keep its existing path, not an untested fast one.
         return False
-    if installed_version != _DIRECT_EXPORT_KGX_VERSION:
+    if installed_version not in _DIRECT_EXPORT_KGX_VERSIONS:
         return False
     graph = config.get("merged_graph", {})
     sources = graph.get("source", {})
@@ -623,6 +623,16 @@ class ProvenancePreservingTransformer(Transformer):
         sink = self.get_sink(**output_args)
         previous = self.inspector, self.node_filters, self.edge_filters
         self.inspector, self.node_filters, self.edge_filters = None, {}, {}
+        # KGX 2.8 resets output-property exclusions on each normal transform.
+        # The eligible direct path permits no exclusion arguments, so inherited
+        # state from an earlier call must not remove data from this export.
+        exclusions = {
+            name: getattr(self, name)
+            for name in ("exclude_node_properties", "exclude_edge_properties")
+            if hasattr(self, name)
+        }
+        for name in exclusions:
+            setattr(self, name, set())
         try:
             with merge_phase("export-nodes") as nodes, merge_phase("export-edges") as edges:
 
@@ -639,6 +649,8 @@ class ProvenancePreservingTransformer(Transformer):
             self._infores_catalog.update(source.get_infores_catalog())
         finally:
             self.inspector, self.node_filters, self.edge_filters = previous
+            for name, values in exclusions.items():
+                setattr(self, name, values)
             # KGX's normal transform does not close a failed sink. These are
             # private loose files; never package/publish a partially written pair.
             sink.NFH.close()

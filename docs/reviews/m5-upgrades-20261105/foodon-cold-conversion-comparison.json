@@ -1,0 +1,172 @@
+{
+  "schema_version": 1,
+  "issue": 1745,
+  "status": "passed",
+  "scope": "Read-only current implementation lifecycle and actual source comparison, not source completion or release admission",
+  "utc": "2026-11-05T07:41:15.121644+00:00",
+  "inputs_and_code": {
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe/data/raw/foodon.json": {
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe/data/raw/foodon.json",
+      "sha256": "8dfba179356a84d8ddad4087dc1fa89a76f6511456c298b9dd7b09df9eb6d853",
+      "bytes": 33925004
+    },
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/upgrades/robot-conversions/foodon.json": {
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/upgrades/robot-conversions/foodon.json",
+      "sha256": "55fc1392b6852559295eab62a9ae01948ed3989ab4fc1d98550ca3f35565a9ab",
+      "bytes": 43822440
+    },
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/upgrades/robot-conversions/foodon.owl": {
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/upgrades/robot-conversions/foodon.owl",
+      "sha256": "1e11fc50283c6498697a7aca9606c9d914f1cda71cc5510e006d949c32df7db0",
+      "bytes": 40429965
+    },
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw/foodon.json": {
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw/foodon.json",
+      "sha256": "55fc1392b6852559295eab62a9ae01948ed3989ab4fc1d98550ca3f35565a9ab",
+      "bytes": 43822440
+    },
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw/foodon.owl": {
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw/foodon.owl",
+      "sha256": "1e11fc50283c6498697a7aca9606c9d914f1cda71cc5510e006d949c32df7db0",
+      "bytes": 40429965
+    },
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/upgrades/foodon-lifecycle/verify-live-closure.py": {
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/upgrades/foodon-lifecycle/verify-live-closure.py",
+      "sha256": "cf1c651de900ecbcfe86318628fae3f263c482884912e0fea8fbeacb6e8c1c4b",
+      "bytes": 6934
+    },
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/kg_microbe/utils/foodon_kernel_quarantine.py": {
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/kg_microbe/utils/foodon_kernel_quarantine.py",
+      "sha256": "78181cc24ee58d2591c67c6390691bb5f41a3e318f009f8551a671c4df10b6ec",
+      "bytes": 12857
+    },
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/kg_microbe/utils/foodon_classification.py": {
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/kg_microbe/utils/foodon_classification.py",
+      "sha256": "023da48eda421247c4f846b095a741728fae48b0d32ad5dc33bda79f8f314cb0",
+      "bytes": 10281
+    },
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/kg_microbe/utils/foodon_kernel_producer.py": {
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/kg_microbe/utils/foodon_kernel_producer.py",
+      "sha256": "28ff99aa82585bc719c414f7ad96976de4d4f7a5ac6761b49fbfe6473322cfde",
+      "bytes": 15987
+    },
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/kg_microbe/utils/source_category_authority.py": {
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/kg_microbe/utils/source_category_authority.py",
+      "sha256": "e7d864110bc2c1992087a022cac68fcc8c27c6d8673645e77668e27f129e863f",
+      "bytes": 11230
+    },
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/kg_microbe/utils/ontology_metadata.py": {
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/kg_microbe/utils/ontology_metadata.py",
+      "sha256": "5ea4dfd0a409ac72ee66eecafe20f36c5a3610877781a8ed64994b63fe8da0a7",
+      "bytes": 4280
+    },
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/kg_microbe/utils/graph_canonicalization.py": {
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/kg_microbe/utils/graph_canonicalization.py",
+      "sha256": "ab865e5433b4650ec96d4ed24c29c9e8d2a3230b8257e3ed6b4d79f2d191311b",
+      "bytes": 5114
+    },
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/kg_microbe/utils/foodon_anatomical_categories.py": {
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/kg_microbe/utils/foodon_anatomical_categories.py",
+      "sha256": "27d30fed998c860912ba1aa6b9a93f6e06e96ef6f82ca87a37c185ce10d4d9df",
+      "bytes": 4441
+    },
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/kg_microbe/utils/ontology_parent_quarantine.py": {
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/kg_microbe/utils/ontology_parent_quarantine.py",
+      "sha256": "868fe73c8201227c595792dd8b6cef84c662ffb0ccd63ab9174029a1f90acb6c",
+      "bytes": 31640
+    },
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/kg_microbe/transform_utils/ontologies/ontologies_transform.py": {
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/kg_microbe/transform_utils/ontologies/ontologies_transform.py",
+      "sha256": "b7f41f52def321ad992c7274fd2efc0c98d2a3fc38717ac27de3137efce418e3",
+      "bytes": 115042
+    },
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/tests/test_foodon_cold_conversion.py": {
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/tests/test_foodon_cold_conversion.py",
+      "sha256": "dc2ea3159544103e96cc10e4fa6c05f612c928380b63781d1ec31e972f09f2c8",
+      "bytes": 7788
+    },
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/mappings/foodon_kernel_quarantine.json": {
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/mappings/foodon_kernel_quarantine.json",
+      "sha256": "6cf8a8eb119e2a792bb24346ee4adc43940f2f69098e121d2af932ed249eb936",
+      "bytes": 155462
+    },
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/mappings/foodon_anatomical_category_dispositions.json": {
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/mappings/foodon_anatomical_category_dispositions.json",
+      "sha256": "41628b812a54236dcbd496d1a05dcfbf39541639ee5ee6a4780d4f7f425fd8f4",
+      "bytes": 2119
+    },
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/mappings/ontology_parent_dispositions.json": {
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/mappings/ontology_parent_dispositions.json",
+      "sha256": "659a5b9e55bbdca79a7a8854f57a2c728060675aa4610526fb2b78315a1c3a95",
+      "bytes": 2000614
+    },
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/mappings/foodon_model_dispositions.tsv": {
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/mappings/foodon_model_dispositions.tsv",
+      "sha256": "46c5a2a7c0cfe395d5698d2b4392ecb0af81d2433a72273dbb1cf61858eff152",
+      "bytes": 2021
+    }
+  },
+  "checks": {
+    "native_category_maps_equal": true,
+    "category_maps_equal_with_previously_reviewed_current_anatomy_overlay": true,
+    "organism_closures_equal": true,
+    "kernel_delta_exact_frozen_22": true,
+    "finite_complete_json_evidence_unchanged": true,
+    "finite_complete_owl_evidence_unchanged": true,
+    "all_retired_declarations_source_backed": true,
+    "all_removed_incidence_source_backed": true,
+    "strict_classifier_producer_transform_unchanged": true
+  },
+  "counts": {
+    "retired_nodes": 607,
+    "retired_node_types": {
+      "CLASS": 587,
+      "PROPERTY": 1,
+      "untyped": 19
+    },
+    "retired_incident_edges": 28,
+    "kernel_category_cohort": 22,
+    "live_category_mapping": 28374,
+    "anatomical_decisions": 24,
+    "retained_organism_closure": 9342
+  },
+  "closure_identity": {
+    "old_organism": "a1d588949ed86d713a936d5a686c7304876f15864466856dc198073beed7da57",
+    "candidate_organism": "a1d588949ed86d713a936d5a686c7304876f15864466856dc198073beed7da57",
+    "old_categories": "09afa8dbe17a0adf86128f16f13b10ef73584dcf9e79fad6d8e4f816466f5d11",
+    "candidate_categories": "09afa8dbe17a0adf86128f16f13b10ef73584dcf9e79fad6d8e4f816466f5d11",
+    "old_categories_with_anatomy": "2585d35dd3bce4128e5ac3b19bfd4e3b49ffd6d8187b5301e7a06e4fceb0b063",
+    "candidate_categories_with_anatomy": "2585d35dd3bce4128e5ac3b19bfd4e3b49ffd6d8187b5301e7a06e4fceb0b063"
+  },
+  "kernel_delta": [
+    "FOODON:00005106",
+    "FOODON:00005107",
+    "FOODON:00005108",
+    "FOODON:00005109",
+    "FOODON:00005119",
+    "FOODON:00005120",
+    "FOODON:00005121",
+    "FOODON:00005122",
+    "FOODON:00005123",
+    "FOODON:00005124",
+    "FOODON:00005125",
+    "FOODON:00005126",
+    "FOODON:00005127",
+    "FOODON:00005128",
+    "FOODON:00005129",
+    "FOODON:00005130",
+    "FOODON:00005131",
+    "FOODON:00005132",
+    "FOODON:00005133",
+    "FOODON:00005134",
+    "FOODON:00005135",
+    "FOODON:00005136"
+  ],
+  "retirement_evidence": {
+    "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/upgrades/foodon-lifecycle/actual-closure-review-1/source-backed-retirements.json",
+    "sha256": "3bd741c4cd66fa6fddb3361c1fda497fe33ba36ddaa6c0fb9f8155fce5fce2ec",
+    "bytes": 1372635
+  },
+  "source_bytes_preserved": true,
+  "prior_acceptance_receipts_unchanged": true
+}

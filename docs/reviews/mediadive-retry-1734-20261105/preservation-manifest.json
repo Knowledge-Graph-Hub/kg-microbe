@@ -1,0 +1,355 @@
+{
+  "status": "preserved_before_retry",
+  "original_files": [
+    {
+      "path": "data/raw/mediadive/solutions.json",
+      "bytes": 10469524,
+      "sha256": "5b136571fa52fb2a698069d6ce7117717bb6eb4c572fa3b9a6af167e7d054e63"
+    },
+    {
+      "path": "data/raw/mediadive/mediadive_download.log",
+      "bytes": 392851,
+      "sha256": "ce4510e1ebc357ae8629a56fd769d4825320e99fafad1135b6a8207560f9ae35"
+    },
+    {
+      "path": "data/raw/mediadive/media_detailed.json",
+      "bytes": 20814573,
+      "sha256": "82a7d02a5a85378d6acaa535c5d4e07a2fe3ede5c5cb743bee0892eed738bb81"
+    },
+    {
+      "path": "data/raw/mediadive/media_strains.json",
+      "bytes": 12415383,
+      "sha256": "cc216f49a6a4499b593664b7265ed6c7f4d801dbb4c327bef5bac7adba69cb15"
+    },
+    {
+      "path": "data/raw/mediadive/compounds.json",
+      "bytes": 228388,
+      "sha256": "5401db0bc697249c9b2b0ad0b950fd3c2b7629f0cdd10c7feaf1e40b0a3a4729"
+    },
+    {
+      "path": "data/raw/mediadive/mediadive_bulk_cache.sqlite-shm",
+      "bytes": 32768,
+      "sha256": "fd4c9fda9cd3f9ae7c962b0ddf37232294d55580e1aa165aa06129b8549389eb"
+    },
+    {
+      "path": "data/raw/mediadive/mediadive_bulk_cache.sqlite-wal",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "data/raw/mediadive/mediadive_bulk_cache.sqlite",
+      "bytes": 53895168,
+      "sha256": "65a2424cd768be0c34f07409734bfe270ecb9e0eac27026f1fbaee8be7d0383f"
+    },
+    {
+      "path": "data/rebuild-evidence/20261105/mediadive/attempts/sequence-1/full/selected-media.json",
+      "bytes": 998810,
+      "sha256": "3c85c7eacef652883ae3cdb2c3a79808ab7bb71bb02bf54a04cb67432b5027eb"
+    },
+    {
+      "path": "data/rebuild-evidence/20261105/mediadive/attempts/sequence-1/full/http-attempts.jsonl",
+      "bytes": 2936614,
+      "sha256": "5baef7feeb0ba86d1264e9c4fc5a7c3f1700cfd5c5ea5cc2bf5351befd3a9022"
+    },
+    {
+      "path": "data/rebuild-evidence/20261105/mediadive/attempts/sequence-1/full/failure-accounting.json",
+      "bytes": 106323,
+      "sha256": "879fced789621230f97daac5d324c39a2dba2fbd1ed6f662f6d430d1dd05a714"
+    },
+    {
+      "path": "data/rebuild-evidence/20261105/mediadive/attempts/sequence-1/full/receipt.json",
+      "bytes": 43375,
+      "sha256": "d792f4def31b55e3e2aca041e4c1d45ef0f86e2b20427e7be78e84d168ffa840"
+    },
+    {
+      "path": "data/rebuild-evidence/20261105/mediadive/attempts/sequence-1/full/artifacts/solutions.json",
+      "bytes": 10469524,
+      "sha256": "5b136571fa52fb2a698069d6ce7117717bb6eb4c572fa3b9a6af167e7d054e63"
+    },
+    {
+      "path": "data/rebuild-evidence/20261105/mediadive/attempts/sequence-1/full/artifacts/mediadive_download.log",
+      "bytes": 392851,
+      "sha256": "ce4510e1ebc357ae8629a56fd769d4825320e99fafad1135b6a8207560f9ae35"
+    },
+    {
+      "path": "data/rebuild-evidence/20261105/mediadive/attempts/sequence-1/full/artifacts/media_detailed.json",
+      "bytes": 20814573,
+      "sha256": "82a7d02a5a85378d6acaa535c5d4e07a2fe3ede5c5cb743bee0892eed738bb81"
+    },
+    {
+      "path": "data/rebuild-evidence/20261105/mediadive/attempts/sequence-1/full/artifacts/media_strains.json",
+      "bytes": 12415383,
+      "sha256": "cc216f49a6a4499b593664b7265ed6c7f4d801dbb4c327bef5bac7adba69cb15"
+    },
+    {
+      "path": "data/rebuild-evidence/20261105/mediadive/attempts/sequence-1/full/artifacts/compounds.json",
+      "bytes": 228388,
+      "sha256": "5401db0bc697249c9b2b0ad0b950fd3c2b7629f0cdd10c7feaf1e40b0a3a4729"
+    },
+    {
+      "path": "data/rebuild-evidence/20261105/mediadive/attempts/sequence-1/full/artifacts/mediadive_bulk_cache.sqlite",
+      "bytes": 53895168,
+      "sha256": "3e53107cc92dd3c6dd09be1064f7be70e53e254711bc9e3f2dcc30bf3b555f38"
+    }
+  ],
+  "protected_ontology_and_review_artifacts": [
+    {
+      "path": "docs/reviews/m5-upgrades-20261105/activation-independent-review.json",
+      "sha256": "cbd17c844d2da70a15bca1b7132fa4a91950bce4ed18a2c9f83f50dbe609eff5",
+      "bytes": 3937
+    },
+    {
+      "path": "docs/reviews/m5-upgrades-20261105/failed-ontology-source-admission.json",
+      "sha256": "e2370c3a20831aaf962d8eb2407f0f60b1bec6bdf4ff338a314e2155c26f5d28",
+      "bytes": 10540
+    },
+    {
+      "path": "docs/reviews/m5-upgrades-20261105/foodon-cold-conversion-comparison.json",
+      "sha256": "b5f73c8e7f0391d39d162becad2a32e66aa40c835ce3c2480c0aae80da1fd7c7",
+      "bytes": 10587
+    },
+    {
+      "path": "docs/reviews/m5-upgrades-20261105/foodon-source-backed-retirements.json",
+      "sha256": "3bd741c4cd66fa6fddb3361c1fda497fe33ba36ddaa6c0fb9f8155fce5fce2ec",
+      "bytes": 1372635
+    },
+    {
+      "path": "docs/reviews/m5-upgrades-20261105/independent-biolink-policy-audit.json",
+      "sha256": "e9ca6d8dff0465910d6f31158a4b579215dd035b2264fd9b81905a1654696697",
+      "bytes": 15958
+    },
+    {
+      "path": "docs/reviews/m5-upgrades-20261105/independent-pin-upgrade-audit.md",
+      "sha256": "fd7009f4c207439d9056fa59401757e21c5af4bf360fb298bca5fed49e544fe7",
+      "bytes": 5765
+    },
+    {
+      "path": "docs/reviews/m5-upgrades-20261105/independent-uberon-disposition-audit.json",
+      "sha256": "00e36584f929fa465ee13eb558fa576fb62ed7cde5afeadfe5549facdd20ffa9",
+      "bytes": 1779
+    },
+    {
+      "path": "docs/reviews/m5-upgrades-20261105/ontology-admission.json",
+      "sha256": "c619d60ed893e09684862cfcf48577ce8c87f44c11e74fa0a9401de78c9575e5",
+      "bytes": 17923
+    },
+    {
+      "path": "docs/reviews/m5-upgrades-20261105/rhea143-current-policy-check.json",
+      "sha256": "f9aefe755818cd069bb09283acd329de42c0c6dc3bc23e6a9bfc30d3e000e83e",
+      "bytes": 20793
+    },
+    {
+      "path": "docs/reviews/m5-upgrades-20261105/rhea143-finite-legacy-assessment.json",
+      "sha256": "3568b9040ff670a177b71c0e6374f0771c606f907dcbf59c1b330aae32977892",
+      "bytes": 8335
+    },
+    {
+      "path": "docs/reviews/m5-upgrades-20261105/rhea143-label-gap-delta.json",
+      "sha256": "3e478b93caff3fc192d303172d9e9e9f3083022fe54612e7cd7db6beddc58a4e",
+      "bytes": 7840
+    },
+    {
+      "path": "docs/reviews/m5-upgrades-20261105/rhea143-selected-context-comparison.json",
+      "sha256": "828c0cb7effd0779c4c14de637458b60fe65e3578da6254081399c30b5d6ea8d",
+      "bytes": 98615
+    },
+    {
+      "path": "docs/reviews/m5-upgrades-20261105/uberon-1737-disposition.json",
+      "sha256": "135f5acac2897b470b34cd834844136ebe026ca47804516247ca16700acf6ace",
+      "bytes": 4579
+    },
+    {
+      "path": "data/transformed/ontologies/chebi_edges.tsv",
+      "sha256": "9a74dd1a3d92a5f82fd7361c58d1ba971abde1f8ebb5c8f2ed0c77990544e1e1",
+      "bytes": 46268462
+    },
+    {
+      "path": "data/transformed/ontologies/chebi_nodes.tsv",
+      "sha256": "02024ca0a29cafaac16b43a06a786edd0368a8a646b75ab1002b6239c1219f60",
+      "bytes": 66294335
+    },
+    {
+      "path": "data/transformed/ontologies/ec_edges.tsv",
+      "sha256": "e82f101c54b8864e5d22cba492ef770867b5751907d533f4870b628b737c1dbe",
+      "bytes": 1260656
+    },
+    {
+      "path": "data/transformed/ontologies/ec_nodes.tsv",
+      "sha256": "84418ecbd7f46a4d08e63c90d4c5f2a6bb1f3ba88b0b564d8e02053c7a1a0ca1",
+      "bytes": 2065473
+    },
+    {
+      "path": "data/transformed/ontologies/envo_edges.tsv",
+      "sha256": "e7b0528ef3eafa7ec252ba04a7934c4ffb6c6b84cf9a81105b8019c8ef923d41",
+      "bytes": 1215225
+    },
+    {
+      "path": "data/transformed/ontologies/envo_nodes.tsv",
+      "sha256": "ff195ed17339df155c90e3af7677f6f6c6a02a0a4b8222f86d7665c68641db0a",
+      "bytes": 1292759
+    },
+    {
+      "path": "data/transformed/ontologies/foodon_edges.tsv",
+      "sha256": "6a3aaaea4bbcca4ced871f6f09b81719ceda73ffb1ba23948552df050770c035",
+      "bytes": 6566906
+    },
+    {
+      "path": "data/transformed/ontologies/foodon_nodes.tsv",
+      "sha256": "9c3d62584031d908a58fb1916759588b9cdab1ac4d6135ce38d261fbf21630b5",
+      "bytes": 7066415
+    },
+    {
+      "path": "data/transformed/ontologies/go_edges.tsv",
+      "sha256": "dfa175a58b2317e112b3d920aee93eab4046bb76af2a3b03b3e4f28b3a180125",
+      "bytes": 7735534
+    },
+    {
+      "path": "data/transformed/ontologies/go_nodes.tsv",
+      "sha256": "23df80dbbbc80cf7a6ac411eff2265b9c0b1cc5c15793ec8495ca74fb59d6ac3",
+      "bytes": 15147094
+    },
+    {
+      "path": "data/transformed/ontologies/hp_edges.tsv",
+      "sha256": "0adb692f275158d3d1d35eff6b0239315dfb7f52d320ecc7fbf7a1eb8b4a4c88",
+      "bytes": 2584221
+    },
+    {
+      "path": "data/transformed/ontologies/hp_nodes.tsv",
+      "sha256": "2eedfe6bb7c1bed2a5d96a7af9837e10c155cf608ff9002d2321ce0d20e9768c",
+      "bytes": 5094035
+    },
+    {
+      "path": "data/transformed/ontologies/metpo_edges.tsv",
+      "sha256": "57dfb68fa09db5e7b9284470df4c717b9b3f9830e151a731cbed5a1c91abf8cb",
+      "bytes": 34308
+    },
+    {
+      "path": "data/transformed/ontologies/metpo_nodes.tsv",
+      "sha256": "6483bee2d730fb55ab58830aa1a87106fbf2531192a4018324a8579169f48266",
+      "bytes": 65883
+    },
+    {
+      "path": "data/transformed/ontologies/mondo_edges.tsv",
+      "sha256": "49ded69d2f533c4ec8dddfa448c4f8171f2207f5fa212b1f6197b83f7b33ed84",
+      "bytes": 12725676
+    },
+    {
+      "path": "data/transformed/ontologies/mondo_nodes.tsv",
+      "sha256": "137e016f3a80718ffafda5c4bcaeabbc26ea675f046c45d22f93edc1616a1777",
+      "bytes": 17218340
+    },
+    {
+      "path": "data/transformed/ontologies/ncbitaxon_edges.tsv",
+      "sha256": "43ce719b5ef439cdb3b4e7c3f86033845383a3024db1ec9aa7b9aeba7f6bd178",
+      "bytes": 116396910
+    },
+    {
+      "path": "data/transformed/ontologies/ncbitaxon_nodes.tsv",
+      "sha256": "f76fdbed252beeba9f48fe9780efa39afb40df3e19b036317a73fe94e6d5da56",
+      "bytes": 104641219
+    },
+    {
+      "path": "data/transformed/ontologies/pato_edges.tsv",
+      "sha256": "ddd87acf3c8d9163c2b3dfa7c62f56d6dbe61f50883d3561e233214e38671743",
+      "bytes": 2065504
+    },
+    {
+      "path": "data/transformed/ontologies/pato_nodes.tsv",
+      "sha256": "45734a73037daa50601d4262c704129b7488f88ed93d7d56bbc54037573747c8",
+      "bytes": 2341468
+    },
+    {
+      "path": "data/transformed/ontologies/ro_edges.tsv",
+      "sha256": "015699c43eede656b82759b30ae68ee873b59dd910cf62306fe54bc78772b9ca",
+      "bytes": 9271
+    },
+    {
+      "path": "data/transformed/ontologies/ro_nodes.tsv",
+      "sha256": "94a72f26e170a9fb28e00712ecc1f09551273f18dcbb0ff749dcc5bbc365efe9",
+      "bytes": 177483
+    },
+    {
+      "path": "data/transformed/ontologies/taxrank_edges.tsv",
+      "sha256": "0a6d62353510003c438a82d66eb4fafd5c0be9e034ae771686512334fa81ff11",
+      "bytes": 9228
+    },
+    {
+      "path": "data/transformed/ontologies/taxrank_nodes.tsv",
+      "sha256": "b4ded9e2479674558e8c3100fbd07fcc27b6690ea46feb79fb159640c873973e",
+      "bytes": 9046
+    },
+    {
+      "path": "data/transformed/ontologies/uberon_edges.tsv",
+      "sha256": "1eec392d80d6da6a05988b06f2a5f406f5053b58bb70136d1e3a216da36cf416",
+      "bytes": 8351905
+    },
+    {
+      "path": "data/transformed/ontologies/uberon_nodes.tsv",
+      "sha256": "23f96f9a513b081b0ef24a22d9f4c7d662489bfbac014679fe4492196f04586a",
+      "bytes": 8122603
+    },
+    {
+      "path": "data/transformed/ontologies/upa_edges.tsv",
+      "sha256": "b1462bdf16f434494ba84b2201f9eb7db546a355f56cad6a31816dda0ae90d7f",
+      "bytes": 308154
+    },
+    {
+      "path": "data/transformed/ontologies/upa_nodes.tsv",
+      "sha256": "4cb2b06ffe73eed9a66e6c1f29e4afd3010eb9a667cbdef412e488d3e30c9fd2",
+      "bytes": 398234
+    },
+    {
+      "path": "data/transformed/ontologies/foodon_kernel_quarantine.tsv",
+      "sha256": "c8dcd4fdec884a4f8f43c25efa71e8d21d6c98d19196731df18439d181019b15",
+      "bytes": 94987
+    },
+    {
+      "path": "data/transformed/ontologies/go_reference_resolution.tsv",
+      "sha256": "f42ed541dd1467a683bbbb3743d14eaa75cc702d13f16142ef6b2d1acb8e24f8",
+      "bytes": 51121937
+    },
+    {
+      "path": "data/transformed/ontologies/native_relation_dispositions.tsv",
+      "sha256": "8f5d8ff5ab56f217a88a0d4d2d5f0c4b2b38e56096390a1263ec8499f2940b05",
+      "bytes": 1198494
+    },
+    {
+      "path": "data/transformed/ontologies/ontology_metadata_exclusions.tsv",
+      "sha256": "5f87736bdaed9ed4b234a306b03fe1882a31ab8bee794011051e60d1806021f5",
+      "bytes": 847486
+    },
+    {
+      "path": "data/transformed/ontologies/ontology_parent_dispositions.tsv",
+      "sha256": "3d6dc70d95cdcb162247c50c4805db3dd2996d5f4880a60a9704bf81316e78bb",
+      "bytes": 15480625
+    },
+    {
+      "path": "data/transformed/ontologies/source_canonicalization.tsv",
+      "sha256": "c3e9b35325164fd3d015c59e3536f67fc98454bed2a071ab8220a99c6214ce29",
+      "bytes": 25524472
+    },
+    {
+      "path": "data/transformed/ontologies/source_metadata_exclusions.tsv",
+      "sha256": "f0bfb347a870f737dd13e48920e6eda693bc99db3f081a4326bc76efdd538564",
+      "bytes": 62
+    },
+    {
+      "path": "data/transformed/ontologies/source_reference_resolution.tsv",
+      "sha256": "d4eae582a3a5a5e88fa58984610c4ffaf35ccce0297bab3530b7fb61ef0c8d4d",
+      "bytes": 579409
+    },
+    {
+      "path": "data/transformed/ontologies/upa_route_review.tsv",
+      "sha256": "347f30dec4ce3cfff617f6080095ef2a612e2f4b51f07156fbcd38b3c58107ed",
+      "bytes": 23692164
+    },
+    {
+      "path": "data/transformed/ontologies/source_finalization.json",
+      "sha256": "99f0aa27a0b7653c479f1bd96af3dd248d72ac3e57cb671828ad30e3c73a34f9",
+      "bytes": 48779
+    }
+  ],
+  "copied_raw_files": 8,
+  "prior_full_receipt_sha256": "d792f4def31b55e3e2aca041e4c1d45ef0f86e2b20427e7be78e84d168ffa840",
+  "ignored_files_included": true
+}

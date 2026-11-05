@@ -1,0 +1,15 @@
+{
+  "data": [
+    {
+      "complex_medium": 1,
+      "description": null,
+      "id": 1366,
+      "link": "https://www.dsmz.de/microorganisms/medium/pdf/DSMZ_Medium1366.pdf",
+      "max_pH": 7,
+      "min_pH": 7,
+      "name": "GAUZE 1 WITH ADDITIONAL YEAST EXTRACT",
+      "reference": null,
+      "source": "DSMZ"
+    }
+  ]
+}

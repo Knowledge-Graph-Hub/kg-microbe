@@ -1,0 +1,335 @@
+{
+  "all_failed_endpoints_have_at_least_one_404": true,
+  "attempt_status_counts": {
+    "200": 6056,
+    "404": 1822,
+    "ConnectionError": 74
+  },
+  "attempt_status_counts_by_failed_final_partition": {
+    "http_404": {
+      "404": 1760,
+      "ConnectionError": 43
+    },
+    "other": {},
+    "transport_ConnectionError": {
+      "404": 62,
+      "ConnectionError": 31
+    }
+  },
+  "catalogue_wrapper_review": {
+    "catalogue_keys": [
+      "status",
+      "count",
+      "data"
+    ],
+    "correction": "Replaced an inappropriate entire-wrapper equality check with exact ordered data equality plus original catalogue byte identity; no source or receipt changed.",
+    "interpretation": "The production helper intentionally writes {data:selected}; full catalogue status/count metadata are not part of that wrapper. Ordered native data is identical, and the raw catalogue identity remains the original receipt identity.",
+    "omitted_non_data_fields": {
+      "count": 3344,
+      "status": 200
+    },
+    "prior_audit_preserved": {
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/mediadive-retry-1734/baseline-review/baseline-audit.json",
+      "sha256": "30bb2ca2c70e606473c04301d2540209c1fbc34d71e4f2737598dbcc074484b7"
+    },
+    "selected_keys": [
+      "data"
+    ]
+  },
+  "checks": {
+    "all_attempts_within_original_budget": true,
+    "all_original_inputs_bytes_mtime_inode_unchanged": true,
+    "cache_exactly_successful_endpoint_scope": true,
+    "cache_no_failed_endpoint": true,
+    "cache_valid_response_bodies_match_success_ledger": true,
+    "compounds_exact_production_extraction": true,
+    "detailed_output_exact_successful_data": true,
+    "empty_success_strain_keys_omitted": true,
+    "every_endpoint_timestamps_monotonic": true,
+    "every_success_exactly_once_uncached": true,
+    "failed_partition_matches_recorded_accounting": true,
+    "failed_scope_only_strains": true,
+    "failed_strain_keys_omitted_without_empty_inference": true,
+    "failure_record_accounting_matches_ledger": true,
+    "helper_and_production_identities_match_original_receipt": true,
+    "ledger_exact_expected_endpoint_scope": true,
+    "no_failed_endpoint_has_earlier_success": true,
+    "no_success_before_later_observation": true,
+    "original_catalogue_identity_matches_receipt": true,
+    "prior_receipt_is_failed": true,
+    "raw_cache_integrity": true,
+    "raw_wal_still_empty": true,
+    "receipt_artifact_hashes_match": true,
+    "receipt_ledger_hash_matches": true,
+    "selected_catalogue_data_exactly_matches_staged_raw": true,
+    "snapshot_cache_integrity": true,
+    "solutions_exact_production_extraction": true,
+    "staged_json_bytes_match_preserved_outputs": true,
+    "staged_raw_cache_exact_logical_snapshot_match": true,
+    "strain_output_exact_nonempty_successful_data": true
+  },
+  "counts": {
+    "attempt_events": 7952,
+    "cached_responses": 6056,
+    "catalogue_ids": 3344,
+    "compounds": 1214,
+    "detailed_media": 3344,
+    "expected_endpoints": 6688,
+    "failed_endpoints": 632,
+    "failed_final_ConnectionError": 31,
+    "failed_http_404": 601,
+    "nonempty_strain_responses": 2712,
+    "observed_endpoints": 6688,
+    "solutions": 5442,
+    "successful_endpoints": 6056,
+    "valid_empty_strain_responses": 0
+  },
+  "current_cache_sidecars": {
+    "-shm": {
+      "bytes": 32768,
+      "device": 16777233,
+      "inode": 135836659,
+      "mtime_ns": 1793860699452544654,
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw/mediadive/mediadive_bulk_cache.sqlite-shm",
+      "sha256": "fd4c9fda9cd3f9ae7c962b0ddf37232294d55580e1aa165aa06129b8549389eb"
+    },
+    "-wal": {
+      "bytes": 0,
+      "device": 16777233,
+      "inode": 135836658,
+      "mtime_ns": 1793860699427410420,
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw/mediadive/mediadive_bulk_cache.sqlite-wal",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "current_vs_snapshot_db_bytes_equal": false,
+  "failed_attempt_sequences": [
+    {
+      "count": 558,
+      "sequence": [
+        "404",
+        "404",
+        "404"
+      ]
+    },
+    {
+      "count": 31,
+      "sequence": [
+        "404",
+        "404",
+        "ConnectionError"
+      ]
+    },
+    {
+      "count": 43,
+      "sequence": [
+        "404",
+        "ConnectionError",
+        "404"
+      ]
+    }
+  ],
+  "final_success_shape_counts": {
+    "medium": 3154,
+    "medium_without_recipe": 179,
+    "medium_without_solutions": 11,
+    "strains": 2712
+  },
+  "inputs_and_code": {
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw/mediadive.json": {
+      "bytes": 1206179,
+      "device": 16777233,
+      "inode": 135826874,
+      "mtime_ns": 1793859153010009997,
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw/mediadive.json",
+      "sha256": "454a3d3b5061bd2347f9520dafe2746a50e830611cb8753eb7e8ea4f9bde12f0"
+    },
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw/mediadive/compounds.json": {
+      "bytes": 228388,
+      "device": 16777233,
+      "inode": 135812728,
+      "mtime_ns": 1793860699409843602,
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw/mediadive/compounds.json",
+      "sha256": "5401db0bc697249c9b2b0ad0b950fd3c2b7629f0cdd10c7feaf1e40b0a3a4729"
+    },
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw/mediadive/media_detailed.json": {
+      "bytes": 20814573,
+      "device": 16777233,
+      "inode": 135812726,
+      "mtime_ns": 1793859929257714238,
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw/mediadive/media_detailed.json",
+      "sha256": "82a7d02a5a85378d6acaa535c5d4e07a2fe3ede5c5cb743bee0892eed738bb81"
+    },
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw/mediadive/media_strains.json": {
+      "bytes": 12415383,
+      "device": 16777233,
+      "inode": 135812727,
+      "mtime_ns": 1793860699164288283,
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw/mediadive/media_strains.json",
+      "sha256": "cc216f49a6a4499b593664b7265ed6c7f4d801dbb4c327bef5bac7adba69cb15"
+    },
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw/mediadive/mediadive_bulk_cache.sqlite": {
+      "bytes": 53895168,
+      "device": 16777233,
+      "inode": 135836656,
+      "mtime_ns": 1793860699425456691,
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw/mediadive/mediadive_bulk_cache.sqlite",
+      "sha256": "65a2424cd768be0c34f07409734bfe270ecb9e0eac27026f1fbaee8be7d0383f"
+    },
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw/mediadive/mediadive_bulk_cache.sqlite-shm": {
+      "bytes": 32768,
+      "device": 16777233,
+      "inode": 135836659,
+      "mtime_ns": 1793860699452544654,
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw/mediadive/mediadive_bulk_cache.sqlite-shm",
+      "sha256": "fd4c9fda9cd3f9ae7c962b0ddf37232294d55580e1aa165aa06129b8549389eb"
+    },
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw/mediadive/mediadive_bulk_cache.sqlite-wal": {
+      "bytes": 0,
+      "device": 16777233,
+      "inode": 135836658,
+      "mtime_ns": 1793860699427410420,
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw/mediadive/mediadive_bulk_cache.sqlite-wal",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw/mediadive/mediadive_download.log": {
+      "bytes": 392851,
+      "device": 16777233,
+      "inode": 135812725,
+      "mtime_ns": 1793860698916552606,
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw/mediadive/mediadive_download.log",
+      "sha256": "ce4510e1ebc357ae8629a56fd769d4825320e99fafad1135b6a8207560f9ae35"
+    },
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw/mediadive/solutions.json": {
+      "bytes": 10469524,
+      "device": 16777233,
+      "inode": 135812724,
+      "mtime_ns": 1793860699394085721,
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw/mediadive/solutions.json",
+      "sha256": "5b136571fa52fb2a698069d6ce7117717bb6eb4c572fa3b9a6af167e7d054e63"
+    },
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/mediadive/attempts/sequence-1/full/artifacts/compounds.json": {
+      "bytes": 228388,
+      "device": 16777233,
+      "inode": 135867767,
+      "mtime_ns": 1793860699409843602,
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/mediadive/attempts/sequence-1/full/artifacts/compounds.json",
+      "sha256": "5401db0bc697249c9b2b0ad0b950fd3c2b7629f0cdd10c7feaf1e40b0a3a4729"
+    },
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/mediadive/attempts/sequence-1/full/artifacts/media_detailed.json": {
+      "bytes": 20814573,
+      "device": 16777233,
+      "inode": 135867762,
+      "mtime_ns": 1793859929257714238,
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/mediadive/attempts/sequence-1/full/artifacts/media_detailed.json",
+      "sha256": "82a7d02a5a85378d6acaa535c5d4e07a2fe3ede5c5cb743bee0892eed738bb81"
+    },
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/mediadive/attempts/sequence-1/full/artifacts/media_strains.json": {
+      "bytes": 12415383,
+      "device": 16777233,
+      "inode": 135867765,
+      "mtime_ns": 1793860699164288283,
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/mediadive/attempts/sequence-1/full/artifacts/media_strains.json",
+      "sha256": "cc216f49a6a4499b593664b7265ed6c7f4d801dbb4c327bef5bac7adba69cb15"
+    },
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/mediadive/attempts/sequence-1/full/artifacts/mediadive_bulk_cache.sqlite": {
+      "bytes": 53895168,
+      "device": 16777233,
+      "inode": 135867770,
+      "mtime_ns": 1793860699517424116,
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/mediadive/attempts/sequence-1/full/artifacts/mediadive_bulk_cache.sqlite",
+      "sha256": "3e53107cc92dd3c6dd09be1064f7be70e53e254711bc9e3f2dcc30bf3b555f38"
+    },
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/mediadive/attempts/sequence-1/full/artifacts/mediadive_download.log": {
+      "bytes": 392851,
+      "device": 16777233,
+      "inode": 135867768,
+      "mtime_ns": 1793860698916552606,
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/mediadive/attempts/sequence-1/full/artifacts/mediadive_download.log",
+      "sha256": "ce4510e1ebc357ae8629a56fd769d4825320e99fafad1135b6a8207560f9ae35"
+    },
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/mediadive/attempts/sequence-1/full/artifacts/solutions.json": {
+      "bytes": 10469524,
+      "device": 16777233,
+      "inode": 135867766,
+      "mtime_ns": 1793860699394085721,
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/mediadive/attempts/sequence-1/full/artifacts/solutions.json",
+      "sha256": "5b136571fa52fb2a698069d6ce7117717bb6eb4c572fa3b9a6af167e7d054e63"
+    },
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/mediadive/attempts/sequence-1/full/failure-accounting.json": {
+      "bytes": 106323,
+      "device": 16777233,
+      "inode": 135876925,
+      "mtime_ns": 1793860791239753461,
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/mediadive/attempts/sequence-1/full/failure-accounting.json",
+      "sha256": "879fced789621230f97daac5d324c39a2dba2fbd1ed6f662f6d430d1dd05a714"
+    },
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/mediadive/attempts/sequence-1/full/http-attempts.jsonl": {
+      "bytes": 2936614,
+      "device": 16777233,
+      "inode": 135836655,
+      "mtime_ns": 1793860698916181644,
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/mediadive/attempts/sequence-1/full/http-attempts.jsonl",
+      "sha256": "5baef7feeb0ba86d1264e9c4fc5a7c3f1700cfd5c5ea5cc2bf5351befd3a9022"
+    },
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/mediadive/attempts/sequence-1/full/receipt.json": {
+      "bytes": 43375,
+      "device": 16777233,
+      "inode": 135867797,
+      "mtime_ns": 1793860699582944919,
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/mediadive/attempts/sequence-1/full/receipt.json",
+      "sha256": "d792f4def31b55e3e2aca041e4c1d45ef0f86e2b20427e7be78e84d168ffa840"
+    },
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/mediadive/attempts/sequence-1/full/selected-media.json": {
+      "bytes": 998810,
+      "device": 16777233,
+      "inode": 135836653,
+      "mtime_ns": 1793859807161279941,
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/mediadive/attempts/sequence-1/full/selected-media.json",
+      "sha256": "3c85c7eacef652883ae3cdb2c3a79808ab7bb71bb02bf54a04cb67432b5027eb"
+    },
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/kg_microbe/transform_utils/mediadive/bulk_inputs.py": {
+      "bytes": 14838,
+      "device": 16777233,
+      "inode": 135679788,
+      "mtime_ns": 1793857686787825210,
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/kg_microbe/transform_utils/mediadive/bulk_inputs.py",
+      "sha256": "75c2f0516e6b6c0b63a0a230653ff67673f09c60bbe77d6975bc81f5621b0203"
+    },
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/kg_microbe/utils/mediadive_bulk_download.py": {
+      "bytes": 25283,
+      "device": 16777233,
+      "inode": 135679909,
+      "mtime_ns": 1793857686807576388,
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/kg_microbe/utils/mediadive_bulk_download.py",
+      "sha256": "da5666af6b486fc8878d2548ab369da36484719b4a62e0084f645254077d2a13"
+    },
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/scripts/adhoc/kgm_mediadive_refresh_20261105.py": {
+      "bytes": 24423,
+      "device": 16777233,
+      "inode": 135729387,
+      "mtime_ns": 1793859640147726999,
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/scripts/adhoc/kgm_mediadive_refresh_20261105.py",
+      "sha256": "ca661032de4e05072a16fb127e397b2ffea306c852ad8cd40ca6864b562b5324"
+    }
+  },
+  "notes": [
+    "The raw cache WAL was zero before and after immutable read-only inspection; no raw SQLite backup, checkpoint, migration, or write connection was opened.",
+    "The failed original helper receipt remains failed; successful response conservation does not satisfy complete catalogue admission.",
+    "No 404/transport/missing output was interpreted as a valid empty response."
+  ],
+  "release_or_producer_admission": false,
+  "reviewed_at": "2026-11-05T18:42:06.252490+00:00",
+  "scope": "Read-only baseline comparison; no HTTP, no tests, no publication/admission waiver",
+  "snapshot_cache": {
+    "issues": [],
+    "quick_check": "ok",
+    "redirects": 0
+  },
+  "staged_cache": {
+    "issues": [],
+    "quick_check": "ok",
+    "redirects": 0
+  },
+  "status": "baseline_consistent_partial_download"
+}

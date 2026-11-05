@@ -1,0 +1,42 @@
+{
+  "association_admission": false,
+  "baseline_valid_endpoints": 6056,
+  "canary_id": "1366",
+  "evidence": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/mediadive-retry-1734/attempts/retry-1",
+  "identity": {
+    "cache_policy": "preserve baseline; every selected endpoint must be absent",
+    "catalogue_sha256": "454a3d3b5061bd2347f9520dafe2746a50e830611cb8753eb7e8ea4f9bde12f0",
+    "dependencies": {
+      "requests": "2.34.2",
+      "requests-cache": "1.3.3"
+    },
+    "environment_sha256": "09f43c88ea10cee427d48ecf016e0f50caefc5668aa1706e50958910ad716e3a",
+    "helper_sha256": "ca661032de4e05072a16fb127e397b2ffea306c852ad8cd40ca6864b562b5324",
+    "launcher": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/scripts/adhoc/kgm_rebuild_20261105.py",
+    "launcher_sha256": "cef7f21abb810ec3b95bba4221c3cd2d43326b550c7d5295d1cd4e0841196103",
+    "output": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw/mediadive",
+    "preservation_manifest": {
+      "bytes": 13619,
+      "sha256": "d63d0a6be750bc6f1f436aeb82e22d04c2d457fb0a3dac670d1f5b44f9990368"
+    },
+    "production_module": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/kg_microbe/utils/mediadive_bulk_download.py",
+    "production_sha256": "da5666af6b486fc8878d2548ab369da36484719b4a62e0084f645254077d2a13",
+    "python": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/.venv/bin/python",
+    "python_version": "3.10.11 (main, Oct 10 2026, 16:38:29) [Clang 21.0.0 (clang-2100.3.34.2)]",
+    "retry_helper_sha256": "c4ef41f2aabb847404249f59dfc4be39f2fa4f58ba7a03af4dc8a05bf8908a9c",
+    "settings": {
+      "max_workers": 5,
+      "retry_count": 3,
+      "retry_delay": 2.0
+    },
+    "source_raw": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe/data/raw",
+    "urls": {
+      "mediadive.json": "https://mediadive.dsmz.de/rest/media",
+      "taxdump.tar.gz": "https://ftp.ncbi.nlm.nih.gov/pub/taxonomy/taxdump.tar.gz"
+    },
+    "worktree": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105"
+  },
+  "maximum_transport_attempts": 1896,
+  "selected_count": 632,
+  "status": "running"
+}

@@ -1,0 +1,155 @@
+{
+  "actual_process": {
+    "elapsed_seconds": 681.589,
+    "error": "SystemExit(2)",
+    "exit_code": 2
+  },
+  "attempt_status_counts": {
+    "404": 1773,
+    "ConnectionError": 123
+  },
+  "audit_type": "independent_read_only_post_run_coverage_and_preservation",
+  "check_details": {},
+  "checks": {
+    "after_snapshot_hashes_match_receipt": true,
+    "all_6056_baseline_cache_blobs_and_keys_unchanged": true,
+    "all_audit_inputs_bytes_mtime_inode_unchanged": true,
+    "all_four_raw_json_bytes_equal_pre_retry": true,
+    "all_original_and_preserved_manifest_records_match": true,
+    "all_prior_strain_json_values_preserved": true,
+    "all_protected_ontology_and_review_artifacts_match": true,
+    "association_admission_matches_complete_coverage": true,
+    "baseline_cache_matches_prior_ledger": true,
+    "baseline_cache_matches_saved_independent_inventory": true,
+    "batch_canary_gate_and_exact_remaining_scope": true,
+    "before_snapshot_json_and_log_equal_original": true,
+    "catalogue_identity": true,
+    "combined_accepted_exact_recomputed_coverage": true,
+    "combined_coverage_receipt_identity": true,
+    "exact_canary_literal_target": true,
+    "exact_disjoint_6688_endpoint_partition": true,
+    "final_counts": true,
+    "final_identity_matches_started": true,
+    "final_raw_json_bytes_equal_retained": true,
+    "fresh_cache_matches_actual_http_bodies": true,
+    "literal_catalogue_unique_3344_and_expected_6688": true,
+    "native_retry_settings": true,
+    "new_observations_cover_only_original_unresolved": true,
+    "new_raw_body_metadata_and_flags_recomputed": true,
+    "new_transport_scope_and_attempt_budgets": true,
+    "phase_receipts_match_independent_reconstruction": true,
+    "preservation_manifest_pinned": true,
+    "prior_exact_coverage": true,
+    "prior_failed_have_no_earlier_success": true,
+    "prior_failed_partition_601_404_31_connection": true,
+    "prior_independent_success_inventory_pinned": true,
+    "prior_receipt_and_artifact_hashes": true,
+    "prior_receipt_pinned": true,
+    "python_runtime": true,
+    "raw_and_retained_cache_exact_effective_accepted_union": true,
+    "raw_and_retained_cache_response_identity": true,
+    "raw_compounds_exact_ordered_production_extraction": true,
+    "raw_details_exact": true,
+    "raw_details_order_exact": true,
+    "raw_solutions_exact_production_extraction": true,
+    "raw_strains_exact_nonempty_responses": true,
+    "remaining_unresolved_exact": true,
+    "requests_dependency_versions": true,
+    "retained_compounds_exact_ordered_production_extraction": true,
+    "retained_details_exact": true,
+    "retained_details_order_exact": true,
+    "retained_solutions_exact_production_extraction": true,
+    "retained_strains_exact_nonempty_responses": true,
+    "reviewed_retry_helper_identity": true,
+    "runtime_helper_sha256": true,
+    "runtime_launcher_sha256": true,
+    "runtime_production_sha256": true,
+    "runtime_retry_helper_sha256": true,
+    "stage_exit2_is_expected_coverage_block": true,
+    "stage_import_origins_unchanged_and_current": true
+  },
+  "counts": {
+    "audit_input_files": 1904,
+    "baseline_valid": 6056,
+    "catalogue": 3344,
+    "combined_valid": 6056,
+    "expected_endpoints": 6688,
+    "new_valid": 0,
+    "original_manifest_records": 18,
+    "protected_ontology_and_review_artifacts": 51,
+    "remaining_unresolved": 632
+  },
+  "created_at": "2026-11-05T19:13:01.861334+00:00",
+  "endpoint_partition_counts": {
+    "accepted_medium_details": 3344,
+    "accepted_nonempty_strains": 2712,
+    "accepted_valid_empty_strains": 0,
+    "unresolved_not_attempted": 0,
+    "unresolved_transport_error": 49,
+    "unresolved_unknown_404": 583,
+    "unresolved_unresolved_http_or_payload": 0
+  },
+  "expected_process_exit": 2,
+  "interpretation": "Expected incomplete-coverage block; unknown errors and transport outcomes are not empty associations.",
+  "limitations": [
+    "No network, tests, transformations, Git operations, or changes to original evidence/raw data.",
+    "The audit verifies the retained response coverage and preservation; it does not convert unknowns into biological absence.",
+    "Interrupted-generation recovery remains the separate #1754 follow-up."
+  ],
+  "phase_review": {
+    "batch": {
+      "fresh_valid_endpoints": 0,
+      "observed": 631,
+      "outcome_counts": {
+        "transport_error": 49,
+        "unknown_404": 582
+      },
+      "selected": 631,
+      "status": "completed",
+      "transport_attempts": 1893
+    },
+    "canary": {
+      "fresh_valid_endpoints": 0,
+      "observed": 1,
+      "outcome_counts": {
+        "unknown_404": 1
+      },
+      "selected": 1,
+      "status": "completed",
+      "transport_attempts": 3
+    }
+  },
+  "prior_to_retry_final_outcome_counts": [
+    {
+      "count": 47,
+      "prior": "http_404",
+      "retry": "transport_error"
+    },
+    {
+      "count": 554,
+      "prior": "http_404",
+      "retry": "unknown_404"
+    },
+    {
+      "count": 2,
+      "prior": "transport_ConnectionError",
+      "retry": "transport_error"
+    },
+    {
+      "count": 29,
+      "prior": "transport_ConnectionError",
+      "retry": "unknown_404"
+    }
+  ],
+  "receipt": {
+    "bytes": 40214,
+    "inode": 137020079,
+    "mtime_ns": 1793905894639653414,
+    "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/mediadive-retry-1734/attempts/retry-1/receipt.json",
+    "sha256": "5050778364c925cedec323b78c9ef80787a9f01405ed42cf92c828be389da0c9"
+  },
+  "reviewed_helper_sha256": "c4ef41f2aabb847404249f59dfc4be39f2fa4f58ba7a03af4dc8a05bf8908a9c",
+  "runtime_defect_observed": false,
+  "source_association_admission": false,
+  "status": "passed"
+}

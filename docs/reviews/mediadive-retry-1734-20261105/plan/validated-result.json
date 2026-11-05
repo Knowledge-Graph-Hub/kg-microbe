@@ -1,0 +1,91 @@
+{
+  "command": [
+    "scripts/adhoc/kgm_mediadive_retry_20261105.py",
+    "--source-raw",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe/data/raw",
+    "--launcher",
+    "scripts/adhoc/kgm_rebuild_20261105.py",
+    "--attempt",
+    "retry-1"
+  ],
+  "elapsed_seconds": 3.976,
+  "exit_code": 0,
+  "finished": 1793905037.804265,
+  "origins_after": {
+    "kg_microbe": {
+      "file": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/kg_microbe/__init__.py",
+      "sha256": "8a0afe5089c32f200af378dfa77ba54d28db827a9a4cb525984af22fd2c6c637"
+    },
+    "kg_microbe.download": {
+      "file": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/kg_microbe/download.py",
+      "sha256": "c3ace7810bf776fb24652b2e77c77a23eb7894400e0918d50ec1cb5d05c72d51"
+    },
+    "kg_microbe.transform_utils": {
+      "file": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/kg_microbe/transform_utils/__init__.py",
+      "sha256": "8bf23dcb5caf75f7fbc3100db981626a4c6eca29adc402fea5e9075d61a26c9b"
+    },
+    "kg_microbe.transform_utils.constants": {
+      "file": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/kg_microbe/transform_utils/constants.py",
+      "sha256": "899ab7fc44992844f395fd3664b976c81365f45d19965ad8940badc03a40ba8b"
+    },
+    "kg_microbe.transform_utils.transform": {
+      "file": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/kg_microbe/transform_utils/transform.py",
+      "sha256": "e25c7edf6aae96efd5aa7b32924f8573e97f96e4b09b58ca307ab6347f55b9d8"
+    },
+    "kg_microbe.utils": {
+      "file": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/kg_microbe/utils/__init__.py",
+      "sha256": "5ef816ae18c814d59d5405714019a65724735d6fe7d8ab574ed10ee871e4260f"
+    },
+    "kg_microbe.utils.download_manifest": {
+      "file": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/kg_microbe/utils/download_manifest.py",
+      "sha256": "764720aae1fa3e4b97a4af94bd7a3a838eb0b7b11dd7ec01967b1c01038d07d0"
+    },
+    "kg_microbe.utils.mediadive_bulk_download": {
+      "file": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/kg_microbe/utils/mediadive_bulk_download.py",
+      "sha256": "da5666af6b486fc8878d2548ab369da36484719b4a62e0084f645254077d2a13"
+    }
+  },
+  "origins_before": {
+    "kg_microbe": {
+      "file": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/kg_microbe/__init__.py",
+      "sha256": "8a0afe5089c32f200af378dfa77ba54d28db827a9a4cb525984af22fd2c6c637"
+    },
+    "kg_microbe.download": {
+      "file": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/kg_microbe/download.py",
+      "sha256": "c3ace7810bf776fb24652b2e77c77a23eb7894400e0918d50ec1cb5d05c72d51"
+    },
+    "kg_microbe.transform_utils": {
+      "file": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/kg_microbe/transform_utils/__init__.py",
+      "sha256": "8bf23dcb5caf75f7fbc3100db981626a4c6eca29adc402fea5e9075d61a26c9b"
+    },
+    "kg_microbe.transform_utils.constants": {
+      "file": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/kg_microbe/transform_utils/constants.py",
+      "sha256": "899ab7fc44992844f395fd3664b976c81365f45d19965ad8940badc03a40ba8b"
+    },
+    "kg_microbe.transform_utils.transform": {
+      "file": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/kg_microbe/transform_utils/transform.py",
+      "sha256": "e25c7edf6aae96efd5aa7b32924f8573e97f96e4b09b58ca307ab6347f55b9d8"
+    },
+    "kg_microbe.utils": {
+      "file": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/kg_microbe/utils/__init__.py",
+      "sha256": "5ef816ae18c814d59d5405714019a65724735d6fe7d8ab574ed10ee871e4260f"
+    },
+    "kg_microbe.utils.download_manifest": {
+      "file": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/kg_microbe/utils/download_manifest.py",
+      "sha256": "764720aae1fa3e4b97a4af94bd7a3a838eb0b7b11dd7ec01967b1c01038d07d0"
+    },
+    "kg_microbe.utils.mediadive_bulk_download": {
+      "file": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/kg_microbe/utils/mediadive_bulk_download.py",
+      "sha256": "da5666af6b486fc8878d2548ab369da36484719b4a62e0084f645254077d2a13"
+    }
+  },
+  "pid": 75122,
+  "python": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/.venv/bin/python",
+  "started": 1793905033.827886,
+  "versions": {
+    "bmt": "1.5.0",
+    "kgx": "2.8.0",
+    "oaklib": "0.7.4",
+    "semsql": "0.4.0"
+  }
+}

@@ -1,0 +1,132 @@
+{
+  "additional_check": {
+    "catalogue_order": "validate_outputs preserves original catalogue order before native solution/compound extraction; SQLite row order cannot change first-occurrence selection. The native detailed JSON order is also checked.",
+    "locations": [
+      "validate_outputs:204-226"
+    ]
+  },
+  "association_admission": false,
+  "disposition": "No blocking code finding remains for the bounded canary-first retry under the reviewed bytes, subject to the parent-coordinated focused tests and unchanged launch identities. This review is not a source completion receipt and provides no semantic waiver for unknown associations.",
+  "issues": {
+    "1752": {
+      "assessment": "addressed_in_reviewed_helper",
+      "evidence": [
+        "Successful strain responses require exact status/count/data envelope, integer status 200, integer count equal to list length, and nonnegative integer native association IDs.",
+        "Duplicate JSON keys and nonstandard constants are rejected; booleans/floats cannot impersonate integer envelope status/count.",
+        "Saved bytes are rehashed and parsed independently; valid/nonempty/empty classifications are recomputed rather than accepted from the ledger.",
+        "Documented HTTP 404 requires the exact error envelope and remains unknown_404; it never becomes valid empty or accepted coverage.",
+        "Canary unknown_404 establishes retry mechanics only. Its URL remains unresolved and therefore prevents full source admission."
+      ],
+      "locations": [
+        "strict_json:84-97",
+        "strain_payload:100-116",
+        "response_record:119-146",
+        "unknown_envelope:327-334",
+        "verify_bodies:398-436"
+      ]
+    },
+    "1753": {
+      "assessment": "addressed_in_reviewed_helper_including_final_boundary_refinement",
+      "evidence": [
+        "Each cached prepared request must regenerate its stored cache key. Duplicate response URLs and all cached redirects are refused.",
+        "All 6056 baseline serialized response blobs are compared between original snapshot and current cache; their exact bytes survive each phase.",
+        "After each native phase, cache URLs must equal original URLs union strictly valid fresh responses. New cache rows bind observed body, HTTP status, request/response URL, method and headers.",
+        "Final live cache, retained final cache and a second live reread all require the exact accepted URL union, valid payloads, body hashes, serialized blob hashes and cache keys.",
+        "All four retained JSON artifacts are independently reconstructed from accepted responses; retained file identities and equality with active JSON are verified before admission assignment.",
+        "The earlier reviewed SHA 34db466e1604119ce4127f42c1feb042507e31ee229d062effed9c6255c7b2be lacked final exact-union/blob binding. The current bound SHA closes that reported gap."
+      ],
+      "locations": [
+        "read_cache:149-185",
+        "validate_cache_coverage:229-235",
+        "baseline:238-310",
+        "phase:452-586",
+        "run:662-681"
+      ]
+    },
+    "1754": {
+      "assessment": "explicit_recovery_limitation_not_a_reachable_failed_phase_admission",
+      "evidence": [
+        "The required actual production cache path is used. Before/phase/final snapshots and observed bodies preserve evidence; no automatic recovery or multi-file transaction is claimed.",
+        "Failed native phases return the previous accepted set and do not publish the candidate strain overlay. Interrupted phases propagate after retaining phase evidence when exception handling can run.",
+        "An unverified canary cannot start the batch. A failed batch cannot contribute successful endpoints from that failed phase to accepted coverage.",
+        "Top-level exceptions reset association_admission to false. Source admission is assigned only after exact complete coverage and final live/retained-generation guards.",
+        "Abrupt interruption may leave a partial active cache/JSON generation; immutable initial preservation checks refuse treating that generation as the old baseline on a new run.",
+        "A hard process kill or failed receipt write may leave only started/partial evidence. Absence of a complete verified success receipt is not admission."
+      ],
+      "locations": [
+        "phase:474-586",
+        "run:622-697"
+      ],
+      "reachable_false_admission_from_failed_or_unverified_phase_found": false
+    }
+  },
+  "limitations": [
+    "Static review is not a proof of arbitrary concurrent hostile filesystem mutation or crash-resumability.",
+    "Current core downloader failure-versus-empty result ambiguity remains separately tracked as issue 1751; this helper must remain the admission gate for this retry.",
+    "No producer or graph admission is authorized by this review artifact alone."
+  ],
+  "method": "Static read-only review of frozen helper, tests, historical helper and production call chain; no tests, HTTP, production execution or tracked edits performed by this reviewer.",
+  "reviewed_at": "2026-11-05T18:58:31.829958+00:00",
+  "reviewed_files": {
+    "scripts/adhoc/kgm_mediadive_retry_20261105.py": {
+      "bytes": 34092,
+      "path": "scripts/adhoc/kgm_mediadive_retry_20261105.py",
+      "sha256": "c4ef41f2aabb847404249f59dfc4be39f2fa4f58ba7a03af4dc8a05bf8908a9c"
+    },
+    "tests/test_mediadive_retry_20261105.py": {
+      "bytes": 24544,
+      "path": "tests/test_mediadive_retry_20261105.py",
+      "sha256": "eb6bdd835d89d99d29a9f099e2ba3254e8ab82b121d4eaa4f012accb64db59c0"
+    }
+  },
+  "reviewer": "/root/rebuild_environment_audit",
+  "schema": "kg-microbe.mediadive-targeted-retry-independent-review.v1",
+  "status": "reviewed_no_blocking_code_findings",
+  "supporting_identities": [
+    {
+      "bytes": 24423,
+      "path": "scripts/adhoc/kgm_mediadive_refresh_20261105.py",
+      "sha256": "ca661032de4e05072a16fb127e397b2ffea306c852ad8cd40ca6864b562b5324"
+    },
+    {
+      "bytes": 25283,
+      "path": "kg_microbe/utils/mediadive_bulk_download.py",
+      "sha256": "da5666af6b486fc8878d2548ab369da36484719b4a62e0084f645254077d2a13"
+    },
+    {
+      "bytes": 13619,
+      "path": "data/rebuild-evidence/20261105/mediadive-retry-1734/preservation/manifest.json",
+      "sha256": "d63d0a6be750bc6f1f436aeb82e22d04c2d457fb0a3dac670d1f5b44f9990368"
+    },
+    {
+      "bytes": 17181,
+      "path": "data/rebuild-evidence/20261105/mediadive-retry-1734/baseline-review/baseline-audit-2.json",
+      "sha256": "34e463065badfdcde3dc9be898a6eb25ea3f6b653894da68029486cce5ed4993"
+    },
+    {
+      "bytes": 19278,
+      "path": "data/rebuild-evidence/20261105/mediadive-retry-1734/official-review/official-semantics.json",
+      "sha256": "99175d7a3be0c4e25dce64a30b50a18a243d5109595822e107888eaa7d02a4be"
+    },
+    {
+      "bytes": 43375,
+      "path": "data/rebuild-evidence/20261105/mediadive/attempts/sequence-1/full/receipt.json",
+      "sha256": "d792f4def31b55e3e2aca041e4c1d45ef0f86e2b20427e7be78e84d168ffa840"
+    }
+  ],
+  "test_review": {
+    "execution_by_reviewer": false,
+    "inspected_controls": [
+      "invalid/error/contradictory-empty/count/ID/duplicate-key HTTP 200 responses",
+      "raw-body payload-kind relabeling",
+      "baseline serialized-header mutation, redirect table, nonempty WAL",
+      "unselected physical requests and retry ceiling",
+      "unknown canary versus valid-empty recovery and full coverage",
+      "interruption after cache persistence and final receipt failure",
+      "reversed SQLite iteration with order-sensitive compound occurrences",
+      "post-phase extra row/header mutation and retained final cache/JSON mutation"
+    ],
+    "root_coordinated_execution": "Parent owns the current focused run and must bind its result separately."
+  },
+  "worktree": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105"
+}

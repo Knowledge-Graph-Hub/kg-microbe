@@ -222,9 +222,45 @@
     "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/artifact-stream-review/final-identity.json"
   },
   {
-    "bytes": 3553,
+    "bytes": 4122,
     "file": "filed-findings.jsonl",
-    "sha256": "439d887d7b381ce9277bf5e430cf406c0a719ff3830ba4eb88bb6c9dd664824f",
+    "sha256": "f2562ab16e82c8aade2b96decf744470ad03d1840caa4d2e55cfb46372a83e2d",
     "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/filed-findings.jsonl"
+  },
+  {
+    "bytes": 6800,
+    "file": "ncbitaxon-reuse-independent-review-1.json",
+    "sha256": "31605de02e84bd35b7890003df34b6ca80d4ece5b7638acbad37f64088f667ec",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/ncbitaxon-reuse-independent-review-1.json"
+  },
+  {
+    "bytes": 4772,
+    "file": "lpsn-phase-helper-independent-review-1.json",
+    "sha256": "b2105f2eb78696295e752f4267c0262281350ee72b27a8ca8e9c8f0c861742ba",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/lpsn-phase-helper-independent-review-1.json"
+  },
+  {
+    "bytes": 3391,
+    "file": "lpsn-phase-helper-review/final-readonly-review.json",
+    "sha256": "cf3c95e3ebf3531f6839e186ab89900d189acc51241f471e4b4694db7ec40e5b",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/lpsn-phase-helper-review/final-readonly-review.json"
+  },
+  {
+    "bytes": 899,
+    "file": "lpsn-phase-helper-review/final-identity.json",
+    "sha256": "867bbcbb1ac0099613436fb4556ba27a58fa4cda014f65b9a0db38f8b8172395",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/lpsn-phase-helper-review/final-identity.json"
+  },
+  {
+    "bytes": 2783,
+    "file": "lpsn-phase-helper-focused-r1.log",
+    "sha256": "23547fc9de005b137dd74bc34a04d84a71efa06522a00bdfb3c44ec70e056e3f",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/lpsn-phase-helper-focused-r1.log"
+  },
+  {
+    "bytes": 403,
+    "file": "native-fixture-whitespace-check-r1.json",
+    "sha256": "cdc840fa1e3f5e8d53b1ae1ca05fcd92337c2bf0ad5d1422ab1def4adc685064",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/native-fixture-whitespace-check-r1.json"
   }
 ]

@@ -1,0 +1,80 @@
+{
+  "authorization_limit": "The root reports that the prior separate-original-.env proposal was auto-review rejected and never executed. This review grants no permission and does not resolve the pending user authorization question.",
+  "current_helper_identity": {
+    "bytes": 3729,
+    "path": "scripts/adhoc/kgm_rebuild_lpsn_phase_20261105.py",
+    "sha256": "405e413dacc2794f0ea3e8ca70e16919109e9e819d2fb850a911a88aad489d3e"
+  },
+  "findings": [
+    {
+      "counterexample_scope": "With the caller-provided matching SHA and available credentials, these receipt fields satisfy the current receipt checks despite admitting no predecessor sources. This is a source-level control-flow proof; no receipt or execution was created.",
+      "finding": "The expected predecessor set is derived exclusively from the supplied receipt phases. The helper does not compare those phases or source paths to the canonical current planner and does not require the receipt root/raw/transformed directories to equal the owned worktree.",
+      "id": "phase3_scope_is_self_attested",
+      "location": "kgm_rebuild_lpsn_phase_20261105.py:35-41",
+      "minimal_repair": "Keep the exact supplied hash and prelaunch byte recheck. Bind the receipt root, selected raw/transformed directories, complete phase list and preceding admitted source set to the actual canonical planner for the owned checkout.",
+      "severity": "medium",
+      "static_counterexample": {
+        "command": "verify-sources",
+        "plan": {
+          "phases": [
+            [],
+            [],
+            [],
+            [
+              "lpsn_api",
+              "microbedecoder"
+            ]
+          ]
+        },
+        "status": "pass",
+        "verification": {
+          "sources": {}
+        }
+      }
+    },
+    {
+      "actual_access_observed": false,
+      "finding": "The helper itself contains no credential-file read and requires both keys already in the environment. The fixed production child nevertheless calls load_dotenv() unconditionally before reading those keys. Existing keys do not establish absence of file reads during dotenv discovery.",
+      "id": "credential_file_read_claim_needs_scope",
+      "location": "helper receipt field credential_files_read; kg_microbe/transform_utils/lpsn_api/lpsn_api.py:348",
+      "minimal_repair": "Describe the false credential-file-read field explicitly as the helper-only boundary. Do not certify the entire production child as file-free from this helper source alone. Any permitted execution remains subject to the pending user authorization and exact approved credential boundary. No alternative credential source or bypass is proposed.",
+      "severity": "medium"
+    }
+  ],
+  "method": "Independent read-only source inspection of the environment-only helper, fixed launcher and production child credential initialization. No helper execution, test, HTTP or credential/environment-file access.",
+  "recorded_at": "2026-11-05T22:24:10.161937+00:00",
+  "review_operations": {
+    "credential_files_read": 0,
+    "environment_values_inspected": 0,
+    "git_or_github_operations": 0,
+    "helper_runs": 0,
+    "http_requests": 0,
+    "source_edits": 0,
+    "tests": 0
+  },
+  "reviewed_helper_sha256": "405e413dacc2794f0ea3e8ca70e16919109e9e819d2fb850a911a88aad489d3e",
+  "reviewed_helper_still_current": true,
+  "satisfied_controls": [
+    "The helper references only LPSN_USERNAME/LPSN_PASSWORD availability and writes boolean availability, not secret values.",
+    "The helper reads only the supplied phase receipt and its own source; it contains no original .env fallback or credential-file creation.",
+    "The child argv is fixed to the owned interpreter and saved launcher with data/raw, data/transformed, lpsn_api and microbedecoder; no shell or arbitrary user command is accepted.",
+    "Resolved phase receipt/output locators must remain inside the owned resolution evidence directory; an existing output is refused and the write uses exclusive mode.",
+    "The supplied phase receipt bytes are SHA256 checked and reread before launch.",
+    "The standard launcher independently enforces a bounded safe label and an exclusive stage folder.",
+    "The receipt explicitly says launch evidence only; actual child completion and production admission remain required."
+  ],
+  "schema_version": 1,
+  "status": "changes_required_before_launch",
+  "supporting_source_identities": [
+    {
+      "bytes": 15000,
+      "path": "scripts/adhoc/kgm_rebuild_20261105.py",
+      "sha256": "cef7f21abb810ec3b95bba4221c3cd2d43326b550c7d5295d1cd4e0841196103"
+    },
+    {
+      "bytes": 33284,
+      "path": "kg_microbe/transform_utils/lpsn_api/lpsn_api.py",
+      "sha256": "acf5dfa2316bdd6880b2785158ac312df1b393f6b79fb9a23dc7b00d3afccbc1"
+    }
+  ]
+}

@@ -55,4 +55,10 @@ No unknown is an explicit empty list or a negative growth assertion.
 | [documentation-contract-fix/fixture-boundary-correction.json](documentation-contract-fix/fixture-boundary-correction.json) | 1160 | `7918f32e99737e7e7ed1ae24bd716a896a402b075f3b775b76dc9f60b9d4705a` |
 | [artifact-stream-review/repair.json](artifact-stream-review/repair.json) | 703 | `def15922024a9b4902e28a28c1285feda25193db9b4df09c25fc80d65c5eaaf6` |
 | [artifact-stream-review/final-identity.json](artifact-stream-review/final-identity.json) | 469 | `a374b4be60236dd6b0f8cc9aa1d1da8d1713f56a6663b1c3a8ce374109aa3342` |
-| [filed-findings.jsonl](filed-findings.jsonl) | 3553 | `439d887d7b381ce9277bf5e430cf406c0a719ff3830ba4eb88bb6c9dd664824f` |
+| [filed-findings.jsonl](filed-findings.jsonl) | 4122 | `f2562ab16e82c8aade2b96decf744470ad03d1840caa4d2e55cfb46372a83e2d` |
+| [ncbitaxon-reuse-independent-review-1.json](ncbitaxon-reuse-independent-review-1.json) | 6800 | `31605de02e84bd35b7890003df34b6ca80d4ece5b7638acbad37f64088f667ec` |
+| [lpsn-phase-helper-independent-review-1.json](lpsn-phase-helper-independent-review-1.json) | 4772 | `b2105f2eb78696295e752f4267c0262281350ee72b27a8ca8e9c8f0c861742ba` |
+| [lpsn-phase-helper-review/final-readonly-review.json](lpsn-phase-helper-review/final-readonly-review.json) | 3391 | `cf3c95e3ebf3531f6839e186ab89900d189acc51241f471e4b4694db7ec40e5b` |
+| [lpsn-phase-helper-review/final-identity.json](lpsn-phase-helper-review/final-identity.json) | 899 | `867bbcbb1ac0099613436fb4556ba27a58fa4cda014f65b9a0db38f8b8172395` |
+| [lpsn-phase-helper-focused-r1.log](lpsn-phase-helper-focused-r1.log) | 2783 | `23547fc9de005b137dd74bc34a04d84a71efa06522a00bdfb3c44ec70e056e3f` |
+| [native-fixture-whitespace-check-r1.json](native-fixture-whitespace-check-r1.json) | 403 | `cdc840fa1e3f5e8d53b1ae1ca05fcd92337c2bf0ad5d1422ab1def4adc685064` |

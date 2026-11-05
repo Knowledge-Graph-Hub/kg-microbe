@@ -40,6 +40,12 @@ All review findings were filed. `R/filed-findings-live-1.json` records #1757–1
 | [#1770](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1770) | Preserve repeated observations sharing a strain entity ID, without deduplication or renumbering |
 | [#1771](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1771) | Decode stream-mode tar members without Python 3.10 `seekable()` failure |
 | [#1772](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1772) | Validate the scoped official error description independently of the native wire wording |
+| [#1773](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1773) | Bind final-phase prerequisites to the complete current canonical plan and owned paths |
+| [#1774](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1774) | Scope credential-file evidence to the helper; child dotenv behavior is not certified |
+
+The environment-only final-phase launcher has six passing offline controls and an
+independent re-review. It has not executed; credentials must be available before
+phase 4. Its controls do not replace the production source-admission gates.
 
 Completed focused logs record 45 passing WAL/probe tests, 69 integration tests, 61 generation/consumer contract tests and 118 disposition/fixture tests. The documentation/remaining-consumer run then had 312 passes and two fixture assertion failures; the affected fixture rerun passed 27/27. The repaired archive verifier passed all 15 offline archive controls (`R/artifact-focused-r2.log`). These selections overlap and are not a cumulative test total; earlier failures remain retained.
 
@@ -62,3 +68,9 @@ Remaining checkpoints, to replace only with actual completed receipts:
 - **Pending:** final candidate preparation, the single complete PR gate and required CI checks.
 
 No GitHub merge, external publication, upstream messaging or assertion of complete association coverage is authorized or reported.
+
+The staged NCBITaxon database is reused July 12 authority, matching the pinned
+OWL release. Its historical build-tool record is unavailable; it is not claimed
+as rebuilt or current-toolchain-certified. The refreshed taxdump independently
+supports retirement checks, while BacDive must admit its actual database bytes
+and query witnesses. The independent qualification is retained in the evidence packet.

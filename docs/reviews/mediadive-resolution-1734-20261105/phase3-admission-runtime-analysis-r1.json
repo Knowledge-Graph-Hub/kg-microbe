@@ -1,0 +1,316 @@
+{
+  "active_process_observation": {
+    "pid": 98966,
+    "qualification": "This is the previously retained sample at25:13 elapsed; root later reported approximately40min. Neither observation identifies a Python frame or establishes the currently executing check.",
+    "sample_owned_open_paths": [
+      "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw/ncbitaxon.db",
+      "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/stages/mediadive-resolution-phase3-admission-r1/process.log"
+    ],
+    "sample_process_state": "  PID ELAPSED      TIME  %CPU    RSS STAT COMM\n98966   25:13  25:08.24  99.6 4670960 Rs   /Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/.venv/bin/python\n",
+    "sample_recorded_at": "2026-11-06T00:09:36.462822+00:00",
+    "source": "phase3-admission-progress-sample-r1.json"
+  },
+  "actual_phase_order": [
+    [
+      "ontologies"
+    ],
+    [
+      "ontologies_stubs",
+      "bacdive",
+      "gtdb",
+      "madin_etal",
+      "metatraits",
+      "rhea_mappings",
+      "prego"
+    ],
+    [
+      "lpsn",
+      "mediadive",
+      "metatraits_gtdb",
+      "bactotraits",
+      "gold"
+    ],
+    [
+      "lpsn_api",
+      "microbedecoder"
+    ]
+  ],
+  "findings": [
+    {
+      "acceptance_controls": [
+        "Keep one fully completed exact-record native verification reusable within a single admission while separately rechecking expected producer, whole-versus-scoped authority and dependency-cycle constraints; a scoped ontology must never become a whole upstream.",
+        "Use deterministic offline call counters on a direct source plus a dependent source to demonstrate bounded replay/serialization counts; do not rely on fragile wall-clock thresholds.",
+        "Preserve failure on changed raw/DB bytes, raw locator replacement, SQLite sidecars, producer/query implementation changes, missing audit/marker, modified current graph or any missing consumed role.",
+        "Negative controls must still catch mutation or substitution of nested native physical-query, demand and label-batch evidence, recorded contracts, callbacks and admission cache membership; memoization must not simply trust mutable current state.",
+        "A new independent admission must redo its required native validation; incomplete or failed first checks must never populate a successful cache.",
+        "Require byte-identical accepted graph/audit identities, exact query witnesses, endpoint qualifications and scientific dispositions before and after any later optimization."
+      ],
+      "classification": "actionable_nonblocking_performance_followup",
+      "evidence": [
+        {
+          "detail": "validate_record caches (path, upstream, expected_source). The same completed whole BacDive record is replayed once for direct selection and again for first upstream selection; _check_record and native replay run before the context-specific scope/source checks. Subsequent equal upstream keys are cached.",
+          "location": "kg_microbe/merge_utils/source_freshness.py:206"
+        },
+        {
+          "detail": "MediaDive declares ontologies and BacDive dependencies. In the actual phase order this is the first phase3 upstream BacDive request; BactoTraits later uses the same cached upstream context.",
+          "location": "kg_microbe/transform_utils/mediadive/mediadive.py:210"
+        },
+        {
+          "detail": "Each native query calls _verify_files at lines61 and95, even for a cached query demand.",
+          "location": "kg_microbe/transform_utils/bacdive/fallback_native_authority.py:55"
+        },
+        {
+          "detail": "_verify_files invokes the shared SourceAdmission.verify(metadata_only=True) by default. This does not rehash DB bytes per query, but executes retained resolvers and all metadata/path/package guards.",
+          "location": "kg_microbe/transform_utils/bacdive/ancestry_authority.py:310"
+        },
+        {
+          "detail": "Every verify calls every retained resolver before file metadata checks.",
+          "location": "kg_microbe/merge_utils/source_admission.py:103"
+        },
+        {
+          "detail": "snapshot JSON-encodes and decodes the complete physical-query and demand arrays; finish_native line172 registers _encoded(snapshot()) as a retained resolver. After the first completed batch, later queries in the same admission repeatedly reconstruct/serialize this closed snapshot.",
+          "location": "kg_microbe/transform_utils/bacdive/fallback_native_authority.py:145"
+        }
+      ],
+      "finite_amplification": {
+        "before_after_checks_per_query": 2,
+        "closed_snapshot_encoded_bytes": 1552864,
+        "conditional_outer_encoding_bytes_for_second_equivalent_replay": 10363814336,
+        "interpretation": "Static count projection for an equivalent successful second replay, not measured work completed by PID98966. It excludes additional internal encode/decode work, package/path checks and other checkpoints. No runtime duration is inferred.",
+        "recorded_query_demands_per_equivalent_replay": 3337
+      },
+      "scientific_or_admission_correctness_failure_demonstrated": false,
+      "scope_recommendation": "File separately; preserve all guards and the active gate. Shared-authority performance work is outside the current MediaDive contract PR.",
+      "title": "Avoid duplicate whole-source replay and repeated sealed BacDive query serialization within one admission",
+      "unbounded_loop_or_recursive_cycle_demonstrated": false
+    }
+  ],
+  "identities": {
+    "data/rebuild-evidence/20261105/mediadive-resolution-1734/phase2-admission-r1.json": {
+      "bytes": 32209,
+      "sha256": "771a23983efa7821e499bf4e0411a42ee8660dea8d6f0cfb78c1f0f72be06f9f"
+    },
+    "data/rebuild-evidence/20261105/mediadive-resolution-1734/phase3-admission-progress-sample-r1.json": {
+      "bytes": 820,
+      "sha256": "c3d85b50c74fef5f4a7bfd1e14a22681a36fabf64925f8a6dda566ee57d70d5c"
+    },
+    "data/rebuild-evidence/20261105/stages/mediadive-resolution-phase2-admission-r1/result.json": {
+      "bytes": 44755,
+      "sha256": "eb763da0cb4bd253404ba6753a43959b66f0d616c429969c13d6c63646177d51"
+    },
+    "data/transformed/bacdive/source_finalization.json": {
+      "bytes": 84768577,
+      "sha256": "fa2202cffd6c29a179509483a2d627479682820be1ff855b545b183538b3cac7"
+    },
+    "data/transformed/bactotraits/source_finalization.json": {
+      "bytes": 9777,
+      "sha256": "3faceda7ebe84d7dda0566940cd2772f1578bfef51c6c6a0d1b7b8258cf763b6"
+    },
+    "data/transformed/gold/source_finalization.json": {
+      "bytes": 26568,
+      "sha256": "0056510879762434ff7779d9388b741dbd27ef12a26fe02860fbe04e1720ac31"
+    },
+    "data/transformed/lpsn/source_finalization.json": {
+      "bytes": 13387,
+      "sha256": "9d74efc58b584f90cb5f68442eef1dfcaffd8ff4ab86627abbe743f80cf7a5a5"
+    },
+    "data/transformed/mediadive/source_finalization.json": {
+      "bytes": 172931,
+      "sha256": "555db90c43c72c0155e9dbf146768e4a7144840f7e8845c94cb1930a48dba2c3"
+    },
+    "data/transformed/metatraits_gtdb/source_finalization.json": {
+      "bytes": 22546,
+      "sha256": "33364c9864b7d2646035df1f30cc55e174a223e47c3aba88e687162a4b1e653f"
+    },
+    "kg_microbe/merge_utils/source_admission.py": {
+      "bytes": 6750,
+      "sha256": "e31844f6f329909a0888f0e8f629052c0eee467ad344b9497180bbd04bea749c"
+    },
+    "kg_microbe/merge_utils/source_freshness.py": {
+      "bytes": 12842,
+      "sha256": "15527444fad4d5adf54c025da4b6789fc61430654c15f52ea757b6de80ca5620"
+    },
+    "kg_microbe/transform_utils/bacdive/ancestry_authority.py": {
+      "bytes": 19420,
+      "sha256": "ac28e5f6f15a5cf964fb342fefc54a06a9f663ec5719cbae62e3dda95cd10ecd"
+    },
+    "kg_microbe/transform_utils/bacdive/bacdive.py": {
+      "bytes": 193036,
+      "sha256": "c2446a6a5daf2ed87bf1d0aefa625ed51324898b854d8f9f0fdf9a5e00d5af72"
+    },
+    "kg_microbe/transform_utils/bacdive/fallback_evidence.py": {
+      "bytes": 27118,
+      "sha256": "eecf8089eea4e0d108a88e6bd832fc2533f3360b6a6596f6bca6afe6ba8c8f66"
+    },
+    "kg_microbe/transform_utils/bacdive/fallback_native_authority.py": {
+      "bytes": 14394,
+      "sha256": "9c2cc3973e3a0dcdf02676813496f66067b34548eae44ce2b4f433566737e0ae"
+    },
+    "kg_microbe/transform_utils/bacdive/taxonomy_evidence.py": {
+      "bytes": 78357,
+      "sha256": "938c5af00d3b2a353e3ffb995d719a8e4cb677d52c9a4d4c7a2c67e0c9124d0f"
+    },
+    "kg_microbe/transform_utils/bactotraits/bactotraits.py": {
+      "bytes": 17777,
+      "sha256": "0d75c432f89f70f90ace3135e7142909721140ba416a638b95e52ac8fcfd7523"
+    },
+    "kg_microbe/transform_utils/gold/crosswalk_quarantine.py": {
+      "bytes": 30932,
+      "sha256": "247a8f5bdb63c66a14d009c5dc74051ea6d64aafe852811f7223d1b3cf682c7c"
+    },
+    "kg_microbe/transform_utils/gold/fold_restoration.py": {
+      "bytes": 17034,
+      "sha256": "8f21ef03b1d25edde982330d9b57d06de0fcbe6ba6b6c8871f00984f2c187129"
+    },
+    "kg_microbe/transform_utils/gold/gold.py": {
+      "bytes": 64437,
+      "sha256": "89bc2649e216cb8307d23e3820f8aa23eba35815dd89fae1a99c9cebb248749b"
+    },
+    "kg_microbe/transform_utils/gold/selected_taxon_aliases.py": {
+      "bytes": 25262,
+      "sha256": "84a5dba705619654fb788f87e6ff67266a46df230d4e05a74dcc5276388c7d25"
+    },
+    "kg_microbe/transform_utils/gold/taxon_dispositions.py": {
+      "bytes": 66644,
+      "sha256": "b9f565b9bb2e69ba5842f3880011aa0b0ab4167078b17cf8ea5411ac9e3b53f6"
+    },
+    "kg_microbe/transform_utils/lpsn/lpsn.py": {
+      "bytes": 45156,
+      "sha256": "853aeac589d6f7b735cc5996e28c3623c03c7088517fd3167e76f7c2299e2da0"
+    },
+    "kg_microbe/transform_utils/mediadive/mediadive.py": {
+      "bytes": 80386,
+      "sha256": "5dd9090519838615677c118bcdc95db5304e658dde0dc04876330193a5f7e855"
+    },
+    "kg_microbe/transform_utils/metatraits_gtdb/metatraits_gtdb.py": {
+      "bytes": 36142,
+      "sha256": "4d15aaba4b793a6e0c63fbe51f035168c765d061f7ae8752ad8e861924d30ca7"
+    },
+    "kg_microbe/utils/source_finalization.py": {
+      "bytes": 65662,
+      "sha256": "4a218471634517d617ef2dade4d511531ef3a42ec442480932654d5a2beffc24"
+    },
+    "kg_microbe/utils/transform_fingerprint.py": {
+      "bytes": 26921,
+      "sha256": "90272b22dfa0f4b0c690b28a3ef7591ac88f2b52a05925da1061eb5190937e9c"
+    }
+  },
+  "limits": [
+    "No sampled stack, timing instrumentation, query plan or live query was obtained. The running process could be at any admissible substep.",
+    "Recorded cohort sizes and static multiplicative work establish a finite performance follow-up; they do not prove what fraction of elapsed time any function consumed.",
+    "No estimate of completion time, admission success, deadlock absence or final scientific acceptance is made.",
+    "All mandatory freshness/provenance checks and the currently running admission must remain intact."
+  ],
+  "most_directly_consistent_open_ncbitaxon_path": {
+    "bacdive_actual_finite_cohort": {
+      "computed_ancestry_queries": 546,
+      "fallback_demands": 3337,
+      "fallback_eligible_records": 818,
+      "fallback_physical_declaration_queries": 508,
+      "label_queries": 863,
+      "native_label_statements_scanned": 2854566,
+      "native_records": 99392,
+      "resolved_deposits": 151188,
+      "source_report_bytes": 84768577
+    },
+    "call_chain": [
+      "verify_sources \u2192 verify_source_freshness \u2192 _SourceFreshness.validate_record",
+      "_check_record \u2192 _verify_recorded_consumed_inputs \u2192 BacDiveTransform.verify_recorded_native_inputs",
+      "taxonomy_evidence.verify_recorded \u2192 prepare_fallback / resolve_deposits \u2192 FreshFallbackAuthority / FreshAncestryAuthority"
+    ],
+    "finite_cache_contexts": "Direct (path,False,None) and upstream(path,True,bacdive); later BactoTraits uses the same upstream key. This is bounded duplicate replay, not infinite dependency recursion.",
+    "inference": "The full admitted source set repeats BacDive native replay when MediaDive first requests BacDive as an upstream. Its live fallback/ancestry authority opens the bound ncbitaxon.db. This is a plausible explanation for the retained descriptor sample, not proof of the current execution point."
+  },
+  "new_phase3_work": {
+    "gold": {
+      "association_count": 531336,
+      "code_locations": [
+        "gold/taxon_dispositions.py:234",
+        "gold/taxon_dispositions.py:617",
+        "gold/taxon_dispositions.py:745",
+        "gold/taxon_dispositions.py:762",
+        "gold/selected_taxon_aliases.py:189"
+      ],
+      "historical_fold_count": 59613,
+      "mechanics": "Reconstructs finite selected-alias authority from native JSON/TSVs and taxdump, builds an isolated temporary SQLite index, rejoins every retained taxonomy audit row, verifies graph nodes/edges and historical fold restorations. _gold_taxon_rejoins caches a completed exact rejoin within the admission. This path does not select the source ncbitaxon.db.",
+      "native_count": 605885,
+      "producer_audit_bytes": {
+        "gold_label_crosswalk_quarantine.tsv": 440536,
+        "gold_lexical_fold_restorations.tsv": 470277468,
+        "gold_selected_taxon_aliases.tsv": 44847,
+        "gold_taxon_dispositions.tsv": 1497836752
+      },
+      "producer_native_hook": "gold.py:437 \u2192 crosswalk verify_recorded_inputs and taxon_dispositions.verify_recorded_taxon_inputs",
+      "retained_count": 531336
+    },
+    "lpsn": {
+      "explanation": "The ncbitaxon label-index builder at lpsn.py:351 is a producer path; freshness uses the registered class without constructing/running it. LPSN admission uses generic graph/authority/audit/marker checks and ontologies/GTDB dependency validation. No evidence supports attributing the open DB to an executing LPSN producer.",
+      "graph_counts": {
+        "edges": 156157,
+        "nodes": 86716
+      },
+      "source_specific_recorded_native_hook": false
+    },
+    "other_sources": {
+      "bactotraits": {
+        "graph_bytes": {
+          "edges.tsv": 9869633,
+          "nodes.tsv": 893975
+        },
+        "graph_counts": {
+          "edges": 87809,
+          "nodes": 9748
+        }
+      },
+      "mediadive": {
+        "graph_bytes": {
+          "edges.tsv": 22413177,
+          "nodes.tsv": 3089112
+        },
+        "graph_counts": {
+          "edges": 114164,
+          "nodes": 32065
+        }
+      },
+      "metatraits_gtdb": {
+        "graph_bytes": {
+          "edges.tsv": 411891970,
+          "nodes.tsv": 3352569
+        },
+        "graph_counts": {
+          "edges": 3407096,
+          "nodes": 33955
+        }
+      }
+    }
+  },
+  "other_bounded_costs": [
+    {
+      "detail": "Metadata-only verification still checks all retained resolvers, lexical bindings, absent paths, package membership and file stamps; it is not constant-time.",
+      "location": "kg_microbe/merge_utils/source_admission.py:103"
+    },
+    {
+      "detail": "finish() deliberately performs full verification after a query batch; full admitted files may be rehashed at batch boundaries. This is separate from per-query metadata checks.",
+      "location": "kg_microbe/transform_utils/bacdive/ancestry_authority.py:349"
+    },
+    {
+      "detail": "finalization_inputs_current independently streams exact consumed file digests via _hash_files; this is finite repeated I/O at record/marker boundaries, even where SourceAdmission.capture has cached an identity.",
+      "location": "kg_microbe/utils/transform_fingerprint.py:466"
+    }
+  ],
+  "prior_phase2_admission": {
+    "elapsed_seconds": 750.663,
+    "exit_code": 0
+  },
+  "recorded_at_utc": "2026-11-06T00:28:39.509689+00:00",
+  "schema_version": 1,
+  "scope": "Read-only static call-chain analysis and completed-report metadata inspection. No attachment, profiler, additional process sample, signal, database query, duplicate gate, producer, tests, HTTP, credentials or tracked edits.",
+  "status": "static_analysis_complete_with_nonblocking_performance_followup",
+  "termination_review": {
+    "dependency_cycle_guard": "source_freshness.py:212 refuses a path already active; completed context keys are cached.",
+    "gold_parent_context": "fold_restoration.py:209 uses visited; crosswalk_quarantine.py:177/184 use monotone finite sets and stop at a fixed point.",
+    "gold_rejoin": "taxonomy audit and graph loops terminate at file EOF; indexed cohort iteration and exact counts bind the full finite cohort; own-GOLD declaration checks reuse the completed rejoin.",
+    "native_parent_walk": "fallback_native_authority.py:225 uses a seen set; its recursive cycle checker uses active/complete sets and rejects directed cycles.",
+    "result": "No concrete accidental unbounded loop or dependency recursion found in the inspected reachable admission paths."
+  }
+}

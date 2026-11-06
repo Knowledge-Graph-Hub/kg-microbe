@@ -1,0 +1,86 @@
+{
+  "baseline_updated": false,
+  "changes": {
+    "solution:2076": {
+      "new": 12,
+      "old": 10
+    },
+    "solution:6546": {
+      "new": 3,
+      "old": 0
+    },
+    "solution:6547": {
+      "new": 10,
+      "old": 0
+    },
+    "solution:6562": {
+      "new": 6,
+      "old": 0
+    },
+    "solution:6635": {
+      "new": 8,
+      "old": 0
+    },
+    "solution:6636": {
+      "new": 1,
+      "old": 0
+    },
+    "solution:6641": {
+      "new": 9,
+      "old": 0
+    },
+    "solution:6650": {
+      "new": 5,
+      "old": 0
+    },
+    "solution:6651": {
+      "new": 3,
+      "old": 0
+    },
+    "solution:6652": {
+      "new": 2,
+      "old": 0
+    },
+    "solution:6669": {
+      "new": 11,
+      "old": 0
+    }
+  },
+  "elapsed_seconds": 0.476,
+  "exit_code": 0,
+  "inputs": {
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/october-baseline/original/data/transformed/mediadive/edges.tsv": {
+      "bytes": 22124764,
+      "sha256": "4e933d1e2412fb1aad74e60719a6a64dfa34862ff0a6b84e93d78da5ce13dd8b"
+    },
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/october-baseline/preservation.json": {
+      "bytes": 2281,
+      "sha256": "f467590594fc763440056342c33971ee0a24986ab278c45b8188df1775064b89"
+    },
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/mediadive/edges.tsv": {
+      "bytes": 22413177,
+      "sha256": "14e741d473dbeb300b3e65f067357e034421f2018495e787e33bc1b3af97ba94"
+    },
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/mediadive/source_finalization.json": {
+      "bytes": 172931,
+      "sha256": "555db90c43c72c0155e9dbf146768e4a7144840f7e8845c94cb1930a48dba2c3"
+    },
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/mediadive/source_fingerprint.json": {
+      "bytes": 4138,
+      "sha256": "84fdf383d32fbefbbc5a474cbb5096eedb2fd2df9dc6c98773645b2bc683efff"
+    },
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/scripts/mediadive_coverage_check.py": {
+      "bytes": 7991,
+      "sha256": "ab79800459146a628374f0b5bed879f84de55ddc4d8c42f15a461b9d2bc384aa"
+    }
+  },
+  "interpretation": "Existing five-percent ingredient-count check only, not association completeness, source admission or final graph admission.",
+  "new_ingredient_edges": 35133,
+  "new_solutions": 4814,
+  "old_ingredient_edges": 35073,
+  "old_solutions": 4804,
+  "shared_solutions_with_losses": 0,
+  "stage_log_sha256": "9ea56d790a8b4418c2bec44c39a4301031ffd69a63e1fee6ac85821b35c49f39",
+  "stage_result_sha256": "4934bd67803c8d14636bf2610eaa4d3a60f07c8d81a3002cc097a22ba699bfc2",
+  "status": "within_tolerance"
+}

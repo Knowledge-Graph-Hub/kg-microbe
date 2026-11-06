@@ -222,9 +222,9 @@
     "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/artifact-stream-review/final-identity.json"
   },
   {
-    "bytes": 4122,
+    "bytes": 4548,
     "file": "filed-findings.jsonl",
-    "sha256": "f2562ab16e82c8aade2b96decf744470ad03d1840caa4d2e55cfb46372a83e2d",
+    "sha256": "0d9a7dc6e0a37fb2c3db31f7df472dd15b77394f8a296d63bf83fc47e0a14f9f",
     "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/filed-findings.jsonl"
   },
   {
@@ -262,5 +262,125 @@
     "file": "native-fixture-whitespace-check-r1.json",
     "sha256": "cdc840fa1e3f5e8d53b1ae1ca05fcd92337c2bf0ad5d1422ab1def4adc685064",
     "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/native-fixture-whitespace-check-r1.json"
+  },
+  {
+    "bytes": 8504,
+    "file": "final-implementation-independent-review-1.json",
+    "sha256": "5d7fd29f48ddff7b907c08959b7c6da9ff1f1e0596834781ae63bc78b6826d7a",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/final-implementation-independent-review-1.json"
+  },
+  {
+    "bytes": 18633,
+    "file": "acceptance-scope-review-1.json",
+    "sha256": "4a7274c10df05cf9167aecf57a39361e804a5ce2bb4460029138ad90696609a7",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/acceptance-scope-review-1.json"
+  },
+  {
+    "bytes": 6650,
+    "file": "rhea-label-authority-reuse-independent-review-1.json",
+    "sha256": "bdb3409ded47ae4ec45cd77d9d9e06d215cce4855a46ce905c041873de73e954",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/rhea-label-authority-reuse-independent-review-1.json"
+  },
+  {
+    "bytes": 369,
+    "file": "phase2-production-identity-r1.json",
+    "sha256": "066fcbb644bab33419e7f1f3bb4d705ea3cca9cd48a124622f2cf90235a661ee",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/phase2-production-identity-r1.json"
+  },
+  {
+    "bytes": 32209,
+    "file": "phase2-admission-r1.json",
+    "sha256": "771a23983efa7821e499bf4e0411a42ee8660dea8d6f0cfb78c1f0f72be06f9f",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/phase2-admission-r1.json"
+  },
+  {
+    "bytes": 561,
+    "file": "phase2-admission-identity-r1.json",
+    "sha256": "c254547f518722cf142fcb10044e9dc4b5e1d237e46d075a71d416a4353ffd3f",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/phase2-admission-identity-r1.json"
+  },
+  {
+    "bytes": 23004,
+    "file": "production-Rhea-review-r1.json",
+    "sha256": "32675552596827168c4241d32bed43b86a6238261d075bd5d8d15aedf4ddf4fb",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/production-Rhea-review-r1.json"
+  },
+  {
+    "bytes": 27659,
+    "file": "full-producer-MediaDive-review-r1.json",
+    "sha256": "fa9eb08b551d1c45020972f5bcb332a80a151724bcbcdd97201c459032ad07fd",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/full-producer-MediaDive-review-r1.json"
+  },
+  {
+    "bytes": 2881,
+    "file": "ingredient-precheck-r1.json",
+    "sha256": "155380ea2639d1ae93e3d7473751a6eee78e4fc5c1da20d8a9d09f196a49e031",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/ingredient-precheck-r1.json"
+  },
+  {
+    "bytes": 1709,
+    "file": "ingredient-precheck-inputs-r1.json",
+    "sha256": "21904247d5ddab219bfb9345ef2db9db30ae7a8b43cda5d5f9ca1558c54320ae",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/ingredient-precheck-inputs-r1.json"
+  },
+  {
+    "bytes": 2103,
+    "file": "microbedecoder-admission-extension/review.json",
+    "sha256": "c03a0af411b0a24fe3d52630d8af2babe24012690ee8c49beacb66ec4ef78b4b",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/microbedecoder-admission-extension/review.json"
+  },
+  {
+    "bytes": 4816,
+    "file": "microbedecoder-admission-extension/independent-review-r1.json",
+    "sha256": "629e0dd0b2b9dd8e7ca35b735dc714e0b961b2d673b8d8ffb90d5afbf2e964ee",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/microbedecoder-admission-extension/independent-review-r1.json"
+  },
+  {
+    "bytes": 2634,
+    "file": "microbedecoder-admission-focused-r1.log",
+    "sha256": "d901a39e6e2dec8fec8d29d26df2048136b26644cbeee2eddb43e1803be76714",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/microbedecoder-admission-focused-r1.log"
+  },
+  {
+    "bytes": 16850,
+    "file": "phase3-admission-runtime-analysis-r1.json",
+    "sha256": "fd05a0c09854674cd0b892705d4b56b24b7e2692f9adae4c3b988eedca05e916",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/phase3-admission-runtime-analysis-r1.json"
+  },
+  {
+    "bytes": 436,
+    "file": "source-admission-cost-issue-r1.json",
+    "sha256": "75949be2ee37a7cca1879ac88af8517bf98e6409b8e116c8eb3cfb00f2268bf2",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/source-admission-cost-issue-r1.json"
+  },
+  {
+    "bytes": 2012,
+    "file": "phase3-production-identity-r1.json",
+    "sha256": "1de685c875aea79ce01b4157b198863f246202013ee58375e7cd76ea1a3813ef",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/phase3-production-identity-r1.json"
+  },
+  {
+    "bytes": 9252,
+    "file": "phase3-admission-runtime-analysis-addendum-r1.json",
+    "sha256": "bfce9d230f17224a854ba4da7b73dd10e1be13788aa27a5b556db8690e5c0420",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/phase3-admission-runtime-analysis-addendum-r1.json"
+  },
+  {
+    "bytes": 261,
+    "file": "format-preservation-r2.json",
+    "sha256": "9a847633957e5281c80aeee78237702189d82d3db721a80c73003affef9b3e7c",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/format-preservation-r2.json"
+  },
+  {
+    "bytes": 6402,
+    "file": "final-checkpoint-review-r1.json",
+    "sha256": "b939320b1f41679d610df3f70ea29310b0f2a1e206faba08e3da2dc2f93de08c",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/final-checkpoint-review-r1.json"
+  },
+  {
+    "bytes": 1476,
+    "file": "native-log-whitespace-check-r1.json",
+    "sha256": "87ae19f3be40f592a4ea967999ec77da5fe644895e62e8346716d3a86f3545c4",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/native-log-whitespace-check-r1.json"
   }
 ]

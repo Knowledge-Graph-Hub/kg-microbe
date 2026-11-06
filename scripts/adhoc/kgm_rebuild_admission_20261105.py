@@ -327,7 +327,9 @@ def write_receipt(path, root, result):
 def main(argv=None):
     """Run a read-only plan or gate and optionally retain its exact outcome as new evidence."""
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("command", choices=("plan", "verify-ontologies", "verify-sources", "verify-merge"))
+    parser.add_argument(
+        "command", choices=("plan", "verify-ontologies", "verify-sources", "verify-microbedecoder", "verify-merge")
+    )
     parser.add_argument("--root", type=Path, default=ROOT)
     parser.add_argument("--raw-dir", type=Path, default=Path("data/raw"))
     parser.add_argument("--transformed-dir", type=Path, default=Path("data/transformed"))
@@ -367,6 +369,13 @@ def main(argv=None):
             result["verification"], _ = verify_sources(
                 plan, [source for phase in plan["phases"][:through] for source in phase]
             )
+        elif args.command == "verify-microbedecoder":
+            result["verification"], _ = verify_sources(plan, ["microbedecoder"])
+            result["admission_scope"] = {
+                "admitted_sources": ["microbedecoder"],
+                "phase4_certified": False,
+                "interpretation": "Only MicrobeDecoder is admitted; phase 4 is not certified.",
+            }
         elif args.command == "verify-merge":
             result["verification"] = verify_merge(plan, config_path, root)
         result["status"] = "planned" if args.command == "plan" else "pass"

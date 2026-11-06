@@ -1,0 +1,28 @@
+{
+  "unfiltered_check_exit": 2,
+  "unfiltered_output": "docs/reviews/mediadive-resolution-1734-20261105/lpsn-phase-helper-focused-r1.log:12: trailing whitespace.\n+  \ndocs/reviews/mediadive-resolution-1734-20261105/microbedecoder-admission-focused-r1.log:12: trailing whitespace.\n+  \n",
+  "exact_native_log_copies": {
+    "docs/reviews/mediadive-resolution-1734-20261105/lpsn-phase-helper-focused-r1.log": {
+      "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/lpsn-phase-helper-focused-r1.log",
+      "bytes": 2783,
+      "sha256": "23547fc9de005b137dd74bc34a04d84a71efa06522a00bdfb3c44ec70e056e3f"
+    },
+    "docs/reviews/mediadive-resolution-1734-20261105/microbedecoder-admission-focused-r1.log": {
+      "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/microbedecoder-admission-focused-r1.log",
+      "bytes": 2634,
+      "sha256": "d901a39e6e2dec8fec8d29d26df2048136b26644cbeee2eddb43e1803be76714"
+    }
+  },
+  "authored_files_check": [
+    "git",
+    "diff",
+    "--cached",
+    "--check",
+    "--",
+    ".",
+    ":(exclude)docs/reviews/mediadive-resolution-1734-20261105/lpsn-phase-helper-focused-r1.log",
+    ":(exclude)docs/reviews/mediadive-resolution-1734-20261105/microbedecoder-admission-focused-r1.log"
+  ],
+  "authored_files_check_exit": 0,
+  "interpretation": "Preserve native pytest output bytes; only their literal whitespace is excepted from this optional precommit check. Required PR gates remain unchanged."
+}

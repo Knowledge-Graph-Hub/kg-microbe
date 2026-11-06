@@ -1,0 +1,542 @@
+{
+  "anti_waiver_static_review": {
+    "interpretation": "expected_count=0 rejects either reviewed snapshot ID OR either RDF digest; a single renamed identity cannot waive six exclusions and seven witnesses. Parser/runtime behavior was inspected, not executed as a new test.",
+    "reviewed_rdf_sha256s": [
+      "8ee48d7044cf3eef1001fa730dae2a491902ab25b259b519d6826796bb8acedf",
+      "8f858aff8d984d8e882b90fac0d81d6980589fb819b460da388ccb796195fa25"
+    ],
+    "reviewed_snapshot_ids": [
+      "rhea-cache-142-20260907",
+      "rhea-release-143-20261105"
+    ]
+  },
+  "checks": {
+    "actual_consumed_legacy_policy": true,
+    "actual_consumed_release_manifest": true,
+    "actual_reaction_audit_cohort": true,
+    "actual_rhea_completion_line": true,
+    "all_common_module_origins_unchanged": true,
+    "all_seven_directional_witnesses": true,
+    "anti_waiver_both142_143_ids_and_rdf": true,
+    "completed_phase2_exit_zero": true,
+    "completed_rhea_report_and_marker_bound_same_producer": true,
+    "consumed_rhea_directions_matches_pin_and_staging": true,
+    "consumed_rhea_rdf_matches_pin_and_staging": true,
+    "directional_RHEA:25075": true,
+    "directional_RHEA:33752": true,
+    "directional_RHEA:42305": true,
+    "directional_RHEA:57721": true,
+    "directional_RHEA:57722": true,
+    "directional_RHEA:58157": true,
+    "directional_RHEA:58158": true,
+    "exact_release143_identity": true,
+    "executed_current_module_kg_microbe.transform_utils.rhea_mappings": true,
+    "executed_current_module_kg_microbe.transform_utils.rhea_mappings.label_inputs": true,
+    "executed_current_module_kg_microbe.transform_utils.rhea_mappings.legacy_xrefs": true,
+    "executed_current_module_kg_microbe.transform_utils.rhea_mappings.native_graph": true,
+    "executed_current_module_kg_microbe.transform_utils.rhea_mappings.native_inputs": true,
+    "executed_current_module_kg_microbe.transform_utils.rhea_mappings.native_rdf": true,
+    "executed_current_module_kg_microbe.transform_utils.rhea_mappings.reaction_families": true,
+    "executed_current_module_kg_microbe.transform_utils.rhea_mappings.rhea_mappings": true,
+    "graph_recorded_size_edges.tsv": true,
+    "graph_recorded_size_nodes.tsv": true,
+    "historical141_identity_and_sources_preserved": true,
+    "historical_selected_context_deltas_limited_to_htmlEquation": true,
+    "legacy_RHEA:15929_record_matches_policy": true,
+    "legacy_RHEA:19441_record_matches_policy": true,
+    "legacy_RHEA:22140_record_matches_policy": true,
+    "legacy_RHEA:28338_record_matches_policy": true,
+    "legacy_RHEA:47152_record_matches_policy": true,
+    "legacy_RHEA:58872_record_matches_policy": true,
+    "prior142_decisions_and_go_normalization_preserved": true,
+    "recorded_audit_bytes_go_reference_resolution.tsv": true,
+    "recorded_audit_bytes_rhea_legacy_xref_dispositions.tsv": true,
+    "recorded_audit_bytes_rhea_reaction_dispositions.tsv": true,
+    "recorded_audit_bytes_source_canonicalization.tsv": true,
+    "recorded_audit_bytes_source_metadata_exclusions.tsv": true,
+    "recorded_audit_bytes_source_reference_resolution.tsv": true,
+    "release_archive_exact143_members": true,
+    "six_production_rows_exact_current_policy_review": true,
+    "unique_directional_audit_RHEA:25075": true,
+    "unique_directional_audit_RHEA:33752": true,
+    "unique_directional_audit_RHEA:42305": true,
+    "unique_directional_audit_RHEA:57721": true,
+    "unique_directional_audit_RHEA:57722": true,
+    "unique_directional_audit_RHEA:58157": true,
+    "unique_directional_audit_RHEA:58158": true
+  },
+  "completion": {
+    "elapsed_seconds": 3611.174,
+    "exit_code": 0,
+    "finalized_counts": {
+      "edges": 446309,
+      "nodes": 105942
+    },
+    "marker": {
+      "bytes": 2774,
+      "path": "data/transformed/rhea_mappings/source_fingerprint.json",
+      "sha256": "aca5c5dfa7e8e00ee35b1f62ddfcdb05f65b7aa88f243f70b00c449d2a3f6321"
+    },
+    "phase2_result": {
+      "bytes": 37783,
+      "path": "data/rebuild-evidence/20261105/stages/mediadive-resolution-phase2-r1/result.json",
+      "sha256": "8a19458f0712b3280f1dafcd2e15b4230dcd88479b852f20077c98378244b65a"
+    },
+    "process_log": {
+      "bytes": 10953,
+      "path": "data/rebuild-evidence/20261105/stages/mediadive-resolution-phase2-r1/process.log",
+      "sha256": "dea92b4fc12aa2aa6b698ed39df3f8fd70cfcec24647497f45ce4ff5f49e2dd2"
+    },
+    "producer_code": {
+      "directory": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/kg_microbe/transform_utils/rhea_mappings",
+      "fingerprint": "146f6f036e674c31f0da23b168227a0e83f8155a5a5e3a4d01633d95af1bbc21"
+    },
+    "python": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/.venv/bin/python",
+    "report": {
+      "bytes": 16150,
+      "path": "data/transformed/rhea_mappings/source_finalization.json",
+      "sha256": "0566c9e33f91a4b557bcd703dbc85551067fa1f829c6bb23fa88ef4d8298006d"
+    },
+    "rhea_completion_line": "[transform] rhea_mappings: done \u2014 nodes.tsv: 105,942 rows; edges.tsv: 446,309 rows"
+  },
+  "consumed_inputs_recorded_by_production": {
+    "rhea_chebi_labels": {
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw/chebi.db",
+      "sha256": "081d065c12487e567fac48ab8c5ee87cc533b2ac89e22f47c119be4ee37ff0b7"
+    },
+    "rhea_directions": {
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw/rhea/rhea-directions.tsv",
+      "sha256": "daeb374f4327c38808006613ca8bbef56d048f907a09ab9c55038baba2cf94f9"
+    },
+    "rhea_ec_labels": {
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw/ec.db",
+      "sha256": "45219ebb57f98cecf789c15a3cc7cde8d066429a23f83f764e528a24e4eb4cc0"
+    },
+    "rhea_go_labels": {
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw/go.db",
+      "sha256": "7e11388df1f9e0a2cd246e68b77c33fd06d78f6ca2190c4f8635742d16064c2a"
+    },
+    "rhea_legacy_xref_dispositions": {
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/mappings/rhea_legacy_xref_dispositions.json",
+      "sha256": "cb02fa0d77048cd6d4f6c89d1fafe37e4888dda3369018a343552ff54f651946"
+    },
+    "rhea_rdf": {
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw/rhea/rhea.rdf.gz",
+      "sha256": "8f858aff8d984d8e882b90fac0d81d6980589fb819b460da388ccb796195fa25"
+    },
+    "rhea_release_manifest": {
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/mappings/rhea_release.json",
+      "sha256": "414c7f32dea8e27b445cebd67990310f6579781f95171dc8c7ed440be99c5b4e"
+    }
+  },
+  "directional_witnesses": [
+    {
+      "actual_production_reaction_audit": {
+        "direction": "LR",
+        "disposition": "retained_active",
+        "master_id": "RHEA:25074",
+        "native_status": "Approved",
+        "reaction_id": "RHEA:25075",
+        "snapshot_id": "rhea-release-143-20261105"
+      },
+      "policy": {
+        "direction": "LR",
+        "master": "RHEA:25074",
+        "object": "GO:0009978",
+        "subject": "RHEA:25075"
+      },
+      "retained_native_assertion_and_side_role_review_passed": true
+    },
+    {
+      "actual_production_reaction_audit": {
+        "direction": "LR",
+        "disposition": "retained_active",
+        "master_id": "RHEA:33751",
+        "native_status": "Approved",
+        "reaction_id": "RHEA:33752",
+        "snapshot_id": "rhea-release-143-20261105"
+      },
+      "policy": {
+        "direction": "LR",
+        "master": "RHEA:33751",
+        "object": "GO:0008962",
+        "subject": "RHEA:33752"
+      },
+      "retained_native_assertion_and_side_role_review_passed": true
+    },
+    {
+      "actual_production_reaction_audit": {
+        "direction": "LR",
+        "disposition": "retained_active",
+        "master_id": "RHEA:42304",
+        "native_status": "Approved",
+        "reaction_id": "RHEA:42305",
+        "snapshot_id": "rhea-release-143-20261105"
+      },
+      "policy": {
+        "direction": "LR",
+        "master": "RHEA:42304",
+        "object": "GO:0008962",
+        "subject": "RHEA:42305"
+      },
+      "retained_native_assertion_and_side_role_review_passed": true
+    },
+    {
+      "actual_production_reaction_audit": {
+        "direction": "LR",
+        "disposition": "retained_active",
+        "master_id": "RHEA:57720",
+        "native_status": "Approved",
+        "reaction_id": "RHEA:57721",
+        "snapshot_id": "rhea-release-143-20261105"
+      },
+      "policy": {
+        "direction": "LR",
+        "master": "RHEA:57720",
+        "object": "GO:0046961",
+        "subject": "RHEA:57721"
+      },
+      "retained_native_assertion_and_side_role_review_passed": true
+    },
+    {
+      "actual_production_reaction_audit": {
+        "direction": "RL",
+        "disposition": "retained_active",
+        "master_id": "RHEA:57720",
+        "native_status": "Approved",
+        "reaction_id": "RHEA:57722",
+        "snapshot_id": "rhea-release-143-20261105"
+      },
+      "policy": {
+        "direction": "RL",
+        "master": "RHEA:57720",
+        "object": "GO:0046933",
+        "subject": "RHEA:57722"
+      },
+      "retained_native_assertion_and_side_role_review_passed": true
+    },
+    {
+      "actual_production_reaction_audit": {
+        "direction": "LR",
+        "disposition": "retained_active",
+        "master_id": "RHEA:58156",
+        "native_status": "Approved",
+        "reaction_id": "RHEA:58157",
+        "snapshot_id": "rhea-release-143-20261105"
+      },
+      "policy": {
+        "direction": "LR",
+        "master": "RHEA:58156",
+        "object": "GO:0046962",
+        "subject": "RHEA:58157"
+      },
+      "retained_native_assertion_and_side_role_review_passed": true
+    },
+    {
+      "actual_production_reaction_audit": {
+        "direction": "RL",
+        "disposition": "retained_active",
+        "master_id": "RHEA:58156",
+        "native_status": "Approved",
+        "reaction_id": "RHEA:58158",
+        "snapshot_id": "rhea-release-143-20261105"
+      },
+      "policy": {
+        "direction": "RL",
+        "master": "RHEA:58156",
+        "object": "GO:0046932",
+        "subject": "RHEA:58158"
+      },
+      "retained_native_assertion_and_side_role_review_passed": true
+    }
+  ],
+  "executed_module_identities_verified": {
+    "kg_microbe.transform_utils.rhea_mappings": {
+      "bytes": 118,
+      "path": "kg_microbe/transform_utils/rhea_mappings/__init__.py",
+      "sha256": "ef18480e3d1e54758ad5668172394f60a09b30694457d7ebd75eb94f54c1cccb"
+    },
+    "kg_microbe.transform_utils.rhea_mappings.label_inputs": {
+      "bytes": 5933,
+      "path": "kg_microbe/transform_utils/rhea_mappings/label_inputs.py",
+      "sha256": "1afdca9ec8d0a85b9f3519a8f5b2de55d3ef7cae68468046bf0155752b1e9c39"
+    },
+    "kg_microbe.transform_utils.rhea_mappings.legacy_xrefs": {
+      "bytes": 17466,
+      "path": "kg_microbe/transform_utils/rhea_mappings/legacy_xrefs.py",
+      "sha256": "f283b475e53effd4528bf891a8037090cbc5db8d6c50d39b35490943b6678459"
+    },
+    "kg_microbe.transform_utils.rhea_mappings.native_graph": {
+      "bytes": 8270,
+      "path": "kg_microbe/transform_utils/rhea_mappings/native_graph.py",
+      "sha256": "7cefbdcd2c549da4c06063408927c4d03152a4eae7a1dfdf95904e73dacc4e2a"
+    },
+    "kg_microbe.transform_utils.rhea_mappings.native_inputs": {
+      "bytes": 4683,
+      "path": "kg_microbe/transform_utils/rhea_mappings/native_inputs.py",
+      "sha256": "41737f8cdf88573b71f42144f0a9af90c4f23a10b22b15397b5f6f4e3e70747f"
+    },
+    "kg_microbe.transform_utils.rhea_mappings.native_rdf": {
+      "bytes": 10833,
+      "path": "kg_microbe/transform_utils/rhea_mappings/native_rdf.py",
+      "sha256": "05b0ca0ef3aa24e64f1112af22036bf1f283d6bd7feafb815a81b128a9f5cac9"
+    },
+    "kg_microbe.transform_utils.rhea_mappings.reaction_families": {
+      "bytes": 10569,
+      "path": "kg_microbe/transform_utils/rhea_mappings/reaction_families.py",
+      "sha256": "dd68799fac0f47545d554e5ee3d989792db55ce3df943ead1b0f6c782be8f017"
+    },
+    "kg_microbe.transform_utils.rhea_mappings.rhea_mappings": {
+      "bytes": 8420,
+      "path": "kg_microbe/transform_utils/rhea_mappings/rhea_mappings.py",
+      "sha256": "f575232c17e11aaf53d12235e800923dd2c69347122c980e1df2363f52b2ec13"
+    }
+  },
+  "findings": [],
+  "graph_members_recorded_not_rehashed": {
+    "edges.tsv": {
+      "bytes": 80138698,
+      "sha256": "3ff2390bccb01bef6dec08be209dfd869a168f731971d5b40418b5b44a399490"
+    },
+    "nodes.tsv": {
+      "bytes": 17280376,
+      "sha256": "379b7f3da74a3f060d669d02f42ce5a7559d2c18c6a06447b10779dbbd415007"
+    }
+  },
+  "historical_provenance": {
+    "complete_context_comparison": {
+      "bytes": 98615,
+      "path": "data/rebuild-evidence/20261105/upgrades/robot-rhea/rhea143-review-1/complete-selected-context-comparison.json",
+      "sha256": "828c0cb7effd0779c4c14de637458b60fe65e3578da6254081399c30b5d6ea8d"
+    },
+    "complete_contexts_identical": false,
+    "explanation": "The retained 142-to143 full-context review records htmlEquation presentation changes. This does not relabel historical141 evidence or revalidate the separate historical GO retirement authority.",
+    "historical141": {
+      "rdf": {
+        "bytes": 8690178,
+        "sha256": "c5ece10984a2f7c4c95c241cde134b108f0dc865335b232bdd77e67e5f074078"
+      },
+      "snapshot_id": "rhea-local-cache-141"
+    },
+    "historical141_and_separate_go_evidence_revalidated_now": false,
+    "legacy_source_identities": {
+      "data/raw/rhea2ec.tsv": {
+        "bytes": 193992,
+        "sha256": "2b449ac148ab155880fd0c751ba5a76b0448f05e42a5079e1877392304a7055a"
+      },
+      "data/raw/rhea2go.tsv": {
+        "bytes": 180913,
+        "sha256": "1a4b90336c6ba0e96bff8bb363544693e0dff51335b15a04fc684817aa3b3158"
+      }
+    },
+    "prior142_finite_decisions_preserved": true,
+    "reviewed142_policy": {
+      "bytes": 13930,
+      "path": "tests/resources/rhea/reviewed_release_142/rhea_legacy_xref_dispositions.json",
+      "sha256": "1f12a77c8f2efac001e5aa444b00e42075f0b92e926b7a87cf61a253bc75f74b"
+    },
+    "reviewed142_release": {
+      "bytes": 961,
+      "path": "tests/resources/rhea/reviewed_release_142/rhea_release.json",
+      "sha256": "4b11fa6f84f1b32d739e552e29fffbe86eb4bc8e04920f18d6acff9ffbfcad9c"
+    },
+    "selected_context_deltas": [
+      {
+        "changed_predicates": [
+          "{http://rdf.rhea-db.org/}htmlEquation"
+        ],
+        "subject": "RHEA:15929"
+      },
+      {
+        "changed_predicates": [
+          "{http://rdf.rhea-db.org/}htmlEquation"
+        ],
+        "subject": "RHEA:16185"
+      },
+      {
+        "changed_predicates": [
+          "{http://rdf.rhea-db.org/}htmlEquation"
+        ],
+        "subject": "RHEA:19441"
+      },
+      {
+        "changed_predicates": [
+          "{http://rdf.rhea-db.org/}htmlEquation"
+        ],
+        "subject": "RHEA:35595"
+      },
+      {
+        "changed_predicates": [
+          "{http://rdf.rhea-db.org/}htmlEquation"
+        ],
+        "subject": "RHEA:47152"
+      },
+      {
+        "changed_predicates": [
+          "{http://rdf.rhea-db.org/}htmlEquation"
+        ],
+        "subject": "RHEA:58868"
+      },
+      {
+        "changed_predicates": [
+          "{http://rdf.rhea-db.org/}htmlEquation"
+        ],
+        "subject": "RHEA:58872"
+      }
+    ]
+  },
+  "label_authority_qualification": {
+    "bytes": 6650,
+    "path": "data/rebuild-evidence/20261105/mediadive-resolution-1734/rhea-label-authority-reuse-independent-review-1.json",
+    "sha256": "bdb3409ded47ae4ec45cd77d9d9e06d215cce4855a46ce905c041873de73e954"
+  },
+  "legacy_exclusions": [
+    {
+      "historical_snapshot_id": "rhea-local-cache-141",
+      "legacy_normalized_object": "EC:3.5.3.21",
+      "original_object": "EC:3.5.3.21",
+      "policy_sha256": "cb02fa0d77048cd6d4f6c89d1fafe37e4888dda3369018a343552ff54f651946",
+      "reason": "reaction_definition_and_annotation_changed",
+      "runtime_validation_scope": "selected_indexed_labels_statuses_xrefs_variant_roles; historical_explanations_not_revalidated",
+      "selected_snapshot_id": "rhea-release-143-20261105",
+      "subject": "RHEA:15929"
+    },
+    {
+      "historical_snapshot_id": "rhea-local-cache-141",
+      "legacy_normalized_object": "GO:0047074",
+      "original_object": "GO:0018581",
+      "policy_sha256": "cb02fa0d77048cd6d4f6c89d1fafe37e4888dda3369018a343552ff54f651946",
+      "reason": "subreaction_annotation_removed",
+      "runtime_validation_scope": "selected_indexed_labels_statuses_xrefs_variant_roles; historical_explanations_not_revalidated",
+      "selected_snapshot_id": "rhea-release-143-20261105",
+      "subject": "RHEA:19441"
+    },
+    {
+      "historical_snapshot_id": "rhea-local-cache-141",
+      "legacy_normalized_object": "GO:0008252",
+      "original_object": "GO:0008252",
+      "policy_sha256": "cb02fa0d77048cd6d4f6c89d1fafe37e4888dda3369018a343552ff54f651946",
+      "reason": "more_specific_native_annotation",
+      "runtime_validation_scope": "selected_indexed_labels_statuses_xrefs_variant_roles; historical_explanations_not_revalidated",
+      "selected_snapshot_id": "rhea-release-143-20261105",
+      "subject": "RHEA:22140"
+    },
+    {
+      "historical_snapshot_id": "rhea-local-cache-141",
+      "legacy_normalized_object": "GO:0008735",
+      "original_object": "GO:0008735",
+      "policy_sha256": "cb02fa0d77048cd6d4f6c89d1fafe37e4888dda3369018a343552ff54f651946",
+      "reason": "different_activity_annotation",
+      "runtime_validation_scope": "selected_indexed_labels_statuses_xrefs_variant_roles; historical_explanations_not_revalidated",
+      "selected_snapshot_id": "rhea-release-143-20261105",
+      "subject": "RHEA:28338"
+    },
+    {
+      "historical_snapshot_id": "rhea-local-cache-141",
+      "legacy_normalized_object": "GO:0004029",
+      "original_object": "GO:0004029",
+      "policy_sha256": "cb02fa0d77048cd6d4f6c89d1fafe37e4888dda3369018a343552ff54f651946",
+      "reason": "more_specific_native_annotation",
+      "runtime_validation_scope": "selected_indexed_labels_statuses_xrefs_variant_roles; historical_explanations_not_revalidated",
+      "selected_snapshot_id": "rhea-release-143-20261105",
+      "subject": "RHEA:47152"
+    },
+    {
+      "historical_snapshot_id": "rhea-local-cache-141",
+      "legacy_normalized_object": "GO:0102177",
+      "original_object": "GO:0102177",
+      "policy_sha256": "cb02fa0d77048cd6d4f6c89d1fafe37e4888dda3369018a343552ff54f651946",
+      "reason": "subreaction_annotation_removed",
+      "runtime_validation_scope": "selected_indexed_labels_statuses_xrefs_variant_roles; historical_explanations_not_revalidated",
+      "selected_snapshot_id": "rhea-release-143-20261105",
+      "subject": "RHEA:58872"
+    }
+  ],
+  "legacy_policy": {
+    "bytes": 14290,
+    "path": "mappings/rhea_legacy_xref_dispositions.json",
+    "sha256": "cb02fa0d77048cd6d4f6c89d1fafe37e4888dda3369018a343552ff54f651946"
+  },
+  "limitations": [
+    "Native RDF, directions source and label DBs were not rehashed or re-parsed in this bounded review. Actual producer consumed-input hashes and retained semantic checks provide their bindings.",
+    "The seven GO annotations are bound by the retained exact native review and actual producer guard-before-publication path, with current reaction audit confirming direction; full output graph was not rescanned.",
+    "Current build-tool provenance is unavailable for reused ChEBI/EC label DBs; the separate qualification remains in force.",
+    "This completed producer review does not replace the persisted phase2 freshness/admission gate or final merged artifact validation."
+  ],
+  "prior_current_policy_review": {
+    "bytes": 20793,
+    "path": "data/rebuild-evidence/20261105/upgrades/robot-rhea/current-reviewed-policy-check/result.json",
+    "sha256": "f9aefe755818cd069bb09283acd329de42c0c6dc3bc23e6a9bfc30d3e000e83e"
+  },
+  "prior_finite_native_review": {
+    "bytes": 8335,
+    "path": "data/rebuild-evidence/20261105/upgrades/robot-rhea/rhea143-review-1/rhea143-finite-legacy-assessment.json",
+    "sha256": "3568b9040ff670a177b71c0e6374f0771c606f907dcbf59c1b330aae32977892"
+  },
+  "production_rhea_completed": true,
+  "reaction_audit_counts": {
+    "excluded_obsolete": 1188,
+    "retained_active": 76020
+  },
+  "reaction_status_counts": {
+    "Approved": 74448,
+    "Obsolete": 1188,
+    "Preliminary": 1572
+  },
+  "release_files_recorded_not_rehashed": {
+    "rhea-directions.tsv": {
+      "bytes": 456168,
+      "sha256": "daeb374f4327c38808006613ca8bbef56d048f907a09ab9c55038baba2cf94f9"
+    },
+    "rhea.rdf.gz": {
+      "bytes": 8875804,
+      "sha256": "8f858aff8d984d8e882b90fac0d81d6980589fb819b460da388ccb796195fa25"
+    }
+  },
+  "release_manifest": {
+    "bytes": 1021,
+    "path": "mappings/rhea_release.json",
+    "sha256": "414c7f32dea8e27b445cebd67990310f6579781f95171dc8c7ed440be99c5b4e"
+  },
+  "reviewed_at_utc": "2026-11-05T23:17:52.046064+00:00",
+  "schema_version": 1,
+  "scope": "Read-only completed-producer receipt/audit review; no source rehash, producer, tests, gate, network or database query. Root persisted phase2 admission remains separate.",
+  "staging_receipt": {
+    "bytes": 986,
+    "path": "data/raw/rhea/snapshot_receipt.json",
+    "sha256": "10a1823961f43846fa301b895d1ea4d9e8d768c143054c25efca50731e419c55"
+  },
+  "status": "pass_completed_rhea_producer_review",
+  "verified_audit_identities": {
+    "go_reference_resolution.tsv": {
+      "bytes": 4004950,
+      "path": "data/transformed/rhea_mappings/go_reference_resolution.tsv",
+      "sha256": "338a260b3937959dfec44ab2bd44589f9154e3e3de07b360c266fe947d9cf321"
+    },
+    "rhea_legacy_xref_dispositions.tsv": {
+      "bytes": 11314,
+      "path": "data/transformed/rhea_mappings/rhea_legacy_xref_dispositions.tsv",
+      "sha256": "cecce55e99135af33567f306356c7aa3f85326d8e347791bdd0490d588c01704"
+    },
+    "rhea_reaction_dispositions.tsv": {
+      "bytes": 5860714,
+      "path": "data/transformed/rhea_mappings/rhea_reaction_dispositions.tsv",
+      "sha256": "8954445c96a9f9a639bb3058dcd2a2688ee6147bfec38efd27c19aa18f1ae5f7"
+    },
+    "source_canonicalization.tsv": {
+      "bytes": 48,
+      "path": "data/transformed/rhea_mappings/source_canonicalization.tsv",
+      "sha256": "4e6a2e08ad0ec3ed46d69cf49c5790c4c0bc253c6cb18d9f1866363bedbd4870"
+    },
+    "source_metadata_exclusions.tsv": {
+      "bytes": 62,
+      "path": "data/transformed/rhea_mappings/source_metadata_exclusions.tsv",
+      "sha256": "f0bfb347a870f737dd13e48920e6eda693bc99db3f081a4326bc76efdd538564"
+    },
+    "source_reference_resolution.tsv": {
+      "bytes": 102,
+      "path": "data/transformed/rhea_mappings/source_reference_resolution.tsv",
+      "sha256": "727041d59de466a4823b0c919310b7efcea1d8695f53b0b09e2e5192656798c8"
+    }
+  }
+}

@@ -1,0 +1,175 @@
+{
+  "copied_evidence": {
+    "all_copy_and_original_sizes_sha256_match": true,
+    "duplicate_records": 0,
+    "linked_source_or_copy_files": 0,
+    "packet_file_count": 63,
+    "records": 61,
+    "unlisted_packet_members": 0
+  },
+  "findings": [
+    {
+      "blocking_for_portable_packet_until_addressed": true,
+      "kind": "precommit_packaging",
+      "paths": [
+        "docs/reviews/mediadive-resolution-1734-20261105/lpsn-phase-helper-focused-r1.log",
+        "docs/reviews/mediadive-resolution-1734-20261105/microbedecoder-admission-focused-r1.log"
+      ],
+      "required_action": "Explicitly include these ignored, currently untracked manifest-listed logs when staging the packet. Their current bytes and source identities already match; no content repair is needed."
+    }
+  ],
+  "local_links": {
+    "checked": 101,
+    "method": "Resolved all relative Markdown links against each document location; file inventory included ignored files.",
+    "missing": []
+  },
+  "manifest_identity": {
+    "bytes": 17009,
+    "path": "docs/reviews/mediadive-resolution-1734-20261105/manifest.json",
+    "sha256": "1ecc9aa634522859bbd3bd26d26f45c6d358c593e337a4cbac693bfdbea1eb29"
+  },
+  "operations": {
+    "credential_access": false,
+    "gates": 0,
+    "git_mutations": false,
+    "http_or_github_operations": false,
+    "producers": 0,
+    "read_only_git_queries": true,
+    "tests": 0,
+    "tracked_file_edits": false
+  },
+  "recorded_at": "2026-11-06T00:38:21.727301+00:00",
+  "review_scope": "Independent read-only checkpoint/report/packet audit before commit and formatting. It does not rerun producer/source admission, raw scientific validation, tests or gates.",
+  "reviewed_documents": [
+    {
+      "bytes": 12944,
+      "path": "docs/M5_REBUILD_20261105.md",
+      "sha256": "730ce9f5bc302c03f44721551d4614550f6684250e8e0ae3ac9ef87c978ece36"
+    },
+    {
+      "bytes": 20405,
+      "path": "docs/MEDIADIVE_RESOLUTION_1734_20261105.md",
+      "sha256": "cc38ecb7932912e1146e12571c8ed02423a4c278943e10d045971bd76e16916f"
+    },
+    {
+      "bytes": 11151,
+      "path": "docs/reviews/mediadive-resolution-1734-20261105/README.md",
+      "sha256": "e878a9f05fc54c0f78fbda8202aff41347569a8f35d62a70c57298668f4281e2"
+    }
+  ],
+  "schema_version": 1,
+  "scientific_and_stage_checks": {
+    "association_coverage_complete": false,
+    "deferred_nonblocking_issue": 1775,
+    "endpoint_accounting_complete": true,
+    "endpoint_state_counts": {
+      "explicit_empty": 0,
+      "malformed": 0,
+      "missing_evidence": 0,
+      "nonempty": 6056,
+      "transport_error": 0,
+      "unknown_unavailable": 632
+    },
+    "final_gate_reporting_boundary": "Tracked report is explicitly a pre-final-gate checkpoint. Later exact source/code/CI outcomes belong in ignored R/final-run-outcome.json,R/final-run-report.md,data/validation/pr-gates and final PR body; no tracked post-gate report edit or inferred pass is required.",
+    "findings_table_count": 19,
+    "finite_policy_sha256": "2e1915efda265be4cbaea8921f126a7a1ea04e7c8110194ead915cfc1cecbd08",
+    "full_mediadive_review_checks": 169,
+    "historical_failure_receipts_and_legacy_database_provenance_limits_retained": true,
+    "implemented_findings": 18,
+    "ingredient_counts": {
+      "new": 35133,
+      "new_solutions": 10,
+      "old": 35073,
+      "shared_losses": 0,
+      "shared_solutions": 4804
+    },
+    "known_native_observations": 73890,
+    "negative_native_observations": 3,
+    "pending_scopes_correctly_unclaimed": [
+      "phase3 persisted admission",
+      "MicrobeDecoder production/admission",
+      "LPSN API and complete phase4 pending authorization",
+      "local final merge and archive/source qualification",
+      "whole-archive October comparison",
+      "new-candidate full code gate",
+      "new-candidate required CI"
+    ],
+    "phase2_admission_status": "pass",
+    "phase2_admitted_artifacts": 351,
+    "phase2_source_rows": {
+      "bacdive": {
+        "edges": 4454892,
+        "nodes": 298474
+      },
+      "gtdb": {
+        "edges": 1471034,
+        "nodes": 1148711
+      },
+      "madin_etal": {
+        "edges": 192394,
+        "nodes": 49036
+      },
+      "metatraits": {
+        "edges": 4365900,
+        "nodes": 55395
+      },
+      "ontologies": {
+        "edges": 1729253,
+        "nodes": 1354823
+      },
+      "ontologies_stubs": {
+        "edges": 837,
+        "nodes": 750
+      },
+      "prego": {
+        "edges": 237745,
+        "nodes": 22033
+      },
+      "rhea_mappings": {
+        "edges": 446309,
+        "nodes": 105942
+      }
+    },
+    "phase3_admission_final_receipt_present": false,
+    "phase3_admission_process_descriptor_pid": 98966,
+    "phase3_admission_terminal_result_present": false,
+    "phase3_gold_counts_from_retained_process_log": {
+      "edges": 765989,
+      "nodes": 637248
+    },
+    "phase3_owned_modules": 97,
+    "phase3_production_exit": 0,
+    "phase3_seconds": 1272.972,
+    "positive_native_observations": 73887,
+    "retained_representation_limits": {
+      "identical_projections_collapsed": 57,
+      "lookup_without_taxon": 73,
+      "no_bacdive_id": 18374
+    },
+    "rhea_review_checks": 53,
+    "runtime_projection_correctly_qualified": "14457 members and192972036 conditional Python loop iterations are not measured system calls, elapsed-time attribution or an unbounded-loop finding.",
+    "unique_graph_projections": 55386
+  },
+  "source_change_review": {
+    "changed_code_paths": [
+      "scripts/adhoc/kgm_rebuild_admission_20261105.py",
+      "tests/test_rebuild_admission_20261105.py"
+    ],
+    "conclusion": "Only the reviewed fixed verify-microbedecoder command and four new wrapper controls differ; canonical planner, production freshness function, authority guards and through-phase exclusivity are unchanged. Distinct receipt leaves phase4 uncertified.",
+    "exact_match_previously_frozen_review": true,
+    "identities": [
+      {
+        "bytes": 19537,
+        "path": "scripts/adhoc/kgm_rebuild_admission_20261105.py",
+        "sha256": "8f952582e4e1d626fd7fddfb738ee5d5df10a0f93275d5601024093ce15a0c0f"
+      },
+      {
+        "bytes": 17227,
+        "path": "tests/test_rebuild_admission_20261105.py",
+        "sha256": "88b7ee0ddae0759881095f69e2a7ff27570d5e8a97ceff2feda4112f2348301e"
+      }
+    ],
+    "production_module_or_policy_diffs": false
+  },
+  "status": "pass_with_precommit_log_inclusion_requirement"
+}

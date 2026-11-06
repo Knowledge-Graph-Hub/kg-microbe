@@ -1,0 +1,29 @@
+{
+  "inputs": {
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/october-baseline/original/data/transformed/mediadive/edges.tsv": {
+      "bytes": 22124764,
+      "sha256": "4e933d1e2412fb1aad74e60719a6a64dfa34862ff0a6b84e93d78da5ce13dd8b"
+    },
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/mediadive/edges.tsv": {
+      "bytes": 22413177,
+      "sha256": "14e741d473dbeb300b3e65f067357e034421f2018495e787e33bc1b3af97ba94"
+    },
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/scripts/mediadive_coverage_check.py": {
+      "bytes": 7991,
+      "sha256": "ab79800459146a628374f0b5bed879f84de55ddc4d8c42f15a461b9d2bc384aa"
+    },
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/mediadive/source_fingerprint.json": {
+      "bytes": 4138,
+      "sha256": "84fdf383d32fbefbbc5a474cbb5096eedb2fd2df9dc6c98773645b2bc683efff"
+    },
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/mediadive/source_finalization.json": {
+      "bytes": 172931,
+      "sha256": "555db90c43c72c0155e9dbf146768e4a7144840f7e8845c94cb1930a48dba2c3"
+    },
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/october-baseline/preservation.json": {
+      "bytes": 2281,
+      "sha256": "f467590594fc763440056342c33971ee0a24986ab278c45b8188df1775064b89"
+    }
+  },
+  "interpretation": "Input identities before the existing coverage check; no source or graph admission claim."
+}

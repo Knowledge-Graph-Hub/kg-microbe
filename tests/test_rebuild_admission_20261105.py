@@ -260,3 +260,111 @@ def test_evidence_receipts_never_overwrite_prior_results_or_inputs(tmp_path):
     assert json.loads(path.read_text()) == {"status": "pass"}
     with pytest.raises(ValueError, match="Receipt must be under"):
         helper.write_receipt(tmp_path / "data/raw/marker.json", tmp_path, {})
+
+
+@pytest.fixture
+def microbedecoder_command(tmp_path, monkeypatch):
+    """Use the real canonical planner and a byte-bound offline public-admission boundary."""
+    import kg_microbe
+    import kg_microbe.merge_utils.source_freshness as freshness
+
+    for name in ("PREGO_SHAPES", "PREGO_MIN_CONFIDENCE", "PREGO_HABITAT_MIN_SCORE", "GOLD_APPLY_TAXON_TRIM"):
+        monkeypatch.delenv(name, raising=False)
+    config, _ = _config(tmp_path)
+    monkeypatch.setattr(helper, "ROOT", tmp_path)
+    monkeypatch.setattr(kg_microbe, "__file__", str(tmp_path / "kg_microbe/__init__.py"))
+    monkeypatch.chdir(tmp_path)
+    raw = tmp_path / "data/raw"
+    raw.mkdir(parents=True)
+    authority = raw / "taxdump.tar.gz"
+    authority.write_bytes(b"explicit synthetic authority bytes for the wrapper boundary")
+    expected_authority = SourceAdmission().capture(authority)
+    directory = tmp_path / "data/transformed/microbedecoder"
+    directory.mkdir(parents=True)
+    paths = [directory / name for name in ("nodes.tsv", "edges.tsv")]
+    paths[0].write_text("id\tcategory\nfixture:1\tbiolink:OrganismTaxon\n")
+    paths[1].write_text("subject\tpredicate\tobject\nfixture:1\tbiolink:subclass_of\tNCBITaxon:1\n")
+    report = {
+        "raw_input_directory": str(raw),
+        "members": {path.name: file_identity(path) for path in paths},
+        "consumed_inputs": {
+            "ncbi_taxonomy_authority": {"path": str(authority), "sha256": expected_authority["sha256"]}
+        },
+        "audit_members": {},
+    }
+    (directory / "source_finalization.json").write_text(json.dumps(report))
+    (directory / "source_fingerprint.json").write_text("{}")
+    calls = []
+
+    def gate(selected):
+        """Model public authority acceptance with real file capture, without preparing source producers."""
+        calls.append(selected)
+        admission = SourceAdmission()
+        if admission.capture(authority) != expected_authority:
+            raise SourceFinalizationRequired("consumed authority changed")
+        for path in selected:
+            admission.capture(path)
+        return admission
+
+    monkeypatch.setattr(freshness, "verify_source_freshness", gate)
+    receipt = tmp_path / helper.EVIDENCE / "microbedecoder-only.json"
+    arguments = [
+        "verify-microbedecoder",
+        "--root",
+        str(tmp_path),
+        "--merge-config",
+        str(config),
+        "--receipt",
+        str(receipt),
+    ]
+    return {"args": arguments, "receipt": receipt, "calls": calls, "paths": paths, "authority": authority}
+
+
+def test_microbedecoder_command_admits_only_fixed_source_with_distinct_receipt(microbedecoder_command):
+    """The complete canonical plan remains recorded while admission selects only MicrobeDecoder."""
+    case = microbedecoder_command
+    assert helper.main(case["args"]) == 0
+    assert case["calls"] == [case["paths"]]
+    receipt = json.loads(case["receipt"].read_text())
+    assert receipt["status"] == "pass"
+    assert receipt["command"] == "verify-microbedecoder"
+    assert receipt["command"] != "verify-sources"
+    assert set(receipt["verification"]["sources"]) == {"microbedecoder"}
+    assert receipt["admission_scope"] == {
+        "admitted_sources": ["microbedecoder"],
+        "phase4_certified": False,
+        "interpretation": "Only MicrobeDecoder is admitted; phase 4 is not certified.",
+    }
+    assert receipt["plan"]["phases"][-1] == ["lpsn_api", "microbedecoder"]
+    assert "lpsn_api" in receipt["plan"]["sources"]
+    assert not Path(receipt["plan"]["sources"]["lpsn_api"][0]).exists()
+
+
+@pytest.mark.parametrize("damage", ["missing", "changed"])
+def test_microbedecoder_command_cannot_bypass_public_authority_refusal(microbedecoder_command, damage):
+    """A fixed-source request still propagates missing or changed authority refusal without restamping."""
+    case = microbedecoder_command
+    directory = case["paths"][0].parent
+    before = {path.name: path.read_bytes() for path in directory.iterdir()}
+    if damage == "missing":
+        case["authority"].unlink()
+    else:
+        case["authority"].write_bytes(b"different synthetic authority")
+    assert helper.main(case["args"]) == 1
+    receipt = json.loads(case["receipt"].read_text())
+    assert receipt["command"] == "verify-microbedecoder" and receipt["status"] == "fail"
+    assert "SourceFinalizationRequired" in receipt["error"]
+    assert "verification" not in receipt and "admission_scope" not in receipt
+    assert case["calls"] == [case["paths"]]
+    assert before == {path.name: path.read_bytes() for path in directory.iterdir()}
+
+
+def test_microbedecoder_command_refuses_phase_selector_before_admission(microbedecoder_command):
+    """A phase selector cannot broaden or relabel the separately named fixed-source gate."""
+    case = microbedecoder_command
+    assert helper.main([*case["args"], "--through-phase", "4"]) == 1
+    assert case["calls"] == []
+    receipt = json.loads(case["receipt"].read_text())
+    assert receipt["command"] == "verify-microbedecoder" and receipt["status"] == "fail"
+    assert "--through-phase applies only to verify-sources" in receipt["error"]
+    assert "verification" not in receipt and "admission_scope" not in receipt

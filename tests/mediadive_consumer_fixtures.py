@@ -60,6 +60,12 @@ def prepare_synthetic_exports(raw, *, catalogue_claims=None):
             row.setdefault("compound_id", int(key))
             if str(row["compound_id"]) != str(key):
                 raise SourceFinalizationRequired("Synthetic catalogue claim has a conflicting compound ID")
+            if "compound" not in row:
+                if not isinstance(row.get("name"), str) or not row["name"]:
+                    raise SourceFinalizationRequired("Synthetic catalogue carrier needs an explicit compound label")
+                # Only this separate synthetic recipe gets the catalogue label;
+                # the caller's exact target recipe and original claims stay intact.
+                row["compound"] = row["name"]
             carrier.append(row)
         catalogue["data"].insert(0, template)
         detailed[CARRIER_MEDIUM] = {

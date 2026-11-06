@@ -11,6 +11,7 @@ import pytest
 from kg_microbe.transform_utils.constants import ID_COLUMN, OBJECT_COLUMN, SOURCE_RECORD_COLUMN, XREF_COLUMN
 from kg_microbe.utils import chemical_mapping_utils as runtime
 from kg_microbe.utils.ingredient_bundle import ReviewedIngredientBundle
+from tests.mediadive_consumer_fixtures import CARRIER_SOLUTION
 from tests.test_chemical_mapping_utils import reset_cache as reset_cache
 from tests.test_mediadive_material_scope_audit import _producer
 from tests.test_mim_conservative_refresh import FIELDS, _metadata, _row, _table
@@ -173,6 +174,18 @@ def test_actual_mediadive_producer_uses_canonical_annotations_on_every_identity_
     assert nodes[0][XREF_COLUMN] == CANONICAL
     with producer.output_edge_file.open() as stream:
         edges = [row for row in csv.DictReader(stream, delimiter="\t") if row.get("source_assertion_id")]
+    assert len(edges) == 2
+    carrier_id = f"mediadive.solution:{CARRIER_SOLUTION}#recipe/1"
+    assert {row["source_assertion_id"] for row in edges} == {carrier_id, "mediadive.solution:1#recipe/1"}
+    carrier = next(row for row in edges if row["source_assertion_id"] == carrier_id)
+    assert carrier[OBJECT_COLUMN] == "CHEBI:7070"
+    assert json.loads(carrier[SOURCE_RECORD_COLUMN]) == {
+        "name": name,
+        "compound_id": 99,
+        "compound": name,
+        **({"ChEBI": "7070"} if route == "embedded" else {}),
+    }
+    edges = [row for row in edges if row["source_assertion_id"] == "mediadive.solution:1#recipe/1"]
     assert len(edges) == 1
     assert edges[0][OBJECT_COLUMN] == "CHEBI:7070"
     assert edges[0]["value"] == "1.0" and edges[0]["unit"] == "g"

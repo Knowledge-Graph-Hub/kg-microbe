@@ -1,0 +1,132 @@
+{
+  "chemical_assertion_review": {
+    "new_scope_checks": "Require exactly two source-assertion edges and exact ID set {carrier#recipe/1, mediadive.solution:1#recipe/1}; carrier must point to CHEBI7070 and retain its exact explicit synthetic raw record.",
+    "no_silent_filter": "The extra carrier edge is asserted before selection; no edge is silently discarded to obtain the original count.",
+    "original_assertions": "After exact target-ID selection, all original target count/object/value/unit/raw-record assertions remain, as do exactly one CHEBI node, canonical xref and old-alias/new-annotation lookup boundary assertions.",
+    "parameter_routes": [
+      "unified",
+      "legacy",
+      "embedded"
+    ]
+  },
+  "findings": [],
+  "fresh_checkpoint_review": {
+    "actual_loader": "MediaDiveTransform._load_bulk_data() constructs a new EndpointConsumer and parses the four required native dictionaries through load_bulk_payload; it does not receive copied endpoint, bulk, recipe or consumed-input guards from the old object.",
+    "checkpoint_boundary": "MediaDiveTransform.finalize restores endpoint evidence and restore_recipe_checkpoint runs public source validation, rereads the media list and required consumed files, then creates/restores a new recipe guard. The proposal does not prepare recipe evidence ahead of this boundary.",
+    "freshness_controls": "Distinct endpoint consumer asserted; recipe guard absent and bacdive_taxon_lookup absent before checkpoint restore. Transform.__init__ establishes fresh generic consumption/dependency admission.",
+    "negative_controls": "Existing six malformed/missing/wrong-source report cases and both source variants for generic restamping remain; public validator, merge admission, fresh repeat-finalize and publication-byte checks remain. The only changed negative helper call initializes the real native reader so rejection reaches evidence validation instead of an absent-object AttributeError.",
+    "positive_control": "Intact persisted evidence must return the exact recorded report, restore exact consumed/native contracts, create a distinct recipe guard, pass consumed/public/merge validators, and leave every source-output byte unchanged.",
+    "scope": "Non-MediaDive consumers retain the original Transform-only reconstruction.",
+    "selected_function": "test_merge_consumed_input_review.py.proposed::_fresh_consumer"
+  },
+  "issue_scope": [
+    "1776",
+    "1777"
+  ],
+  "kind": "independent_read_only_review_of_saved_test_fixture_proposals",
+  "limits": [
+    "Read-only static review and AST/hash comparison only; no proposed code imported or executed.",
+    "No tests, gates, producers, HTTP, DB queries, tracked edits or source-data writes performed.",
+    "This approval binds the three saved proposals. Actual applied bytes and focused results require the later requested check.",
+    "The separately prepared1778BacDive proposal is outside this review."
+  ],
+  "manifest": {
+    "bytes": 737,
+    "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/mediadive-resolution-1734/final-gate-fixture-proposals-r1/manifest.json",
+    "sha256": "4a8dec470788a16229dce3ec7e6a413bb345290a949cf61a1b3aaf5580e0d6e0"
+  },
+  "production_code_identities": {
+    "kg_microbe/transform_utils/mediadive/bulk_inputs.py": {
+      "bytes": 15065,
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/kg_microbe/transform_utils/mediadive/bulk_inputs.py",
+      "sha256": "a7b6d87afbf530ae8a520f10b5edda3b52b8ab267431ffe3810b0b8614254d4b"
+    },
+    "kg_microbe/transform_utils/mediadive/endpoint_consumer.py": {
+      "bytes": 13120,
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/kg_microbe/transform_utils/mediadive/endpoint_consumer.py",
+      "sha256": "0b14f6ec992476b73c5cf0cf9e1e92ad38acc59724fd5e20c75a2f35e29cea94"
+    },
+    "kg_microbe/transform_utils/mediadive/mediadive.py": {
+      "bytes": 80386,
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/kg_microbe/transform_utils/mediadive/mediadive.py",
+      "sha256": "5dd9090519838615677c118bcdc95db5304e658dde0dc04876330193a5f7e855"
+    },
+    "kg_microbe/transform_utils/mediadive/recipe_identity.py": {
+      "bytes": 29074,
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/kg_microbe/transform_utils/mediadive/recipe_identity.py",
+      "sha256": "b124405ce71e02500acb4b37d0404b189649309103585227a48f5fe5db51202f"
+    },
+    "kg_microbe/transform_utils/transform.py": {
+      "bytes": 15003,
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/kg_microbe/transform_utils/transform.py",
+      "sha256": "e25c7edf6aae96efd5aa7b32924f8573e97f96e4b09b58ca307ab6347f55b9d8"
+    }
+  },
+  "proposal_identity_and_assertion_checks": [
+    {
+      "all_original_assertion_ast_occurrences_retained": true,
+      "before": {
+        "bytes": 6484,
+        "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/mediadive-resolution-1734/final-gate-fixture-proposals-r1/test_merge_consumed_input_review.py.before",
+        "sha256": "73244ae4383ab77dae0b1069c1738d929e00e99b2b03d801bf4f1aa8c5d5af88"
+      },
+      "before_matches_manifest": true,
+      "old_assertions": 5,
+      "proposed": {
+        "bytes": 8038,
+        "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/mediadive-resolution-1734/final-gate-fixture-proposals-r1/test_merge_consumed_input_review.py.proposed",
+        "sha256": "9fcf6a2c99727b344857c2d57403c352bf381864bf806312024a9123156572d0"
+      },
+      "proposed_assertions": 13,
+      "proposed_matches_manifest": true,
+      "target": "tests/test_merge_consumed_input_review.py",
+      "tracked_bytes_remain_before": true
+    },
+    {
+      "all_original_assertion_ast_occurrences_retained": true,
+      "before": {
+        "bytes": 5330,
+        "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/mediadive-resolution-1734/final-gate-fixture-proposals-r1/mediadive_consumer_fixtures.py.before",
+        "sha256": "c0149aafc48cbfb1896030ffb2d55b226500a55e068c51a35788bd5878a33359"
+      },
+      "before_matches_manifest": true,
+      "old_assertions": 0,
+      "proposed": {
+        "bytes": 5771,
+        "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/mediadive-resolution-1734/final-gate-fixture-proposals-r1/mediadive_consumer_fixtures.py.proposed",
+        "sha256": "ebee9a87f7925311c21942ffb45fed1ab0f39b15cb3709eb985b5ea066b8d450"
+      },
+      "proposed_assertions": 0,
+      "proposed_matches_manifest": true,
+      "target": "tests/mediadive_consumer_fixtures.py",
+      "tracked_bytes_remain_before": true
+    },
+    {
+      "all_original_assertion_ast_occurrences_retained": true,
+      "before": {
+        "bytes": 8460,
+        "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/mediadive-resolution-1734/final-gate-fixture-proposals-r1/test_chemical_xref_annotations.py.before",
+        "sha256": "e09939effd09d3211d321423d0e96a994698f9c785806cc2b038424cdd3f9c6e"
+      },
+      "before_matches_manifest": true,
+      "old_assertions": 37,
+      "proposed": {
+        "bytes": 9159,
+        "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/mediadive-resolution-1734/final-gate-fixture-proposals-r1/test_chemical_xref_annotations.py.proposed",
+        "sha256": "10f8ed7a0847efbbea476a4fd14b60f1a1c745cf1860c469492be9df9515db90"
+      },
+      "proposed_assertions": 41,
+      "proposed_matches_manifest": true,
+      "target": "tests/test_chemical_xref_annotations.py",
+      "tracked_bytes_remain_before": true
+    }
+  ],
+  "recorded_at_utc": "2026-11-06T01:15:58.705714+00:00",
+  "status": "pass_static_review_pending_actual_application_and_focused_validation",
+  "synthetic_carrier_review": {
+    "label_origin": "Only when compound is absent, require an existing nonempty string name and copy that value to compound on a deep copy of the explicit catalogue claim.",
+    "preservation": "Original files are preserved before derivation; caller catalogue claim is deep copied; target recipe records are copied independently and receive no added fields. Existing compound values are not replaced.",
+    "selected_function": "mediadive_consumer_fixtures.py.proposed::prepare_synthetic_exports",
+    "semantics": "The added field belongs to the explicitly synthetic first-occurrence carrier. This is not a new field claimed for the original target observation or an alteration of scientific source data."
+  }
+}

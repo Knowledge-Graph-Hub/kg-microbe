@@ -1,0 +1,125 @@
+{
+  "actual_case": {
+    "audit_rows": 128,
+    "authority_sha256": "8f784a79de31b8b134e5bd34b0432e33a3b776da88e7209dd5307cd1caf3a9d5",
+    "canonical": "NCBITaxon:197562",
+    "canonical_category": "biolink:OrganismTaxon",
+    "canonical_endpoint_count": 128,
+    "canonical_name": "Pancrustacea",
+    "legacy_endpoint_count": 0,
+    "original": "NCBITaxon:6657",
+    "proof_limit": "The saved independent audit counted128 rows/edges and matched two complete edge witnesses. This recommendation does not claim an independently recomputed128-record bijection.",
+    "unused_target": false
+  },
+  "basis": {
+    "bytes": 17547,
+    "path": "data/rebuild-evidence/20261105/mediadive-resolution-1734/artifact-sensitive-independent-diagnosis-r1.json",
+    "sha256": "4e9d5f16559fd42d7b89cc412b63b4290955e0387a2d4e5eb57bf35d94f435f2"
+  },
+  "diagnosis": "The test subtracts literal curated targets from finalized node IDs. The inline producer first emits named OrganismTaxon stubs per referenced isolation occurrence; source finalization must then replace retired IDs using exact taxdump evidence. The failing literal6657 assertion conflicts with the established authorized6657\u2192197562 normalization. The test also currently inspects IDs without asserting each resolved declaration category.",
+  "hermetic_regression_controls": [
+    {
+      "case": "Direct live mapped target",
+      "expected": "Pass when actually referenced and typed in either source; fail when both declarations absent or the only category is NamedThing/OntologyClass."
+    },
+    {
+      "case": "Real finalizer on small synthetic chain10\u219211\u219212",
+      "expected": "Generate actual audit/consumed proof under tmp_path; pass only with live typed12, original endpoint10 retained on rewritten edges and exact original observation context. Do not hand-author a self-certifying pass receipt."
+    },
+    {
+      "case": "Missing/wrong/conflicting retirement proof",
+      "expected": "Fail if audit missing, disposition unknown/deleted, wrong original/canonical ID, wrong authority hash/locator, unrelated retirement chain, changed proof bytes, or missing live terminal. No arbitrary replacement of unresolved references."
+    },
+    {
+      "case": "Invalid chain or stale proof",
+      "expected": "Retain existing production rejection for cycle, conflict, deletion and any selected live nonterminal; an outer receipt rehash must not substitute new scientific proof."
+    },
+    {
+      "case": "Canonical graph tampering",
+      "expected": "Fail for missing replacement node, wrong taxon category, wrong final endpoint, missing original endpoint, changed predicate/opposite endpoint, or removed affected edge."
+    },
+    {
+      "case": "Separate unused mapping",
+      "expected": "An explicit unreferenced mapping fixture does not demand a node; adding its actual edge without a typed declaration immediately fails. This generic scope control must not be presented as the reason for the real6657 failure."
+    }
+  ],
+  "implementation_bound": "Prefer a small test-local assertion over a new production validator. Reuse the actual finalizer and production retirement loaders in immutable/tmp_path fixtures, retaining native proof validation and source admission contracts. Root must review any proposed helper before selecting focused tests; none were run here.",
+  "minimal_scientific_acceptance": [
+    "Require a typed node for each actual trusted isolation-source reference, using edges/native occurrence evidence to select the cohort; never intersect expected references with emitted node IDs because that hides missing nodes. An unused mapping alone is not a source assertion, but that is not the explanation for6657.",
+    "For a direct current reference require OrganismTaxon in the actual trimmed or BacDive declaration. Missing/untyped/NamedThing/OntologyClass-only declarations fail. An unknown taxid with its own typed source declaration is not automatically invalid; it simply cannot gain an unproved retirement exception.",
+    "For a missing literal mapped ID, accept a canonical target only with current source_reference_resolution.tsv disposition retired_id_replaced, exact original/canonical IDs, authority taxdump.tar.gz and hash matching the selected consumed-input proof. This retirement audit is distinct from source_canonicalization.tsv.",
+    "Bind audit/member identities to current source_finalization and the original selected authority locator/bytes. Validate the actual native merged chain with existing production retirement APIs; preserve checks for deleted IDs, conflicting/cyclic chains, live nonterminals and a live named terminal. A curated mapping, alternate-ID annotation, claimed audit row, matching label or arbitrary same_as is insufficient proof.",
+    "Verify the final canonical declaration is typed OrganismTaxon and the affected edge retains the correct canonical endpoint plus original_subject/original_object and unchanged predicate, opposite endpoint and source evidence. For the tiny regression fixture require all affected original audit observations to match final edges; no count-only replacement or deleted-edge escape.",
+    "Do not add a6657 allowlist/skip, resurrect its retired node, change mappings or production finalizer policy, loosen unknown-taxon handling, or restamp actual receipts. Retain missing-reference rejection for unaffected targets."
+  ],
+  "operations": {
+    "http_or_credentials_or_github": false,
+    "raw_taxdump_or_finalized_graph_scan": false,
+    "tests_or_producers_or_gates": false,
+    "tracked_edits": false
+  },
+  "recorded_at": "2026-11-06T01:11:43.419102+00:00",
+  "reuse_existing_controls": {
+    "tests/test_bacdive_unresolvable_taxa.py": [
+      "test_a_taxon_the_pinned_release_lacks_gets_a_typed_stub",
+      "test_a_taxon_in_the_pinned_release_gets_no_stub",
+      "test_a_taxon_this_run_already_wrote_gets_no_second_row",
+      "test_taxa_reached_by_any_predicate_are_covered"
+    ],
+    "tests/test_declared_taxid_retirement.py": [
+      "test_named_taxids_forward_both_endpoints_preserve_evidence_and_repeat",
+      "test_bad_retirement_proof_preserves_all_existing_outputs",
+      "test_missing_selected_taxdump_fails_without_checkout_fallback",
+      "test_authority_mutation_during_parse_cannot_attest_old_decisions",
+      "test_published_authority_or_audit_change_fails_admission",
+      "test_receipt_requires_ncbi_role_and_original_selected_locator",
+      "test_hidden_live_chain_members_preserve_complete_previous_publication",
+      "test_clean_selected_chain_preserves_observations_evidence_and_admission",
+      "test_retirement_loader_keeps_structural_checks_in_both_modes"
+    ]
+  },
+  "reviewed_files": [
+    {
+      "bytes": 6085,
+      "path": "tests/test_bacdive_ncbitaxon_stubs.py",
+      "sha256": "4eba42d78c2136f976f76190e51a822beca7da43304235ebd6e895e9a6487a6c"
+    },
+    {
+      "bytes": 193036,
+      "path": "kg_microbe/transform_utils/bacdive/bacdive.py",
+      "sha256": "c2446a6a5daf2ed87bf1d0aefa625ed51324898b854d8f9f0fdf9a5e00d5af72"
+    },
+    {
+      "bytes": 32822,
+      "path": "kg_microbe/merge_utils/external_node_closure.py",
+      "sha256": "7c3000f2c1d34252ab255152d3106a615b2468e138e88d7ed8299b52f2bf6d06"
+    },
+    {
+      "bytes": 5105,
+      "path": "kg_microbe/utils/external_identifiers.py",
+      "sha256": "635aaa232d5679f2ddd49d51419f31443298a5694c0467341e08abf7e92452f7"
+    },
+    {
+      "bytes": 65662,
+      "path": "kg_microbe/utils/source_finalization.py",
+      "sha256": "4a218471634517d617ef2dade4d511531ef3a42ec442480932654d5a2beffc24"
+    },
+    {
+      "bytes": 41194,
+      "path": "tests/test_declared_taxid_retirement.py",
+      "sha256": "45461e3920d105d71177c6a6a1935be9ad8248068edcc2c30f64b843d3bed7d7"
+    },
+    {
+      "bytes": 6275,
+      "path": "tests/test_bacdive_unresolvable_taxa.py",
+      "sha256": "fbad111a4cd8e23e57cc583089c0629b836a8093f98b5db3d65426a5fab2803d"
+    },
+    {
+      "bytes": 80694,
+      "path": "mappings/isolation_source_to_ontology.tsv",
+      "sha256": "6be9917171b58f19cd1859fac80e43c7d9240844de48d2ab4b9099559ceaed3a"
+    }
+  ],
+  "scope": "Independent read-only test/producer/finalizer scope review. Actual large-data finding is attributed to the separate saved native audit; no taxdump or finalized graph scan, tests, producers or gates were run here.",
+  "status": "test_contract_repair_recommended_production_unchanged"
+}

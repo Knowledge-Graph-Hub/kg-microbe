@@ -26,6 +26,35 @@ def _prepared_consumer(tmp_path, source="mediadive"):
     return consumer, config
 
 
+def _fresh_consumer(consumer):
+    """Use new native readers without reusing producer guards or preparing recipe evidence."""
+    repeated = type(consumer).__new__(type(consumer))
+    Transform.__init__(repeated, consumer.source_name, consumer.input_base_dir, consumer.output_base_dir)
+    if consumer.source_name == "mediadive":
+        repeated.bulk_data_dir = repeated._resolve_bulk_data_dir(repeated.input_base_dir)
+        repeated._load_bulk_data()
+        assert repeated._endpoint_consumer is not consumer._endpoint_consumer
+        assert getattr(repeated, "_recipe_identity_guard", None) is None
+        assert "bacdive_taxon_lookup" not in repeated.consumed_input_snapshots
+    return repeated
+
+
+def test_intact_checkpoint_restores_a_distinct_fresh_native_reader(tmp_path):
+    """The reconstructed fixture accepts real intact evidence before testing damaged reports."""
+    consumer, config = _prepared_consumer(tmp_path)
+    before = {path.name: path.read_bytes() for path in consumer.output_dir.iterdir()}
+    report = json.loads(before["source_finalization.json"])
+    repeated = _fresh_consumer(consumer)
+    assert repeated.finalize() == report
+    assert repeated.consumed_input_snapshots == report["consumed_inputs"]
+    assert repeated.producer_native_inputs == report["producer_native_inputs"]
+    assert repeated._recipe_identity_guard is not consumer._recipe_identity_guard
+    repeated.verify_consumed_inputs()
+    verify_finalized_source_files([repeated.output_node_file, repeated.output_edge_file])
+    merge_kg._assert_sources_finalized(str(config))
+    assert before == {path.name: path.read_bytes() for path in consumer.output_dir.iterdir()}
+
+
 def _assert_rejected_without_publication(consumer, config, tmp_path, monkeypatch):
     """Require both repeat and public entry rejection without changing source or published bytes."""
     before = {path.name: path.read_bytes() for path in consumer.output_dir.iterdir()}
@@ -45,8 +74,7 @@ def _assert_rejected_without_publication(consumer, config, tmp_path, monkeypatch
         merge_kg.load_and_merge(str(config))
     # A newly reconstructed object has no in-memory snapshot to accidentally
     # rescue damaged persisted evidence during the repeat-finalize API.
-    repeated = type(consumer).__new__(type(consumer))
-    Transform.__init__(repeated, consumer.source_name, consumer.input_base_dir, consumer.output_base_dir)
+    repeated = _fresh_consumer(consumer)
     with pytest.raises(SourceFinalizationRequired):
         repeated.finalize()
     assert before == {path.name: path.read_bytes() for path in consumer.output_dir.iterdir()}

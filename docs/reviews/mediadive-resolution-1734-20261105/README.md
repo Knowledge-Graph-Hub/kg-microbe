@@ -16,6 +16,9 @@ remain historical. No copied record certifies an unrun producer, graph or releas
 The curated exact-case policy is in `mappings/mediadive_unknown_dispositions.json`.
 No unknown is an explicit empty list or a negative growth assertion.
 
+The findings ledger preserves filing-time notes; the run report gives current dispositions.
+The failed first final gate remains failed evidence for its recorded candidate.
+
 | Copy | Bytes | SHA-256 |
 | --- | ---: | --- |
 | [resolution-seed-r1-receipt.json](resolution-seed-r1-receipt.json) | 40739 | `0af71098c42a2ea4ea51a675e537140ca694729c6143e9d2a6399f0523d3f216` |
@@ -55,7 +58,7 @@ No unknown is an explicit empty list or a negative growth assertion.
 | [documentation-contract-fix/fixture-boundary-correction.json](documentation-contract-fix/fixture-boundary-correction.json) | 1160 | `7918f32e99737e7e7ed1ae24bd716a896a402b075f3b775b76dc9f60b9d4705a` |
 | [artifact-stream-review/repair.json](artifact-stream-review/repair.json) | 703 | `def15922024a9b4902e28a28c1285feda25193db9b4df09c25fc80d65c5eaaf6` |
 | [artifact-stream-review/final-identity.json](artifact-stream-review/final-identity.json) | 469 | `a374b4be60236dd6b0f8cc9aa1d1da8d1713f56a6663b1c3a8ce374109aa3342` |
-| [filed-findings.jsonl](filed-findings.jsonl) | 4548 | `0d9a7dc6e0a37fb2c3db31f7df472dd15b77394f8a296d63bf83fc47e0a14f9f` |
+| [filed-findings.jsonl](filed-findings.jsonl) | 6094 | `9e756c4afd2bf85ce6bfee8d8476d8c2ba2aecb31a3718562d2d30c52ee9afba` |
 | [ncbitaxon-reuse-independent-review-1.json](ncbitaxon-reuse-independent-review-1.json) | 6800 | `31605de02e84bd35b7890003df34b6ca80d4ece5b7638acbad37f64088f667ec` |
 | [lpsn-phase-helper-independent-review-1.json](lpsn-phase-helper-independent-review-1.json) | 4772 | `b2105f2eb78696295e752f4267c0262281350ee72b27a8ca8e9c8f0c861742ba` |
 | [lpsn-phase-helper-review/final-readonly-review.json](lpsn-phase-helper-review/final-readonly-review.json) | 3391 | `cf3c95e3ebf3531f6839e186ab89900d189acc51241f471e4b4694db7ec40e5b` |
@@ -82,3 +85,18 @@ No unknown is an explicit empty list or a negative growth assertion.
 | [format-preservation-r2.json](format-preservation-r2.json) | 261 | `9a847633957e5281c80aeee78237702189d82d3db721a80c73003affef9b3e7c` |
 | [final-checkpoint-review-r1.json](final-checkpoint-review-r1.json) | 6402 | `b939320b1f41679d610df3f70ea29310b0f2a1e206faba08e3da2dc2f93de08c` |
 | [native-log-whitespace-check-r1.json](native-log-whitespace-check-r1.json) | 1476 | `87ae19f3be40f592a4ea967999ec77da5fe644895e62e8346716d3a86f3545c4` |
+| [failed-final-code-gate-r1.json](failed-final-code-gate-r1.json) | 3112 | `868338eff74f8cbccdbbb8335a5701cb86757642b2cd3136ef69cd345bedd3b4` |
+| [merge-consumed-clone-diagnosis-1.json](merge-consumed-clone-diagnosis-1.json) | 5304 | `bd97d09e2d085c321db8bcc399b646c93849b7a59c6b30165fcfabad4f4cb9de` |
+| [artifact-sensitive-independent-diagnosis-r1.json](artifact-sensitive-independent-diagnosis-r1.json) | 17547 | `4e9d5f16559fd42d7b89cc412b63b4290955e0387a2d4e5eb57bf35d94f435f2` |
+| [bacdive-stub-retirement-scope-review-r1.json](bacdive-stub-retirement-scope-review-r1.json) | 8415 | `ccfbdc8fd7769d493736452fd2d5f30217d2c5f91ccf189b0c23955818839ccd` |
+| [final-gate-fixture-proposals-independent-review-r1.json](final-gate-fixture-proposals-independent-review-r1.json) | 9042 | `2b4efd08b20e18e500223566f9ee923c97aa39bb2020d9a50af4129f71296660` |
+| [bacdive-stub-retirement-proposal-independent-review-r1.json](bacdive-stub-retirement-proposal-independent-review-r1.json) | 7495 | `e8b7e30baea6b7a0ee94b88e819ba7bca361bfadbf5f9b5f1e7b364d656f8594` |
+| [bacdive-stub-retirement-proposal-independent-review-r2.json](bacdive-stub-retirement-proposal-independent-review-r2.json) | 2990 | `0adb0de77fd4048969eca7291857e462dbb76951539ba424b9a612bcb0adee0a` |
+| [retirement-fixture-installation-r1.json](retirement-fixture-installation-r1.json) | 586 | `1793765877dc2932bb2bf973a59717b00c2dca30bcd694367511a010f7fd5a93` |
+| [final-applied-fixture-repairs-independent-review-r1.json](final-applied-fixture-repairs-independent-review-r1.json) | 10355 | `b684c0fb27a472db45c8c245acaf53a81bc29d1093fdf1e7415533f08e4856fc` |
+| [final-fixture-repair-validation-r1.json](final-fixture-repair-validation-r1.json) | 2686 | `7fa04edcd5a86c8f1af01ea67a2a61ec39f1eae6b896bb85747aa8a43a54e927` |
+| [format-preservation-r3.json](format-preservation-r3.json) | 243 | `c943d2d77f069a0dd5e25ea512a4bfdac80b1ff276a05c30dec787d83e8a6906` |
+| [final-gate-fixture-focused-r1.log](final-gate-fixture-focused-r1.log) | 3847 | `8f69de5bb6408d90049b15999e3b04c52941f0792d817ed404d1d22c591f91b0` |
+| [retirement-fixture-focused-r1.log](retirement-fixture-focused-r1.log) | 2742 | `fbab0f769345a7d954cdd9000672c83cd6fa012d42efab063f9d1fd2e2749067` |
+| [phase3-admission-stack-observation-r1.json](phase3-admission-stack-observation-r1.json) | 900 | `167a92541bbec1504bfdbcc294f8e5ae06f93c294a131ed1c02f570634d33f64` |
+| [final-checkpoint-review-r2.json](final-checkpoint-review-r2.json) | 6191 | `cd6009f65dc6b2d7ce2a1c5d915234de97bb8d344e1e2b53dcec4c1c11847230` |

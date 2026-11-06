@@ -1,0 +1,86 @@
+{
+  "schema_version": 1,
+  "scope": "Read-only diagnosis of synthetic repeat-finalization construction; no tracked edits, test execution, HTTP, or Git operations.",
+  "reported_head": "8bdf8b1",
+  "log": "data/rebuild-evidence/20261105/mediadive-resolution-1734/merge-consumed-diagnostic-r1.log",
+  "cause": {
+    "test": "tests/test_merge_consumed_input_review.py::_assert_rejected_without_publication",
+    "lines": [
+      48,
+      49,
+      51
+    ],
+    "construction": "type(consumer).__new__ followed only by Transform.__init__ bypasses all MediaDive subclass initialization, including the mandatory sealed-generation consumer.",
+    "failure": "MediaDiveTransform.finalize calls self._endpoint_consumer.restore(report_path) before the recorded recipe/public input checks. Missing attribute produces AttributeError, so the intended SourceFinalizationRequired assertion is never reached."
+  },
+  "production_assessment": {
+    "analogous_normal_construction_defect_found": false,
+    "constructor": "MediaDiveTransform.__init__ sets selected bulk_data_dir and calls _load_bulk_data unconditionally before returning.",
+    "guard_creation": "_load_bulk_data constructs EndpointConsumer, assigns its shared admission, then loads all four native payloads. It re-raises any exception; a constructor failure cannot return a usable producer.",
+    "cli_path": "transform._run_one constructs via DATA_SOURCES[source], which invokes the full registered class constructor before run/finalize.",
+    "limitation": "Manually bypassed or corrupted instances can still raise AttributeError in this restore branch. That is not evidence of a normal construction/publication bypass; verify_native_inputs separately rejects a missing endpoint guard. No production change is needed to repair this fixture."
+  },
+  "proposed_fixture_only_repair": {
+    "file": "tests/test_merge_consumed_input_review.py",
+    "after": "Transform.__init__(repeated, consumer.source_name, consumer.input_base_dir, consumer.output_base_dir)",
+    "code": "if consumer.source_name == \"mediadive\":\n    repeated.bulk_data_dir = repeated._resolve_bulk_data_dir(repeated.input_base_dir)\n    repeated._load_bulk_data()",
+    "why": "Runs the actual subclass native-read initialization against the existing sealed fixture generation. New EndpointConsumer and source snapshots are created by genuine reads; no original in-memory consumer/recipe guard or damaged completion snapshots are copied.",
+    "avoid": "Do not call read_mediadive_bulk_inputs helper: it additionally prepares recipe/material guards and alters the fresh restore path. Do not create a fake endpoint consumer, widen expected exception to AttributeError, skip repeated.finalize, or weaken production validation.",
+    "preserved_adversarial_assertions": [
+      "Current public source verification raises SourceFinalizationRequired.",
+      "Public merge raises SourceFinalizationRequired before KGX.",
+      "Fresh repeat-finalize raises SourceFinalizationRequired on the damaged persisted evidence.",
+      "Every source output byte and prior published archive remains unchanged.",
+      "All six persisted metadata damage cases and changed-lookup/hash-restamp cases remain active."
+    ],
+    "optional_narrow_setup_assertions": [
+      "repeated._endpoint_consumer is not consumer._endpoint_consumer",
+      "repeated has no _recipe_identity_guard before finalize",
+      "bacdive_taxon_lookup is absent from repeated.consumed_input_snapshots before finalize"
+    ],
+    "validation_when_root_allows": "Run this module and existing fresh/repeated MediaDive finalization controls; root controls pytest. No failure has been rerun here."
+  },
+  "search": {
+    "ignored_included": true,
+    "roots": [
+      "kg_microbe",
+      "tests",
+      "scripts"
+    ],
+    "finding": "Targeted bypass/deletion search found synthetic __new__ constructions in tests, no matching production deletion/reset of _endpoint_consumer."
+  },
+  "inputs": {
+    "tests/test_merge_consumed_input_review.py": {
+      "sha256": "73244ae4383ab77dae0b1069c1738d929e00e99b2b03d801bf4f1aa8c5d5af88",
+      "bytes": 6484
+    },
+    "tests/test_merge_source_freshness.py": {
+      "sha256": "587743b12e06c7bbf582d6066297056acf6dae99d5a78bf24f76adaf9d9af63e",
+      "bytes": 37050
+    },
+    "kg_microbe/transform_utils/mediadive/mediadive.py": {
+      "sha256": "5dd9090519838615677c118bcdc95db5304e658dde0dc04876330193a5f7e855",
+      "bytes": 80386
+    },
+    "kg_microbe/transform_utils/mediadive/endpoint_consumer.py": {
+      "sha256": "0b14f6ec992476b73c5cf0cf9e1e92ad38acc59724fd5e20c75a2f35e29cea94",
+      "bytes": 13120
+    },
+    "kg_microbe/transform_utils/mediadive/recipe_identity.py": {
+      "sha256": "b124405ce71e02500acb4b37d0404b189649309103585227a48f5fe5db51202f",
+      "bytes": 29074
+    },
+    "kg_microbe/transform_utils/mediadive/bulk_inputs.py": {
+      "sha256": "a7b6d87afbf530ae8a520f10b5edda3b52b8ab267431ffe3810b0b8614254d4b",
+      "bytes": 15065
+    },
+    "kg_microbe/transform_utils/transform.py": {
+      "sha256": "e25c7edf6aae96efd5aa7b32924f8573e97f96e4b09b58ca307ab6347f55b9d8",
+      "bytes": 15003
+    },
+    "kg_microbe/transform.py": {
+      "sha256": "2a78cc3fb75e6681612949ecf56d7c061cd84d5052ee469a834c2e2a614ec94d",
+      "bytes": 29148
+    }
+  }
+}

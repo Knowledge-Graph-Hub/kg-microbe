@@ -1,0 +1,158 @@
+{
+  "blocking_findings": [],
+  "checks": {
+    "failed_full_gate": {
+      "all_four_recorded_log_identities_match": true,
+      "candidate": "8bdf8b1fffbad024f5d0a0ccbd821c242039a677",
+      "failed": 11,
+      "passed": 9888,
+      "pytest_seconds": 2243.8,
+      "skipped": 8,
+      "still_reported_failed": true
+    },
+    "findings": {
+      "count": 23,
+      "deferred": 1775,
+      "implemented_dispositions": 22,
+      "issue_closure_or_graph_release_not_claimed": true,
+      "unique_ids": [
+        1757,
+        1758,
+        1759,
+        1760,
+        1761,
+        1762,
+        1763,
+        1764,
+        1765,
+        1766,
+        1767,
+        1768,
+        1769,
+        1770,
+        1771,
+        1772,
+        1773,
+        1774,
+        1775,
+        1776,
+        1777,
+        1778,
+        1779
+      ]
+    },
+    "focused_runs": [
+      {
+        "passed": 455,
+        "seconds": 378.79,
+        "sha256": "8f69de5bb6408d90049b15999e3b04c52941f0792d817ed404d1d22c591f91b0"
+      },
+      {
+        "passed": 203,
+        "seconds": 111.16,
+        "sha256": "fbab0f769345a7d954cdd9000672c83cd6fa012d42efab063f9d1fd2e2749067"
+      }
+    ],
+    "format_r3": {
+      "bytes_checked": 405096429,
+      "changed_bytes": [],
+      "changed_mtime": [],
+      "exit_code": 0,
+      "files_checked": 1251,
+      "seconds": 1.2
+    },
+    "local_markdown_links_resolve": 125,
+    "manifest_records": 78,
+    "not_yet_tracked_packet_files": [],
+    "phase3_admission": {
+      "completed_stage_result_absent": true,
+      "fixed_command": "verify-sources --through-phase 3",
+      "observed_elapsed": "01:51:12",
+      "observed_process_state": "Rs",
+      "pid": 98966,
+      "stage_inventory": [
+        "plan.json",
+        "process.json",
+        "process.log",
+        "started.json"
+      ]
+    },
+    "policy_sha256": "2e1915efda265be4cbaea8921f126a7a1ea04e7c8110194ead915cfc1cecbd08",
+    "readme_identity_rows_match": 78,
+    "regular_non_symlink_copies": true,
+    "search_includes_ignored_files": true,
+    "source_and_copy_identities_match": 78,
+    "two_new_native_logs": "Both final-gate-fixture-focused-r1.log and retirement-fixture-focused-r1.log were already in the Git index at observation; exact native bytes match source and manifest.",
+    "unlisted_packet_files": []
+  },
+  "documents": [
+    {
+      "bytes": 23660,
+      "path": "docs/MEDIADIVE_RESOLUTION_1734_20261105.md",
+      "sha256": "52bf3b2fe4b5451deba697e85a1b84e49404b22adff59ed660d3293e7f257ca3"
+    },
+    {
+      "bytes": 13457,
+      "path": "docs/M5_REBUILD_20261105.md",
+      "sha256": "674f78e7aa73578f6878f301f0bb88940e54dde996e1d8826a49927510386490"
+    },
+    {
+      "bytes": 13982,
+      "path": "docs/reviews/mediadive-resolution-1734-20261105/README.md",
+      "sha256": "f5e169121a3d11c2b8efac066a95642a1f5ec83b21a4e028a1b1626bef48469e"
+    }
+  ],
+  "limits": "This verifies the report checkpoint and copied evidence identities, not completion or acceptance of pending source/graph/CI gates. Older receipts retain their original meaning.",
+  "manifest": {
+    "bytes": 21795,
+    "path": "docs/reviews/mediadive-resolution-1734-20261105/manifest.json",
+    "sha256": "6e693abf3e3bae81ec866b63791250ff95f58df725bfa1f4614fcd298a5b6663"
+  },
+  "operations": {
+    "HTTP_or_GitHub_or_credential_access": false,
+    "read_only_git_index_listing": true,
+    "read_only_owned_process_status": true,
+    "source_code_re_review": false,
+    "tests_or_gates_or_producers": false,
+    "tracked_writes": false
+  },
+  "recorded_at": "2026-11-06T01:36:22.744864+00:00",
+  "scientific_boundaries": [
+    "6688endpoint accounting remains distinct from association coverage:6056nonempty+632unknown, association_coverage_complete=false, no recovered association or biological absence inferred.",
+    "Seed/canary/batch historical admission-false receipts and the failed activation/full gate remain historical; qualified admission is attributed to separate actual r2 proof.",
+    "Phase2 production/admission and phase3 production are distinct from the still-running phase3 persisted admission.",
+    "MicrobeDecoder and LPSN API/complete phase4 remain pending; no final graph merge/admission or repaired-candidate full gate/CI pass is claimed.",
+    "Credential authorization remains pending per root/session status; no credential material was inspected. The earlier rejected file-read command is explicitly recorded as unexecuted.",
+    "Later source, candidate-gate and CI results are assigned to ignored run evidence and the PR body, preserving this pre-gate committed checkpoint without inferred passes.",
+    "Known SPARQL limits, native observation representation limits, reused database toolchain limits and historical model/receipt identities remain explicit."
+  ],
+  "scope": "Two current reports and the78-record compact evidence packet. No self-review of test implementation; rely on the separately retained independent applied-byte review.",
+  "status": "passed_read_only_documentation_and_packet_checkpoint",
+  "supporting_identities": [
+    {
+      "bytes": 3112,
+      "path": "data/rebuild-evidence/20261105/mediadive-resolution-1734/failed-final-code-gate-r1.json",
+      "sha256": "868338eff74f8cbccdbbb8335a5701cb86757642b2cd3136ef69cd345bedd3b4"
+    },
+    {
+      "bytes": 2686,
+      "path": "data/rebuild-evidence/20261105/mediadive-resolution-1734/final-fixture-repair-validation-r1.json",
+      "sha256": "7fa04edcd5a86c8f1af01ea67a2a61ec39f1eae6b896bb85747aa8a43a54e927"
+    },
+    {
+      "bytes": 10355,
+      "path": "data/rebuild-evidence/20261105/mediadive-resolution-1734/final-applied-fixture-repairs-independent-review-r1.json",
+      "sha256": "b684c0fb27a472db45c8c245acaf53a81bc29d1093fdf1e7415533f08e4856fc"
+    },
+    {
+      "bytes": 243,
+      "path": "data/rebuild-evidence/20261105/mediadive-resolution-1734/format-preservation-r3.json",
+      "sha256": "c943d2d77f069a0dd5e25ea512a4bfdac80b1ff276a05c30dec787d83e8a6906"
+    },
+    {
+      "bytes": 6094,
+      "path": "data/rebuild-evidence/20261105/mediadive-resolution-1734/filed-findings.jsonl",
+      "sha256": "9e756c4afd2bf85ce6bfee8d8476d8c2ba2aecb31a3718562d2d30c52ee9afba"
+    }
+  ]
+}

@@ -1,0 +1,91 @@
+{
+  "associated_files": {
+    "before.py": {
+      "bytes": 6085,
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/mediadive-resolution-1734/bacdive-stub-retirement-proposal/before.py",
+      "sha256": "4eba42d78c2136f976f76190e51a822beca7da43304235ebd6e895e9a6487a6c"
+    },
+    "design.json": {
+      "bytes": 3187,
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/mediadive-resolution-1734/bacdive-stub-retirement-proposal/design.json",
+      "sha256": "8270f6450b79be7b5094fc689130d4664e4494aa0214e949eee0df8fe04243ff"
+    },
+    "proposal.patch": {
+      "bytes": 22706,
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/mediadive-resolution-1734/bacdive-stub-retirement-proposal/proposal.patch",
+      "sha256": "d108a6263bbc55b91004f4bf987bc49f6638472c0bb76765b204fac049b7b7fd"
+    }
+  },
+  "findings": [
+    {
+      "acceptance_control": "A current trusted20edge carrying untrusted original_subject999 must not pass when20 lacks an OrganismTaxon node; test this after synthetic outer hash reseal. Keep direct-live, native-chain, missing canonical, exact edge-context and empty-cohort controls.",
+      "classification": "test_helper_false_pass",
+      "evidence_method": "Static path analysis only; no proposed code or test executed.",
+      "id": "trusted_current_subject_hidden_by_untrusted_original_subject",
+      "location": "proposed.py:225-229",
+      "minimal_fix": "Add every current trusted subject to required independently of original_subject. Preserve the existing trusted-original exact replay guard. If additional rewrite-proof validation is added, keep its selected audit cohort explicit rather than expanding into unrelated full-source admission.",
+      "production_impact": "No production defect established. The proposal is not installed, and this finding concerns its regression-test helper.",
+      "severity": "medium",
+      "static_counterexample": [
+        "Use the existing closure_source positive fixture: trusted10/20; native10\u219211\u219212; canonical12 typed and direct20 typed.",
+        "Change only the direct20location_of edge original_subject toNCBITaxon:999, which is outside trusted.",
+        "Remove the typed20node. Recompute only the synthetic nodes/edges member identities using the existing _bind_mutated_fixture helper. Preserve source_reference_resolution audit and native taxdump.",
+        "Replay of trusted10 still succeeds and populates canonical_targets/expected with12. The direct20edge is skipped because original999 is outside trusted and current20 is outside canonical_targets. required remains{12}; typed12 satisfies closure, so the missing referenced20node is missed."
+      ],
+      "summary": "A nonempty original_subject replaces the current subject for cohort selection. An untrusted claimed origin can therefore remove a trusted currently referenced taxon from typed-node closure.",
+      "why_in_scope": "The proposed helper promises closure for actually referenced trusted targets. This counterexample changes neither predicate nor current trusted target; only a provenance field suppresses the existing closure obligation. It is not a whole-source completeness or scientific-admission demand."
+    }
+  ],
+  "issue_scope": "1778",
+  "kind": "independent_read_only_adversarial_review_of_bacdive_stub_test_proposal",
+  "limits": [
+    "No tests, producers, gates, network calls, source/data edits or large native/graph rescans performed.",
+    "No final approval of the proposal until the scoped false-pass is repaired and root coordinates focused validation.",
+    "Actual128-edge evidence remains in artifact-sensitive-independent-diagnosis-r1.json; this review did not repeat that scan."
+  ],
+  "production_code_identities": {
+    "kg_microbe/merge_utils/external_node_closure.py": {
+      "bytes": 32822,
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/kg_microbe/merge_utils/external_node_closure.py",
+      "sha256": "7c3000f2c1d34252ab255152d3106a615b2468e138e88d7ed8299b52f2bf6d06"
+    },
+    "kg_microbe/merge_utils/source_admission.py": {
+      "bytes": 6750,
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/kg_microbe/merge_utils/source_admission.py",
+      "sha256": "e31844f6f329909a0888f0e8f629052c0eee467ad344b9497180bbd04bea749c"
+    },
+    "kg_microbe/utils/external_identifiers.py": {
+      "bytes": 5105,
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/kg_microbe/utils/external_identifiers.py",
+      "sha256": "635aaa232d5679f2ddd49d51419f31443298a5694c0467341e08abf7e92452f7"
+    },
+    "kg_microbe/utils/source_finalization.py": {
+      "bytes": 65662,
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/kg_microbe/utils/source_finalization.py",
+      "sha256": "4a218471634517d617ef2dade4d511531ef3a42ec442480932654d5a2beffc24"
+    },
+    "tests/test_declared_taxid_retirement.py": {
+      "bytes": 41194,
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/tests/test_declared_taxid_retirement.py",
+      "sha256": "45461e3920d105d71177c6a6a1935be9ad8248068edcc2c30f64b843d3bed7d7"
+    }
+  },
+  "proposal": {
+    "bytes": 22388,
+    "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/mediadive-resolution-1734/bacdive-stub-retirement-proposal/proposed.py",
+    "sha256": "2aa9128712eb41ccadc75f250c575b893fcf1663be29e7ffcafecb8da461f648"
+  },
+  "recorded_at_utc": "2026-11-06T01:25:03.459966+00:00",
+  "reviewed_sound_controls": [
+    "SourceAdmission binds existing graph/audit member hashes and the exact selected consumed ncbi_taxonomy_authority locator/hash; final metadata check guards mutation during the comparison.",
+    "Only finite original named node and full edge witnesses are copied into scratch; resolve_external_reference_bundle is reused with strict native-chain validation, explicit taxdump, normalize_declared_ncbi, no discovery and no GO.",
+    "Native replay audit equality retains all fields and full original JSON records, independent of JSON key order.",
+    "Expected rewritten edge context retains every nonempty field, including original endpoints; missing edges, wrong opposite endpoint/predicate/publication cannot satisfy expected membership.",
+    "Both direct and replacement targets require OrganismTaxon instead of merely any node ID.",
+    "Positive fixture retains two distinct original observations; set membership is explicitly scoped and does not claim raw multiplicity or full source admission.",
+    "Existing original availability/age conditions remain. No actual source output, authority, mapping, production implementation or receipt is edited.",
+    "Native proof negative controls cover stale digest, unrelated chain, cycles, live intermediate, missing terminal, wrong canonical/disposition/digest/declaration, missing/foreign authority. Deleted/unknown handling also remains in the existing production resolver tests; the proposal does not authorize inferred replacement."
+  ],
+  "status": "changes_requested_one_test_coverage_finding",
+  "tracked_file_matches_before": true
+}

@@ -1,6 +1,6 @@
 # MediaDive #1734 resolution — 2026-11-05
 
-Committed-candidate checkpoint prepared 2026-11-06T00:36:22.525774+00:00. This continues the isolated M5 worktree and [PR #1750](https://github.com/Knowledge-Graph-Hub/kg-microbe/pull/1750) under the renewed user instruction retained locally in `R/user-resolution-instructions.md`. `E` denotes `data/rebuild-evidence/20261105/`; `R` denotes its `mediadive-resolution-1734/` directory. [Compact evidence and its hash manifest](reviews/mediadive-resolution-1734-20261105/README.md) preserve exact copies; full bodies, caches, logs and failed attempts remain under `E`. Original staging, approved Biolink/ROBOT/Rhea upgrades and preservation are recorded in the [M5 report](M5_REBUILD_20261105.md). Other pins and canonical graph scope remain unchanged; the backlog goal stays paused.
+Committed-candidate checkpoint prepared 2026-11-06T01:33:25.829718+00:00. This continues the isolated M5 worktree and [PR #1750](https://github.com/Knowledge-Graph-Hub/kg-microbe/pull/1750) under the renewed user instruction retained locally in `R/user-resolution-instructions.md`. `E` denotes `data/rebuild-evidence/20261105/`; `R` denotes its `mediadive-resolution-1734/` directory. [Compact evidence and its hash manifest](reviews/mediadive-resolution-1734-20261105/README.md) preserve exact copies; full bodies, caches, logs and failed attempts remain under `E`. Original staging, approved Biolink/ROBOT/Rhea upgrades and preservation are recorded in the [M5 report](M5_REBUILD_20261105.md). Other pins and canonical graph scope remain unchanged; the backlog goal stays paused.
 
 **Qualified MediaDive raw admission and the full MediaDive producer have passed. The final graph has not been merged or admitted.** All 6,688 endpoints across 3,344 media are accounted for: **6,056 nonempty, 632 unknown/unavailable, zero explicit empty, transport errors, malformed responses or missing evidence**. `association_coverage_complete=false`. No strain association was recovered, and no unknown became an empty list, negative growth, biological absence or a nonexistent-medium claim.
 
@@ -16,7 +16,7 @@ Committed-candidate checkpoint prepared 2026-11-06T00:36:22.525774+00:00. This c
 | Independent MicrobeDecoder production/admission | **Not run** | Await phase-three admission; fixed-source command cannot certify phase 4 |
 | LPSN API / complete phase 4 | **Pending explicit credential authorization** | No helper or child execution claimed |
 | Final merge, general admission, endpoint artifact admission and whole-archive October comparison | **Not run** | Producer or raw admission cannot certify these gates |
-| Final candidate PR gate and required CI | **Not run for the new candidate** | Focused checks below are separate |
+| Final candidate PR gate and required CI | **Repaired candidate gate pending** | First candidate gate failed; its 11 failures are repaired with focused checks and independent review below |
 
 Phase 2 produced `ontologies_stubs`, `bacdive`, `gtdb`, `madin_etal`, `metatraits`, `rhea_mappings` and `prego`; its admission receipt SHA256 is `771a23983efa7821e499bf4e0411a42ee8660dea8d6f0cfb78c1f0f72be06f9f`. Phase 3 produced `lpsn`, `mediadive`, `metatraits_gtdb`, `bactotraits` and `gold`. GOLD has 637,248 node rows and 765,989 edge rows; these production counts do not replace the still-running phase-three admission.
 
@@ -49,7 +49,7 @@ Admitted phase-two graph row counts, before merge, are:
 
 The October MediaDive edges, merged archive and merged stats are independently preserved with exact hashes and separate inodes under `E/october-baseline/`. [Preservation](reviews/mediadive-resolution-1734-20261105/october-preservation-r1.json) passed in 0.839 s using `scripts/adhoc/kgm_rebuild_comparison_20261105.py` (SHA256 `0077fb45b31613bd03c4c5df33bd4e424df4223d7fa85644316365a486ed82eb`). The unchanged ingredient checker [passed its precheck](reviews/mediadive-resolution-1734-20261105/ingredient-precheck-r1.json), exit 0 in 0.476 s: **35,073 → 35,133 ingredient edges (+0.2%)**, no losses among 4,804 shared solutions, one shared solution gaining ingredients and ten new solutions. All eleven changes and unchanged input identities are retained; the committed baseline was not updated. Whole-archive comparison remains pending. Descriptive counts do not grant semantic admission or association completeness.
 
-All 19 review findings were filed: 18 have implemented repairs and retained controls, while #1775 is a deferred, nonblocking performance follow-up. These dispositions do not claim issue closure or a released graph. `R/filed-findings-live-1.json` retains the #1757–1771 snapshot; subsequent filings are #1772–1775.
+All 23 review findings were filed: 22 have implemented repairs and retained controls, while #1775 is a deferred, nonblocking performance follow-up. These dispositions do not claim issue closure or a released graph. `R/filed-findings-live-1.json` retains the #1757–1771 snapshot; subsequent filings are #1772–1779.
 
 | Issue | Finding / disposition |
 | --- | --- |
@@ -72,6 +72,10 @@ All 19 review findings were filed: 18 have implemented repairs and retained cont
 | [#1773](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1773) | Bind final-phase prerequisites to the complete current canonical plan and owned paths |
 | [#1774](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1774) | Scope credential-file evidence to the helper; child dotenv behavior is not certified |
 | [#1775](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1775) | Deferred: redundant whole-source replay and sealed-proof serialization; all provenance guards and the active gate remain unchanged |
+| [#1776](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1776) | Fresh synthetic reconstruction uses the real endpoint reader and intact-checkpoint control; all persisted-evidence rejection assertions remain |
+| [#1777](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1777) | Explicit synthetic catalogue carrier has a recipe label; original target records and annotation assertions remain unchanged |
+| [#1778](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1778) | Stub regression verifies typed current references and finite native retirement evidence, including the actual supported 6657-to-197562 replacement |
+| [#1779](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1779) | A forged original-subject field cannot hide a trusted current endpoint from typed-node closure |
 
 The environment-only LPSN phase helper has [six passing offline controls](reviews/mediadive-resolution-1734-20261105/lpsn-phase-helper-focused-r1.log) and [independent re-review](reviews/mediadive-resolution-1734-20261105/lpsn-phase-helper-review/final-readonly-review.json). Execution remains pending explicit authorization. Automatic approval review rejected the earlier proposed credential-file read; that command never executed. The retained helper requires existing environment keys, has no credential-file fallback and explicitly does not certify child production dotenv behavior. Its controls do not replace production admission. The separate `verify-microbedecoder` command keeps canonical scope and delegates to the unchanged public gate, but its distinct receipt states `phase4_certified=false`. [All 28 affected offline controls passed](reviews/mediadive-resolution-1734-20261105/microbedecoder-admission-focused-r1.log); [independent review](reviews/mediadive-resolution-1734-20261105/microbedecoder-admission-extension/independent-review-r1.json) found no defect. Actual MicrobeDecoder production/admission has not run.
 
@@ -79,8 +83,8 @@ Saved focused logs record 45 WAL/probe passes (`R/wal-and-probe-focused-tests-r2
 
 Formatting/codespell preparation passed with all 1,241 measured files byte-identical ([record](reviews/mediadive-resolution-1734-20261105/format-preservation-r1.json)); lint and required `docstr-coverage` passed, the latter at 100%. The mistaken optional `doclint` invocation failed because `docs/source/` was absent; `R/optional-doclint-command-correction.json` records correction to the real gate command without a configuration change or waiver. Historical local gates and the earlier Python-3.11 WAL CI failure belong to their recorded candidates; no new-candidate full-suite or CI pass is inferred.
 
-This report is a committed checkpoint prepared before the final code gate. The
-planned single run is `scripts/run_pr_gates.py mediadive-resolution-20261105-final-r1`;
+This report is a committed checkpoint prepared before the repaired candidate final code gate. The
+planned single run is `scripts/run_pr_gates.py mediadive-resolution-20261105-final-r2`;
 its actual candidate and command outcomes are retained under
 `data/validation/pr-gates/`. Final source, code and CI outcomes will be recorded
 separately in `R/final-run-outcome.json` and `R/final-run-report.md`, and in the PR
@@ -94,9 +98,15 @@ The independent runtime analysis identified one nonblocking performance follow-u
 
 The runtime [addendum](reviews/mediadive-resolution-1734-20261105/phase3-admission-runtime-analysis-addendum-r1.json) counts 14,457 generation members entering the shared guard before upstream BacDive replay. The conditional second-replay projection is about 193 million combined binding/stamp loop iterations; this is not observed syscall work or isolated elapsed-time attribution. Body and history mutation detection remains required.
 
-Final formatting/spelling preparation passed again before commit (1.22 seconds).
+Earlier formatting/spelling preparation before `8bdf8b1f` passed in 1.22 seconds.
 The [preservation receipt](reviews/mediadive-resolution-1734-20261105/format-preservation-r2.json)
 verifies all 1,251 inventoried targets, including ignored files, retained identical
 bytes and modification times. The [checkpoint review](reviews/mediadive-resolution-1734-20261105/final-checkpoint-review-r1.json)
 found no scientific overclaim; its two identified ignored log files are explicitly
 included in this candidate. Later code-gate and source-replay outcomes remain separate.
+
+The [first final candidate gate](reviews/mediadive-resolution-1734-20261105/failed-final-code-gate-r1.json), on `8bdf8b1fffbad024f5d0a0ccbd821c242039a677`, passed lock/config and code quality but finished with **11 failed, 9,888 passed, 8 skipped** in 2,243.80 seconds. This remains a failed historical result. Its three failure groups are filed as #1776–#1778; independent review of the proposed retirement test found and filed #1779 before installation. No production graph defect was demonstrated by these failures. Native evidence supports 128 references rewritten from retired `NCBITaxon:6657` to typed `NCBITaxon:197562`; the old test incorrectly required the retired node. The correction retains native-chain, original-context, missing/untyped-node and contradictory-proof controls rather than exempting an identifier.
+
+[Focused validation of the repairs](reviews/mediadive-resolution-1734-20261105/final-fixture-repair-validation-r1.json) passed **455** affected MediaDive/merge tests and **203** retirement/stub tests, in 378.79 and 111.16 seconds respectively. [Applied-byte independent review](reviews/mediadive-resolution-1734-20261105/final-applied-fixture-repairs-independent-review-r1.json) found no remaining defect. The four changed implementation files are tests/fixtures only. Negative tests deliberately alter only synthetic fixture bindings to test semantic rejection; actual source records, graph files and receipts remain unchanged. The [required formatting preparation](reviews/mediadive-resolution-1734-20261105/format-preservation-r3.json) passed in 1.20 seconds and preserved all 1,251 targets, including ignored files, byte-for-byte and with unchanged modification times. These results do not claim a passing full gate for the repaired candidate.
+
+The [updated checkpoint review](reviews/mediadive-resolution-1734-20261105/final-checkpoint-review-r2.json) verified all 78 packet records present at review, their README identity rows and 125 local links. Its own exact review record was subsequently added as the 79th packet entry. The findings ledger retains filing-time notes; the table above records current dispositions.

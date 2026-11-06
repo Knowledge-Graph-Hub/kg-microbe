@@ -1,0 +1,102 @@
+{
+  "candidate": "8bdf8b1fffbad024f5d0a0ccbd821c242039a677",
+  "tracked_candidate_clean_after_exit": true,
+  "label": "mediadive-resolution-20261105-final-r1",
+  "status": "failed",
+  "gate_exit_codes": [
+    0,
+    0,
+    0,
+    1
+  ],
+  "pytest": {
+    "failed": 11,
+    "passed": 9888,
+    "skipped": 8,
+    "seconds": 2243.8
+  },
+  "issues": [
+    "#1776",
+    "#1777",
+    "#1778"
+  ],
+  "logs": [
+    {
+      "path": "data/validation/pr-gates/kgm-mediadive-resolution-20261105-final-r1-1.log",
+      "bytes": 1178,
+      "sha256": "bfcaa044ad7f852fb0feadb3da1ffda3f1a065a5c40914e7938fc95c1fdf0cdc"
+    },
+    {
+      "path": "data/validation/pr-gates/kgm-mediadive-resolution-20261105-final-r1-2.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "data/validation/pr-gates/kgm-mediadive-resolution-20261105-final-r1-3.log",
+      "bytes": 6476,
+      "sha256": "44cfa90c6702a79601a3d7feb747f2c04bbfc3041854406ecf6ce9b1fd906905"
+    },
+    {
+      "path": "data/validation/pr-gates/kgm-mediadive-resolution-20261105-final-r1-4.log",
+      "bytes": 96867,
+      "sha256": "907c00f24a812a21eb2a0d9f2383faa9cc63c1ba97e7362a9a6a146f46ace9ac"
+    }
+  ],
+  "ledger": [
+    {
+      "command": [
+        "poetry",
+        "check",
+        "--lock"
+      ],
+      "commit": "8bdf8b1fffbad024f5d0a0ccbd821c242039a677",
+      "exit_code": 0,
+      "seconds": 0.26,
+      "log": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/validation/pr-gates/kgm-mediadive-resolution-20261105-final-r1-1.log"
+    },
+    {
+      "command": [
+        "poetry",
+        "run",
+        "python",
+        "scripts/generate_merge_configs.py",
+        "--check"
+      ],
+      "commit": "8bdf8b1fffbad024f5d0a0ccbd821c242039a677",
+      "exit_code": 0,
+      "seconds": 0.28,
+      "log": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/validation/pr-gates/kgm-mediadive-resolution-20261105-final-r1-2.log"
+    },
+    {
+      "command": [
+        "poetry",
+        "run",
+        "tox",
+        "-e",
+        "coverage-clean,format-check,lint,codespell,docstr-coverage"
+      ],
+      "commit": "8bdf8b1fffbad024f5d0a0ccbd821c242039a677",
+      "exit_code": 0,
+      "seconds": 4.0,
+      "log": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/validation/pr-gates/kgm-mediadive-resolution-20261105-final-r1-3.log"
+    },
+    {
+      "command": [
+        "poetry",
+        "run",
+        "--",
+        "tox",
+        "-e",
+        "py",
+        "--",
+        "tests",
+        "--durations=50"
+      ],
+      "commit": "8bdf8b1fffbad024f5d0a0ccbd821c242039a677",
+      "exit_code": 1,
+      "seconds": 2254.21,
+      "log": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/validation/pr-gates/kgm-mediadive-resolution-20261105-final-r1-4.log"
+    }
+  ],
+  "interpretation": "Failed historical gate, not validation of any later candidate. No assertions or scientific evidence waived."
+}

@@ -1,0 +1,47 @@
+{
+  "additional_native_control": {
+    "assessment": "The selected native source explicitly deletes10 and contains no retirement links. Synthetic authority/audit hashes are synchronized. Actual resolver produces no authorized10\u219212forward replacement, so complete native replay audit equality rejects the unchanged claimed retirement. No production validator or policy is relaxed.",
+    "mutation": "deleted-original"
+  },
+  "author_response": {
+    "bytes": 1104,
+    "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/mediadive-resolution-1734/bacdive-stub-retirement-proposal/review-response-reviewed-r2.json",
+    "sha256": "56f6dc25495b2f1d3ea2fd038fd191d601bd746542f44bc93684575f96ec6eec"
+  },
+  "findings": [],
+  "issues": [
+    1778,
+    1779
+  ],
+  "kind": "independent_read_only_bacdive_stub_proposal_rereview",
+  "limits": [
+    "Read-only delta review; no tests, gate, producer, network, source/data edits or actual graph/native rescans.",
+    "This accepts the corrected ignored proposal only. Installed bytes and root-coordinated focused results still require verification."
+  ],
+  "preserved_scope": {
+    "full_context_and_typed_node_checks_unchanged": true,
+    "new_full_source_admission_claim": false,
+    "original_proposal_assertion_ast_occurrences_retained": true,
+    "tracked_file_still_before": true,
+    "trusted_original_replay_unchanged": true,
+    "unrelated_original_subjects_added_to_native_replay": false
+  },
+  "prior_finding_disposition": {
+    "finding": "trusted_current_subject_hidden_by_untrusted_original_subject",
+    "reason": "The current subject enters required whenever it is trusted, independently of original_subject. The original trusted-origin replay branch remains unchanged. A forged untrusted origin cannot remove referenced current20 from typed-node closure.",
+    "regression": "New test forges original_subject999 on the direct20edge, removes20node, reseals both synthetic graph identities, then requires a lacksOrganismTaxon failure. This reaches the semantic closure check rather than relying on stale hashes.",
+    "resolved": true
+  },
+  "prior_finding_review": {
+    "bytes": 7495,
+    "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/mediadive-resolution-1734/bacdive-stub-retirement-proposal-independent-review-r1.json",
+    "sha256": "e8b7e30baea6b7a0ee94b88e819ba7bca361bfadbf5f9b5f1e7b364d656f8594"
+  },
+  "proposal": {
+    "bytes": 23406,
+    "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/mediadive-resolution-1734/bacdive-stub-retirement-proposal/proposed-reviewed-r2.py",
+    "sha256": "440bbd2552d5aab4bf3f98b8d98ce31b3209940d28ce0d369aff56c599e240d9"
+  },
+  "recorded_at_utc": "2026-11-06T01:26:41.219455+00:00",
+  "status": "pass_static_review_pending_applied_bytes_and_focused_tests"
+}

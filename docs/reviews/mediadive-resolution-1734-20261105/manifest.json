@@ -222,9 +222,9 @@
     "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/artifact-stream-review/final-identity.json"
   },
   {
-    "bytes": 4548,
+    "bytes": 6094,
     "file": "filed-findings.jsonl",
-    "sha256": "0d9a7dc6e0a37fb2c3db31f7df472dd15b77394f8a296d63bf83fc47e0a14f9f",
+    "sha256": "9e756c4afd2bf85ce6bfee8d8476d8c2ba2aecb31a3718562d2d30c52ee9afba",
     "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/filed-findings.jsonl"
   },
   {
@@ -382,5 +382,95 @@
     "file": "native-log-whitespace-check-r1.json",
     "sha256": "87ae19f3be40f592a4ea967999ec77da5fe644895e62e8346716d3a86f3545c4",
     "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/native-log-whitespace-check-r1.json"
+  },
+  {
+    "bytes": 3112,
+    "file": "failed-final-code-gate-r1.json",
+    "sha256": "868338eff74f8cbccdbbb8335a5701cb86757642b2cd3136ef69cd345bedd3b4",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/failed-final-code-gate-r1.json"
+  },
+  {
+    "bytes": 5304,
+    "file": "merge-consumed-clone-diagnosis-1.json",
+    "sha256": "bd97d09e2d085c321db8bcc399b646c93849b7a59c6b30165fcfabad4f4cb9de",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/merge-consumed-clone-diagnosis-1.json"
+  },
+  {
+    "bytes": 17547,
+    "file": "artifact-sensitive-independent-diagnosis-r1.json",
+    "sha256": "4e9d5f16559fd42d7b89cc412b63b4290955e0387a2d4e5eb57bf35d94f435f2",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/artifact-sensitive-independent-diagnosis-r1.json"
+  },
+  {
+    "bytes": 8415,
+    "file": "bacdive-stub-retirement-scope-review-r1.json",
+    "sha256": "ccfbdc8fd7769d493736452fd2d5f30217d2c5f91ccf189b0c23955818839ccd",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/bacdive-stub-retirement-scope-review-r1.json"
+  },
+  {
+    "bytes": 9042,
+    "file": "final-gate-fixture-proposals-independent-review-r1.json",
+    "sha256": "2b4efd08b20e18e500223566f9ee923c97aa39bb2020d9a50af4129f71296660",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/final-gate-fixture-proposals-independent-review-r1.json"
+  },
+  {
+    "bytes": 7495,
+    "file": "bacdive-stub-retirement-proposal-independent-review-r1.json",
+    "sha256": "e8b7e30baea6b7a0ee94b88e819ba7bca361bfadbf5f9b5f1e7b364d656f8594",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/bacdive-stub-retirement-proposal-independent-review-r1.json"
+  },
+  {
+    "bytes": 2990,
+    "file": "bacdive-stub-retirement-proposal-independent-review-r2.json",
+    "sha256": "0adb0de77fd4048969eca7291857e462dbb76951539ba424b9a612bcb0adee0a",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/bacdive-stub-retirement-proposal-independent-review-r2.json"
+  },
+  {
+    "bytes": 586,
+    "file": "retirement-fixture-installation-r1.json",
+    "sha256": "1793765877dc2932bb2bf973a59717b00c2dca30bcd694367511a010f7fd5a93",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/retirement-fixture-installation-r1.json"
+  },
+  {
+    "bytes": 10355,
+    "file": "final-applied-fixture-repairs-independent-review-r1.json",
+    "sha256": "b684c0fb27a472db45c8c245acaf53a81bc29d1093fdf1e7415533f08e4856fc",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/final-applied-fixture-repairs-independent-review-r1.json"
+  },
+  {
+    "bytes": 2686,
+    "file": "final-fixture-repair-validation-r1.json",
+    "sha256": "7fa04edcd5a86c8f1af01ea67a2a61ec39f1eae6b896bb85747aa8a43a54e927",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/final-fixture-repair-validation-r1.json"
+  },
+  {
+    "bytes": 243,
+    "file": "format-preservation-r3.json",
+    "sha256": "c943d2d77f069a0dd5e25ea512a4bfdac80b1ff276a05c30dec787d83e8a6906",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/format-preservation-r3.json"
+  },
+  {
+    "bytes": 3847,
+    "file": "final-gate-fixture-focused-r1.log",
+    "sha256": "8f69de5bb6408d90049b15999e3b04c52941f0792d817ed404d1d22c591f91b0",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/final-gate-fixture-focused-r1.log"
+  },
+  {
+    "bytes": 2742,
+    "file": "retirement-fixture-focused-r1.log",
+    "sha256": "fbab0f769345a7d954cdd9000672c83cd6fa012d42efab063f9d1fd2e2749067",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/retirement-fixture-focused-r1.log"
+  },
+  {
+    "bytes": 900,
+    "file": "phase3-admission-stack-observation-r1.json",
+    "sha256": "167a92541bbec1504bfdbcc294f8e5ae06f93c294a131ed1c02f570634d33f64",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/phase3-admission-stack-observation-r1.json"
+  },
+  {
+    "file": "final-checkpoint-review-r2.json",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/final-checkpoint-review-r2.json",
+    "bytes": 6191,
+    "sha256": "cd6009f65dc6b2d7ce2a1c5d915234de97bb8d344e1e2b53dcec4c1c11847230"
   }
 ]

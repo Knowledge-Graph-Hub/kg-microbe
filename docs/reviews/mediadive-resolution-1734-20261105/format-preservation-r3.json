@@ -1,0 +1,9 @@
+{
+  "command": "poetry run tox -e format,codespell-write",
+  "files_checked": 1251,
+  "bytes_checked": 405096429,
+  "inventory_includes_ignored_files": true,
+  "changed_bytes": [],
+  "changed_mtime": [],
+  "production_files_unchanged": true
+}

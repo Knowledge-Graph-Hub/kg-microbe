@@ -15,10 +15,11 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 def test_committed_release_pin():
     """Pin the selected immutable export without inventing a published release tag."""
     pin = cli.load_release_pin(REPO_ROOT)
+    # Exact identities independently reviewed and reproduced in the #1788 source/product packet.
     assert pin["schema_version"] == 2
     assert pin["origin"] == "immutable_commit_export"
-    assert pin["source_commit"] == "1848b0fe521bc2462f165912fcf92d09ad9a8cec"
-    assert pin["manifest_sha256"] == "9bb29d5605d93dea351be9624d99c5d8ada57d4b9831b22764957b784bd685af"
+    assert pin["source_commit"] == "0dac278466699129a083343a921c2e0ca18a9ab4"
+    assert pin["manifest_sha256"] == "b02a92446e8a613fd0d96b0dd8147d439733fcf73e731b363a6388e95d616703"
     assert "release_tag" not in pin and "release_url" not in pin
     assert pin["mode"] == "candidate_only"
 

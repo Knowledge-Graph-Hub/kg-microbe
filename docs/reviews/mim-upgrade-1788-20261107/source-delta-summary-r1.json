@@ -1,0 +1,1718 @@
+{
+  "baseline": {
+    "columns": [
+      "subject_id",
+      "subject_label",
+      "predicate_id",
+      "object_id",
+      "object_label",
+      "object_source",
+      "mapping_justification",
+      "source",
+      "mapping_date",
+      "confidence",
+      "comment",
+      "other",
+      "validation_method"
+    ],
+    "commit": "1848b0fe521bc2462f165912fcf92d09ad9a8cec",
+    "dispositions": {
+      "SUPPORTED": 1747,
+      "WITHHOLD": 1252
+    },
+    "predicates": {
+      "skos:broadMatch": 152,
+      "skos:closeMatch": 97,
+      "skos:exactMatch": 2750
+    },
+    "source_sha256": "7567e33fe5e5f4239afbe42065e3d119ea3b4023ba28cb5559781ddc0f41f260"
+  },
+  "candidate": {
+    "columns": [
+      "subject_id",
+      "subject_label",
+      "predicate_id",
+      "object_id",
+      "object_label",
+      "object_source",
+      "mapping_justification",
+      "source",
+      "mapping_date",
+      "confidence",
+      "comment",
+      "other",
+      "validation_method"
+    ],
+    "commit": "0dac278466699129a083343a921c2e0ca18a9ab4",
+    "dispositions": {
+      "SUPPORTED": 1739,
+      "WITHHOLD": 1275
+    },
+    "predicates": {
+      "skos:broadMatch": 189,
+      "skos:closeMatch": 56,
+      "skos:exactMatch": 2769
+    },
+    "source_sha256": "d5f76fc404967477903fafc79eaba86ecfef9e2c391926ec08c3c1af4a5220b6"
+  },
+  "changed_supported_rows": {
+    "raw_rows_added": [
+      {
+        "mapping": {
+          "comment": "Registry/identity row (Rule B1) for broadMatch subject; kg-microbe primary id kgmicrobe.compound:sodium_perchlorate_monohydrate alongside parent CHEBI:132103.",
+          "confidence": "0.99",
+          "mapping_date": "2026-11-01",
+          "mapping_justification": "semapv:ManualMappingCuration",
+          "object_id": "kgmicrobe.compound:sodium_perchlorate_monohydrate",
+          "object_label": "Sodium perchlorate monohydrate",
+          "object_source": "kgm:compound",
+          "other": "CAS:7791-07-3",
+          "predicate_id": "skos:exactMatch",
+          "source": "MIM:CultureBotHT|MIM:CHEBI via OLS (stem-substring)|MIM:MIM curation (#342)|MIM:MIM curation (#901); PubChem CID 516899; ChEBI:132103|MIM:curator=claude|kgm:native_ontology:chebi",
+          "subject_id": "MIM:Sodium_Perchlorate_Monohydrate",
+          "subject_label": "Sodium perchlorate monohydrate",
+          "validation_method": ""
+        },
+        "owner": "data/ingredients/mapped/Sodium_Perchlorate_Monohydrate.yaml",
+        "owner_sha256": "36464b5ebec13eb2d71864e7b6af5d6069e931f1cb1c340ed24b63c81b8a1be4",
+        "position": 3014,
+        "row_sha256": "069dfd73500435df66a355306b496ddaf00eb01125e623ccd27b292ed7b8a830"
+      },
+      {
+        "mapping": {
+          "comment": "Registry/identity row (Rule B1) for broadMatch subject; kg-microbe primary id kgmicrobe.compound:d-_-melezitose_monohydrate alongside parent CHEBI:6731.",
+          "confidence": "0.99",
+          "mapping_date": "2026-11-01",
+          "mapping_justification": "semapv:ManualMappingCuration",
+          "object_id": "kgmicrobe.compound:d-_-melezitose_monohydrate",
+          "object_label": "D-(+)-melezitose monohydrate",
+          "object_source": "kgm:compound",
+          "other": "CAS:10030-67-8",
+          "predicate_id": "skos:exactMatch",
+          "source": "MIM:CultureBotHT|MIM:anchor_cas_hydrate_records|MIM:MIM curation (#342)|MIM:MIM curation (#901); PubChem CID 16217716; ChEBI:6731|MIM:curator=claude|kgm:mediaingredientmech_reviewed[manifest=9bb29d5605d93dea351be9624d99c5d8ada57d4b9831b22764957b784bd685af]|kgm:native_ontology:chebi",
+          "subject_id": "MIM:D-_-melezitose_Monohydrate",
+          "subject_label": "D-(+)-melezitose monohydrate",
+          "validation_method": ""
+        },
+        "owner": "data/ingredients/mapped/D-_-melezitose_Monohydrate.yaml",
+        "owner_sha256": "206d615a2983b122e8de655c58a7bf1c30845a3d61dadac2ba06b953930f694c",
+        "position": 3013,
+        "row_sha256": "4e15d8eb5e7cd78d2e9219b175a32daa9b1a47eb14618b16ae2a157036218447"
+      },
+      {
+        "mapping": {
+          "comment": "",
+          "confidence": "0.9",
+          "mapping_date": "2026-11-01",
+          "mapping_justification": "semapv:ManualMappingCuration",
+          "object_id": "CHEBI:132103",
+          "object_label": "sodium perchlorate",
+          "object_source": "obo:chebi.owl",
+          "other": "",
+          "predicate_id": "skos:broadMatch",
+          "source": "MIM:CultureBotHT|MIM:CHEBI via OLS (stem-substring)|MIM:MIM curation (#342)|MIM:MIM curation (#901); PubChem CID 516899; ChEBI:132103|MIM:curator=claude|kgm:native_ontology:chebi",
+          "subject_id": "MIM:Sodium_Perchlorate_Monohydrate",
+          "subject_label": "Sodium perchlorate monohydrate",
+          "validation_method": ""
+        },
+        "owner": "data/ingredients/mapped/Sodium_Perchlorate_Monohydrate.yaml",
+        "owner_sha256": "36464b5ebec13eb2d71864e7b6af5d6069e931f1cb1c340ed24b63c81b8a1be4",
+        "position": 2610,
+        "row_sha256": "51baf5d397ac027631a579a054ba21b07ae97d65e0f5f66d2861c81dfdb8df46"
+      },
+      {
+        "mapping": {
+          "comment": "Registry/identity row preserving cas:7791-07-3 alongside parent CHEBI:132103.",
+          "confidence": "0.99",
+          "mapping_date": "2026-11-01",
+          "mapping_justification": "semapv:ManualMappingCuration",
+          "object_id": "cas:7791-07-3",
+          "object_label": "Sodium perchlorate monohydrate",
+          "object_source": "registry:cas",
+          "other": "CAS:7791-07-3",
+          "predicate_id": "skos:exactMatch",
+          "source": "MIM:CultureBotHT|MIM:CHEBI via OLS (stem-substring)|MIM:MIM curation (#342)|MIM:MIM curation (#901); PubChem CID 516899; ChEBI:132103|MIM:curator=claude|kgm:native_ontology:chebi",
+          "subject_id": "MIM:Sodium_Perchlorate_Monohydrate",
+          "subject_label": "Sodium perchlorate monohydrate",
+          "validation_method": "none|UNKNOWN_TERM|2026-07-07"
+        },
+        "owner": "data/ingredients/mapped/Sodium_Perchlorate_Monohydrate.yaml",
+        "owner_sha256": "36464b5ebec13eb2d71864e7b6af5d6069e931f1cb1c340ed24b63c81b8a1be4",
+        "position": 2611,
+        "row_sha256": "9aff710dedc116f4feabb872e257433818b457fe598c63c5fcb1b19a36ec4887"
+      },
+      {
+        "mapping": {
+          "comment": "Registry/identity row preserving cas:10030-67-8 alongside parent CHEBI:6731.",
+          "confidence": "0.99",
+          "mapping_date": "2026-11-01",
+          "mapping_justification": "semapv:ManualMappingCuration",
+          "object_id": "cas:10030-67-8",
+          "object_label": "D-(+)-melezitose monohydrate",
+          "object_source": "registry:cas",
+          "other": "CAS:10030-67-8",
+          "predicate_id": "skos:exactMatch",
+          "source": "MIM:CultureBotHT|MIM:anchor_cas_hydrate_records|MIM:MIM curation (#342)|MIM:MIM curation (#901); PubChem CID 16217716; ChEBI:6731|MIM:curator=claude|kgm:mediaingredientmech_reviewed[manifest=9bb29d5605d93dea351be9624d99c5d8ada57d4b9831b22764957b784bd685af]|kgm:native_ontology:chebi",
+          "subject_id": "MIM:D-_-melezitose_Monohydrate",
+          "subject_label": "D-(+)-melezitose monohydrate",
+          "validation_method": "none|UNKNOWN_TERM|2026-07-07"
+        },
+        "owner": "data/ingredients/mapped/D-_-melezitose_Monohydrate.yaml",
+        "owner_sha256": "206d615a2983b122e8de655c58a7bf1c30845a3d61dadac2ba06b953930f694c",
+        "position": 927,
+        "row_sha256": "a644bad003f578f4a63e861ec0ba09cffc2f16459b5b476a275a845c685ed8e5"
+      },
+      {
+        "mapping": {
+          "comment": "",
+          "confidence": "0.9",
+          "mapping_date": "2026-11-01",
+          "mapping_justification": "semapv:ManualMappingCuration",
+          "object_id": "CHEBI:6731",
+          "object_label": "melezitose",
+          "object_source": "obo:chebi.owl",
+          "other": "",
+          "predicate_id": "skos:broadMatch",
+          "source": "MIM:CultureBotHT|MIM:anchor_cas_hydrate_records|MIM:MIM curation (#342)|MIM:MIM curation (#901); PubChem CID 16217716; ChEBI:6731|MIM:curator=claude|kgm:mediaingredientmech_reviewed[manifest=9bb29d5605d93dea351be9624d99c5d8ada57d4b9831b22764957b784bd685af]|kgm:native_ontology:chebi",
+          "subject_id": "MIM:D-_-melezitose_Monohydrate",
+          "subject_label": "D-(+)-melezitose monohydrate",
+          "validation_method": ""
+        },
+        "owner": "data/ingredients/mapped/D-_-melezitose_Monohydrate.yaml",
+        "owner_sha256": "206d615a2983b122e8de655c58a7bf1c30845a3d61dadac2ba06b953930f694c",
+        "position": 926,
+        "row_sha256": "bf4990db504f0338c6ece439092954d1104e4916712ff1227b6d844b68fe0f62"
+      }
+    ],
+    "raw_rows_removed": [
+      {
+        "mapping": {
+          "comment": "Registry/identity row preserving cas:10030-67-8 alongside parent CHEBI:6731.",
+          "confidence": "0.99",
+          "mapping_date": "2026-08-13",
+          "mapping_justification": "semapv:ManualMappingCuration",
+          "object_id": "cas:10030-67-8",
+          "object_label": "D-(+)-melezitose monohydrate",
+          "object_source": "registry:cas",
+          "other": "CAS:10030-67-8",
+          "predicate_id": "skos:exactMatch",
+          "source": "MIM:CultureBotHT|MIM:anchor_cas_hydrate_records|MIM:MIM curation (#342)|MIM:curator=regrade_hydrate_to_close_match|kgm:chebi_xrefs|kgm:culturebotai_reviewed|kgm:mediaingredientmech_reviewed|kgm:mediaingredientmech_reviewed[curator=anchor_cas_hydrate_records]|kgm:mediaingredientmech_reviewed[curator=classify_ingredient_type]|kgm:mediaingredientmech_reviewed[curator=review-ingredients]|kgm:primary_mappings[bacdive_api]|kgm:primary_mappings[kegg_compound]",
+          "subject_id": "MIM:D-_-melezitose_Monohydrate",
+          "subject_label": "D-(+)-melezitose monohydrate",
+          "validation_method": "none|UNKNOWN_TERM|2026-07-07"
+        },
+        "owner": "data/ingredients/mapped/D-_-melezitose_Monohydrate.yaml",
+        "owner_sha256": "e17d80e75cf8794f5f4e2cab65a4cff77c92f921add55e36185549f75aff3222",
+        "position": 922,
+        "row_sha256": "1e5aaffe48b98b5733dc82a8eebaeb64243446731d40be430f2b55f0f169307f"
+      },
+      {
+        "mapping": {
+          "comment": "Registry/identity row preserving cas:13517-23-2 alongside parent CHEBI:36361.",
+          "confidence": "0.99",
+          "mapping_date": "2026-08-13",
+          "mapping_justification": "semapv:ManualMappingCuration",
+          "object_id": "cas:13517-23-2",
+          "object_label": "Sodium phosphite dibasic pentahydrate",
+          "object_source": "registry:cas",
+          "other": "CAS:13517-23-2",
+          "predicate_id": "skos:exactMatch",
+          "source": "MIM:CultureBotHT|MIM:anchor_cas_hydrate_records|MIM:MIM curation (#342)|MIM:curator=regrade_hydrate_to_close_match|kgm:chebi_xrefs|kgm:mediaingredientmech_reviewed|kgm:mediaingredientmech_reviewed[curator=anchor_cas_hydrate_records]|kgm:mediaingredientmech_reviewed[curator=audit_integrate_culturebotht]|kgm:mediaingredientmech_reviewed[curator=auto_classify_ingredient_type]",
+          "subject_id": "MIM:Sodium_Phosphite_Dibasic_Pentahydrate",
+          "subject_label": "Sodium phosphite dibasic pentahydrate",
+          "validation_method": "none|UNKNOWN_TERM|2026-07-07"
+        },
+        "owner": "data/ingredients/mapped/Sodium_Phosphite_Dibasic_Pentahydrate.yaml",
+        "owner_sha256": "1605e85f71607a3b6e6f36d67c62c47b2c19cb7f425207bc19970ec1b4f06ffa",
+        "position": 2610,
+        "row_sha256": "22044744d0557ab1e5c10b5d310947331151fbfee7a9511000ff39466f1d4477"
+      },
+      {
+        "mapping": {
+          "comment": "Registry/identity row (Rule B1) for broadMatch subject; kg-microbe primary id kgmicrobe.compound:heparin_sodium_salt_from_porcine_intestinal_mucosa alongside parent CHEBI:230519.",
+          "confidence": "0.99",
+          "mapping_date": "2026-08-13",
+          "mapping_justification": "semapv:ManualMappingCuration",
+          "object_id": "kgmicrobe.compound:heparin_sodium_salt_from_porcine_intestinal_mucosa",
+          "object_label": "Heparin sodium salt from porcine intestinal mucosa",
+          "object_source": "kgm:compound",
+          "other": "CAS:9041-08-1",
+          "predicate_id": "skos:exactMatch",
+          "source": "MIM:CultureBotHT|MIM:MIM curation (#322)|MIM:curator=mint_registry_for_narrow_records|kgm:chebi_xrefs|kgm:mediaingredientmech_reviewed|kgm:mediaingredientmech_reviewed[curator=audit_cas_chebi_followup]|kgm:mediaingredientmech_reviewed[curator=auto_classify_ingredient_type]",
+          "subject_id": "MIM:Heparin_Sodium_Salt_From_Porcine_Intestinal_Mucosa",
+          "subject_label": "Heparin sodium salt from porcine intestinal mucosa",
+          "validation_method": "none|UNKNOWN_TERM|2026-09-02"
+        },
+        "owner": "data/ingredients/mapped/Heparin_Sodium_Salt_From_Porcine_Intestinal_Mucosa.yaml",
+        "owner_sha256": "bd5b5a096c71a786b9b472151c415114ca3337c94296e827d546c31c118ca173",
+        "position": 1425,
+        "row_sha256": "23d145bb05f0ecc9cbd7ad03e7ebffb530a4dfa04be7b5bf9382973bc8e58ec2"
+      },
+      {
+        "mapping": {
+          "comment": "Registry/identity row preserving cas:207300-70-7 alongside parent CHEBI:4178.",
+          "confidence": "0.99",
+          "mapping_date": "2026-09-02",
+          "mapping_justification": "semapv:ManualMappingCuration",
+          "object_id": "cas:207300-70-7",
+          "object_label": "D-Glucuronic acid sodium salt monohydrate",
+          "object_source": "registry:cas",
+          "other": "CAS:207300-70-7",
+          "predicate_id": "skos:exactMatch",
+          "source": "MIM:CultureBotHT|MIM:CHEBI via OLS (stem-substring)|MIM:MIM curation (#342)|MIM:curator=claude_sssom_surface_form_backfill|kgm:chebi_xrefs|kgm:culturebotai_reviewed|kgm:mediaingredientmech_reviewed|kgm:mediaingredientmech_reviewed[curator=auto_classify_ingredient_type]|kgm:mediaingredientmech_reviewed[curator=backfill_parent_terms]|kgm:mediaingredientmech_reviewed[curator=infer_roles_from_chebi_ancestry]|kgm:mediaingredientmech_reviewed[curator=migrate_media_roles_to_facets]|kgm:primary_mappings[kegg_compound]",
+          "subject_id": "MIM:D-Glucuronic_Acid_Sodium_Salt_Monohydrate",
+          "subject_label": "D-Glucuronic acid sodium salt monohydrate",
+          "validation_method": "none|UNKNOWN_TERM|2026-07-07"
+        },
+        "owner": "data/ingredients/mapped/D-Glucuronic_Acid_Sodium_Salt_Monohydrate.yaml",
+        "owner_sha256": "e77bcd2a4a944106d4e17fde216fd20169d0074f660d088aeeb68c8426d78d3d",
+        "position": 897,
+        "row_sha256": "315b59ec1caa827f484784b5725b036b471e6f57389ee4727a1e393a166e1deb"
+      },
+      {
+        "mapping": {
+          "comment": "Registry/identity row (Rule B1) for broadMatch subject; kg-microbe primary id kgmicrobe.compound:cholesterol_lipid_concentrate alongside parent CHEBI:16113.",
+          "confidence": "0.99",
+          "mapping_date": "2026-08-27",
+          "mapping_justification": "semapv:ManualMappingCuration",
+          "object_id": "kgmicrobe.compound:cholesterol_lipid_concentrate",
+          "object_label": "cholesterol lipid concentrate",
+          "object_source": "kgm:compound",
+          "other": "",
+          "predicate_id": "skos:exactMatch",
+          "source": "MIM:MIM curation (#288)|MIM:curator=refresh_occurrence_statistics|kgm:mediaingredientmech_reviewed|kgm:mediaingredientmech_reviewed[curator=cbclaw_followups_114]",
+          "subject_id": "MIM:Cholesterol_Lipid_Concentrate",
+          "subject_label": "cholesterol lipid concentrate",
+          "validation_method": "none|UNKNOWN_TERM|2026-09-02"
+        },
+        "owner": "data/ingredients/mapped/Cholesterol_Lipid_Concentrate.yaml",
+        "owner_sha256": "568d325ff4ba6d9fa7aafe321d824ee34d1b963702d4772a92f73125b1138ef9",
+        "position": 752,
+        "row_sha256": "3959c79ff62fa21b065a0d7263840c959a02bb0ce0c410acf3050872a60c4b66"
+      },
+      {
+        "mapping": {
+          "comment": "Registry/identity row (Rule B1) for broadMatch subject; kg-microbe primary id kgmicrobe.compound:mops_2m_ph7 alongside parent CHEBI:39074.",
+          "confidence": "0.99",
+          "mapping_date": "2026-08-06",
+          "mapping_justification": "semapv:ManualMappingCuration",
+          "object_id": "kgmicrobe.compound:mops_2m_ph7",
+          "object_label": "MOPS_2M_pH7",
+          "object_source": "kgm:compound",
+          "other": "",
+          "predicate_id": "skos:exactMatch",
+          "source": "MIM:MIM curation (#114)|MIM:curator=promote_resolved_unmapped|kgm:culturebotai_reviewed|kgm:mediadive_compounds|kgm:mediaingredientmech_reviewed|kgm:mediaingredientmech_reviewed[curator=auto_classify_ingredient_type]|kgm:mediaingredientmech_reviewed[curator=extract_roles_from_synonyms]|kgm:mediaingredientmech_reviewed[curator=fetch_cas_rn_from_pubchem]|kgm:mediaingredientmech_reviewed[curator=migrate_media_roles_to_facets]",
+          "subject_id": "MIM:MOPS_2M_pH7",
+          "subject_label": "MOPS_2M_pH7",
+          "validation_method": "none|UNKNOWN_TERM|2026-09-02"
+        },
+        "owner": "data/ingredients/mapped/MOPS_2M_pH7.yaml",
+        "owner_sha256": "02f126ea8cc227721d0ba18c29e6797f1514e85600c3ad8ff9b03b7aef81b943",
+        "position": 1745,
+        "row_sha256": "3ee878bedb9ec1baaf06545faa951ac88957be0974829a5735dfdda38c8487d7"
+      },
+      {
+        "mapping": {
+          "comment": "Registry/identity row (Rule B1) for broadMatch subject; kg-microbe primary id kgmicrobe.compound:menadione_solution alongside parent CHEBI:28869.",
+          "confidence": "0.99",
+          "mapping_date": "2026-08-27",
+          "mapping_justification": "semapv:ManualMappingCuration",
+          "object_id": "kgmicrobe.compound:menadione_solution",
+          "object_label": "Menadione solution",
+          "object_source": "kgm:compound",
+          "other": "",
+          "predicate_id": "skos:exactMatch",
+          "source": "MIM:MIM curation (#288)|MIM:curator=refresh_occurrence_statistics|kgm:chebi_xrefs|kgm:culturebotai_reviewed|kgm:mediaingredientmech_reviewed|kgm:mediaingredientmech_reviewed[curator=audit_mim_merge]|kgm:mediaingredientmech_reviewed[curator=auto_classify_ingredient_type]|kgm:mediaingredientmech_reviewed[curator=correct_stale_ontology_labels.py]|kgm:mediaingredientmech_reviewed[curator=migrate_media_roles_to_facets]|kgm:primary_mappings[kegg_compound]",
+          "subject_id": "MIM:Menadione_Solution",
+          "subject_label": "Menadione solution",
+          "validation_method": "none|UNKNOWN_TERM|2026-09-02"
+        },
+        "owner": "data/ingredients/mapped/Menadione_Solution.yaml",
+        "owner_sha256": "bbeaf74217cf7292062604f493b3c4c9faa397713fb50c10a4e6f92239b6dcb1",
+        "position": 1817,
+        "row_sha256": "68f606e83d210ffb7f3fcaae7a0d48e7d2e33e206316cde5ee7b90465cd1cda3"
+      },
+      {
+        "mapping": {
+          "comment": "Registry/identity row (Rule B1) for broadMatch subject; kg-microbe primary id kgmicrobe.compound:mes_buffer alongside parent CHEBI:39010.",
+          "confidence": "0.99",
+          "mapping_date": "2026-08-27",
+          "mapping_justification": "semapv:ManualMappingCuration",
+          "object_id": "kgmicrobe.compound:mes_buffer",
+          "object_label": "MES buffer",
+          "object_source": "kgm:compound",
+          "other": "",
+          "predicate_id": "skos:exactMatch",
+          "source": "MIM:MIM curation (#114)|MIM:curator=refresh_occurrence_statistics|kgm:culturebotai_reviewed|kgm:mediadive_compounds|kgm:mediaingredientmech_reviewed|kgm:mediaingredientmech_reviewed[curator=auto_classify_ingredient_type]|kgm:mediaingredientmech_reviewed[curator=extract_roles_from_synonyms]|kgm:mediaingredientmech_reviewed[curator=fetch_cas_rn_from_pubchem]|kgm:mediaingredientmech_reviewed[curator=migrate_media_roles_to_facets]",
+          "subject_id": "MIM:MES_Buffer",
+          "subject_label": "MES buffer",
+          "validation_method": "none|UNKNOWN_TERM|2026-09-02"
+        },
+        "owner": "data/ingredients/mapped/MES_Buffer.yaml",
+        "owner_sha256": "74ddfe25a63c479e3d2880b2117f91b9a876a980e9b3bb55a49484629d1ae370",
+        "position": 1736,
+        "row_sha256": "6f4a13c6fcfe12c78a473a0cdf34c9ea983e340d3e542d783e9865efeaedd8ce"
+      },
+      {
+        "mapping": {
+          "comment": "Registry/identity row (Rule B1) for broadMatch subject; kg-microbe primary id kgmicrobe.compound:amylopectin_from_maize alongside parent CHEBI:28057.",
+          "confidence": "0.99",
+          "mapping_date": "2026-08-13",
+          "mapping_justification": "semapv:ManualMappingCuration",
+          "object_id": "kgmicrobe.compound:amylopectin_from_maize",
+          "object_label": "amylopectin from maize",
+          "object_source": "kgm:compound",
+          "other": "CAS:9037-22-3",
+          "predicate_id": "skos:exactMatch",
+          "source": "MIM:CultureBotHT|MIM:MIM curation (#322)|MIM:curator=mint_registry_for_narrow_records|kgm:chebi_xrefs|kgm:mediaingredientmech_reviewed|kgm:mediaingredientmech_reviewed[curator=audit_cas_chebi_followup]|kgm:mediaingredientmech_reviewed[curator=auto_classify_ingredient_type]|kgm:primary_mappings[kegg_compound]",
+          "subject_id": "MIM:Amylopectin_From_Maize",
+          "subject_label": "amylopectin from maize",
+          "validation_method": "none|UNKNOWN_TERM|2026-09-02"
+        },
+        "owner": "data/ingredients/mapped/Amylopectin_From_Maize.yaml",
+        "owner_sha256": "e35f6b30ae1fbc8c17847d3b2d3ed6d38bd28e08ec2fef36bddecbf12435e4f7",
+        "position": 378,
+        "row_sha256": "ab15b1deb46b64df414c530534aff18116b8b4918433d51e2f15870bbfe2ca1b"
+      },
+      {
+        "mapping": {
+          "comment": "Registry/identity row preserving cas:10489-48-2 alongside parent CHEBI:46612.",
+          "confidence": "0.99",
+          "mapping_date": "2026-08-13",
+          "mapping_justification": "semapv:ManualMappingCuration",
+          "object_id": "cas:10489-48-2",
+          "object_label": "Sodium thiophosphate tribasic hydrate",
+          "object_source": "registry:cas",
+          "other": "CAS:10489-48-2",
+          "predicate_id": "skos:exactMatch",
+          "source": "MIM:CultureBotHT|MIM:anchor_cas_hydrate_records|MIM:MIM curation (#342)|MIM:curator=regrade_hydrate_to_close_match|kgm:mediaingredientmech_reviewed|kgm:mediaingredientmech_reviewed[curator=anchor_cas_hydrate_records]",
+          "subject_id": "MIM:Sodium_Thiophosphate_Tribasic_Hydrate",
+          "subject_label": "Sodium thiophosphate tribasic hydrate",
+          "validation_method": "none|UNKNOWN_TERM|2026-07-07"
+        },
+        "owner": "data/ingredients/mapped/Sodium_Thiophosphate_Tribasic_Hydrate.yaml",
+        "owner_sha256": "bc89ba3f7c2a53ccf57d102b3ae39ae36782a788e82fbdc22bfa9b32a1333173",
+        "position": 2624,
+        "row_sha256": "b3cc43a665bf3556c4e6c40834375968792c4f0ab6d6c2533fc79796c79e64a3"
+      },
+      {
+        "mapping": {
+          "comment": "",
+          "confidence": "0.9",
+          "mapping_date": "2026-08-06",
+          "mapping_justification": "semapv:ManualMappingCuration",
+          "object_id": "kgmicrobe.ingredient:nldm_metabolites",
+          "object_label": "NLDM_metabolites",
+          "object_source": "kgm:ingredient",
+          "other": "",
+          "predicate_id": "skos:exactMatch",
+          "source": "MIM:MIM curation (#114)|MIM:curator=promote_resolved_unmapped",
+          "subject_id": "MIM:NLDM_metabolites",
+          "subject_label": "NLDM_metabolites",
+          "validation_method": "manual:promote_resolved_unmapped|PROMOTED|2026-08-06"
+        },
+        "owner": "data/ingredients/mapped/NLDM_metabolites.yaml",
+        "owner_sha256": "7332021e0d760384bc0381f5e00e3a87bd4dfe4b7c5b2eb1140853f7c17d78a0",
+        "position": 1968,
+        "row_sha256": "c78076c95da31ba439812cd1cfab6f6336fd5e077d88e6d418ee42c090f17013"
+      },
+      {
+        "mapping": {
+          "comment": "Registry/identity row preserving kgmicrobe.compound:maltose_hydrate alongside parent CHEBI:17306.",
+          "confidence": "0.99",
+          "mapping_date": "2026-08-13",
+          "mapping_justification": "semapv:ManualMappingCuration",
+          "object_id": "kgmicrobe.compound:maltose_hydrate",
+          "object_label": "Maltose Hydrate",
+          "object_source": "kgm:compound",
+          "other": "",
+          "predicate_id": "skos:exactMatch",
+          "source": "MIM:MIM curation (#213)|MIM:MIM curation (#342)|MIM:curator=regrade_hydrate_to_close_match|kgm:chebi_xrefs|kgm:culturebotai_reviewed|kgm:mediadive_compounds|kgm:mediaingredientmech_reviewed|kgm:mediaingredientmech_reviewed[curator=audit_mim_merge]|kgm:mediaingredientmech_reviewed[curator=auto_classify_ingredient_type]|kgm:mediaingredientmech_reviewed[curator=correct_stale_ontology_labels.py]|kgm:mediaingredientmech_reviewed[curator=infer_energy_source]|kgm:mediaingredientmech_reviewed[curator=merge_cas_conflict_duplicates]|kgm:metatraits_chemical_synonyms[manual_2026-04-07]|kgm:primary_mappings[bacdive_api]|kgm:primary_mappings[chemicals_sssom]|kgm:primary_mappings[kegg_compound]",
+          "subject_id": "MIM:Maltose_Hydrate",
+          "subject_label": "Maltose Hydrate",
+          "validation_method": "manual:promote_resolved_unmapped|PROMOTED|2026-08-06"
+        },
+        "owner": "data/ingredients/mapped/Maltose_Hydrate.yaml",
+        "owner_sha256": "84c99c2429dea060e731ef5f5bbbf066574a4025f832ff97f006599b6a152cbc",
+        "position": 1780,
+        "row_sha256": "dbf6918c400618747fa0f452555842a0bce536203bfdc2adf80af2f019e89288"
+      },
+      {
+        "mapping": {
+          "comment": "Registry/identity row preserving cas:16373-93-6 alongside parent CHEBI:17256.",
+          "confidence": "0.99",
+          "mapping_date": "2026-08-13",
+          "mapping_justification": "semapv:ManualMappingCuration",
+          "object_id": "cas:16373-93-6",
+          "object_label": "2-Deoxyadenosine monohydrate",
+          "object_source": "registry:cas",
+          "other": "CAS:16373-93-6",
+          "predicate_id": "skos:exactMatch",
+          "source": "MIM:CultureBotHT|MIM:anchor_cas_hydrate_records|MIM:MIM curation (#342)|MIM:curator=regrade_hydrate_to_close_match|kgm:chebi_xrefs|kgm:mediaingredientmech_reviewed|kgm:mediaingredientmech_reviewed[curator=anchor_cas_hydrate_records]|kgm:primary_mappings[kegg_compound]",
+          "subject_id": "MIM:2-Deoxyadenosine_Monohydrate",
+          "subject_label": "2-Deoxyadenosine monohydrate",
+          "validation_method": "none|UNKNOWN_TERM|2026-07-07"
+        },
+        "owner": "data/ingredients/mapped/2-Deoxyadenosine_Monohydrate.yaml",
+        "owner_sha256": "234edb342d3ca2141a1d979722b23e9f4541903cd40df75d1871a864cb515edb",
+        "position": 55,
+        "row_sha256": "e4e7126195fca9c570335d6f0730fefafe6713f903df66c484e8c156320a4834"
+      },
+      {
+        "mapping": {
+          "comment": "Registry/identity row preserving kgmicrobe.compound:carnitine_hydrochloride alongside parent CHEBI:17126.",
+          "confidence": "0.99",
+          "mapping_date": "2026-08-27",
+          "mapping_justification": "semapv:ManualMappingCuration",
+          "object_id": "kgmicrobe.compound:carnitine_hydrochloride",
+          "object_label": "Carnitine Hydrochloride",
+          "object_source": "kgm:compound",
+          "other": "",
+          "predicate_id": "skos:exactMatch",
+          "source": "MIM:cbclaw_followups_114|MIM:curator=refresh_occurrence_statistics|kgm:chebi_xrefs|kgm:culturebotai_reviewed|kgm:mediaingredientmech_reviewed|kgm:mediaingredientmech_reviewed[curator=auto_classify_ingredient_type]|kgm:mediaingredientmech_reviewed[curator=backfill_parent_terms]|kgm:mediaingredientmech_reviewed[curator=cbclaw_kg_microbe_sweep]|kgm:mediaingredientmech_reviewed[curator=correct_stale_ontology_labels.py]|kgm:mediaingredientmech_reviewed[curator=regrade_synonym_matches]|kgm:mediaingredientmech_reviewed[curator=resolve_unmapped]|kgm:primary_mappings[chemicals_sssom]|kgm:primary_mappings[kegg_compound]",
+          "subject_id": "MIM:Carnitine_Hydrochloride",
+          "subject_label": "Carnitine Hydrochloride",
+          "validation_method": "none|UNKNOWN_TERM|2026-07-07"
+        },
+        "owner": "data/ingredients/mapped/Carnitine_Hydrochloride.yaml",
+        "owner_sha256": "c123a3f76cf2277ca68a08c99e58f96845842fd90c75bdd19b90ab8db7bb6780",
+        "position": 651,
+        "row_sha256": "ee82699ff7dc3eb49629557f7202119c99fed4e77360b4c8acc8d7f6e4a2ff2c"
+      }
+    ]
+  },
+  "detailed_source_delta_sha256": "7729db5befb03d61c895f5a68bd386bfddca5e133e563c0bd66cce6a50292644",
+  "full_row_counts": {
+    "added": 178,
+    "removed": 163
+  },
+  "scope": "Immutable upstream source delta; source dispositions are not a KGM artifact-admission claim. Complete detailed evidence retained separately.",
+  "triple_multiset_added": [
+    {
+      "count": 1,
+      "triple": [
+        "MIM:2-Deoxyadenosine_Monohydrate",
+        "skos:broadMatch",
+        "CHEBI:17256"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:2-Deoxyadenosine_Monohydrate",
+        "skos:exactMatch",
+        "kgmicrobe.compound:2-deoxyadenosine_monohydrate"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:2-Keto-D-gluconic_Acid_Hemicalcium_Salt_Hydrate",
+        "skos:broadMatch",
+        "CHEBI:27469"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:2-Keto-D-gluconic_Acid_Hemicalcium_Salt_Hydrate",
+        "skos:exactMatch",
+        "kgmicrobe.compound:2-keto-d-gluconic_acid_hemicalcium_salt_hydrate"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:25-didehydro-D-gluconate",
+        "skos:exactMatch",
+        "CHEBI:11449"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:4-Hydroxymandelic_Acid_Monohydrate",
+        "skos:broadMatch",
+        "CHEBI:16388"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:4-Hydroxymandelic_Acid_Monohydrate",
+        "skos:exactMatch",
+        "kgmicrobe.compound:4-hydroxymandelic_acid_monohydrate"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:5-Fluoroorotic_Acid_Hydrate",
+        "skos:broadMatch",
+        "CHEBI:74498"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:5-Fluoroorotic_Acid_Hydrate",
+        "skos:exactMatch",
+        "kgmicrobe.compound:5-fluoroorotic_acid_hydrate"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:Beta-Glycerophosphate_Disodium_Salt_Hydrate",
+        "skos:broadMatch",
+        "CHEBI:132089"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:Beta-Glycerophosphate_Disodium_Salt_Hydrate",
+        "skos:exactMatch",
+        "kgmicrobe.compound:beta-glycerophosphate_disodium_salt_hydrate"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:Cadmium_Acetate_Dihydrate",
+        "skos:broadMatch",
+        "CHEBI:232796"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:Cadmium_Acetate_Dihydrate",
+        "skos:exactMatch",
+        "kgmicrobe.compound:cadmium_acetate_dihydrate"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:Carnitine_Hydrochloride",
+        "skos:exactMatch",
+        "NCIT:C216679"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:Cecl3_X_7_H2o",
+        "skos:broadMatch",
+        "CHEBI:35458"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:Cecl3_X_7_H2o",
+        "skos:exactMatch",
+        "cas:18618-55-8"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:Cefsulodin_Sodium_Salt_Hydrate",
+        "skos:broadMatch",
+        "CHEBI:31380"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:Chlorhexidine_Diacetate_Salt_Hydrate",
+        "skos:broadMatch",
+        "CHEBI:81711"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:Cocl2_X_2_H2o",
+        "skos:broadMatch",
+        "CHEBI:35696"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:Cu_No32_X_3_H2o",
+        "skos:broadMatch",
+        "CHEBI:78036"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:Cu_No32_X_3_H2o",
+        "skos:exactMatch",
+        "cas:10031-43-3"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:D-Fructose_6-phosphate_Disodium_Salt_Hydrate",
+        "skos:broadMatch",
+        "CHEBI:190546"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:D-Fructose_6-phosphate_Disodium_Salt_Hydrate",
+        "skos:exactMatch",
+        "kgmicrobe.compound:d-fructose_6-phosphate_disodium_salt_hydrate"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:D-Galacturonic_Acid_Monohydrate",
+        "skos:broadMatch",
+        "CHEBI:18024"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:D-Galacturonic_Acid_Monohydrate",
+        "skos:exactMatch",
+        "kgmicrobe.compound:d-galacturonic_acid_monohydrate"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:D-Glucuronic_Acid_Sodium_Salt_Monohydrate",
+        "skos:broadMatch",
+        "CHEBI:32144"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:D-Glucuronic_Acid_Sodium_Salt_Monohydrate",
+        "skos:exactMatch",
+        "kgmicrobe.compound:d-glucuronic_acid_sodium_salt_monohydrate"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:D-Maltose_Monohydrate",
+        "skos:exactMatch",
+        "NCIT:C80300"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:D-_-melezitose_Hydrate",
+        "skos:broadMatch",
+        "CHEBI:6731"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:D-_-melezitose_Hydrate",
+        "skos:exactMatch",
+        "kgmicrobe.compound:d-_-melezitose_hydrate"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:D-_-melezitose_Monohydrate",
+        "skos:broadMatch",
+        "CHEBI:6731"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:DL-Glycerol_1-phosphate_Sodium_Salt_Hydrate",
+        "skos:broadMatch",
+        "CHEBI:14336"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:DL-Glycerol_1-phosphate_Sodium_Salt_Hydrate",
+        "skos:exactMatch",
+        "kgmicrobe.compound:dl-glycerol_1-phosphate_sodium_salt_hydrate"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:EDTA_Tetrasodium_Tetrahydrate_Salt",
+        "skos:broadMatch",
+        "CHEBI:750784"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:EDTA_Tetrasodium_Tetrahydrate_Salt",
+        "skos:exactMatch",
+        "kgmicrobe.compound:edta_tetrasodium_tetrahydrate_salt"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:Furaltadone_Hydrochloride",
+        "skos:exactMatch",
+        "NCIT:C217928"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:Galactose_1-phosphate_Dipotassium_Salt_Pentahydrate",
+        "skos:broadMatch",
+        "CHEBI:17973"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:Galactose_1-phosphate_Dipotassium_Salt_Pentahydrate",
+        "skos:exactMatch",
+        "kgmicrobe.compound:galactose_1-phosphate_dipotassium_salt_pentahydrate"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:Gly-Gln_Monohydrate",
+        "skos:broadMatch",
+        "CHEBI:73898"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:Gly-Gln_Monohydrate",
+        "skos:exactMatch",
+        "kgmicrobe.compound:gly-gln_monohydrate"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:Izalpinin",
+        "skos:exactMatch",
+        "cas:480-14-8"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:L-Aspartic_Acid_Sodium_Salt_Monohydrate",
+        "skos:broadMatch",
+        "CHEBI:17053"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:L-Aspartic_Acid_Sodium_Salt_Monohydrate",
+        "skos:exactMatch",
+        "kgmicrobe.compound:l-aspartic_acid_sodium_salt_monohydrate"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:L-Cysteic_Acid_Monohydrate",
+        "skos:broadMatch",
+        "CHEBI:17285"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:L-Cysteic_Acid_Monohydrate",
+        "skos:exactMatch",
+        "kgmicrobe.compound:l-cysteic_acid_monohydrate"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:L-Glutamic_Acid_Monopotassium_Salt_Monohydrate",
+        "skos:broadMatch",
+        "CHEBI:16015"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:L-Glutamic_Acid_Monopotassium_Salt_Monohydrate",
+        "skos:exactMatch",
+        "kgmicrobe.compound:l-glutamic_acid_monopotassium_salt_monohydrate"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:L-Rhamnose_Monohydrate",
+        "skos:broadMatch",
+        "CHEBI:62345"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:L-Rhamnose_Monohydrate",
+        "skos:exactMatch",
+        "kgmicrobe.compound:l-rhamnose_monohydrate"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:Lithium_Chloride_Hydrate",
+        "skos:broadMatch",
+        "CHEBI:48607"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:Lithium_Chloride_Hydrate",
+        "skos:exactMatch",
+        "kgmicrobe.compound:lithium_chloride_hydrate"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:Magnesium_Nitrate_Hexahydrate",
+        "skos:broadMatch",
+        "CHEBI:64736"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:Magnesium_Nitrate_Hexahydrate",
+        "skos:exactMatch",
+        "kgmicrobe.compound:magnesium_nitrate_hexahydrate"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:Maltose_Hydrate",
+        "skos:broadMatch",
+        "CHEBI:17306"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:Maltotriose_Hydrate",
+        "skos:broadMatch",
+        "CHEBI:140999"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:Maltotriose_Hydrate",
+        "skos:exactMatch",
+        "kgmicrobe.compound:maltotriose_hydrate"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:Mgso4h2o",
+        "skos:broadMatch",
+        "CHEBI:32599"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:Mgso4h2o",
+        "skos:exactMatch",
+        "cas:14168-73-1"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:Mgso4h2o",
+        "skos:exactMatch",
+        "kgmicrobe.compound:mgso4h2o"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:Na2glycerophosphate5h2o",
+        "skos:broadMatch",
+        "CHEBI:17270"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:Na2hpo4_X_7_H2o",
+        "skos:exactMatch",
+        "NCIT:C61946"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:Nicl2_X_2_H2o",
+        "skos:broadMatch",
+        "CHEBI:34887"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:Palatinose_Hydrate",
+        "skos:broadMatch",
+        "CHEBI:18394"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:Palatinose_Hydrate",
+        "skos:exactMatch",
+        "kgmicrobe.compound:palatinose_hydrate"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:Potassium_Citramalate_Monohydrate",
+        "skos:broadMatch",
+        "CHEBI:15584"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:Potassium_Citramalate_Monohydrate",
+        "skos:exactMatch",
+        "kgmicrobe.compound:potassium_citramalate_monohydrate"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:Potassium_Tellurate_Hydrate",
+        "skos:broadMatch",
+        "CHEBI:30463"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:Potassium_Tellurate_Hydrate",
+        "skos:exactMatch",
+        "kgmicrobe.compound:potassium_tellurate_hydrate"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:Sodium_Carbonate_Monohydrate",
+        "skos:exactMatch",
+        "NCIT:C80911"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:Sodium_Cholate_Hydrate",
+        "skos:broadMatch",
+        "CHEBI:26711"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:Sodium_Cholate_Hydrate",
+        "skos:exactMatch",
+        "kgmicrobe.compound:sodium_cholate_hydrate"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:Sodium_Deoxycholate_Monohydrate",
+        "skos:broadMatch",
+        "CHEBI:9177"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:Sodium_Deoxycholate_Monohydrate",
+        "skos:exactMatch",
+        "kgmicrobe.compound:sodium_deoxycholate_monohydrate"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:Sodium_Perchlorate_Monohydrate",
+        "skos:broadMatch",
+        "CHEBI:132103"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:Sodium_Phosphite_Dibasic_Pentahydrate",
+        "skos:broadMatch",
+        "CHEBI:36361"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:Sodium_Phosphite_Dibasic_Pentahydrate",
+        "skos:exactMatch",
+        "kgmicrobe.compound:sodium_phosphite_dibasic_pentahydrate"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:Sodium_Thiophosphate_Tribasic_Hydrate",
+        "skos:broadMatch",
+        "CHEBI:46612"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:Sodium_Thiophosphate_Tribasic_Hydrate",
+        "skos:exactMatch",
+        "kgmicrobe.compound:sodium_thiophosphate_tribasic_hydrate"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:Stachyose_Hydrate",
+        "skos:broadMatch",
+        "CHEBI:17164"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:Stachyose_Hydrate",
+        "skos:exactMatch",
+        "kgmicrobe.compound:stachyose_hydrate"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:Wc_Trace_Elements_Solution",
+        "skos:broadMatch",
+        "MICRO:0000455"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:Wc_Trace_Elements_Solution",
+        "skos:exactMatch",
+        "kgmicrobe.ingredient:wc_trace_elements_solution"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:D-_-melezitose_Monohydrate",
+        "skos:exactMatch",
+        "kgmicrobe.compound:d-_-melezitose_monohydrate"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:Sodium_Perchlorate_Monohydrate",
+        "skos:exactMatch",
+        "kgmicrobe.compound:sodium_perchlorate_monohydrate"
+      ]
+    }
+  ],
+  "triple_multiset_removed": [
+    {
+      "count": 1,
+      "triple": [
+        "MIM:2-Deoxyadenosine_Monohydrate",
+        "skos:closeMatch",
+        "CHEBI:17256"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:2-Keto-D-gluconic_Acid_Hemicalcium_Salt_Hydrate",
+        "skos:closeMatch",
+        "CHEBI:27469"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:4-Hydroxymandelic_Acid_Monohydrate",
+        "skos:closeMatch",
+        "CHEBI:16388"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:5-Fluoroorotic_Acid_Hydrate",
+        "skos:closeMatch",
+        "CHEBI:74498"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:84_GL_NaHCO3_Solution",
+        "skos:exactMatch",
+        "kgmicrobe.compound:84_gl_nahco3_solution"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:Amylopectin_From_Maize",
+        "skos:exactMatch",
+        "kgmicrobe.compound:amylopectin_from_maize"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:Beta-Glycerophosphate_Disodium_Salt_Hydrate",
+        "skos:closeMatch",
+        "CHEBI:17270"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:Cadmium_Acetate_Dihydrate",
+        "skos:closeMatch",
+        "CHEBI:232796"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:Carnitine_Dl_Hydrochloride",
+        "skos:broadMatch",
+        "CHEBI:17126"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:Carnitine_Dl_Hydrochloride",
+        "skos:exactMatch",
+        "cas:461-06-3"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:Carnitine_Dl_Hydrochloride",
+        "skos:exactMatch",
+        "kgmicrobe.compound:carnitine_dl_hydrochloride"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:Carnitine_Hydrochloride",
+        "skos:broadMatch",
+        "CHEBI:17126"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:Carnitine_Hydrochloride",
+        "skos:exactMatch",
+        "kgmicrobe.compound:carnitine_hydrochloride"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:Cecl3_X_7_H2o",
+        "skos:closeMatch",
+        "CHEBI:35458"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:Cefsulodin_Sodium_Salt_Hydrate",
+        "skos:closeMatch",
+        "CHEBI:31380"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:Chlorhexidine_Diacetate_Salt_Hydrate",
+        "skos:closeMatch",
+        "CHEBI:81711"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:Cholesterol_Lipid_Concentrate",
+        "skos:exactMatch",
+        "kgmicrobe.compound:cholesterol_lipid_concentrate"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:Cocl2_X_2_H2o",
+        "skos:closeMatch",
+        "CHEBI:35696"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:Cu_No32_X_3_H2o",
+        "skos:closeMatch",
+        "CHEBI:78036"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:D-Fructose_6-phosphate_Disodium_Salt_Hydrate",
+        "skos:closeMatch",
+        "CHEBI:190546"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:D-Galacturonic_Acid_Monohydrate",
+        "skos:closeMatch",
+        "CHEBI:18024"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:D-Glucuronic_Acid_Sodium_Salt_Monohydrate",
+        "skos:closeMatch",
+        "CHEBI:4178"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:D-Maltose_Monohydrate",
+        "skos:closeMatch",
+        "CHEBI:17306"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:D-Maltose_Monohydrate",
+        "skos:exactMatch",
+        "cas:6363-53-7"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:D-_-melezitose_Hydrate",
+        "skos:closeMatch",
+        "CHEBI:6731"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:D-_-melezitose_Monohydrate",
+        "skos:closeMatch",
+        "CHEBI:6731"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:DL-Glycerol_1-phosphate_Sodium_Salt_Hydrate",
+        "skos:closeMatch",
+        "CHEBI:14336"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:EDTA_Tetrasodium_Tetrahydrate_Salt",
+        "skos:closeMatch",
+        "CHEBI:4735"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:Fish-sperm_Dna",
+        "skos:exactMatch",
+        "kgmicrobe.compound:fish-sperm_dna"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:Furaltadone_Hydrochloride",
+        "skos:broadMatch",
+        "NCIT:C217928"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:Furaltadone_Hydrochloride",
+        "skos:exactMatch",
+        "cas:3759-92-1"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:Furaltadone_Hydrochloride",
+        "skos:exactMatch",
+        "kgmicrobe.compound:furaltadone_hydrochloride"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:Galactose_1-phosphate_Dipotassium_Salt_Pentahydrate",
+        "skos:closeMatch",
+        "CHEBI:17973"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:Gly-Gln_Monohydrate",
+        "skos:closeMatch",
+        "CHEBI:73898"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:Heparin_Sodium_Salt_From_Porcine_Intestinal_Mucosa",
+        "skos:exactMatch",
+        "kgmicrobe.compound:heparin_sodium_salt_from_porcine_intestinal_mucosa"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:Izalpinin",
+        "skos:exactMatch",
+        "cas:480-14-4"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:L-Aspartic_Acid_Sodium_Salt_Monohydrate",
+        "skos:closeMatch",
+        "CHEBI:17053"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:L-Cysteic_Acid_Monohydrate",
+        "skos:closeMatch",
+        "CHEBI:17285"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:L-Glutamic_Acid_Monopotassium_Salt_Monohydrate",
+        "skos:closeMatch",
+        "CHEBI:16015"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:L-Rhamnose_Monohydrate",
+        "skos:closeMatch",
+        "CHEBI:62345"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:Lichenan_Icelandic_Moss",
+        "skos:exactMatch",
+        "kgmicrobe.compound:lichenan_icelandic_moss"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:Lithium_Chloride_Hydrate",
+        "skos:closeMatch",
+        "CHEBI:48607"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:MES_Buffer",
+        "skos:exactMatch",
+        "kgmicrobe.compound:mes_buffer"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:MOPS_2M_pH7",
+        "skos:exactMatch",
+        "kgmicrobe.compound:mops_2m_ph7"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:Magnesium_Nitrate_Hexahydrate",
+        "skos:closeMatch",
+        "CHEBI:64736"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:Maltose_Hydrate",
+        "skos:closeMatch",
+        "CHEBI:17306"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:Maltotriose_Hydrate",
+        "skos:closeMatch",
+        "CHEBI:61993"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:Menadione_Solution",
+        "skos:exactMatch",
+        "kgmicrobe.compound:menadione_solution"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:Mgso4h2o",
+        "skos:exactMatch",
+        "CHEBI:31795"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:Na2glycerophosphate5h2o",
+        "skos:broadMatch",
+        "CHEBI:15978"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:Na2hpo4_X_7_H2o",
+        "skos:closeMatch",
+        "CHEBI:34683"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:Na2hpo4_X_7_H2o",
+        "skos:exactMatch",
+        "kgmicrobe.compound:na2hpo4_x_7_h2o"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:Nicl2_X_2_H2o",
+        "skos:closeMatch",
+        "CHEBI:34887"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:PBS",
+        "skos:exactMatch",
+        "kgmicrobe.compound:pbs"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:PIPES_Buffer",
+        "skos:exactMatch",
+        "kgmicrobe.compound:pipes_buffer"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:Palatinose_Hydrate",
+        "skos:closeMatch",
+        "CHEBI:18394"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:Potassium_Citramalate_Monohydrate",
+        "skos:closeMatch",
+        "CHEBI:15584"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:Potassium_Tellurate_Hydrate",
+        "skos:closeMatch",
+        "CHEBI:30463"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:Ribonucleic_Acid_From_Torula_Yeast_Type_VI",
+        "skos:exactMatch",
+        "kgmicrobe.compound:ribonucleic_acid_from_torula_yeast_type_vi"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:Sn-Glycerol_3-phosphate_Lithium_Salt",
+        "skos:exactMatch",
+        "cas:17989-41-2"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:Sodium_Carbonate_Monohydrate",
+        "skos:closeMatch",
+        "CHEBI:29377"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:Sodium_Carbonate_Monohydrate",
+        "skos:exactMatch",
+        "cas:5968-11-6"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:Sodium_Cholate_Hydrate",
+        "skos:closeMatch",
+        "CHEBI:26711"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:Sodium_Deoxycholate_Monohydrate",
+        "skos:closeMatch",
+        "CHEBI:9177"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:Sodium_Perchlorate_Monohydrate",
+        "skos:closeMatch",
+        "CHEBI:132103"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:Sodium_Phosphite_Dibasic_Pentahydrate",
+        "skos:closeMatch",
+        "CHEBI:36361"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:Sodium_Thiophosphate_Tribasic_Hydrate",
+        "skos:closeMatch",
+        "CHEBI:46612"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:Stachyose_Hydrate",
+        "skos:closeMatch",
+        "CHEBI:17164"
+      ]
+    },
+    {
+      "count": 1,
+      "triple": [
+        "MIM:Wc_Trace_Elements_Solution",
+        "skos:exactMatch",
+        "MICRO:0000455"
+      ]
+    }
+  ]
+}

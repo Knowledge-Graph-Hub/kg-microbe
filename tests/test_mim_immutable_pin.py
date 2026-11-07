@@ -40,7 +40,8 @@ def _archive(path, pin, members, extra=None):
             info.size = len(data)
             archive.addfile(info, io.BytesIO(data))
         if extra is not None:
-            archive.addfile(extra)
+            for item in extra if isinstance(extra, list) else [extra]:
+                archive.addfile(item)
     pin["source_archive"]["sha256"] = _sha(path.read_bytes())
 
 
@@ -312,4 +313,119 @@ def test_provenance_inputs_cannot_be_symbolic_links(export_fixture, tmp_path, ta
         path.rename(real)
         path.symlink_to(real)
     with pytest.raises(ValueError, match="unsafe"):
+        cli.validate_immutable_export(pin, archive, release)
+
+
+def _metadata_entries(pin):
+    """Describe the two actual reviewed upstream metadata links and their directory target."""
+    prefix = "MediaIngredientMech-" + pin["source_commit"] + "/"
+    directory = tarfile.TarInfo(prefix + ".claude/skills/")
+    directory.type = tarfile.DIRTYPE
+    links = []
+    for name, target in ((".agents/skills", "../.claude/skills"), ("CLAUDE.md", "AGENTS.md")):
+        info = tarfile.TarInfo(prefix + name)
+        info.type = tarfile.SYMTYPE
+        info.linkname = target
+        links.append(info)
+    return [directory, *links]
+
+
+def test_reviewed_metadata_links_are_recorded_without_following_or_extracting(export_fixture, monkeypatch):
+    """The current archive's exact two links do not become source authority or filesystem entries."""
+    pin, archive, release, members = export_fixture
+    members["AGENTS.md"] = b"Repository metadata, not execution instructions.\n"
+    _archive(archive, pin, members, _metadata_entries(pin))
+    extractfile = tarfile.TarFile.extractfile
+    opened = []
+
+    def read_regular_provenance(handle, member):
+        """Permit reads only of the four consumed regular provenance members."""
+        assert member.isfile()
+        name = member.name.split("/", 1)[1]
+        assert name in {cli.SOURCE_SSSOM, cli.SOURCE_REVIEW, "uv.lock", cli.SOURCE_WORKFLOW}
+        opened.append(name)
+        return extractfile(handle, member)
+
+    def forbid_extraction(*args, **kwargs):
+        """Any attempt to materialize the archive is a regression."""
+        pytest.fail("Source verification must not extract archive members")
+
+    monkeypatch.setattr(tarfile.TarFile, "extractfile", read_regular_provenance)
+    monkeypatch.setattr(tarfile.TarFile, "extract", forbid_extraction)
+    monkeypatch.setattr(tarfile.TarFile, "extractall", forbid_extraction)
+    result = cli.validate_immutable_export(pin, archive, release)
+    assert len(opened) == 4
+    assert result["ignored_metadata_symlinks"] == [
+        {"path": ".agents/skills", "target": "../.claude/skills", "resolved_target": ".claude/skills"},
+        {"path": "CLAUDE.md", "target": "AGENTS.md", "resolved_target": "AGENTS.md"},
+    ]
+    assert not (archive.parent / ("MediaIngredientMech-" + pin["source_commit"])).exists()
+
+
+@pytest.mark.parametrize(
+    "defect",
+    [
+        "absolute",
+        "escape",
+        "different_target",
+        "hardlink",
+        "duplicate",
+        "trailing_slash",
+        "missing_target",
+        "file_target",
+    ],
+)
+def test_metadata_link_allowlist_cannot_hide_unsafe_members(export_fixture, defect):
+    """Known names do not authorize changed links, aliases, missing targets or unsafe types."""
+    pin, archive, release, members = export_fixture
+    members["AGENTS.md"] = b"metadata\n"
+    entries = _metadata_entries(pin)
+    link = entries[1]
+    if defect in {"absolute", "escape", "different_target"}:
+        link.linkname = {"absolute": "/outside", "escape": "../../outside", "different_target": "../other"}[defect]
+    elif defect == "hardlink":
+        link.type = tarfile.LNKTYPE
+    elif defect == "duplicate":
+        entries.append(link)
+    elif defect == "trailing_slash":
+        link.name += "/"
+    elif defect == "missing_target":
+        entries.pop(0)
+    else:
+        entries[0].name = entries[0].name.rstrip("/")
+        entries[0].type = tarfile.REGTYPE
+    _archive(archive, pin, members, entries)
+    with pytest.raises(ValueError, match="Unsafe"):
+        cli.validate_immutable_export(pin, archive, release)
+
+
+@pytest.mark.parametrize("ancestor_first", [False, True])
+@pytest.mark.parametrize("ancestor_kind", ["metadata_link", "regular_file"])
+def test_non_directory_ancestors_fail_in_either_archive_order(export_fixture, ancestor_first, ancestor_kind):
+    """An allowed metadata link never authorizes descendants or an ambiguous source path."""
+    pin, archive, release, members = export_fixture
+    entries = _metadata_entries(pin)
+    members["AGENTS.md"] = b"metadata\n"
+    prefix = "MediaIngredientMech-" + pin["source_commit"] + "/"
+    if ancestor_kind == "metadata_link":
+        child = tarfile.TarInfo(prefix + ".agents/skills/child")
+        entries = [*entries, child] if ancestor_first else [child, *entries]
+    elif ancestor_first:
+        members = {"mappings": b"not a directory", **members}
+    else:
+        members["mappings"] = b"not a directory"
+    _archive(archive, pin, members, entries)
+    with pytest.raises(ValueError, match="Unsafe non-directory ancestor"):
+        cli.validate_immutable_export(pin, archive, release)
+
+
+def test_consumed_member_cannot_be_a_link_even_to_reviewed_metadata(export_fixture):
+    """The metadata exception never permits a linked source, review, workflow or lock."""
+    pin, archive, release, members = export_fixture
+    del members[cli.SOURCE_REVIEW]
+    info = tarfile.TarInfo("MediaIngredientMech-" + pin["source_commit"] + "/" + cli.SOURCE_REVIEW)
+    info.type = tarfile.SYMTYPE
+    info.linkname = "AGENTS.md"
+    _archive(archive, pin, members, info)
+    with pytest.raises(ValueError, match="Unsafe"):
         cli.validate_immutable_export(pin, archive, release)

@@ -1,11 +1,11 @@
 """
 Bind the promoted supported-only MIM set and unified artifact to their review.
 
-The immutable reviewed export intentionally contains exact matches only. Requiring
-asymmetric rows would reject that product and encourage replaying withheld claims.
-Legacy/asymmetric direction behavior remains covered independently by
-``tests/test_sssom_predicate_semantics.py``; it is not inferred from release dates
-or disabled when the production supported subset contains no asymmetric rows.
+The reviewed native export contains two broader form claims alongside exact
+assertions. The unified pair projects four directed relations through explicit
+CAS/local form identities, with both original row hashes retained. Legacy
+asymmetric direction remains independently covered by
+``tests/test_sssom_predicate_semantics.py``; source dates do not define direction.
 """
 
 import gzip
@@ -30,22 +30,23 @@ POTATO_SCOPE = REPO_ROOT / "tests" / "resources" / "mediadive" / "potato_scope.j
 P3556_SCOPE = REPO_ROOT / "tests" / "resources" / "mediadive" / "p3556_scope.json"
 MATERIAL_ALIAS_SCOPE = REPO_ROOT / "tests" / "resources" / "mediadive" / "material_aliases_1262.json"
 MATERIAL_ALIAS_REVIEW = REPO_ROOT / "mappings" / "mediadive_material_grounding_review.json"
+CATALASE_SCOPE = REPO_ROOT / "tests" / "resources" / "mediadive" / "catalase_scope.json"
 
 # Byte identities accepted together in the immutable-export promotion review.
 # Updating a release requires reviewing both products, not regenerating these
 # expectations from whichever files happen to be present in the checkout.
-SOURCE_COMMIT = "1848b0fe521bc2462f165912fcf92d09ad9a8cec"
-MANIFEST_SHA256 = "9bb29d5605d93dea351be9624d99c5d8ada57d4b9831b22764957b784bd685af"
-SUPPORTED_SHA256 = "6b52b30e018b369aa322d41dfd4e81fcfae0e895e34d7fe48900abf5835815fb"
-UNIFIED_SHA256 = "59464e08017cc907a1240a4378d2462efc9e2c1b9d6c3cf0b08b4344ef695ae8"
-IDENTITY_REFRESH_WRITER_SHA256 = "257fe4d8bf16f92eb78d5e375065e030ea56d7c1174d859fecd2baa80ac18c27"
-IDENTITY_POLICY_SHA256 = "559b47b3c946601350bd2351fc8686fd731038908a1c90277dfe94981c0573b0"
-RELEASE_PIN_SHA256 = "f082c05656a0910c85176eec7b41deeb77c27967aecb80393fddc262819b6d97"
+SOURCE_COMMIT = "0dac278466699129a083343a921c2e0ca18a9ab4"
+MANIFEST_SHA256 = "b02a92446e8a613fd0d96b0dd8147d439733fcf73e731b363a6388e95d616703"
+SUPPORTED_SHA256 = "7e68fea7fd788928f29c7671156198af101baaa3b3051f19bab78a5479d2a940"
+UNIFIED_SHA256 = "f1314a41ede9b143c595399ada5178e52306364e69b467810cf71e7cdc4be23d"
+CONSERVATIVE_WRITER_SHA256 = "ade61c8ac18bd7f1883e7c43a7ef7c5637c4774af7b8f4593ae4e6f5682fd95f"
+RELEASE_PIN_SHA256 = "8c66be0b68dcb773a908b17de56ff34b6270dc9eebf114e759552b07c3907cd5"
 PRIOR_CLAIMS_SHA256 = "629198d090f7e45f7f17ce97a124eb9cad879b0bb066930b11ea8cf80ce15b2c"
 POTATO_SCOPE_SHA256 = "b4755925efe8cde9871569b047e28c185ac56e2cba6295fca20fef2901062723"
 P3556_SCOPE_SHA256 = "7c06f4e2179356ddf1d917a6938cba5e3bdf6669f42a29019b93963e4a70646c"
 MATERIAL_ALIAS_SCOPE_SHA256 = "e6db6174173a12101875104c33478f1868f4454ddd296db8e46b47ab6119f126"
 MATERIAL_ALIAS_REVIEW_SHA256 = "b94ecaa4935082a6ed79faddfa448ed3a1768a858a572bc63306d20f43701e03"
+CATALASE_SCOPE_SHA256 = "9508981c607e26e93747c7ef8fd939d6048bbbf398dbcf17a0ca299c2886823d"
 P3556_REVIEWED_LABEL = (
     "[(2R)-3-hexadecanoyloxy-2-[(9E,12E)-octadeca-9,12-dienoyl]oxy-propyl] 2-(trimethylammonio)ethyl phosphate"
 )
@@ -78,7 +79,7 @@ def _row_key(row):
 
 
 class VendoredSetShapeTest(TestCase):
-    """Require the exact-only supported product; missing tracked data must fail."""
+    """Require the reviewed exact/broader native product; missing tracked data must fail."""
 
     @classmethod
     def setUpClass(cls):
@@ -94,19 +95,21 @@ class VendoredSetShapeTest(TestCase):
         self.assertEqual(self.pin["files"][SSSOM.name], SUPPORTED_SHA256)
         self.assertEqual(_sha256(SSSOM), SUPPORTED_SHA256)
 
-    def test_only_the_1747_supported_exact_assertions_are_vendored(self):
-        """Do not reintroduce withheld asymmetric claims merely to satisfy a test."""
-        self.assertEqual(Counter(row["predicate_id"] for row in self.rows), {"skos:exactMatch": 1747})
+    def test_only_the_1739_supported_native_assertions_are_vendored(self):
+        """Retain native support, including the separately held downstream exact claim."""
+        self.assertEqual(
+            Counter(row["predicate_id"] for row in self.rows), {"skos:exactMatch": 1737, "skos:broadMatch": 2}
+        )
         self.assertTrue(all(row["subject_id"].startswith("MIM:") for row in self.rows))
         self.assertTrue(all(row["subject_label"] and row["object_id"] for row in self.rows))
-        self.assertEqual(len({row["subject_id"] for row in self.rows}), 1696)
-        self.assertEqual(len({row["subject_label"] for row in self.rows}), 1696)
+        self.assertEqual(len({row["subject_id"] for row in self.rows}), 1690)
+        self.assertEqual(len({row["subject_label"] for row in self.rows}), 1690)
 
     def test_supported_header_declares_skos_and_the_reviewed_version(self):
-        """Keep predicate semantics explicit even when every current row is exact."""
+        """Keep explicit SKOS direction and the native supported subset date."""
         self.assertEqual(read_predicate_semantics(SSSOM), "skos")
         self.assertEqual(self.metadata["predicate_semantics"], "skos")
-        self.assertEqual(self.metadata["mapping_set_version"], "2026-09-24")
+        self.assertEqual(self.metadata["mapping_set_version"], "2026-11-01")
         self.assertEqual(
             self.metadata["mapping_set_id"],
             "https://w3id.org/sssom/mappings/culturebotai_mim_ingredient/reviewed-supported",
@@ -154,28 +157,22 @@ class PromotedMappingPairTest(TestCase):
         )
         self.assertTrue(all(row["mapping_date"] == "2026-09-04" for row in rows))
 
-    def test_unified_header_identifies_the_pinned_review_and_identity_refresh_writer(self):
-        """Keep the original reviewed origin and name the actual bounded-update writer."""
+    def test_unified_header_identifies_the_pinned_review_and_conservative_writer(self):
+        """Bind the new review and actual writer while retaining historical unified version."""
         metadata = _metadata(UNIFIED)
         pin = load_release_pin(REPO_ROOT)
-        self.assertEqual(metadata["mapping_tool"], "kg-microbe/scripts/consolidate_chemical_mappings.py")
-        self.assertEqual(metadata["mapping_tool_version"], "sha256:" + IDENTITY_REFRESH_WRITER_SHA256)
+        self.assertEqual(metadata["mapping_tool"], "kg-microbe/scripts/mim_conservative_refresh.py")
+        self.assertEqual(metadata["mapping_tool_version"], "sha256:" + CONSERVATIVE_WRITER_SHA256)
         self.assertEqual(
             metadata["mapping_set_description"],
-            "Conservative MIM candidate; reviewed manifest sha256:"
-            + pin["manifest_sha256"]
-            + ". Ingredient identity policy sha256:"
-            + IDENTITY_POLICY_SHA256
-            + ".",
+            "Conservative MIM candidate; reviewed manifest sha256:" + pin["manifest_sha256"] + ".",
         )
-        # The conservative builder preserves historical baseline metadata
-        # (#1170). Absence retains the reader's legacy direction contract; the
-        # accepted unified set has no asymmetric rows to interpret. Do not
-        # rewrite its immutable bytes to copy the supported product's header.
-        self.assertNotIn("predicate_semantics", metadata)
-        self.assertEqual(read_predicate_semantics(UNIFIED), "")
+        # The reviewed baseline had no asymmetric rows. The four new directed
+        # relations require explicit SKOS semantics; legacy fixtures stay separate.
+        self.assertEqual(metadata["predicate_semantics"], "skos")
+        self.assertEqual(read_predicate_semantics(UNIFIED), "skos")
         # The unified version preserves historical baseline metadata. It must not
-        # be fabricated as the supported product's September 24 release date.
+        # be fabricated as the supported product's November 1 subset date.
         self.assertEqual(metadata["mapping_set_version"], "2026-09-06")
 
     def test_unified_counts_and_native_categories_match_the_reviewed_candidate(self):
@@ -183,6 +180,14 @@ class PromotedMappingPairTest(TestCase):
         entities = set()
         predicates = Counter()
         native_rows = Counter()
+        self.assertEqual(_sha256(CATALASE_SCOPE), CATALASE_SCOPE_SHA256)
+        catalase_originals = json.loads(CATALASE_SCOPE.read_text(encoding="utf-8"))["native_mapping_rows"]
+        self.assertEqual(len(catalase_originals), 4)
+        expected_related = Counter(
+            _row_key(dict(row, predicate_id="skos:relatedMatch", comment="native_authority_metadata_only"))
+            for row in catalase_originals
+        )
+        observed_related = Counter()
         self.assertEqual(_sha256(POTATO_SCOPE), POTATO_SCOPE_SHA256)
         potato_claim = json.loads(POTATO_SCOPE.read_text(encoding="utf-8"))["mapping_claims"]["unified"]["row"]
         self.assertEqual(len(potato_claim), 13)
@@ -281,6 +286,8 @@ class PromotedMappingPairTest(TestCase):
             rows += 1
             entities.add(row["object_id"])
             predicates[row["predicate_id"]] += 1
+            if row["predicate_id"] == "skos:relatedMatch":
+                observed_related[_row_key(row)] += 1
             if row["object_id"] in material_cohort:
                 observed_material_rows[_row_key(row)] += 1
                 if row["object_id"] in material_controls:
@@ -313,11 +320,15 @@ class PromotedMappingPairTest(TestCase):
                     added_provenance[full_row] += 1
             if row["object_id"] in {"NCIT:C16883", "NCIT:C71939"}:
                 native_rows[(row["subject_id"], row["predicate_id"], row["object_id"], row["object_category"])] += 1
-        self.assertEqual(rows, 591933)
-        self.assertEqual(len(entities), 120183)
-        self.assertEqual(predicates, {"skos:exactMatch": 336048, "skos:closeMatch": 255885})
-        self.assertEqual(predicates["skos:broadMatch"], 0)
+        self.assertEqual(rows, 591914)
+        self.assertEqual(len(entities), 120173)
+        self.assertEqual(
+            predicates,
+            {"skos:exactMatch": 336027, "skos:closeMatch": 255879, "skos:broadMatch": 4, "skos:relatedMatch": 4},
+        )
+        self.assertEqual(predicates["skos:broadMatch"], 4)
         self.assertEqual(predicates["skos:narrowMatch"], 0)
+        self.assertEqual(observed_related, expected_related)
         self.assertEqual(native_rows, expected_native_rows)
         self.assertFalse(invalid_endpoints)
         self.assertFalse(retained_invalid)

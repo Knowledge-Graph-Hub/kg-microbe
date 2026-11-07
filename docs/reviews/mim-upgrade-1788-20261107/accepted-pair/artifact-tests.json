@@ -1,0 +1,35 @@
+{
+  "changed_python": {},
+  "command": [
+    "poetry",
+    "run",
+    "python",
+    "-B",
+    "-m",
+    "pytest",
+    "tests/test_sssom_asymmetric_direction.py",
+    "tests/test_chemical_mapping_utils_artifact.py",
+    "tests/test_metatraits_manual_identity.py",
+    "tests/test_mappings_artifact_reproducibility.py",
+    "tests/test_mapping_provenance.py",
+    "-q"
+  ],
+  "exit_code": 0,
+  "finished_at": "2026-11-07T10:48:18.562972+00:00",
+  "log_sha256": "f339a9c9527c43622b66610e68b98df6a98f4e3f75d4b251ba5c623db5f695e2",
+  "promoted_pair_after_sha256": {
+    "ingredient_mappings.sssom.tsv": "7e68fea7fd788928f29c7671156198af101baaa3b3051f19bab78a5479d2a940",
+    "kgmicrobe_unified_entity_mappings.sssom.tsv.gz": "f1314a41ede9b143c595399ada5178e52306364e69b467810cf71e7cdc4be23d"
+  },
+  "promoted_pair_before_sha256": {
+    "ingredient_mappings.sssom.tsv": "7e68fea7fd788928f29c7671156198af101baaa3b3051f19bab78a5479d2a940",
+    "kgmicrobe_unified_entity_mappings.sssom.tsv.gz": "f1314a41ede9b143c595399ada5178e52306364e69b467810cf71e7cdc4be23d"
+  },
+  "promoted_pair_unchanged": true,
+  "python_after_sha256": "10df5937d075845c2dedc091ae6431a3c4449d5731cabdf322aa0ee7e4305e09",
+  "python_before_sha256": "10df5937d075845c2dedc091ae6431a3c4449d5731cabdf322aa0ee7e4305e09",
+  "python_file_count_after": 753,
+  "python_file_count_before": 753,
+  "python_hashes_unchanged": true,
+  "request_sha256": "afa1f4c4d264aa9833186a94361aba7e969c6a21d9df03dc7df5acd5507b6600"
+}

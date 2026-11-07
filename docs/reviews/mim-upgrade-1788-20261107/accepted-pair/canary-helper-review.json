@@ -1,0 +1,26 @@
+{
+  "status": "independent_static_review_pass_focused_and_live_checks_pending",
+  "issue": 1798,
+  "reviewer": "root; helper authored by environment audit",
+  "files": {
+    "scripts/adhoc/kgm_mim_mediadive_canary_20261107.py": "5e9dca08314f1f3d7a3f627daa3749a21e7e4ef3d89ab7ff5c98db9d4c898c23",
+    "tests/test_mim_mediadive_canary_20261107.py": "f4f250a1e4f96812ead76531df798490f331a5ef870238a0ceea1f62832752dc"
+  },
+  "checks": [
+    "Actual dispatcher used with complete original catalogue, no selector/subset override",
+    "Native total len(data)+1 and first callback after complete medium writers confirmed",
+    "Only progress observer patched; network interception throws BaseException outside broad record handlers",
+    "Original native read guards and sticky consumed-input failure retained; no finalized source claim",
+    "SourceAdmission.capture_tree binds Python source membership only, so new owned summary TSV does not invalidate code guard",
+    "Only exclusive fixed output paths preserved after complete output hash checks; unexpected failures retain partial artifacts",
+    "First medium four recipe quantities and serialized source context checked; scientific target review remains separate",
+    "Owned launcher, interpreter, cwd and actual first-party module origins required",
+    "Offline tests exercise real dispatcher, reads, writer, sticky refusal and fresh-instance continuation with explicitly scoped prerequisite/finalizer isolation"
+  ],
+  "findings": [],
+  "limits": [
+    "Static code review does not establish passing tests or source admission",
+    "Production execution requires genuinely rebuilt native upstreams, reviewed mapping pair and final code gates",
+    "One-medium result is never complete MediaDive source admission; 632 unknown qualification retained"
+  ]
+}

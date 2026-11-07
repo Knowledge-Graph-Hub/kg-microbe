@@ -2,38 +2,82 @@
 
 ## Status and scope
 
-The selected upstream input is the validated immutable export of
-[commit `1848b0fe521bc2462f165912fcf92d09ad9a8cec`](https://github.com/CultureBotAI/MediaIngredientMech/commit/1848b0fe521bc2462f165912fcf92d09ad9a8cec),
-not a newly published release tag. Its [locked-runtime validation run](https://github.com/CultureBotAI/MediaIngredientMech/actions/runs/36109949250)
-passed review reproduction, complete export validation and SSSOM schema checks.
-The user explicitly selected immutable-commit/export consumption; the schema-v2
-`mappings/mim_reviewed_release.json` records that origin without relabeling the
-old September 21 release. Its `candidate_only` mode controls candidate generation,
-not permission to publish or silently replace production mappings. Paired
-production promotion remains the separate reviewed step below.
+The authorized update in [#1788](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1788)
+selects immutable upstream commit
+[`0dac278466699129a083343a921c2e0ca18a9ab4`](https://github.com/CultureBotAI/MediaIngredientMech/commit/0dac278466699129a083343a921c2e0ca18a9ab4).
+Its [locked-runtime validation run](https://github.com/CultureBotAI/MediaIngredientMech/actions/runs/41900248437)
+passed native review reproduction, complete export validation and SSSOM schema checks.
+The [source and actual-product review](reviews/mim-upgrade-1788-20261107/README.md)
+retains independent review and a local reproduction whose four products match the
+official artifact byte-for-byte. This is an immutable-commit export, not a newly
+published release tag or human curator signoff.
 
-The [2026-09-29 Potato scope record](reviews/mediadive-potato-scope-20260929/PROMOTION.md)
-records the latest isolated paired staging change and its remaining gates.
-Paired-change tests, CI, production integration and fresh KG validation remain
-separate required gates. The [2026-09-27 invalid-CAS mapping review](reviews/mim-invalid-cas-20260927/PROMOTION.md),
-[earlier native-category record](reviews/mim-native-category-20260927/PROMOTION.md)
-and [2026-09-25 acceptance record](reviews/mim-admission-20260925/PROMOTION.md)
-are preserved as historical evidence, not reassigned to the new candidate. The
-first hydration candidate exposed three further legacy scope defects (#1169)
-during full MediaDive replay; its previous passing audits remain diagnostic
-history. A pin, candidate file or earlier passing report does not complete a
-later installation or graph-release gate.
+**The reviewed supported/unified pair is accepted and installed in the isolated
+worktree. All 15 genuine worktree producers, producer canaries, final code/CI gates,
+and the new graph/archive validation remain pending.** The
+[acceptance record](reviews/mim-upgrade-1788-20261107/ACCEPTANCE.md) binds the actual
+candidate, independent reviews, second-cycle reproduction, historical runtime
+controls and completed paired installation. The old pair and failed first attempt
+remain preserved. That attempt exposed the existing P3556 downstream hold;
+[#1799](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1799) now records its
+finite, full-row disposition without weakening identity admission.
 
-The complete export contains 1,747 supported exact mappings and 1,252 withheld
-rows (2,999 source assertions). Its three product files are byte-identical to the
-previously reviewed `a8b26f007cdf5bdc7529ab13888d611f359e6aad` export; the manifest's
-review hash changed with later upstream verifier provenance. Do not confuse this
-full table with the separate opt-in 20-case ingredient-scope/history bundle.
-The supported table is the only approved MIM mapping input. The withheld table
-is a review backlog, **not a set of globally false assertions**. An independent
-ontology/source can still support a claim absent from the supported table.
-The release does not approve ingredient roles, components, or media regeneration.
-Its review is agent-assisted/adversarial; do not label it human curator signoff.
+The installed native supported table has SHA256
+`7e68fea7fd788928f29c7671156198af101baaa3b3051f19bab78a5479d2a940`.
+The installed unified candidate has SHA256
+`f1314a41ede9b143c595399ada5178e52306364e69b467810cf71e7cdc4be23d`
+(591,914 rows and 120,173 targets). These exact bytes are the accepted pair for
+commit `0dac278466699129a083343a921c2e0ca18a9ab4`; their installation does not certify
+production outputs or a release.
+
+The native export contains **1,739 supported assertions: 1,737 exact matches and
+two directed broader matches**, plus **1,275 withheld rows** (3,014 source rows).
+Supported and withheld subset versions are their actual maximum mapping dates,
+2026-11-01 and 2026-11-03 respectively. They are bound to the same immutable source,
+review and complete partition; equal version strings are not a release contract.
+The separate opt-in ingredient-scope/history bundle has not been activated.
+
+Native support remains distinct from downstream transport eligibility. The exact
+unchanged `MIM:L-alpha-Phosphatidylcholine` claim remains native SUPPORTED but is
+held by the existing [P3556 review](reviews/mediadive-p3556-scope-1241.md). Its full
+original payload must remain audit evidence; it cannot establish positive identity,
+aliases, cross-references or a sibling identity for broader projection. A finite
+held disposition does not permit skipping changed or unfamiliar policy conflicts.
+The native product is never rewritten to make its decision agree with KGM policy.
+The accepted partition therefore retains all 1,739 native supported rows, with
+one downstream-held claim and 1,738 eligible claims: 1,736 exact and two broader.
+The two broader source claims yield four directed relations through their reviewed
+CAS and local identity siblings; the held claim licenses none of these routes.
+
+Independent acceptance accounts for every baseline row and every reconstructed
+payload, with direct native or selected independent evidence and explicit category
+defaults. The real second build reproduces the unified bytes exactly. Fresh reader
+probes preserve the finite material, invalid-CAS, Potato and P3556 controls, the
+four Catalase metadata-only annotations, and all 13 withdrawn target dispositions.
+The complete 55-row historical override cohort was replayed against the actual
+candidate with unchanged observed outcomes. This does not re-curate all unchanged
+historical assertions or replace whole-producer review.
+
+The existing [#1253 native-alternative review](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1253)
+remains applicable: one exact structured synonym selects CHEBI:196822 with
+synonyms enabled, while the reviewed canonical label selects CHEBI:86658.
+Current complete native structure evidence and all 19 competing mapping rows were
+rechecked; the lookup outcomes are unchanged. Generic L-alpha queries may select
+the distinct CHEBI:16110 class only in synonym mode. None of these routes identifies
+the whole supplier P3556 product. The overstrict intermediate reviewer checks and
+their explicit corrections remain in the acceptance evidence.
+
+The withheld table is a review backlog, **not a set of globally false assertions**.
+An independent ontology/source can still support a claim absent from the supported
+table. This update does not approve ingredient roles, components or wholesale media
+regeneration. The previous immutable pin `1848b0fe521bc2462f165912fcf92d09ad9a8cec`
+and its consumed graph are preserved comparison evidence. Historical
+[Potato scope](reviews/mediadive-potato-scope-20260929/PROMOTION.md),
+[invalid-CAS](reviews/mim-invalid-cas-20260927/PROMOTION.md),
+[native-category](reviews/mim-native-category-20260927/PROMOTION.md) and
+[September acceptance](reviews/mim-admission-20260925/PROMOTION.md) records retain
+their actual inputs, checks and remaining limits. They are not acceptance of this
+new candidate. Earlier hydration replay failures (#1169) also remain history.
 
 ## Build a candidate
 
@@ -42,18 +86,18 @@ bundle to new evidence locations under `data/`:
 
 ```bash
 curl --fail --location \
-  --output data/mim-source-1848b0fe.tar.gz \
-  https://codeload.github.com/CultureBotAI/MediaIngredientMech/tar.gz/1848b0fe521bc2462f165912fcf92d09ad9a8cec
+  --output data/mim-source-0dac2784.tar.gz \
+  https://codeload.github.com/CultureBotAI/MediaIngredientMech/tar.gz/0dac278466699129a083343a921c2e0ca18a9ab4
 
-gh run download 36109949250 \
+gh run download 41900248437 \
   --repo CultureBotAI/MediaIngredientMech \
   --name mim-reviewed-sssom \
-  --dir data/mim-reviewed-1848b0fe
+  --dir data/mim-reviewed-0dac2784
 
 poetry run python -m scripts.refresh_reviewed_mim \
-  --source-archive data/mim-source-1848b0fe.tar.gz \
-  --release-directory data/mim-reviewed-1848b0fe \
-  --output-directory data/mim-candidate-1848b0fe
+  --source-archive data/mim-source-0dac2784.tar.gz \
+  --release-directory data/mim-reviewed-0dac2784 \
+  --output-directory data/mim-candidate-0dac2784
 ```
 
 The output directory must not exist. No sibling checkout or live ontology service
@@ -66,9 +110,14 @@ Validation checks manifest/product hashes, SSSOM structure and CURIE prefixes,
 supported-only predicate scope, counts, and the lossless supported/withheld
 partition against complete-row hashes in `mapping-dispositions.tsv`.
 For schema-v2 pins, validation additionally checks the entire source archive hash,
-commit-named archive root, safe unique regular-file/directory members, the original
+commit-named archive root, safe unique members, the original
 source SSSOM and review bytes against the manifest, and the pinned lock/workflow
 bytes. The source archive is streamed without extracting or executing its code.
+Only two reviewed metadata links are permitted: `.agents/skills` to
+`../.claude/skills`, and `CLAUDE.md` to `AGENTS.md`. They are recorded but never
+followed or materialized; their exact targets/types and every ancestor are checked.
+Consumed provenance members must remain regular files. Other links, unsafe paths,
+duplicate members and linked ancestors still fail.
 Malformed, missing, unsafe, floating or mismatched provenance aborts before
 candidate output. Pin, source archive and CLI-code hashes are added to the atomic
 candidate report's before/after input checks; verified provenance is retained in
@@ -87,16 +136,29 @@ unrecognized recipes and publication modes fail closed. Schema v1 does not accep
 disabled while either version of the pin exists.
 
 Pinned archive SHA256:
-`33ff549d7a2bf34e943156e800e00149736a30dfc0a974f3ca9a9884358bfef2`.
+`51c6029b88a2d1d73ca1cbe13029c9cf60991dc65af2556cec6b1413ee52eb9d`.
 Pinned complete manifest SHA256:
-`9bb29d5605d93dea351be9624d99c5d8ada57d4b9831b22764957b784bd685af`.
+`b02a92446e8a613fd0d96b0dd8147d439733fcf73e731b363a6388e95d616703`.
 
 The CI artifact is a convenient copy, not the sole durable origin: it expires.
 If unavailable, retrieve the same commit-addressed source archive, verify its
 SHA256 against the independently committed pin **before extraction/execution**,
 and extract into a new directory beneath `data/`. Do not accept a different
-archive hash, floating main checkout or silently regenerated review. Within the
-verified source root, `reviewed_sssom_v1` means the following exact workflow:
+archive hash, floating main checkout or silently regenerated review. Extraction must skip the two metadata links under the reviewed policy above.
+Current form reviews also require real historical Git commits; an archive alone
+fails native provenance checking ([#1793](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1793)).
+Fetch the exact selected commit and history from the official HTTPS repository
+into a separate bare object store with Git object checking enabled. Verify the
+required base commits `e568dbf0e0f759431ed317b973675680f031dd1d` and
+`330d9e34c5cf69bb355d4d242977eb1a78dbe374` there. Supply that store through explicit
+`GIT_DIR` and set `GIT_NO_LAZY_FETCH=1`; clear unrelated inherited Git overrides.
+Do not edit native review/source files or disable provenance checks. These reviews
+retain their declared working-tree attestations, not committed-byte proof.
+The retained reproduction packet records the exact fetch, object identities,
+failed archive-only attempt and successful unchanged four-command reproduction.
+
+Within the verified source root and isolated frozen Python 3.13 environment,
+`reviewed_sssom_v1` means the following exact workflow:
 
 ```bash
 env UV_PYTHON=3.13 uv sync --frozen
@@ -231,8 +293,14 @@ Keep release hashes, input fingerprints, quarantine disposition, second-cycle
 stability, full fallback/whole-MediaDive review, and runtime regression evidence
 with that change. Record final code/test/CI results and installation status in
 the acceptance record. Update the vendored-set shape test to
-expect the intentionally exact-only supported release; preserve the separate
-legacy asymmetric-semantics mechanism tests. Do not stamp freshness receipts to
+bind the actual reviewed supported counts and predicates. The two supported
+broader claims are projected only through affirmative, explicitly supported exact
+identities for the same source subject; each derived relation binds both full-row
+hashes. They must not contribute parent names, formulas or identity cross-references.
+Nonblank supported predicate modifiers are rejected before any positive route.
+The new unified header declares SKOS direction explicitly; an unmarked baseline
+with existing asymmetric rows cannot be silently relabeled. Preserve the separate
+legacy asymmetric-semantics controls. Do not stamp freshness receipts to
 make existing outputs appear current.
 
 **Direct fallback coverage:** 55 of the 194 historical special-chemical overrides have explicit MIM
@@ -271,6 +339,23 @@ GOLD depends on those stub outputs; BactoTraits and MediaDive consume BacDive
 outputs. Changes to shared runtime utilities, identity policy, ontology outputs,
 or other inputs can expand the closure, including all 15 canonical producers.
 Run the freshness check against the actual checkout and data before deciding.
+
+This accepted pair is installed in a new isolated worktree, so the current run
+requires **all 15 genuine canonical producers** under that worktree's actual
+code, pin, mapping pair and input bindings. Prior-worktree completion records
+remain historical evidence; they cannot certify producers in the new execution
+context. The nine-producer command above describes the conditional mappings-only
+closure, not the present run. A bounded one-medium canary also cannot certify a
+complete MediaDive source.
+
+The candidate's nine native authority tables were selected from the frozen prior
+worktree. The consumed stub-ID cohort is unchanged, although the full upstream
+source adds four withheld NCIT claims. After genuine worktree ontology/stub
+production, compare the actual authority tables and selected native claims with
+those candidate-bound inputs before dependent consumers proceed. Any difference
+requires an explicit reviewed lineage disposition, not a new fingerprint applied
+to an old claim. MediaDive's 632 unknown endpoint outcomes and incomplete
+association coverage remain qualifications throughout this run.
 
 After merge, run KG model/path reviews and release validation on the newly built
 archive. A successful candidate build, green code CI, or a successful merge alone

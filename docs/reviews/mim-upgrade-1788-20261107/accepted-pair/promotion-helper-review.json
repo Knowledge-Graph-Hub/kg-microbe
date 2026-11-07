@@ -1,0 +1,41 @@
+{
+  "checks": {
+    "accepted_scientific_conservation_replay_receipt_hashes_preserved": true,
+    "all_staged_bytes_verified_before_guard_verify_and_replace": true,
+    "every_candidate_input_recaptured_before_staging": true,
+    "exact_two_canonical_paths_and_native_product_bytes_preserved_in_contract": true,
+    "exclusive_new_r2_staging_names_receipt_preserve_r1_failure": true,
+    "no_helper_execution_by_reviewer": true,
+    "no_production_module_pin_or_scientific_digest_change": true,
+    "old_canonical_pair_current_hashes_and_backups_verified": true,
+    "only_real_builder_import_origin_and_candidate_bound_capture_added": true,
+    "strict_full_context_equality_before_staging_and_after_replacements_preserved": true,
+    "two_replacements_have_post_hash_checks_and_pending_production_validation_receipt": true
+  },
+  "code_diff": "--- promote-reviewed-pair-r1.py\n+++ promote-reviewed-pair-r2.py\n@@ -11,7 +11,7 @@\n ROOT = Path.cwd().resolve()\n E = ROOT / 'data/rebuild-evidence/mim-1788-20261107'\n assert ROOT.name == 'kg-microbe-mim-1788-20261107'\n-receipt = E / 'paired-promotion-r1.json'\n+receipt = E / 'paired-promotion-r2.json'\n assert not receipt.exists()\n guard = SourceAdmission()\n def capture(path, expected):\n@@ -38,6 +38,10 @@\n expected_candidate='f1314a41ede9b143c595399ada5178e52306364e69b467810cf71e7cdc4be23d'\n assert scientific['candidate_sha256']==independent['candidate_sha256']==report['candidate_sha256']==expected_candidate\n for path,sha in report['input_sha256'].items():capture(Path(path),sha)\n+from scripts import mim_conservative_refresh as production_builder\n+builder_path = Path(production_builder.__file__).resolve()\n+assert builder_path == ROOT / 'scripts/mim_conservative_refresh.py'\n+capture(builder_path, report['input_sha256'][str(builder_path)])\n assert reproducibility_context(ROOT)==report['reproducibility_context']\n backups=read(E/'canonical-pair-before-promotion-r1/receipt.json','838664cc409d9c33ce57c2a15a3bbec786e5e72386a0c0fb8c687f80c58b7da9')\n files=[('ingredient_mappings.sssom.tsv',E/'official-export-0dac2784/ingredient_mappings.sssom.tsv','6b52b30e018b369aa322d41dfd4e81fcfae0e895e34d7fe48900abf5835815fb','7e68fea7fd788928f29c7671156198af101baaa3b3051f19bab78a5479d2a940'),('kgmicrobe_unified_entity_mappings.sssom.tsv.gz',E/'candidate-r2/candidate.sssom.tsv.gz','59464e08017cc907a1240a4378d2462efc9e2c1b9d6c3cf0b08b4344ef695ae8',expected_candidate)]\n@@ -46,7 +50,7 @@\n     destination=ROOT/'mappings'/name\n     capture(destination,old);capture(source,new)\n     capture(Path(backups['files'][name]['copy']),old)\n-    temporary=destination.with_name('.'+name+'.mim1788-r1')\n+    temporary=destination.with_name('.'+name+'.mim1788-r2')\n     with source.open('rb') as inp, temporary.open('xb') as out:shutil.copyfileobj(inp,out)\n     assert digest(temporary)==new and temporary.stat().st_nlink==1\n     staged.append((temporary,destination))\n",
+  "current_canonical_sha256": {
+    "ingredient_mappings.sssom.tsv": "6b52b30e018b369aa322d41dfd4e81fcfae0e895e34d7fe48900abf5835815fb",
+    "kgmicrobe_unified_entity_mappings.sssom.tsv.gz": "59464e08017cc907a1240a4378d2462efc9e2c1b9d6c3cf0b08b4344ef695ae8"
+  },
+  "findings": [],
+  "helper_sha256": "9f0e1b593977c84701696055da248e5d75e900b4264a8da67d3b283bd5815a23",
+  "input_sha256": {
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/data/rebuild-evidence/mim-1788-20261107/candidate-r2-independent-acceptance-summary-r1.json": "18d64d16510a5482ab957c31c1c7b74cd87dadc7cedb1423bc38c741c17d2487",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/data/rebuild-evidence/mim-1788-20261107/candidate-r2-scientific-review-r1/final-review-r2.json": "d8088826909f15c2c0f21272403d16ec313138a3675cbe9f9e22c68efbe2a73c",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/data/rebuild-evidence/mim-1788-20261107/candidate-r2/report.json": "6e63bf4254ca2a595e93aa8d58fb597c2188003efd75ecdcbc1a43473819a4c0",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/data/rebuild-evidence/mim-1788-20261107/canonical-pair-before-promotion-r1/receipt.json": "838664cc409d9c33ce57c2a15a3bbec786e5e72386a0c0fb8c687f80c58b7da9",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/data/rebuild-evidence/mim-1788-20261107/historical55-paired-comparison-r1.json": "c7be56338759fdd3fe7d47b36f38d2ea4a7df67028f0b55e200424d6482822a5",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/data/rebuild-evidence/mim-1788-20261107/promote-reviewed-pair-r1.py": "1d8caae299db0e80a7c706e7f45a1bc869a69f74ce844d4abd721ee4927d2b26",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/data/rebuild-evidence/mim-1788-20261107/promote-reviewed-pair-r2.py": "9f0e1b593977c84701696055da248e5d75e900b4264a8da67d3b283bd5815a23",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/data/rebuild-evidence/mim-1788-20261107/promotion-context-independent-r1/independent-diagnosis.json": "b93d2e1130459bb2f6f28f22a494512972bbe59745c7d053f025a855f4f20aa8",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/scripts/mim_conservative_refresh.py": "ade61c8ac18bd7f1883e7c43a7ef7c5637c4774af7b8f4593ae4e6f5682fd95f"
+  },
+  "limitations": [
+    "Reviewer did not run the helper or authorize graph/source admission. Root must use the owned launcher; actual execution must satisfy every unchanged guard.",
+    "The two replacements are sequential, not a multi-file transaction. An interruption cannot produce the final receipt; exact old backups remain preserved. This review does not claim crash-atomic pair publication."
+  ],
+  "promotion_executed": false,
+  "scope": "Read-only independent static review of1803 promotion-helper r2 and current preconditions",
+  "source_and_graph_admission": false,
+  "status": "pass"
+}

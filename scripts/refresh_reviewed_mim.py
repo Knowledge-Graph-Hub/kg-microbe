@@ -15,6 +15,12 @@ SOURCE_SSSOM = "mappings/ingredient_mappings.sssom.tsv"
 SOURCE_REVIEW = "reports/sssom_completion_20260921/review.json"
 SOURCE_WORKFLOW = ".github/workflows/qc-reviewed-sssom.yaml"
 PRODUCT_FILES = {"ingredient_mappings.sssom.tsv", "withheld_mappings.sssom.tsv", "mapping-dispositions.tsv"}
+# Reviewed repository metadata only. These entries are recorded, never followed
+# or extracted; every consumed provenance member must remain a regular file.
+METADATA_SYMLINKS = {
+    ".agents/skills": ("../.claude/skills", ".claude/skills", "directory"),
+    "CLAUDE.md": ("AGENTS.md", "AGENTS.md", "file"),
+}
 ONTOLOGY_INPUTS = (
     "transformed/ontologies/chebi_nodes.tsv",
     "transformed/ontologies/envo_nodes.tsv",
@@ -151,7 +157,7 @@ def validate_immutable_export(pin: dict, source_archive: Path, release_directory
     for name, digest in expected.items():
         _digest(digest, name)
     root = "MediaIngredientMech-" + pin["source_commit"]
-    seen, observed = set(), {}
+    seen, observed, member_types, ignored_links = set(), {}, {}, []
     with tarfile.open(source_archive, "r:gz") as archive:
         for member in archive:
             path = PurePosixPath(member.name)
@@ -162,18 +168,37 @@ def validate_immutable_export(pin: dict, source_archive: Path, release_directory
                 or ".." in path.parts
                 or "\\" in member.name
                 or path.as_posix() != member.name.rstrip("/")
+                or (member.name.endswith("/") and not member.isdir())
                 or any(ord(character) < 32 for character in member.name)
-                or not (member.isfile() or member.isdir())
                 or str(path) in seen
             ):
                 raise ValueError(f"Unsafe, duplicate or wrong-commit source archive member: {member.name}")
             seen.add(str(path))
             relative = str(PurePosixPath(*path.parts[1:]))
+            if member.issym() and relative in METADATA_SYMLINKS:
+                target, resolved, _ = METADATA_SYMLINKS[relative]
+                if member.linkname != target or member.size != 0:
+                    raise ValueError(f"Unsafe metadata symlink in source archive: {relative}")
+                member_types[relative] = "symlink"
+                ignored_links.append({"path": relative, "target": target, "resolved_target": resolved})
+            elif member.isfile() or member.isdir():
+                member_types[relative] = "file" if member.isfile() else "directory"
+            else:
+                raise ValueError(f"Unsafe source archive member type: {relative}")
             if relative in expected:
                 if not member.isfile():
                     raise ValueError(f"Source provenance member is not a regular file: {relative}")
                 with archive.extractfile(member) as stream:
                     observed[relative] = _hash_stream(stream)
+    # Check after the complete inventory so a linked/file ancestor cannot hide
+    # behind archive ordering. No archive member is ever materialized.
+    for relative in member_types:
+        if any(member_types.get(str(parent), "directory") != "directory" for parent in PurePosixPath(relative).parents):
+            raise ValueError(f"Unsafe non-directory ancestor in source archive: {relative}")
+    for link in ignored_links:
+        _, target, kind = METADATA_SYMLINKS[link["path"]]
+        if member_types.get(target) != kind:
+            raise ValueError(f"Unsafe or missing metadata symlink target: {link['path']}")
     if observed != expected:
         raise ValueError("Archived source/review/locked workflow disagrees with the export provenance")
     if (
@@ -181,7 +206,10 @@ def validate_immutable_export(pin: dict, source_archive: Path, release_directory
         or _file_hash(manifest_path) != pin["manifest_sha256"]
     ):
         raise ValueError("Immutable export inputs changed during provenance verification")
-    return {"archive_members_sha256": observed, "verification": "verified_archived_source_and_manifest_binding"}
+    result = {"archive_members_sha256": observed, "verification": "verified_archived_source_and_manifest_binding"}
+    if ignored_links:
+        result["ignored_metadata_symlinks"] = sorted(ignored_links, key=lambda link: link["path"])
+    return result
 
 
 def build_candidate(

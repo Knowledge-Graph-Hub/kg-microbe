@@ -1,0 +1,1946 @@
+{
+  "baseline_sha256": "59464e08017cc907a1240a4378d2462efc9e2c1b9d6c3cf0b08b4344ef695ae8",
+  "candidate_sha256": "f1314a41ede9b143c595399ada5178e52306364e69b467810cf71e7cdc4be23d",
+  "catalase_scope": "Exactly four existing native NCIT:C61062 lexical payloads become relatedMatch/native_authority_metadata_only. All other fields including original date remain unchanged. Native Catalase/CAT/CAT Protein/EC1.11.1.6 labels remain available as metadata, while all four are excluded from ingredient identity toC61062; MIM:Catalase and identity xrefs remain absent. This does not deny catalase assay biology or create whole-product identity.",
+  "checks": [
+    {
+      "evidence": {
+        "original_report_sha256": "96842de13ec98fbc68520e20f39df3e4ceb663eda4a4543cf2efbe9140a14c24"
+      },
+      "name": "first_stream_checks_except_explicit_reviewer_projection_error",
+      "pass": true
+    },
+    {
+      "evidence": {
+        "additional_transport_fields": {
+          "description": "",
+          "provided_by": "chebi.json"
+        },
+        "complete_actual_row": {
+          "category": "biolink:ChemicalEntity",
+          "deprecated": "",
+          "description": "",
+          "id": "CHEBI:86658",
+          "name": "L-alpha-Phosphatidylcholine",
+          "provided_by": "chebi.json",
+          "same_as": "",
+          "synonym": "[(2R)-3-(1-oxohexadecoxy)-2-[(9E,12E)-1-oxooctadeca-9,12-dienoxy]propyl] 2-(trimethylammonio)ethyl phosphate|[(2R)-3-hexadecanoyloxy-2-[(9E,12E)-octadeca-9,12-dienoyl]oxy-propyl] 2-(trimethylammonio)ethyl phosphate|[(2R)-3-hexadecanoyloxy-2-[(9E,12E)-octadeca-9,12-dienoyl]oxy-propyl] 2-(trimethylazaniumyl)ethyl phosphate|[(2R)-3-hexadecanoyloxy-2-[(9E,12E)-octadeca-9,12-dienoyl]oxypropyl] 2-(trimethylazaniumyl)ethyl phosphate",
+          "xref": ""
+        },
+        "diagnostic_disposition": "Initial reviewer compared all TSV fields with the deliberately scoped eight-field scientific policy. The two extra fields are description and provided_by; original failed diagnostic is preserved. No production or policy change.",
+        "policy_fields": [
+          "category",
+          "deprecated",
+          "id",
+          "name",
+          "same_as",
+          "synonym",
+          "xref"
+        ],
+        "policy_row": {
+          "category": "biolink:ChemicalEntity",
+          "deprecated": "",
+          "id": "CHEBI:86658",
+          "name": "L-alpha-Phosphatidylcholine",
+          "same_as": "",
+          "synonym": "[(2R)-3-(1-oxohexadecoxy)-2-[(9E,12E)-1-oxooctadeca-9,12-dienoxy]propyl] 2-(trimethylammonio)ethyl phosphate|[(2R)-3-hexadecanoyloxy-2-[(9E,12E)-octadeca-9,12-dienoyl]oxy-propyl] 2-(trimethylammonio)ethyl phosphate|[(2R)-3-hexadecanoyloxy-2-[(9E,12E)-octadeca-9,12-dienoyl]oxy-propyl] 2-(trimethylazaniumyl)ethyl phosphate|[(2R)-3-hexadecanoyloxy-2-[(9E,12E)-octadeca-9,12-dienoyl]oxypropyl] 2-(trimethylazaniumyl)ethyl phosphate",
+          "xref": ""
+        }
+      },
+      "name": "held_native_eight_reviewed_fields_equal",
+      "pass": true
+    },
+    {
+      "evidence": {
+        "rows": 4
+      },
+      "name": "complete_payloads_unchanged_p3556",
+      "pass": true
+    },
+    {
+      "evidence": {
+        "rows": 85
+      },
+      "name": "complete_payloads_unchanged_eight_material_aliases",
+      "pass": true
+    },
+    {
+      "evidence": {
+        "rows": 35
+      },
+      "name": "complete_payloads_unchanged_three_material_controls",
+      "pass": true
+    },
+    {
+      "evidence": {
+        "rows": 198
+      },
+      "name": "complete_payloads_unchanged_prior_native_lexical",
+      "pass": true
+    },
+    {
+      "evidence": {
+        "current_rows": 180,
+        "definition": "Complete semantic fields, with historical date/source retained separately in immutable original123 fixture.",
+        "original_rows": 90
+      },
+      "name": "all90_original_native_lexicals_present_semantically",
+      "pass": true
+    },
+    {
+      "evidence": null,
+      "name": "all90_native_lexical_reader_behaviors_unchanged",
+      "pass": true
+    },
+    {
+      "evidence": {
+        "child": {
+          "category": "biolink:ChemicalEntity",
+          "formula": null,
+          "hydrate_equivalents": [],
+          "name": "D-(+)-melezitose monohydrate",
+          "parents": [
+            "CHEBI:6731"
+          ],
+          "synonyms": [
+            "CAS:10030-67-8"
+          ],
+          "xrefs": [
+            "MIM:D-_-melezitose_Monohydrate"
+          ]
+        },
+        "parent": {
+          "category": "biolink:ChemicalEntity",
+          "formula": null,
+          "hydrate_equivalents": [],
+          "name": "Melezitose",
+          "parents": [],
+          "synonyms": [
+            "Melizitose",
+            "O-alpha-D-glucopyranosyl-(1-3)-beta-D-fructofuranosyl-alpha-D-glucopyranoside",
+            "alpha-D-glucopyranosyl-(1->3)-beta-D-fructofuranosyl alpha-D-glucopyranoside"
+          ],
+          "xrefs": [
+            "MIM:Melezitose"
+          ]
+        },
+        "source": {
+          "child": "cas:10030-67-8",
+          "parent": "CHEBI:6731",
+          "parent_label": "melezitose",
+          "subject_id": "MIM:D-_-melezitose_Monohydrate",
+          "subject_label": "D-(+)-melezitose monohydrate"
+        }
+      },
+      "name": "broader_direction_and_no_identity_cas:10030-67-8",
+      "pass": true
+    },
+    {
+      "evidence": null,
+      "name": "broader_runtime_resolves_specific_form_cas:10030-67-8",
+      "pass": true
+    },
+    {
+      "evidence": {
+        "child": {
+          "category": "biolink:ChemicalEntity",
+          "formula": null,
+          "hydrate_equivalents": [],
+          "name": "D-(+)-melezitose monohydrate",
+          "parents": [
+            "CHEBI:6731"
+          ],
+          "synonyms": [
+            "CAS:10030-67-8"
+          ],
+          "xrefs": [
+            "MIM:D-_-melezitose_Monohydrate"
+          ]
+        },
+        "parent": {
+          "category": "biolink:ChemicalEntity",
+          "formula": null,
+          "hydrate_equivalents": [],
+          "name": "Melezitose",
+          "parents": [],
+          "synonyms": [
+            "Melizitose",
+            "O-alpha-D-glucopyranosyl-(1-3)-beta-D-fructofuranosyl-alpha-D-glucopyranoside",
+            "alpha-D-glucopyranosyl-(1->3)-beta-D-fructofuranosyl alpha-D-glucopyranoside"
+          ],
+          "xrefs": [
+            "MIM:Melezitose"
+          ]
+        },
+        "source": {
+          "child": "kgmicrobe.compound:d-_-melezitose_monohydrate",
+          "parent": "CHEBI:6731",
+          "parent_label": "melezitose",
+          "subject_id": "MIM:D-_-melezitose_Monohydrate",
+          "subject_label": "D-(+)-melezitose monohydrate"
+        }
+      },
+      "name": "broader_direction_and_no_identity_kgmicrobe.compound:d-_-melezitose_monohydrate",
+      "pass": true
+    },
+    {
+      "evidence": null,
+      "name": "broader_runtime_resolves_specific_form_kgmicrobe.compound:d-_-melezitose_monohydrate",
+      "pass": true
+    },
+    {
+      "evidence": {
+        "child": {
+          "category": "biolink:ChemicalEntity",
+          "formula": null,
+          "hydrate_equivalents": [],
+          "name": "Sodium perchlorate monohydrate",
+          "parents": [
+            "CHEBI:132103"
+          ],
+          "synonyms": [
+            "CAS:7791-07-3"
+          ],
+          "xrefs": [
+            "MIM:Sodium_Perchlorate_Monohydrate"
+          ]
+        },
+        "parent": {
+          "category": "biolink:ChemicalEntity",
+          "formula": null,
+          "hydrate_equivalents": [],
+          "name": "sodium perchlorate",
+          "parents": [],
+          "synonyms": [
+            "NaClO4",
+            "Natriumperchlorat",
+            "Perchlorate de sodium",
+            "Perchloric acid, sodium salt"
+          ],
+          "xrefs": []
+        },
+        "source": {
+          "child": "cas:7791-07-3",
+          "parent": "CHEBI:132103",
+          "parent_label": "sodium perchlorate",
+          "subject_id": "MIM:Sodium_Perchlorate_Monohydrate",
+          "subject_label": "Sodium perchlorate monohydrate"
+        }
+      },
+      "name": "broader_direction_and_no_identity_cas:7791-07-3",
+      "pass": true
+    },
+    {
+      "evidence": null,
+      "name": "broader_runtime_resolves_specific_form_cas:7791-07-3",
+      "pass": true
+    },
+    {
+      "evidence": {
+        "child": {
+          "category": "biolink:ChemicalEntity",
+          "formula": null,
+          "hydrate_equivalents": [],
+          "name": "Sodium perchlorate monohydrate",
+          "parents": [
+            "CHEBI:132103"
+          ],
+          "synonyms": [
+            "CAS:7791-07-3"
+          ],
+          "xrefs": [
+            "MIM:Sodium_Perchlorate_Monohydrate"
+          ]
+        },
+        "parent": {
+          "category": "biolink:ChemicalEntity",
+          "formula": null,
+          "hydrate_equivalents": [],
+          "name": "sodium perchlorate",
+          "parents": [],
+          "synonyms": [
+            "NaClO4",
+            "Natriumperchlorat",
+            "Perchlorate de sodium",
+            "Perchloric acid, sodium salt"
+          ],
+          "xrefs": []
+        },
+        "source": {
+          "child": "kgmicrobe.compound:sodium_perchlorate_monohydrate",
+          "parent": "CHEBI:132103",
+          "parent_label": "sodium perchlorate",
+          "subject_id": "MIM:Sodium_Perchlorate_Monohydrate",
+          "subject_label": "Sodium perchlorate monohydrate"
+        }
+      },
+      "name": "broader_direction_and_no_identity_kgmicrobe.compound:sodium_perchlorate_monohydrate",
+      "pass": true
+    },
+    {
+      "evidence": null,
+      "name": "broader_runtime_resolves_specific_form_kgmicrobe.compound:sodium_perchlorate_monohydrate",
+      "pass": true
+    },
+    {
+      "evidence": null,
+      "name": "p3556_native_entity_unchanged",
+      "pass": true
+    },
+    {
+      "evidence": null,
+      "name": "p3556_generic_and_mim_do_not_resolve_specific_structure",
+      "pass": true
+    },
+    {
+      "evidence": null,
+      "name": "p3556_structured_native_lookup_[(2R)-3-hexadecanoyloxy-2-[(9E,12E)-octadeca-9,12-dienoyl]oxy-propyl] 2-(trimethylammonio)ethyl phosphate",
+      "pass": true
+    },
+    {
+      "evidence": {
+        "actual": {
+          "SL10": {
+            "(False, False, False)": null,
+            "(True, False, False)": null,
+            "(True, True, True)": null
+          }
+        },
+        "source_names": [
+          "SL10"
+        ]
+      },
+      "name": "material_target_scoped_denial_CHEBI:1387",
+      "pass": true
+    },
+    {
+      "evidence": {
+        "actual": {
+          "Trace vitamin (see Medium No.197)": {
+            "(False, False, False)": null,
+            "(True, False, False)": null,
+            "(True, True, True)": null
+          },
+          "Trace vitamins (See Medium No.197)": {
+            "(False, False, False)": null,
+            "(True, False, False)": null,
+            "(True, True, True)": null
+          },
+          "Trace vitamins (see Medium No. 197)": {
+            "(False, False, False)": null,
+            "(True, False, False)": null,
+            "(True, True, True)": null
+          },
+          "Trace vitamins (see Medium No.197)": {
+            "(False, False, False)": null,
+            "(True, False, False)": null,
+            "(True, True, True)": null
+          },
+          "Trace vitamins (see Medium No.197)*": {
+            "(False, False, False)": null,
+            "(True, False, False)": null,
+            "(True, True, True)": null
+          },
+          "Trace vitamins(see Medium No.197)": {
+            "(False, False, False)": null,
+            "(True, False, False)": null,
+            "(True, True, True)": null
+          },
+          "Trace vitamins* (see Medium No. 197)": {
+            "(False, False, False)": null,
+            "(True, False, False)": null,
+            "(True, True, True)": null
+          },
+          "Trace vitamins* (see Medium No.197)": {
+            "(False, False, False)": null,
+            "(True, False, False)": null,
+            "(True, True, True)": null
+          }
+        },
+        "source_names": [
+          "Trace vitamin (see Medium No.197)",
+          "Trace vitamins (See Medium No.197)",
+          "Trace vitamins (see Medium No. 197)",
+          "Trace vitamins (see Medium No.197)",
+          "Trace vitamins (see Medium No.197)*",
+          "Trace vitamins(see Medium No.197)",
+          "Trace vitamins* (see Medium No. 197)",
+          "Trace vitamins* (see Medium No.197)"
+        ]
+      },
+      "name": "material_target_scoped_denial_CHEBI:1784",
+      "pass": true
+    },
+    {
+      "evidence": {
+        "actual": {
+          "Mueller-Hinton broth": {
+            "(False, False, False)": null,
+            "(True, False, False)": null,
+            "(True, True, True)": null
+          }
+        },
+        "source_names": [
+          "Mueller-Hinton broth"
+        ]
+      },
+      "name": "material_target_scoped_denial_CHEBI:748",
+      "pass": true
+    },
+    {
+      "evidence": {
+        "actual": {
+          "Difco Marine Broth 2216": {
+            "(False, False, False)": null,
+            "(True, False, False)": null,
+            "(True, True, True)": null
+          },
+          "Difco marine broth (Difco 2216)": {
+            "(False, False, False)": null,
+            "(True, False, False)": null,
+            "(True, True, True)": null
+          },
+          "Difco marine broth (Difco2216)": {
+            "(False, False, False)": null,
+            "(True, False, False)": null,
+            "(True, True, True)": null
+          }
+        },
+        "source_names": [
+          "Difco Marine Broth 2216",
+          "Difco marine broth (Difco 2216)",
+          "Difco marine broth (Difco2216)"
+        ]
+      },
+      "name": "material_target_scoped_denial_CHEBI:2216",
+      "pass": true
+    },
+    {
+      "evidence": {
+        "actual": {
+          "Malted wheat meal": {
+            "(False, False, False)": null,
+            "(True, False, False)": null,
+            "(True, True, True)": null
+          }
+        },
+        "source_names": [
+          "Malted wheat meal"
+        ]
+      },
+      "name": "material_target_scoped_denial_CHEBI:1881",
+      "pass": true
+    },
+    {
+      "evidence": {
+        "actual": {
+          "K2HSO4": {
+            "(False, False, False)": null,
+            "(True, False, False)": null,
+            "(True, True, True)": null
+          }
+        },
+        "source_names": [
+          "K2HSO4"
+        ]
+      },
+      "name": "material_target_scoped_denial_CHEBI:1895",
+      "pass": true
+    },
+    {
+      "evidence": {
+        "actual": {
+          "Leibovitz's L-15 medium": {
+            "(False, False, False)": null,
+            "(True, False, False)": null,
+            "(True, True, True)": null
+          }
+        },
+        "source_names": [
+          "Leibovitz's L-15 medium"
+        ]
+      },
+      "name": "material_target_scoped_denial_CHEBI:1941",
+      "pass": true
+    },
+    {
+      "evidence": {
+        "actual": {
+          "Selenite-Tungstate Solution:": {
+            "(False, False, False)": null,
+            "(True, False, False)": null,
+            "(True, True, True)": null
+          },
+          "Selenite-Tungstate solution": {
+            "(False, False, False)": null,
+            "(True, False, False)": null,
+            "(True, True, True)": null
+          },
+          "Selenite-tungstate solution": {
+            "(False, False, False)": null,
+            "(True, False, False)": null,
+            "(True, True, True)": null
+          }
+        },
+        "source_names": [
+          "Selenite-Tungstate Solution:",
+          "Selenite-Tungstate solution",
+          "Selenite-tungstate solution"
+        ]
+      },
+      "name": "material_target_scoped_denial_CHEBI:88",
+      "pass": true
+    },
+    {
+      "evidence": null,
+      "name": "potato_scope_preserved",
+      "pass": true
+    },
+    {
+      "evidence": null,
+      "name": "preserved_authority_lookup_dodecylphosphocholine",
+      "pass": true
+    },
+    {
+      "evidence": null,
+      "name": "preserved_authority_lookup_green kidney bean",
+      "pass": true
+    },
+    {
+      "evidence": null,
+      "name": "preserved_authority_lookup_heptacosanoate",
+      "pass": true
+    },
+    {
+      "evidence": null,
+      "name": "preserved_authority_lookup_(R)-2,6-dimethylheptanoylcarnitine",
+      "pass": true
+    },
+    {
+      "evidence": null,
+      "name": "preserved_authority_lookup_Mucin",
+      "pass": true
+    },
+    {
+      "evidence": null,
+      "name": "preserved_authority_lookup_Sugar",
+      "pass": true
+    },
+    {
+      "evidence": null,
+      "name": "preserved_authority_lookup_perillyl alcohol",
+      "pass": true
+    },
+    {
+      "evidence": null,
+      "name": "no_false_detergent_vegetable_sausage_Tryptone",
+      "pass": true
+    },
+    {
+      "evidence": null,
+      "name": "no_false_detergent_vegetable_sausage_Bacto-tryptone",
+      "pass": true
+    },
+    {
+      "evidence": null,
+      "name": "no_false_detergent_vegetable_sausage_Soyton",
+      "pass": true
+    },
+    {
+      "evidence": null,
+      "name": "no_false_detergent_vegetable_sausage_Trypticase soy broth",
+      "pass": true
+    },
+    {
+      "evidence": null,
+      "name": "no_false_detergent_vegetable_sausage_Casamino acids",
+      "pass": true
+    },
+    {
+      "evidence": null,
+      "name": "no_false_detergent_vegetable_sausage_Proteose peptone",
+      "pass": true
+    },
+    {
+      "evidence": {
+        "qualification": "Formula-positive synthetic stale-artifact controls passed in affected tests; actual baseline and candidate do not contain these formula lookups. This review does not claim formula completeness."
+      },
+      "name": "formulas_not_invented_or_lost_in_actual_pair",
+      "pass": true
+    },
+    {
+      "evidence": {
+        "qualification": "This native-positive control exists in immutable stale-artifact tests; it is absent in both actual mapping epochs. No new loss is inferred."
+      },
+      "name": "fresh_bratwurst_not_falsely_claimed_present",
+      "pass": true
+    },
+    {
+      "evidence": null,
+      "name": "withheld_parent_not_resurrected_kgmicrobe.ingredient:vermont_soil",
+      "pass": true
+    },
+    {
+      "evidence": null,
+      "name": "withheld_parent_not_resurrected_kgmicrobe.ingredient:beef_brain_powder",
+      "pass": true
+    },
+    {
+      "evidence": null,
+      "name": "actinomycin_not_admitted",
+      "pass": true
+    },
+    {
+      "evidence": null,
+      "name": "hydration_not_identity_CHEBI:32149",
+      "pass": true
+    },
+    {
+      "evidence": null,
+      "name": "hydration_not_identity_CHEBI:32599",
+      "pass": true
+    },
+    {
+      "evidence": null,
+      "name": "water_no_hydrate",
+      "pass": true
+    },
+    {
+      "evidence": null,
+      "name": "polluted_pubchem_absent",
+      "pass": true
+    },
+    {
+      "evidence": {
+        "context_only_fields": [
+          "predicate_id",
+          "comment"
+        ],
+        "historical_date_preserved": true,
+        "native_definition": [
+          {
+            "datatype": null,
+            "language": null,
+            "object": null,
+            "predicate": "IAO:0000115",
+            "value": "Catalase (527 aa, ~60 kDa) is encoded by the human CAT gene. This protein plays a role in the detoxification of hydrogen peroxide."
+          }
+        ],
+        "selected_complete_native_row": {
+          "category": "biolink:OntologyClass",
+          "deprecated": "",
+          "description": "",
+          "id": "NCIT:C61062",
+          "name": "Catalase",
+          "provided_by": "ontologies_stubs",
+          "same_as": "",
+          "synonym": "CAT|CAT Protein|EC 1.11.1.6",
+          "xref": "cas:9001-05-2"
+        }
+      },
+      "name": "catalase_exact_four_contextualized_native_annotations",
+      "pass": true
+    },
+    {
+      "evidence": {
+        "CAT": "CHEBI:149681",
+        "CAT Protein": null,
+        "Catalase": null,
+        "EC 1.11.1.6": null
+      },
+      "name": "catalase_all_native_names_not_ingredient_identity",
+      "pass": true
+    },
+    {
+      "evidence": null,
+      "name": "catalase_native_metadata_readable",
+      "pass": true
+    },
+    {
+      "evidence": {
+        "code_path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/kg_microbe/utils/stub_curie_collection.py",
+        "new_consumed_scope": {
+          "BTO": [
+            "BTO:0000537",
+            "BTO:0003114",
+            "BTO:0004304"
+          ],
+          "MICRO": [
+            "MICRO:0000082",
+            "MICRO:0000094",
+            "MICRO:0000113",
+            "MICRO:0000114",
+            "MICRO:0000175",
+            "MICRO:0000176",
+            "MICRO:0000178",
+            "MICRO:0000180",
+            "MICRO:0000182",
+            "MICRO:0000183",
+            "MICRO:0000193",
+            "MICRO:0000307",
+            "MICRO:0000455",
+            "MICRO:0000456",
+            "MICRO:0000457",
+            "MICRO:0000460",
+            "MICRO:0000462",
+            "MICRO:0000466",
+            "MICRO:0000520",
+            "MICRO:0000521",
+            "MICRO:0000522",
+            "MICRO:0000536",
+            "MICRO:0000543",
+            "MICRO:0000554",
+            "MICRO:0000566",
+            "MICRO:0000567",
+            "MICRO:0000591",
+            "MICRO:0000595",
+            "MICRO:0000606",
+            "MICRO:0000610",
+            "MICRO:0000673",
+            "MICRO:0001229",
+            "MICRO:0001230",
+            "MICRO:0001234",
+            "MICRO:0001235",
+            "MICRO:0001238",
+            "MICRO:0001241",
+            "MICRO:0001328",
+            "MICRO:0001348",
+            "MICRO:0001349",
+            "MICRO:0001358",
+            "MICRO:0001362",
+            "MICRO:0001363",
+            "MICRO:0001365",
+            "MICRO:0001366",
+            "MICRO:0001570",
+            "MICRO:0001572",
+            "MICRO:0001597",
+            "MICRO:0001598",
+            "MICRO:0001599",
+            "MICRO:0001611",
+            "MICRO:0001647",
+            "MICRO:0001668",
+            "MICRO:0001709",
+            "MICRO:0001715",
+            "MICRO:0001723",
+            "MICRO:0001773",
+            "MICRO:0002250",
+            "MICRO:0002392",
+            "MICRO:0002393"
+          ],
+          "NCIT": [
+            "NCIT:C105971",
+            "NCIT:C1115",
+            "NCIT:C113696",
+            "NCIT:C120264",
+            "NCIT:C120561",
+            "NCIT:C1241",
+            "NCIT:C1295",
+            "NCIT:C13347",
+            "NCIT:C13452",
+            "NCIT:C14258",
+            "NCIT:C14271",
+            "NCIT:C15189",
+            "NCIT:C152426",
+            "NCIT:C152482",
+            "NCIT:C166606",
+            "NCIT:C166659",
+            "NCIT:C166895",
+            "NCIT:C16883",
+            "NCIT:C169786",
+            "NCIT:C169798",
+            "NCIT:C170025",
+            "NCIT:C171504",
+            "NCIT:C17649",
+            "NCIT:C178908",
+            "NCIT:C180316",
+            "NCIT:C183132",
+            "NCIT:C187267",
+            "NCIT:C189218",
+            "NCIT:C1928",
+            "NCIT:C200498",
+            "NCIT:C216370",
+            "NCIT:C217928",
+            "NCIT:C217966",
+            "NCIT:C220851",
+            "NCIT:C221830",
+            "NCIT:C221850",
+            "NCIT:C26707",
+            "NCIT:C29298",
+            "NCIT:C29321",
+            "NCIT:C29406",
+            "NCIT:C33446",
+            "NCIT:C360",
+            "NCIT:C386",
+            "NCIT:C43963",
+            "NCIT:C45313",
+            "NCIT:C47551",
+            "NCIT:C48957",
+            "NCIT:C50344",
+            "NCIT:C54713",
+            "NCIT:C61062",
+            "NCIT:C61731",
+            "NCIT:C61766",
+            "NCIT:C61894",
+            "NCIT:C62021",
+            "NCIT:C624",
+            "NCIT:C65816",
+            "NCIT:C66725",
+            "NCIT:C71932",
+            "NCIT:C71939",
+            "NCIT:C71971",
+            "NCIT:C72000",
+            "NCIT:C72005",
+            "NCIT:C72056",
+            "NCIT:C75654",
+            "NCIT:C75874",
+            "NCIT:C76253",
+            "NCIT:C765",
+            "NCIT:C77500",
+            "NCIT:C77524",
+            "NCIT:C77914",
+            "NCIT:C77916",
+            "NCIT:C79997",
+            "NCIT:C80654",
+            "NCIT:C83530",
+            "NCIT:C83732",
+            "NCIT:C839",
+            "NCIT:C84877",
+            "NCIT:C85060",
+            "NCIT:C85253",
+            "NCIT:C85509",
+            "NCIT:C87334",
+            "NCIT:C87343",
+            "NCIT:C87429",
+            "NCIT:C87433",
+            "NCIT:C87592",
+            "NCIT:C88206",
+            "NCIT:C896",
+            "NCIT:C90636",
+            "NCIT:C90684",
+            "NCIT:C98044"
+          ],
+          "PO": [
+            "PO:0004518",
+            "PO:0004542",
+            "PO:0006016",
+            "PO:0009005",
+            "PO:0009011",
+            "PO:0009046",
+            "PO:0009047",
+            "PO:0025538"
+          ],
+          "mesh": [
+            "mesh:C000366",
+            "mesh:C000601869",
+            "mesh:C000633628",
+            "mesh:C000655964",
+            "mesh:C000709627",
+            "mesh:C000730144",
+            "mesh:C001493",
+            "mesh:C001897",
+            "mesh:C002076",
+            "mesh:C002363",
+            "mesh:C002547",
+            "mesh:C003169",
+            "mesh:C003339",
+            "mesh:C003372",
+            "mesh:C004910",
+            "mesh:C004977",
+            "mesh:C005460",
+            "mesh:C005642",
+            "mesh:C006403",
+            "mesh:C008231",
+            "mesh:C008328",
+            "mesh:C009560",
+            "mesh:C010250",
+            "mesh:C010427",
+            "mesh:C012306",
+            "mesh:C012993",
+            "mesh:C013216",
+            "mesh:C014480",
+            "mesh:C015563",
+            "mesh:C016600",
+            "mesh:C016719",
+            "mesh:C017029",
+            "mesh:C017637",
+            "mesh:C017721",
+            "mesh:C018306",
+            "mesh:C018307",
+            "mesh:C019594",
+            "mesh:C024500",
+            "mesh:C024625",
+            "mesh:C024712",
+            "mesh:C025349",
+            "mesh:C027711",
+            "mesh:C028805",
+            "mesh:C031780",
+            "mesh:C032953",
+            "mesh:C033379",
+            "mesh:C033989",
+            "mesh:C034426",
+            "mesh:C038459",
+            "mesh:C038549",
+            "mesh:C039460",
+            "mesh:C041783",
+            "mesh:C041989",
+            "mesh:C045442",
+            "mesh:C048169",
+            "mesh:C048266",
+            "mesh:C052093",
+            "mesh:C058276",
+            "mesh:C061361",
+            "mesh:C068160",
+            "mesh:C069668",
+            "mesh:C076135",
+            "mesh:C079132",
+            "mesh:C087989",
+            "mesh:C096638",
+            "mesh:C096639",
+            "mesh:C105206",
+            "mesh:C108556",
+            "mesh:C109395",
+            "mesh:C434666",
+            "mesh:C434937",
+            "mesh:C442243",
+            "mesh:C498222",
+            "mesh:C509797",
+            "mesh:C512805",
+            "mesh:C514290",
+            "mesh:C521980",
+            "mesh:C554989",
+            "mesh:C559991",
+            "mesh:D000038",
+            "mesh:D000076624",
+            "mesh:D000083422",
+            "mesh:D001360",
+            "mesh:D002174",
+            "mesh:D002592",
+            "mesh:D005372",
+            "mesh:D007633",
+            "mesh:D009429",
+            "mesh:D010118",
+            "mesh:D010142",
+            "mesh:D010514",
+            "mesh:D011136",
+            "mesh:D012313",
+            "mesh:D013025",
+            "mesh:D014131",
+            "mesh:D015048",
+            "mesh:D016959",
+            "mesh:D037421",
+            "mesh:D044003",
+            "mesh:D062611"
+          ]
+        },
+        "new_raw_id_complete_review_witnesses": [
+          {
+            "decision": {
+              "disposition": "WITHHOLD",
+              "evidence_key": "652",
+              "owner_record": "data/ingredients/mapped/Carnitine_Hydrochloride.yaml",
+              "review_evidence": "reports/sssom_completion_20260921/mapping-evidence.json",
+              "review_reason": "Cross-record baseline is an unresolved review obligation, not proof of false identity. Native related-form aliases and ontology synonyms must be judged in their actual row predicate/object context; no blanket approval.",
+              "row_sha256": "a1ad62c0f320c58c6dde05259faae8cb5cf5635868dc9ee1537df2c47f34b070",
+              "source_position": 652
+            },
+            "row": {
+              "comment": "",
+              "confidence": "0.99",
+              "mapping_date": "2026-11-01",
+              "mapping_justification": "semapv:LexicalMatching",
+              "object_id": "NCIT:C216679",
+              "object_label": "DL-Carnitine Hydrochloride",
+              "object_source": "obo:ncit.owl",
+              "other": "Carnitine (Dl) Hydrochloride|CAS:461-05-2",
+              "predicate_id": "skos:exactMatch",
+              "source": "MIM:cbclaw_followups_114|MIM:curator=refresh_occurrence_statistics|kgm:chebi_xrefs|kgm:culturebotai_reviewed|kgm:mediaingredientmech_reviewed|kgm:mediaingredientmech_reviewed[curator=auto_classify_ingredient_type]|kgm:mediaingredientmech_reviewed[curator=backfill_parent_terms]|kgm:mediaingredientmech_reviewed[curator=cbclaw_kg_microbe_sweep]|kgm:mediaingredientmech_reviewed[curator=correct_stale_ontology_labels.py]|kgm:mediaingredientmech_reviewed[curator=regrade_synonym_matches]|kgm:mediaingredientmech_reviewed[curator=resolve_unmapped]|kgm:primary_mappings[chemicals_sssom]|kgm:primary_mappings[kegg_compound]|MIM:https://api-evsrest.nci.nih.gov/api/v1/concept/ncit/C216679?include=full|MIM:curator=Codex",
+              "subject_id": "MIM:Carnitine_Hydrochloride",
+              "subject_label": "Carnitine Hydrochloride",
+              "validation_method": ""
+            },
+            "source_position": 652
+          },
+          {
+            "decision": {
+              "disposition": "WITHHOLD",
+              "evidence_key": "907",
+              "owner_record": "data/ingredients/mapped/D-Maltose_Monohydrate.yaml",
+              "review_evidence": "reports/sssom_completion_20260921/mapping-evidence.json",
+              "review_reason": "Cross-record baseline is an unresolved review obligation, not proof of false identity. Native related-form aliases and ontology synonyms must be judged in their actual row predicate/object context; no blanket approval. Different-substance chemistry conflict remains in label index; mapping row target/predicate and each alias source require per-record review before any equivalence approval.",
+              "row_sha256": "889ef9d6dc2fcd270344f796f4b890db4ef949b862be8cd98ab57ec1019972fe",
+              "source_position": 907
+            },
+            "row": {
+              "comment": "",
+              "confidence": "0.9",
+              "mapping_date": "2026-11-03",
+              "mapping_justification": "semapv:ManualMappingCuration",
+              "object_id": "NCIT:C80300",
+              "object_label": "Maltose Monohydrate",
+              "object_source": "obo:ncit.owl",
+              "other": "CAS:6363-53-7",
+              "predicate_id": "skos:exactMatch",
+              "source": "MIM:CultureBotHT|MIM:family_mismatch_fix|MIM:MIM curation (#342)|MIM:curator=refresh_occurrence_statistics|kgm:chebi_xrefs|kgm:culturebotai_reviewed|kgm:mediadive_compounds|kgm:mediaingredientmech_reviewed|kgm:mediaingredientmech_reviewed[curator=audit_mim_merge]|kgm:mediaingredientmech_reviewed[curator=auto_classify_ingredient_type]|kgm:mediaingredientmech_reviewed[curator=correct_stale_ontology_labels.py]|kgm:mediaingredientmech_reviewed[curator=infer_energy_source]|kgm:mediaingredientmech_reviewed[curator=merge_cas_conflict_duplicates]|kgm:metatraits_chemical_synonyms[manual_2026-04-07]|kgm:primary_mappings[bacdive_api]|kgm:primary_mappings[chemicals_sssom]|kgm:primary_mappings[kegg_compound]|MIM:MIM Step7d scientific review (#901)|MIM:curator=claude",
+              "subject_id": "MIM:D-Maltose_Monohydrate",
+              "subject_label": "D-Maltose monohydrate",
+              "validation_method": ""
+            },
+            "source_position": 907
+          },
+          {
+            "decision": {
+              "disposition": "WITHHOLD",
+              "evidence_key": "2024",
+              "owner_record": "data/ingredients/mapped/Na2hpo4_X_7_H2o.yaml",
+              "review_evidence": "reports/sssom_completion_20260921/mapping-evidence.json",
+              "review_reason": "Current row requires resolution of this record-specific mapping/identity/alias/evidence concern: The heptahydrate surface is preserved, but exact CAS promotion, chemical structure, and BUFFER evidence need curation.",
+              "row_sha256": "cf74a1d36d2723d9e6739cde466e74b32f8ccec6bf2d0152bddc2b4cebcde134",
+              "source_position": 2024
+            },
+            "row": {
+              "comment": "",
+              "confidence": "0.99",
+              "mapping_date": "2026-11-01",
+              "mapping_justification": "semapv:LexicalMatching",
+              "object_id": "NCIT:C61946",
+              "object_label": "Sodium Phosphate, Dibasic, Heptahydrate",
+              "object_source": "obo:ncit.owl",
+              "other": "Na2HPO4.7H2O|Na2HPO4\u20227H2O|CAS:7782-85-6",
+              "predicate_id": "skos:exactMatch",
+              "source": "MIM:CultureMech|MIM:MIM curation (#321/#334)|MIM:MIM curation (#321)|MIM:MIM curation (#342)|MIM:curator=refresh_occurrence_statistics|kgm:chebi_xrefs|kgm:culturebotai_reviewed|kgm:mediadive_compounds|kgm:mediaingredientmech_reviewed|kgm:mediaingredientmech_reviewed[curator=audit_mim_merge]|kgm:mediaingredientmech_reviewed[curator=audit_p44_hydration_routing]|kgm:mediaingredientmech_reviewed[curator=audit_resolve_risky_cas_rn]|kgm:mediaingredientmech_reviewed[curator=auto_classify_ingredient_type]|kgm:mediaingredientmech_reviewed[curator=cbclaw_kg_microbe_sweep]|kgm:mediaingredientmech_reviewed[curator=correct_stale_ontology_labels.py]|kgm:mediaingredientmech_reviewed[curator=migrate_media_roles_to_facets]|kgm:mediaingredientmech_reviewed[curator=sssom_synonym_enrich_review_2026_05_10]|kgm:mediaingredientmech_reviewed[curator=unmapped_duplicate_review_2026_05_07]|kgm:primary_mappings[kegg_compound]|MIM:https://api-evsrest.nci.nih.gov/api/v1/concept/ncit/C61946?include=full|MIM:curator=Codex",
+              "subject_id": "MIM:Na2hpo4_X_7_H2o",
+              "subject_label": "Na2HPO4 x 7 H2O",
+              "validation_method": ""
+            },
+            "source_position": 2024
+          },
+          {
+            "decision": {
+              "disposition": "WITHHOLD",
+              "evidence_key": "2565",
+              "owner_record": "data/ingredients/mapped/Sodium_Carbonate_Monohydrate.yaml",
+              "review_evidence": "reports/sssom_completion_20260921/mapping-evidence.json",
+              "review_reason": "Cross-record baseline is an unresolved review obligation, not proof of false identity. Native related-form aliases and ontology synonyms must be judged in their actual row predicate/object context; no blanket approval. Different-substance chemistry conflict remains in label index; mapping row target/predicate and each alias source require per-record review before any equivalence approval.",
+              "row_sha256": "ac8d6c1bad54174f8c8a5fe28e3376ffbab7ff3d482b5cc7bb9c4441244f7d6f",
+              "source_position": 2565
+            },
+            "row": {
+              "comment": "",
+              "confidence": "0.9",
+              "mapping_date": "2026-11-03",
+              "mapping_justification": "semapv:ManualMappingCuration",
+              "object_id": "NCIT:C80911",
+              "object_label": "Sodium Carbonate Monohydrate",
+              "object_source": "obo:ncit.owl",
+              "other": "CAS:5968-11-6",
+              "predicate_id": "skos:exactMatch",
+              "source": "MIM:CultureBotHT|MIM:CHEBI via OLS (stem-substring)|MIM:MIM curation (#342)|MIM:curator=claude_sssom_surface_form_backfill|kgm:chebi_xrefs|kgm:culturebotai_reviewed|kgm:mediadive_compounds|kgm:mediaingredientmech_reviewed|kgm:mediaingredientmech_reviewed[curator=audit_mim_merge]|kgm:mediaingredientmech_reviewed[curator=auto_classify_ingredient_type]|kgm:mediaingredientmech_reviewed[curator=backfill_parent_terms]|kgm:mediaingredientmech_reviewed[curator=classify_ingredient_type]|kgm:mediaingredientmech_reviewed[curator=correct_stale_ontology_labels.py]|kgm:mediaingredientmech_reviewed[curator=mediaingredientmech-agentic-curation]|kgm:mediaingredientmech_reviewed[curator=migrate_media_roles_to_facets]|kgm:mediaingredientmech_reviewed[curator=resolve_unmapped_v2]|MIM:MIM Step7d scientific review (#901)|MIM:curator=claude",
+              "subject_id": "MIM:Sodium_Carbonate_Monohydrate",
+              "subject_label": "sodium carbonate monohydrate",
+              "validation_method": ""
+            },
+            "source_position": 2565
+          }
+        ],
+        "old_consumed_scope": {
+          "BTO": [
+            "BTO:0000537",
+            "BTO:0003114",
+            "BTO:0004304"
+          ],
+          "MICRO": [
+            "MICRO:0000082",
+            "MICRO:0000094",
+            "MICRO:0000113",
+            "MICRO:0000114",
+            "MICRO:0000175",
+            "MICRO:0000176",
+            "MICRO:0000178",
+            "MICRO:0000180",
+            "MICRO:0000182",
+            "MICRO:0000183",
+            "MICRO:0000193",
+            "MICRO:0000307",
+            "MICRO:0000455",
+            "MICRO:0000456",
+            "MICRO:0000457",
+            "MICRO:0000460",
+            "MICRO:0000462",
+            "MICRO:0000466",
+            "MICRO:0000520",
+            "MICRO:0000521",
+            "MICRO:0000522",
+            "MICRO:0000536",
+            "MICRO:0000543",
+            "MICRO:0000554",
+            "MICRO:0000566",
+            "MICRO:0000567",
+            "MICRO:0000591",
+            "MICRO:0000595",
+            "MICRO:0000606",
+            "MICRO:0000610",
+            "MICRO:0000673",
+            "MICRO:0001229",
+            "MICRO:0001230",
+            "MICRO:0001234",
+            "MICRO:0001235",
+            "MICRO:0001238",
+            "MICRO:0001241",
+            "MICRO:0001328",
+            "MICRO:0001348",
+            "MICRO:0001349",
+            "MICRO:0001358",
+            "MICRO:0001362",
+            "MICRO:0001363",
+            "MICRO:0001365",
+            "MICRO:0001366",
+            "MICRO:0001570",
+            "MICRO:0001572",
+            "MICRO:0001597",
+            "MICRO:0001598",
+            "MICRO:0001599",
+            "MICRO:0001611",
+            "MICRO:0001647",
+            "MICRO:0001668",
+            "MICRO:0001709",
+            "MICRO:0001715",
+            "MICRO:0001723",
+            "MICRO:0001773",
+            "MICRO:0002250",
+            "MICRO:0002392",
+            "MICRO:0002393"
+          ],
+          "NCIT": [
+            "NCIT:C105971",
+            "NCIT:C1115",
+            "NCIT:C113696",
+            "NCIT:C120264",
+            "NCIT:C120561",
+            "NCIT:C1241",
+            "NCIT:C1295",
+            "NCIT:C13347",
+            "NCIT:C13452",
+            "NCIT:C14258",
+            "NCIT:C14271",
+            "NCIT:C15189",
+            "NCIT:C152426",
+            "NCIT:C152482",
+            "NCIT:C166606",
+            "NCIT:C166659",
+            "NCIT:C166895",
+            "NCIT:C16883",
+            "NCIT:C169786",
+            "NCIT:C169798",
+            "NCIT:C170025",
+            "NCIT:C171504",
+            "NCIT:C17649",
+            "NCIT:C178908",
+            "NCIT:C180316",
+            "NCIT:C183132",
+            "NCIT:C187267",
+            "NCIT:C189218",
+            "NCIT:C1928",
+            "NCIT:C200498",
+            "NCIT:C216370",
+            "NCIT:C217928",
+            "NCIT:C217966",
+            "NCIT:C220851",
+            "NCIT:C221830",
+            "NCIT:C221850",
+            "NCIT:C26707",
+            "NCIT:C29298",
+            "NCIT:C29321",
+            "NCIT:C29406",
+            "NCIT:C33446",
+            "NCIT:C360",
+            "NCIT:C386",
+            "NCIT:C43963",
+            "NCIT:C45313",
+            "NCIT:C47551",
+            "NCIT:C48957",
+            "NCIT:C50344",
+            "NCIT:C54713",
+            "NCIT:C61062",
+            "NCIT:C61731",
+            "NCIT:C61766",
+            "NCIT:C61894",
+            "NCIT:C62021",
+            "NCIT:C624",
+            "NCIT:C65816",
+            "NCIT:C66725",
+            "NCIT:C71932",
+            "NCIT:C71939",
+            "NCIT:C71971",
+            "NCIT:C72000",
+            "NCIT:C72005",
+            "NCIT:C72056",
+            "NCIT:C75654",
+            "NCIT:C75874",
+            "NCIT:C76253",
+            "NCIT:C765",
+            "NCIT:C77500",
+            "NCIT:C77524",
+            "NCIT:C77914",
+            "NCIT:C77916",
+            "NCIT:C79997",
+            "NCIT:C80654",
+            "NCIT:C83530",
+            "NCIT:C83732",
+            "NCIT:C839",
+            "NCIT:C84877",
+            "NCIT:C85060",
+            "NCIT:C85253",
+            "NCIT:C85509",
+            "NCIT:C87334",
+            "NCIT:C87343",
+            "NCIT:C87429",
+            "NCIT:C87433",
+            "NCIT:C87592",
+            "NCIT:C88206",
+            "NCIT:C896",
+            "NCIT:C90636",
+            "NCIT:C90684",
+            "NCIT:C98044"
+          ],
+          "PO": [
+            "PO:0004518",
+            "PO:0004542",
+            "PO:0006016",
+            "PO:0009005",
+            "PO:0009011",
+            "PO:0009046",
+            "PO:0009047",
+            "PO:0025538"
+          ],
+          "mesh": [
+            "mesh:C000366",
+            "mesh:C000601869",
+            "mesh:C000633628",
+            "mesh:C000655964",
+            "mesh:C000709627",
+            "mesh:C000730144",
+            "mesh:C001493",
+            "mesh:C001897",
+            "mesh:C002076",
+            "mesh:C002363",
+            "mesh:C002547",
+            "mesh:C003169",
+            "mesh:C003339",
+            "mesh:C003372",
+            "mesh:C004910",
+            "mesh:C004977",
+            "mesh:C005460",
+            "mesh:C005642",
+            "mesh:C006403",
+            "mesh:C008231",
+            "mesh:C008328",
+            "mesh:C009560",
+            "mesh:C010250",
+            "mesh:C010427",
+            "mesh:C012306",
+            "mesh:C012993",
+            "mesh:C013216",
+            "mesh:C014480",
+            "mesh:C015563",
+            "mesh:C016600",
+            "mesh:C016719",
+            "mesh:C017029",
+            "mesh:C017637",
+            "mesh:C017721",
+            "mesh:C018306",
+            "mesh:C018307",
+            "mesh:C019594",
+            "mesh:C024500",
+            "mesh:C024625",
+            "mesh:C024712",
+            "mesh:C025349",
+            "mesh:C027711",
+            "mesh:C028805",
+            "mesh:C031780",
+            "mesh:C032953",
+            "mesh:C033379",
+            "mesh:C033989",
+            "mesh:C034426",
+            "mesh:C038459",
+            "mesh:C038549",
+            "mesh:C039460",
+            "mesh:C041783",
+            "mesh:C041989",
+            "mesh:C045442",
+            "mesh:C048169",
+            "mesh:C048266",
+            "mesh:C052093",
+            "mesh:C058276",
+            "mesh:C061361",
+            "mesh:C068160",
+            "mesh:C069668",
+            "mesh:C076135",
+            "mesh:C079132",
+            "mesh:C087989",
+            "mesh:C096638",
+            "mesh:C096639",
+            "mesh:C105206",
+            "mesh:C108556",
+            "mesh:C109395",
+            "mesh:C434666",
+            "mesh:C434937",
+            "mesh:C442243",
+            "mesh:C498222",
+            "mesh:C509797",
+            "mesh:C512805",
+            "mesh:C514290",
+            "mesh:C521980",
+            "mesh:C554989",
+            "mesh:C559991",
+            "mesh:D000038",
+            "mesh:D000076624",
+            "mesh:D000083422",
+            "mesh:D001360",
+            "mesh:D002174",
+            "mesh:D002592",
+            "mesh:D005372",
+            "mesh:D007633",
+            "mesh:D009429",
+            "mesh:D010118",
+            "mesh:D010142",
+            "mesh:D010514",
+            "mesh:D011136",
+            "mesh:D012313",
+            "mesh:D013025",
+            "mesh:D014131",
+            "mesh:D015048",
+            "mesh:D016959",
+            "mesh:D037421",
+            "mesh:D044003",
+            "mesh:D062611"
+          ]
+        },
+        "raw_source_added_ids": {
+          "BTO": [],
+          "MICRO": [],
+          "NCIT": [
+            "NCIT:C216679",
+            "NCIT:C61946",
+            "NCIT:C80300",
+            "NCIT:C80911"
+          ],
+          "PO": [],
+          "mesh": []
+        },
+        "raw_source_removed_ids": {
+          "BTO": [],
+          "MICRO": [],
+          "NCIT": [],
+          "PO": [],
+          "mesh": []
+        },
+        "scope_qualification": "Full upstream source adds four WITHHOLD NCIT claims; these are not active product inputs. The actual combined supported/unified/current-other-mappings cohort is compared, not inferred from full source.",
+        "unchanged_consumed_scope": true
+      },
+      "name": "stub_consumed_scope_unchanged",
+      "pass": true
+    },
+    {
+      "evidence": null,
+      "name": "raw_four_new_ncit_claims_withheld",
+      "pass": true
+    },
+    {
+      "baseline": {
+        "(False, False, False)": null,
+        "(True, False, False)": "CHEBI:86658",
+        "(True, True, True)": "CHEBI:86658"
+      },
+      "candidate": {
+        "(False, False, False)": null,
+        "(True, False, False)": "CHEBI:86658",
+        "(True, True, True)": "CHEBI:86658"
+      },
+      "canonical_only_expected": null,
+      "name": "p3556_exact_retained_native_lookup_[(2R)-3-(1-oxohexadecoxy)-2-[(9E,12E)-1-oxooctadeca-9,12-dienoxy]propyl] 2-(trimethylammonio)ethyl phosphate",
+      "native_other_owner": null,
+      "pass": true
+    },
+    {
+      "baseline": {
+        "(False, False, False)": "CHEBI:86658",
+        "(True, False, False)": "CHEBI:86658",
+        "(True, True, True)": "CHEBI:86658"
+      },
+      "candidate": {
+        "(False, False, False)": "CHEBI:86658",
+        "(True, False, False)": "CHEBI:86658",
+        "(True, True, True)": "CHEBI:86658"
+      },
+      "canonical_only_expected": "CHEBI:86658",
+      "name": "p3556_exact_retained_native_lookup_[(2R)-3-hexadecanoyloxy-2-[(9E,12E)-octadeca-9,12-dienoyl]oxy-propyl] 2-(trimethylammonio)ethyl phosphate",
+      "native_other_owner": null,
+      "pass": true
+    },
+    {
+      "baseline": {
+        "(False, False, False)": null,
+        "(True, False, False)": "CHEBI:86658",
+        "(True, True, True)": "CHEBI:86658"
+      },
+      "candidate": {
+        "(False, False, False)": null,
+        "(True, False, False)": "CHEBI:86658",
+        "(True, True, True)": "CHEBI:86658"
+      },
+      "canonical_only_expected": null,
+      "name": "p3556_exact_retained_native_lookup_[(2R)-3-hexadecanoyloxy-2-[(9E,12E)-octadeca-9,12-dienoyl]oxy-propyl] 2-(trimethylazaniumyl)ethyl phosphate",
+      "native_other_owner": null,
+      "pass": true
+    },
+    {
+      "baseline": {
+        "(False, False, False)": null,
+        "(True, False, False)": "CHEBI:196822",
+        "(True, True, True)": "CHEBI:196822"
+      },
+      "candidate": {
+        "(False, False, False)": null,
+        "(True, False, False)": "CHEBI:196822",
+        "(True, True, True)": "CHEBI:196822"
+      },
+      "canonical_only_expected": null,
+      "name": "p3556_exact_retained_native_lookup_[(2R)-3-hexadecanoyloxy-2-[(9E,12E)-octadeca-9,12-dienoyl]oxypropyl] 2-(trimethylazaniumyl)ethyl phosphate",
+      "native_other_owner": "CHEBI:196822",
+      "pass": true
+    },
+    {
+      "evidence_sha256": "b944fa8709f7e21d7eefb0e8e00951b07dac4253aab2d1b4310ebe40cf102162",
+      "name": "existing1253_complete_current_raw_structural_and19row_binding",
+      "pass": true
+    }
+  ],
+  "counts": {
+    "baseline": {
+      "predicates": {
+        "skos:closeMatch": 255885,
+        "skos:exactMatch": 336048
+      },
+      "rows": 591933,
+      "targets": 120183
+    },
+    "candidate": {
+      "predicates": {
+        "skos:broadMatch": 4,
+        "skos:closeMatch": 255879,
+        "skos:exactMatch": 336027,
+        "skos:relatedMatch": 4
+      },
+      "rows": 591914,
+      "targets": 120173
+    },
+    "quarantine": {
+      "predicates": {
+        "skos:closeMatch": 8248,
+        "skos:exactMatch": 3493
+      },
+      "rows": 11741,
+      "targets": 1747
+    }
+  },
+  "existing_issue_disposition": {
+    "draft_issue_superseded": true,
+    "evidence_path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/data/rebuild-evidence/mim-1788-20261107/candidate-r2-scientific-review-r1/reviewed-native-alternative-1253.json",
+    "evidence_sha256": "b944fa8709f7e21d7eefb0e8e00951b07dac4253aab2d1b4310ebe40cf102162",
+    "issue": 1253,
+    "state": "CLOSED",
+    "status": "current_exact_controls_pass"
+  },
+  "findings": [],
+  "input_sha256": {
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/data/raw/chebi.json": "31bf2d3483a4a497cc8addadb0881af6cdd24fcfd46365accf75096178286a71",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/data/rebuild-evidence/20261105/stages/mim1788-candidate-r2/plan.json": "0ba248e09482c5c1efd6a5f8d4d791568d2ecf41d38fc47e0ea7f297c5e9a65e",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/data/rebuild-evidence/20261105/stages/mim1788-candidate-r2/result.json": "c81e4025b6c6d6cde07d808ed8d3681022e938ed100b64afb628be22ca2f3a5a",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/data/rebuild-evidence/mim-1788-20261107/candidate-r2-scientific-review-r1/baseline-reader.json": "97439602cd97ce3b3614bd378c5e4a45106a1aca3dc9ea7b91e87749c3a43348",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/data/rebuild-evidence/mim-1788-20261107/candidate-r2-scientific-review-r1/candidate-reader.json": "0cc90d7c05e76ade8e625acf41155f6da64705149c1b18ad411fb00f8ab2f530",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/data/rebuild-evidence/mim-1788-20261107/candidate-r2-scientific-review-r1/complete-review.py": "9399068945c6f831151004870471022c95ba77b89cbae61d95ecfff9b8d8b1fd",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/data/rebuild-evidence/mim-1788-20261107/candidate-r2-scientific-review-r1/finite-cohort-payloads.json": "ed575dbe0cdd38c6abf142e0e8a198f5395c9145a98384ba1c07162eb9c017b9",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/data/rebuild-evidence/mim-1788-20261107/candidate-r2-scientific-review-r1/finite-review.py": "51408e90901732a25fbb0689034a077943f5263a4cffe538cf58918114a082b9",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/data/rebuild-evidence/mim-1788-20261107/candidate-r2-scientific-review-r1/reader-probe.py": "f8188581806f2e4edfd575687839fb7347d1d13ff9a8547aed79751c5771b7cf",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/data/rebuild-evidence/mim-1788-20261107/candidate-r2-scientific-review-r1/reader-process-results.json": "9c8d73bd215ea07277ee1d02efb30acfef8478b2a2285553afb773dcb96c38ca",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/data/rebuild-evidence/mim-1788-20261107/candidate-r2-scientific-review-r1/unreconstructed-source-continuations.json": "d10872b8123c167187099ab2a410af0ed4c8318150ec7a546bf7c0846e156d7c",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/data/rebuild-evidence/mim-1788-20261107/candidate-r2/candidate.sssom.tsv.gz": "f1314a41ede9b143c595399ada5178e52306364e69b467810cf71e7cdc4be23d",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/data/rebuild-evidence/mim-1788-20261107/candidate-r2/downstream-held.json": "91040e82c6ec148e8cbbc53a9bfb93061da46962f9c5f357d78f151d3d75a5c8",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/data/rebuild-evidence/mim-1788-20261107/candidate-r2/quarantine.sssom.tsv.gz": "5b6bea1fcc855f59089902775d2a8182c0aa742a55083ed05d39efd3beddb7e7",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/data/rebuild-evidence/mim-1788-20261107/candidate-r2/report.json": "6e63bf4254ca2a595e93aa8d58fb597c2188003efd75ecdcbc1a43473819a4c0",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/data/rebuild-evidence/mim-1788-20261107/existing-native-alternative-issue-1253-r1.json": "73fc94626198ff9510ae225dc4169b00de20596db87f22af00e10726cffdc79a",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/data/rebuild-evidence/mim-1788-20261107/mim-source-0dac278466699129a083343a921c2e0ca18a9ab4.tar.gz": "51c6029b88a2d1d73ca1cbe13029c9cf60991dc65af2556cec6b1413ee52eb9d",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/data/rebuild-evidence/mim-1788-20261107/official-export-0dac2784/ingredient_mappings.sssom.tsv": "7e68fea7fd788928f29c7671156198af101baaa3b3051f19bab78a5479d2a940",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/data/rebuild-evidence/mim-1788-20261107/official-export-0dac2784/manifest.json": "b02a92446e8a613fd0d96b0dd8147d439733fcf73e731b363a6388e95d616703",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/data/rebuild-evidence/mim-1788-20261107/official-export-0dac2784/mapping-dispositions.tsv": "2a075c9c4a699c9d22a5e8b736bc6d7c00c344f19363f28178c0b50b6b590a19",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/data/rebuild-evidence/mim-1788-20261107/official-export-0dac2784/withheld_mappings.sssom.tsv": "5817fb845c65f995fb0c78095168af1cbf0c837a991004fcd0a9d73cd0874c88",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/data/rebuild-evidence/mim-1788-20261107/source-mapping-delta-r1.json": "7729db5befb03d61c895f5a68bd386bfddca5e133e563c0bd66cce6a50292644",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/data/rebuild-evidence/mim-1788-20261107/source-review-chain-r1.json": "8f66fd35c2da10ec2e303c3c7920b332132d31962c12ce0f4db0cc76b6770b2d",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/data/rebuild-evidence/mim-1788-20261107/source/0dac278466699129a083343a921c2e0ca18a9ab4/mappings/ingredient_mappings.sssom.tsv": "d5f76fc404967477903fafc79eaba86ecfef9e2c391926ec08c3c1af4a5220b6",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/data/rebuild-evidence/mim-1788-20261107/source/0dac278466699129a083343a921c2e0ca18a9ab4/reports/sssom_completion_20260921/review.json": "ab301d1f66276cdfeefea79080ce49f26ebb02c1920a53c71512c14b283b16cf",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/data/rebuild-evidence/mim-1788-20261107/source/1848b0fe521bc2462f165912fcf92d09ad9a8cec/mappings/ingredient_mappings.sssom.tsv": "7567e33fe5e5f4239afbe42065e3d119ea3b4023ba28cb5559781ddc0f41f260",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/docs/reviews/mediadive-p3556-scope-1241.md": "9736cc6e83b6b11bbb9714edae26f20ead548ccd8ea30b72e0a1822c4293695b",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/kg_microbe/utils/__init__.py": "5ef816ae18c814d59d5405714019a65724735d6fe7d8ab574ed10ee871e4260f",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/kg_microbe/utils/atomic_io.py": "de7d3a3fddcecf35d47050bb5b159e179836aa3094340197b70cf49410f6e497",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/kg_microbe/utils/biolink_hierarchy.py": "69c31f374277f54f87222f94047ace773c26e9b25a4395136c90d8de2c034f41",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/kg_microbe/utils/biolink_model.py": "e3bba06bf045e31633e803e7d73079dd58a662b8b7d9f04a6ccb53e9984d0ef3",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/kg_microbe/utils/cas.py": "39d526c55af41a3c792aa2e5c1fef1486fbb11f3a54c9da0138ea189c4e92775",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/kg_microbe/utils/chemical_mapping_utils.py": "3ec59d6123da19eae19e997c63dd455ab25e3bbcc867ddabc82352a5c1a12c19",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/kg_microbe/utils/clinical_mesh_categories.py": "6a62f852dec9d3db458962dfa59493651b5e68d11faf6cbcca8d617fa411ab41",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/kg_microbe/utils/consolidate_categories.py": "6f1fc59bd5b68c9f299e08a3a132dccaa10b68745cb1339396cf4b3579b47e16",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/kg_microbe/utils/download_bacdive.py": "e41a7ff5b425b0e2bd3fe98265894691d2a3fba8885271d08344785cc2222553",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/kg_microbe/utils/download_manifest.py": "764720aae1fa3e4b97a4af94bd7a3a838eb0b7b11dd7ec01967b1c01038d07d0",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/kg_microbe/utils/download_utils.py": "384cc1212623eb5a51a8d56eb0f884b544f9f91015759cf8743be7c90b918a0d",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/kg_microbe/utils/dummy_tqdm.py": "378afb3b13de0a33e7f80d5e876dc72d69f9721c84e815991e14ef0c5eb6de96",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/kg_microbe/utils/external_identifiers.py": "635aaa232d5679f2ddd49d51419f31443298a5694c0467341e08abf7e92452f7",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/kg_microbe/utils/finite_envo_po_categories.py": "6985cd9752f9234cf23f25b12b6d4b23bac79852b38d46d1921a146025897119",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/kg_microbe/utils/finite_import_categories.py": "caeec4ab8d64eabd3e3a9be292a29162ad6bd1efb2d4506601e46bd8682e655e",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/kg_microbe/utils/fix_list_representations.py": "957c516a26282743b07d1197f88f35912596765ea7052b2682cd0e36a196aa25",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/kg_microbe/utils/foodon_anatomical_categories.py": "27d30fed998c860912ba1aa6b9a93f6e06e96ef6f82ca87a37c185ce10d4d9df",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/kg_microbe/utils/foodon_classification.py": "023da48eda421247c4f846b095a741728fae48b0d32ad5dc33bda79f8f314cb0",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/kg_microbe/utils/foodon_kernel_producer.py": "28ff99aa82585bc719c414f7ad96976de4d4f7a5ac6761b49fbfe6473322cfde",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/kg_microbe/utils/foodon_kernel_quarantine.py": "78181cc24ee58d2591c67c6390691bb5f41a3e318f009f8551a671c4df10b6ec",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/kg_microbe/utils/go_authority.py": "5fb9214c86eb7873cb3bc496468f54ad66e8c79b979fca111562598e36ddfce5",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/kg_microbe/utils/go_imported_restrictions.py": "dcf5cf8173465c16c487d225c0f3c6a4581ab55d73ec1c8fc387e72b625f33c0",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/kg_microbe/utils/graph_canonicalization.py": "ab865e5433b4650ec96d4ed24c29c9e8d2a3230b8257e3ed6b4d79f2d191311b",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/kg_microbe/utils/graph_schema.py": "3c170b449c599d2b4a89410c555370dd9a01b4ff582750ca90fa7781ac1f5a1f",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/kg_microbe/utils/imported_gene_authority.py": "b4d711c7922358eba458caeeb17cfca50f0b07e257c8c922671004e447e25490",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/kg_microbe/utils/ingredient_bundle.py": "59e1bf4af7d4de1f42c97ee95515253953166f508764a2edd432e8a7ae7c3561",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/kg_microbe/utils/ingredient_bundle_contract.py": "1002925b2a370742597a6e865580ff83ce3b05a95a3f9a8565252869f05af292",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/kg_microbe/utils/ingredient_context.py": "1d41042b05763064820a13098750448628ebe8aa3b86e5321a9cb767c87868ea",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/kg_microbe/utils/ingredient_identity.py": "2fbf540fcc3a0f62ae855bf38d888246764cd4f0fce2c2ee6ed036ddb0ba4099",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/kg_microbe/utils/ingredient_kgx.py": "9a818340832a6b012e12bf564d6e02f6a5bc5c7761f22297d70cd56f1f9d45c9",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/kg_microbe/utils/ingredient_scope.py": "f87281c84af5569a1211a14bbe2e4dcf8476df1a56035c0b3a176c829d44bf62",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/kg_microbe/utils/isolation_source_mapping_utils.py": "18ad93c7c658bbec5d23af28ca724c36a5b02c10fcebc3b6e40fdfc19ab4816f",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/kg_microbe/utils/kgm_validation_profile.py": "86d9d332af4f6b0e152c744151937effffb7c05e373e6cf1e311dc9f538597f4",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/kg_microbe/utils/lpsn_utils.py": "2f82693dd4f121247b728cd9e51d31dd481691c3888b3955fdc89ea4db5dc250",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/kg_microbe/utils/mapping_file_utils.py": "612ea15a0c8670d160d5d5f5be7d8feb66cca07ec12d81230afdb5fa7a6aa23f",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/kg_microbe/utils/mediadive_bulk_download.py": "da5666af6b486fc8878d2548ab369da36484719b4a62e0084f645254077d2a13",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/kg_microbe/utils/mesh_finite_categories.py": "8c6020382bd14982bbe22b1a2d89157b3af0dad13bb7d6764bfed9b5be599247",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/kg_microbe/utils/metpo_liveness.py": "c3498c4dbda1eb13906eda21fbe850ae8cb4619a760384a3e334e1e20741a9b4",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/kg_microbe/utils/metpo_predicates.py": "c1a260eacc20fb73c200a1f93ecba19c049ab24810074082d1caeccadeebdb00",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/kg_microbe/utils/microbial_trait_mappings.py": "17f78bcd1c29878ce89e043229edef96fd71b3f4c46e8bd39445916d0863688a",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/kg_microbe/utils/native_rdf.py": "e78b01c59cff3e0077240570dd902bfa60ab514ce80f69f3bb007753d889ba31",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/kg_microbe/utils/native_ro_retention.py": "21d4319c14b0b342d6dbf9e7611f731366ce118df733f1b251789c269b0f3076",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/kg_microbe/utils/ncit_eight_categories.py": "d60c2c0faf732de351cf15449669a1ff6c77372c622dda7357050bdc92c7b57c",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/kg_microbe/utils/ner_utils.py": "33bd43eabff362bf18fb4b265841a4177b13282c799b840e1fe9c95065b90292",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/kg_microbe/utils/oak_utils.py": "5ea400ebeec899109a7f97a4b6b4e3ba54a9c75a9a6ef8dd0e5a638231b540e9",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/kg_microbe/utils/ontology_category_authority.py": "432db3f0329a629c1954dd24d20c0b9ab06bb671405779e78386e80dc675186a",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/kg_microbe/utils/ontology_dependency_declarations.py": "ff2f2c8dc7d28411f409c10c705fd5fa3f0f5fcd815673c8c558200e65e45b30",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/kg_microbe/utils/ontology_metadata.py": "5ea4dfd0a409ac72ee66eecafe20f36c5a3610877781a8ed64994b63fe8da0a7",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/kg_microbe/utils/ontology_parent_quarantine.py": "868fe73c8201227c595792dd8b6cef84c662ffb0ccd63ab9174029a1f90acb6c",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/kg_microbe/utils/ontology_resolution.py": "1c946ece1fba5cd0e483975c915cb5a4dac2b7f04ba564cc375cd037f8f4d584",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/kg_microbe/utils/ontology_utils.py": "d23bafd787e3b74cfb51eaf37fd9c75432a519bded4c2cabf12912a2e13f20f6",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/kg_microbe/utils/optional_consumed_inputs.py": "b6fd85c91217d9fcbc4f5c187c341b1ec06aeb45b364d63ba6685e702e374f9a",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/kg_microbe/utils/pandas_utils.py": "5730b4c0396682d4335a8ad547daebbe53e72283c7cf3dd461655228e97e8a4b",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/kg_microbe/utils/parse_taxon_rank.py": "a94e0789ee4e54723883bd08b5b3f7a459b5192422a202bdd83f8aefe8c95a5b",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/kg_microbe/utils/postprocess_artifacts.py": "d59efdf16bc6c7904bd4b8490c80f3b1511694387926994fbefbb37f56545b92",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/kg_microbe/utils/producer_audits.py": "4e51f7ae6954104668e612645eda6c8bc3bfa0584151fd98941ad379f0b68606",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/kg_microbe/utils/provenance.py": "d2b4c90776e653bca956d282f6c6cbe1b8a3717ba1b7110b67f29c37df766995",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/kg_microbe/utils/release_binding.py": "3b30d1653cc08c9871dfbccfcddc1b5422ca212d419124e6845c60a884463ed8",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/kg_microbe/utils/release_preflight.py": "4acc3b028fd571c915fa4083a372c49baca8b48e4cae04a83260f300ffe0b23e",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/kg_microbe/utils/review_claims.py": "3c28b47454c4d7d556100df79711d6f689fccd4e2f76cd066a0e7c3a4fbe8db0",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/kg_microbe/utils/robot_utils.py": "b4e5e9dddabcf4ac29fd7a5c4565036daaee8241bdcb81a6249d9c9d82cedbb1",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/kg_microbe/utils/sanitize_curies.py": "6e12551ddf8adc304c84a6e0cf22cfaaae1e2fec80276279bc51d77a0f67d3aa",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/kg_microbe/utils/semsql_toolchain.py": "2a609d1dde6f4631539f755fe68044a8c0c65dc309d366388c638971799a59cb",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/kg_microbe/utils/source_category_authority.py": "e7d864110bc2c1992087a022cac68fcc8c27c6d8673645e77668e27f129e863f",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/kg_microbe/utils/source_finalization.py": "4a218471634517d617ef2dade4d511531ef3a42ec442480932654d5a2beffc24",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/kg_microbe/utils/sqlite_read.py": "cbdc0af1651f678d5af3950f499a5d447e227690d6739c1723f9aed4b94c5782",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/kg_microbe/utils/sssom_identity_policy.py": "3685d46f1621ee471cf5b8c0a94f333f7ff037eac0bf4bc23412bc14e493e53f",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/kg_microbe/utils/string_coding.py": "14eb33fd99bd82598da0ea1b48bf71a833ec88922dc75ca7af7bdd209b54eef8",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/kg_microbe/utils/stub_curie_collection.py": "ac224f8dbca57d61116384e37fe9f003256907aaddeda6e0ae9a0b3a422bda06",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/kg_microbe/utils/transform_fingerprint.py": "90272b22dfa0f4b0c690b28a3ef7591ac88f2b52a05925da1061eb5190937e9c",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/kg_microbe/utils/trembl_utils.py": "5aacd00ca48ff819b611251d5348972eb54cb94d50613ba8adbc3982692b9ea6",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/kg_microbe/utils/tsv_io.py": "44b4b863a535c7d03fcd7cb7880bd989f6f2f7612898c7c7b33f8a7c49e0e948",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/kg_microbe/utils/uberon_temporal_categories.py": "4d2e04c12d148b9813cba2d4242c5dd3ad9ecb1cfbf79c8d0b4322fbdd1d5e92",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/kg_microbe/utils/unipathways_utils.py": "c2bd0140bad25b449a1eaf826e8a27bfad54c9bb974c501c64eb546ae673e9fe",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/kg_microbe/utils/uniprot_utils.py": "4caa9d10501de40bf4c236ac33a8e8754637266e301f6a3b873c630be0a5652f",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/kg_microbe/utils/upa_route_review.py": "36b264c44ce86dcc10baf7d674f8f97cd271e88df6fb479d45817236122c50ab",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/kg_microbe/utils/validation_utils.py": "33e5890dd86d88aa6310ccfaef698480d76432ed98de2d1834bed5fda921c8b7",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/mappings/canonical/chemical_mappings.tsv": "73ac6cc03f3e4c0820748dd2adbd857cede40b0d29295a818f70979163bacd41",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/mappings/canonical/enzyme_mappings.tsv": "62ff3c9c0b07e6fdbb721716d087c61d991f73ad642b5d1bf65be5a47d1b4535",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/mappings/canonical/enzyme_name_to_go.tsv": "79d87c70008a223beb8dc29f4e9fe356eaae06e20ae0ef84f49341f7ef642f37",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/mappings/canonical/metpo_alias_mappings.tsv": "15c4aa67644fd0aac233dbc909cda0b8bbfcbc50bb998fc8bf3e06a7b19ace06",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/mappings/canonical/pathway_mappings.tsv": "e32d689a31db7e6c7eb4b2c47edce8a9c94ca09a18ab9f72d47725f5cd3a8fe5",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/mappings/canonical/phenotype_mappings.tsv": "360cf010dea614151ffa52f56c1f5396d2cbf096d5fc465715b80dd0bbea25c0",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/mappings/canonical/special_chemical_mappings.tsv": "1e6648b8489c758099c7bbb8afa4a8990cdcaa4e2bbf6296026a08884d3f4e7a",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/mappings/catalase_native_authority.json": "b95f503a2d75f162c110bd624e6e09bb29ad2d921901058d53ec01fdb1b801ac",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/mappings/ingredient_context_dispositions.json": "c1035fa5fac058b3a21c5ee815092020ee6811db659faa29666542d1a3872e8e",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/mappings/ingredient_identity_exclusions.tsv": "adee54d81504734c1c6c164346c3c4db600da6840a7ed3908325ca712a528499",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/mappings/ingredient_mappings.sssom.tsv": "6b52b30e018b369aa322d41dfd4e81fcfae0e895e34d7fe48900abf5835815fb",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/mappings/ingredient_name_scopes.tsv": "683c5410418f2d33a41985a1d168c8f86e47b7fa2a91ea8c97bc9f029f4d3f8a",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/mappings/isolation_source_to_ontology.tsv": "6be9917171b58f19cd1859fac80e43c7d9240844de48d2ab4b9099559ceaed3a",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz": "59464e08017cc907a1240a4378d2462efc9e2c1b9d6c3cf0b08b4344ef695ae8",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/mappings/madin_environment_id_corrections.tsv": "75f73a82a1deef9b64232143c8d1ad19f6075214be031ead01f293b499ff8444",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/mappings/mediadive_material_grounding_review.json": "b94ecaa4935082a6ed79faddfa448ed3a1768a858a572bc63306d20f43701e03",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/mappings/mim_downstream_holds.json": "ed136aca89d76107a456ddc11f3da49ce31bec8a474abdcab71c8cda9b6a9ddf",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/mappings/mim_reviewed_release.json": "8c66be0b68dcb773a908b17de56ff34b6270dc9eebf114e759552b07c3907cd5",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/tests/resources/cas_mapping_promotion/prior_claims.tsv": "629198d090f7e45f7f17ce97a124eb9cad879b0bb066930b11ea8cf80ce15b2c",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/tests/resources/mediadive/catalase_scope.json": "9508981c607e26e93747c7ef8fd939d6048bbbf398dbcf17a0ca299c2886823d",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/tests/resources/mediadive/material_aliases_1262.json": "e6db6174173a12101875104c33478f1868f4454ddd296db8e46b47ab6119f126",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/tests/resources/mediadive/p3556_scope.json": "7c06f4e2179356ddf1d917a6938cba5e3bdf6669f42a29019b93963e4a70646c",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/tests/resources/mediadive/potato_scope.json": "b4755925efe8cde9871569b047e28c185ac56e2cba6295fca20fef2901062723",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies/chebi_nodes.tsv": "02024ca0a29cafaac16b43a06a786edd0368a8a646b75ab1002b6239c1219f60",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies/envo_nodes.tsv": "ff195ed17339df155c90e3af7677f6f6c6a02a0a4b8222f86d7665c68641db0a",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies/foodon_nodes.tsv": "9c3d62584031d908a58fb1916759588b9cdab1ac4d6135ce38d261fbf21630b5",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies/uberon_nodes.tsv": "23f96f9a513b081b0ef24a22d9f4c7d662489bfbac014679fe4492196f04586a",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies_stubs/bto_nodes.tsv": "3fd4a0311b1fa62810afa9645d2a34e6135e929ea1f5854301f77b6add345d23",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies_stubs/mesh_nodes.tsv": "1117ef3188f8207b17726af0c3252caf4e0092ed6872506a4fa1ff62e5d78307",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies_stubs/micro_nodes.tsv": "df68f3df8a7eb83f97c74c4ca35fd94d730d405a688fc3a1f67938b985262a44",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies_stubs/ncit_nodes.tsv": "5a8bcb7498456cd9624a57f17ec80c1e9125b3dedd03fccca9929310d3b15450",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies_stubs/po_nodes.tsv": "b43d1c5fc604cac0a0651528aaba741184293047df89bf3dfb74949ebeb8dac3"
+  },
+  "limitations": [
+    "No blanket re-curation of580192 unchanged historical rows. Complete11718 reconstructed payload lineage and all55 runtime override replay are separate mandatory reviews.",
+    "Freshness and associations unchanged:632 MediaDive endpoints unknown; association coverage remains incomplete.",
+    "W1 native authority inputs are actual selected witnesses, not W2 phase2 output certification. Root must compare genuine W2 phase2 selected native claims/bytes before further consumers; differences need explicit reviewed disposition.",
+    "WITHHOLD is unresolved evidence, never proof of false identity or blanket name blacklist. Six obsolete compound names independently resolve material ingredient IDs; complete new-row lineage is reviewed separately.",
+    "Native formulas and FOODON fresh bratwurst positive fixture controls are not asserted present in these actual artifacts. No loss occurred between actual reader epochs.",
+    "No source producer, full native admission, mapping promotion, or readiness claim is made.",
+    "Existing #1253 native alternative is reverified from complete current raw chemical structure fields. Native identities are not merged; supplier whole-product identity remains denied.",
+    "Exactly13 retired target identities are absent. Six labels continue resolving to independently supported ingredient identities; withholding a former claim is not proof the label has no valid identity.",
+    "Original finite-helper diagnostics remain unchanged and are explicitly adjudicated here; final acceptance does not hide or relabel those failed reviewer expectations."
+  ],
+  "mapping_promoted": false,
+  "native_supported_sha256": "7e68fea7fd788928f29c7671156198af101baaa3b3051f19bab78a5479d2a940",
+  "prior_scoped_review_sha256": "f1fb7e46f41dd26de3a6c6d4cfd496ef9f27e471384743bc5f67e8d6df59cf89",
+  "proof_files": {
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/data/rebuild-evidence/mim-1788-20261107/candidate-r2-scientific-review-r1/baseline-reader.json": "97439602cd97ce3b3614bd378c5e4a45106a1aca3dc9ea7b91e87749c3a43348",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/data/rebuild-evidence/mim-1788-20261107/candidate-r2-scientific-review-r1/candidate-reader.json": "0cc90d7c05e76ade8e625acf41155f6da64705149c1b18ad411fb00f8ab2f530",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/data/rebuild-evidence/mim-1788-20261107/candidate-r2-scientific-review-r1/complete-review.py": "9399068945c6f831151004870471022c95ba77b89cbae61d95ecfff9b8d8b1fd",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/data/rebuild-evidence/mim-1788-20261107/candidate-r2-scientific-review-r1/final-scope-qualification-r2.py": "b12816f1e4af0754a6e341cdd88ffd6674d19d8d40de6522e94a931f1d8a810a",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/data/rebuild-evidence/mim-1788-20261107/candidate-r2-scientific-review-r1/finite-cohort-payloads.json": "ed575dbe0cdd38c6abf142e0e8a198f5395c9145a98384ba1c07162eb9c017b9",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/data/rebuild-evidence/mim-1788-20261107/candidate-r2-scientific-review-r1/reader-process-results.json": "9c8d73bd215ea07277ee1d02efb30acfef8478b2a2285553afb773dcb96c38ca",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/data/rebuild-evidence/mim-1788-20261107/candidate-r2-scientific-review-r1/review.json": "42298c52219fc9c7e4e6b1f5f71c248cdae42c421689b7cb23797487e1deb516",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/data/rebuild-evidence/mim-1788-20261107/candidate-r2-scientific-review-r1/row-review.json": "96842de13ec98fbc68520e20f39df3e4ceb663eda4a4543cf2efbe9140a14c24",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/data/rebuild-evidence/mim-1788-20261107/candidate-r2-scientific-review-r1/verify-reviewed-native-alternative-1253.py": "01bdf8c4e0ebcb45f9e9f48958f4f293c9ca4a41819c45dce329cd42b156fcf5"
+  },
+  "review_scope": "Independent actual candidate finite scientific, broader-direction, historical-withdrawal, native-material and runtime review",
+  "reviewer_diagnostic_adjudication": {
+    "complete_native_other_owner": {
+      "category": "biolink:ChemicalEntity",
+      "deprecated": "",
+      "description": "",
+      "id": "CHEBI:196822",
+      "name": "PC(16:0/18:2(9E,12E))",
+      "provided_by": "chebi.json",
+      "same_as": "",
+      "synonym": "[(2R)-3-hexadecanoyloxy-2-[(9E,12E)-octadeca-9,12-dienoyl]oxypropyl] 2-(trimethylazaniumyl)ethyl phosphate",
+      "xref": "chemspider:17341551|lipidmaps:LMGP01010592"
+    },
+    "complete_unchanged_four_other_owner_rows": [
+      {
+        "comment": "",
+        "confidence": "",
+        "mapping_date": "2026-09-04",
+        "mapping_justification": "semapv:UnspecifiedMatching",
+        "object_category": "biolink:ChemicalEntity",
+        "object_formula": "",
+        "object_id": "CHEBI:196822",
+        "object_label": "PC(16:0/18:2(9E,12E))",
+        "object_source": "obo:chebi.owl",
+        "predicate_id": "skos:exactMatch",
+        "source": "chebi_xrefs",
+        "subject_id": "chemspider:17341551",
+        "subject_label": ""
+      },
+      {
+        "comment": "synonym",
+        "confidence": "",
+        "mapping_date": "2026-09-04",
+        "mapping_justification": "semapv:LexicalMatching",
+        "object_category": "biolink:ChemicalEntity",
+        "object_formula": "",
+        "object_id": "CHEBI:196822",
+        "object_label": "PC(16:0/18:2(9E,12E))",
+        "object_source": "obo:chebi.owl",
+        "predicate_id": "skos:closeMatch",
+        "source": "chebi_xrefs",
+        "subject_id": "kgm.name:2r-3-hexadecanoyloxy-2-9e12e-octadeca-912-dienoyloxypropyl_2-trimethylazaniumylethyl_phosphate",
+        "subject_label": "[(2R)-3-hexadecanoyloxy-2-[(9E,12E)-octadeca-9,12-dienoyl]oxypropyl] 2-(trimethylazaniumyl)ethyl phosphate"
+      },
+      {
+        "comment": "canonical_name",
+        "confidence": "",
+        "mapping_date": "2026-09-04",
+        "mapping_justification": "semapv:LexicalMatching",
+        "object_category": "biolink:ChemicalEntity",
+        "object_formula": "",
+        "object_id": "CHEBI:196822",
+        "object_label": "PC(16:0/18:2(9E,12E))",
+        "object_source": "obo:chebi.owl",
+        "predicate_id": "skos:exactMatch",
+        "source": "chebi_xrefs",
+        "subject_id": "kgm.name:pc1601829e12e",
+        "subject_label": "PC(16:0/18:2(9E,12E))"
+      },
+      {
+        "comment": "",
+        "confidence": "",
+        "mapping_date": "2026-09-04",
+        "mapping_justification": "semapv:UnspecifiedMatching",
+        "object_category": "biolink:ChemicalEntity",
+        "object_formula": "",
+        "object_id": "CHEBI:196822",
+        "object_label": "PC(16:0/18:2(9E,12E))",
+        "object_source": "obo:chebi.owl",
+        "predicate_id": "skos:exactMatch",
+        "source": "chebi_xrefs",
+        "subject_id": "lipidmaps:LMGP01010592",
+        "subject_label": ""
+      }
+    ],
+    "native_other_owner_path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies/chebi_nodes.tsv",
+    "native_other_owner_sha256": "02024ca0a29cafaac16b43a06a786edd0368a8a646b75ab1002b6239c1219f60",
+    "original_failed_intermediate_review": {
+      "failed_checks": [
+        "p3556_structured_native_lookup_[(2R)-3-(1-oxohexadecoxy)-2-[(9E,12E)-1-oxooctadeca-9,12-dienoxy]propyl] 2-(trimethylammonio)ethyl phosphate",
+        "p3556_structured_native_lookup_[(2R)-3-hexadecanoyloxy-2-[(9E,12E)-octadeca-9,12-dienoyl]oxy-propyl] 2-(trimethylazaniumyl)ethyl phosphate",
+        "p3556_structured_native_lookup_[(2R)-3-hexadecanoyloxy-2-[(9E,12E)-octadeca-9,12-dienoyl]oxypropyl] 2-(trimethylazaniumyl)ethyl phosphate"
+      ],
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/data/rebuild-evidence/mim-1788-20261107/candidate-r2-scientific-review-r1/review.json",
+      "sha256": "42298c52219fc9c7e4e6b1f5f71c248cdae42c421689b7cb23797487e1deb516"
+    },
+    "reviewer_expectation_correction": "The intermediate helper incorrectly demanded all native synonyms resolve to86658 even with synonyms=False, and assumed unique lexical ownership. Actual baseline and candidate match exactly: only the reviewed canonical label resolves in canonical-only mode; one structural synonym resolves to an unchanged current-native196822 owner in synonym mode. This is a recorded existing same-form native lexical overlap, not an added equivalence assertion.",
+    "scoped_projection_diagnostic": {
+      "overstrict_reviewer_projection_check_corrected_here_only": true,
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/data/rebuild-evidence/mim-1788-20261107/candidate-r2-scientific-review-r1/row-review.json",
+      "sha256": "96842de13ec98fbc68520e20f39df3e4ceb663eda4a4543cf2efbe9140a14c24"
+    }
+  },
+  "separate_mandatory_review_references": {
+    "complete_reconstructed_lineage": {
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/data/rebuild-evidence/mim-1788-20261107/candidate-r2-reconstructed-lineage-r1/review.json",
+      "sha256": "5ba919b1b4c217a8d4a002e329592bd3e10f8776d32b7230a59076ad660ed289"
+    },
+    "conservation": {
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/data/rebuild-evidence/mim-1788-20261107/candidate-r2-conservation-review-r1/review.json",
+      "sha256": "16719342cdfe75d01323ebec26a895366d5beba60cb3a1db4988d98a55f9a945"
+    }
+  },
+  "source_admitted": false,
+  "source_completed": false,
+  "source_id_lineage": {
+    "consumed_combined_prefix_cohort_unchanged": true,
+    "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/data/rebuild-evidence/mim-1788-20261107/candidate-r2-scientific-review-r1/stub-source-lineage.json",
+    "raw_new_four_ncit_claims_explicitly_withheld": true,
+    "sha256": "1af5d64d7ac90a69bf36e7617a78eb2a9e6f3820b3e60cea992582d48daa6694"
+  },
+  "status": "pass",
+  "withdrawal_scope": {
+    "complete_original_claims_in_quarantine": true,
+    "exact_runtime_transitions": [
+      {
+        "candidate_name_results": {
+          "(False, False, False)": null,
+          "(True, False, False)": null,
+          "(True, True, True)": null
+        },
+        "name": "Sodium thiophosphate tribasic hydrate",
+        "old_complete_claim_count": 3,
+        "old_name_results": {
+          "(False, False, False)": "cas:10489-48-2",
+          "(True, False, False)": "cas:10489-48-2",
+          "(True, True, True)": "cas:10489-48-2"
+        },
+        "old_target": "cas:10489-48-2",
+        "source_disposition": "WITHHOLD"
+      },
+      {
+        "candidate_name_results": {
+          "(False, False, False)": null,
+          "(True, False, False)": null,
+          "(True, True, True)": null
+        },
+        "name": "Sodium phosphite dibasic pentahydrate",
+        "old_complete_claim_count": 3,
+        "old_name_results": {
+          "(False, False, False)": "cas:13517-23-2",
+          "(True, False, False)": "cas:13517-23-2",
+          "(True, True, True)": "cas:13517-23-2"
+        },
+        "old_target": "cas:13517-23-2",
+        "source_disposition": "WITHHOLD"
+      },
+      {
+        "candidate_name_results": {
+          "(False, False, False)": null,
+          "(True, False, False)": null,
+          "(True, True, True)": null
+        },
+        "name": "2-Deoxyadenosine monohydrate",
+        "old_complete_claim_count": 3,
+        "old_name_results": {
+          "(False, False, False)": "cas:16373-93-6",
+          "(True, False, False)": "cas:16373-93-6",
+          "(True, True, True)": "cas:16373-93-6"
+        },
+        "old_target": "cas:16373-93-6",
+        "source_disposition": "WITHHOLD"
+      },
+      {
+        "candidate_name_results": {
+          "(False, False, False)": null,
+          "(True, False, False)": null,
+          "(True, True, True)": null
+        },
+        "name": "D-Glucuronic acid sodium salt monohydrate",
+        "old_complete_claim_count": 3,
+        "old_name_results": {
+          "(False, False, False)": "cas:207300-70-7",
+          "(True, False, False)": "cas:207300-70-7",
+          "(True, True, True)": "cas:207300-70-7"
+        },
+        "old_target": "cas:207300-70-7",
+        "source_disposition": "WITHHOLD"
+      },
+      {
+        "candidate_name_results": {
+          "(False, False, False)": "kgmicrobe.ingredient:amylopectin_from_maize",
+          "(True, False, False)": "kgmicrobe.ingredient:amylopectin_from_maize",
+          "(True, True, True)": "kgmicrobe.ingredient:amylopectin_from_maize"
+        },
+        "name": "amylopectin from maize",
+        "old_complete_claim_count": 3,
+        "old_name_results": {
+          "(False, False, False)": "kgmicrobe.compound:amylopectin_from_maize",
+          "(True, False, False)": "kgmicrobe.compound:amylopectin_from_maize",
+          "(True, True, True)": "kgmicrobe.compound:amylopectin_from_maize"
+        },
+        "old_target": "kgmicrobe.compound:amylopectin_from_maize",
+        "source_disposition": "removed_by_recorded_source_receipt"
+      },
+      {
+        "candidate_name_results": {
+          "(False, False, False)": null,
+          "(True, False, False)": null,
+          "(True, True, True)": null
+        },
+        "name": "Carnitine Hydrochloride",
+        "old_complete_claim_count": 2,
+        "old_name_results": {
+          "(False, False, False)": "kgmicrobe.compound:carnitine_hydrochloride",
+          "(True, False, False)": "kgmicrobe.compound:carnitine_hydrochloride",
+          "(True, True, True)": "kgmicrobe.compound:carnitine_hydrochloride"
+        },
+        "old_target": "kgmicrobe.compound:carnitine_hydrochloride",
+        "source_disposition": "removed_by_recorded_source_receipt"
+      },
+      {
+        "candidate_name_results": {
+          "(False, False, False)": "kgmicrobe.ingredient:cholesterol_lipid_concentrate",
+          "(True, False, False)": "kgmicrobe.ingredient:cholesterol_lipid_concentrate",
+          "(True, True, True)": "kgmicrobe.ingredient:cholesterol_lipid_concentrate"
+        },
+        "name": "cholesterol lipid concentrate",
+        "old_complete_claim_count": 2,
+        "old_name_results": {
+          "(False, False, False)": "kgmicrobe.compound:cholesterol_lipid_concentrate",
+          "(True, False, False)": "kgmicrobe.compound:cholesterol_lipid_concentrate",
+          "(True, True, True)": "kgmicrobe.compound:cholesterol_lipid_concentrate"
+        },
+        "old_target": "kgmicrobe.compound:cholesterol_lipid_concentrate",
+        "source_disposition": "removed_by_recorded_source_receipt"
+      },
+      {
+        "candidate_name_results": {
+          "(False, False, False)": "kgmicrobe.ingredient:heparin_sodium_salt_from_porcine_intestinal_mucosa",
+          "(True, False, False)": "kgmicrobe.ingredient:heparin_sodium_salt_from_porcine_intestinal_mucosa",
+          "(True, True, True)": "kgmicrobe.ingredient:heparin_sodium_salt_from_porcine_intestinal_mucosa"
+        },
+        "name": "Heparin sodium salt from porcine intestinal mucosa",
+        "old_complete_claim_count": 3,
+        "old_name_results": {
+          "(False, False, False)": "kgmicrobe.compound:heparin_sodium_salt_from_porcine_intestinal_mucosa",
+          "(True, False, False)": "kgmicrobe.compound:heparin_sodium_salt_from_porcine_intestinal_mucosa",
+          "(True, True, True)": "kgmicrobe.compound:heparin_sodium_salt_from_porcine_intestinal_mucosa"
+        },
+        "old_target": "kgmicrobe.compound:heparin_sodium_salt_from_porcine_intestinal_mucosa",
+        "source_disposition": "removed_by_recorded_source_receipt"
+      },
+      {
+        "candidate_name_results": {
+          "(False, False, False)": null,
+          "(True, False, False)": null,
+          "(True, True, True)": null
+        },
+        "name": "Maltose Hydrate",
+        "old_complete_claim_count": 2,
+        "old_name_results": {
+          "(False, False, False)": "kgmicrobe.compound:maltose_hydrate",
+          "(True, False, False)": "kgmicrobe.compound:maltose_hydrate",
+          "(True, True, True)": "kgmicrobe.compound:maltose_hydrate"
+        },
+        "old_target": "kgmicrobe.compound:maltose_hydrate",
+        "source_disposition": "WITHHOLD"
+      },
+      {
+        "candidate_name_results": {
+          "(False, False, False)": "kgmicrobe.ingredient:menadione_solution",
+          "(True, False, False)": "kgmicrobe.ingredient:menadione_solution",
+          "(True, True, True)": "kgmicrobe.ingredient:menadione_solution"
+        },
+        "name": "Menadione solution",
+        "old_complete_claim_count": 2,
+        "old_name_results": {
+          "(False, False, False)": "kgmicrobe.compound:menadione_solution",
+          "(True, False, False)": "kgmicrobe.compound:menadione_solution",
+          "(True, True, True)": "kgmicrobe.compound:menadione_solution"
+        },
+        "old_target": "kgmicrobe.compound:menadione_solution",
+        "source_disposition": "removed_by_recorded_source_receipt"
+      },
+      {
+        "candidate_name_results": {
+          "(False, False, False)": "kgmicrobe.ingredient:mes_buffer",
+          "(True, False, False)": "kgmicrobe.ingredient:mes_buffer",
+          "(True, True, True)": "kgmicrobe.ingredient:mes_buffer"
+        },
+        "name": "MES buffer",
+        "old_complete_claim_count": 2,
+        "old_name_results": {
+          "(False, False, False)": "kgmicrobe.compound:mes_buffer",
+          "(True, False, False)": "kgmicrobe.compound:mes_buffer",
+          "(True, True, True)": "kgmicrobe.compound:mes_buffer"
+        },
+        "old_target": "kgmicrobe.compound:mes_buffer",
+        "source_disposition": "removed_by_recorded_source_receipt"
+      },
+      {
+        "candidate_name_results": {
+          "(False, False, False)": "kgmicrobe.ingredient:mops_2m_ph7",
+          "(True, False, False)": "kgmicrobe.ingredient:mops_2m_ph7",
+          "(True, True, True)": "kgmicrobe.ingredient:mops_2m_ph7"
+        },
+        "name": "MOPS_2M_pH7",
+        "old_complete_claim_count": 2,
+        "old_name_results": {
+          "(False, False, False)": "kgmicrobe.compound:mops_2m_ph7",
+          "(True, False, False)": "kgmicrobe.compound:mops_2m_ph7",
+          "(True, True, True)": "kgmicrobe.compound:mops_2m_ph7"
+        },
+        "old_target": "kgmicrobe.compound:mops_2m_ph7",
+        "source_disposition": "removed_by_recorded_source_receipt"
+      },
+      {
+        "candidate_name_results": {
+          "(False, False, False)": null,
+          "(True, False, False)": null,
+          "(True, True, True)": null
+        },
+        "name": "NLDM_metabolites",
+        "old_complete_claim_count": 2,
+        "old_name_results": {
+          "(False, False, False)": "kgmicrobe.ingredient:nldm_metabolites",
+          "(True, False, False)": "kgmicrobe.ingredient:nldm_metabolites",
+          "(True, True, True)": "kgmicrobe.ingredient:nldm_metabolites"
+        },
+        "old_target": "kgmicrobe.ingredient:nldm_metabolites",
+        "source_disposition": "WITHHOLD"
+      }
+    ],
+    "names_not_globally_blacklisted": true,
+    "old_targets": 13,
+    "review_chain_bound": true
+  }
+}

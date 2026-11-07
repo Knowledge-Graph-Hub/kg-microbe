@@ -1,0 +1,26 @@
+{
+  "fixture_sha256": "c3214cd003450be634374e3bc05a8e36c654558cc4ce7cb1df77195ab7277b5a",
+  "generation_id": "resolution-admitted-r2",
+  "kind": "immutable_exact_native_medium_excerpt",
+  "manifest_sha256": "fa3c9e47bad5ff298b35e32382de7bd642e6be6ed95540db128d7d674058924f",
+  "qualification": "Complete source records, without value changes. Offline tests add an explicitly synthetic second medium and empty association observations; this fixture is not an admitted production source.",
+  "selection": {
+    "catalogue.json": "data[0] (id integer1)",
+    "media_detailed.json": "key1 complete object",
+    "solutions.json": "key1 complete object"
+  },
+  "source_files": {
+    "catalogue.json": {
+      "bytes": 1206179,
+      "sha256": "454a3d3b5061bd2347f9520dafe2746a50e830611cb8753eb7e8ea4f9bde12f0"
+    },
+    "media_detailed.json": {
+      "bytes": 20814573,
+      "sha256": "82a7d02a5a85378d6acaa535c5d4e07a2fe3ede5c5cb743bee0892eed738bb81"
+    },
+    "solutions.json": {
+      "bytes": 10469524,
+      "sha256": "5b136571fa52fb2a698069d6ce7117717bb6eb4c572fa3b9a6af167e7d054e63"
+    }
+  }
+}

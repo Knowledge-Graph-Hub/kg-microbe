@@ -1,0 +1,113 @@
+{
+  "actual_source_claims_have_no_modifiers": true,
+  "candidate_fields": [
+    "subject_id",
+    "subject_label",
+    "predicate_id",
+    "object_id",
+    "object_label",
+    "object_source",
+    "mapping_justification",
+    "source",
+    "mapping_date",
+    "confidence",
+    "comment",
+    "object_formula",
+    "object_category"
+  ],
+  "finding_body": {
+    "bytes": 3228,
+    "path": "data/rebuild-evidence/mim-1788-20261107/finding-negated-supported-projection-r1.md",
+    "sha256": "2faa06f6f4a71b192c29b8c22e8b500f9dd5fccb58f64b46e692ed61f4542977"
+  },
+  "method": {
+    "candidate_generation": false,
+    "ignored_inclusive_search": true,
+    "network": false,
+    "read_only_static": true,
+    "tests_run": false,
+    "tracked_edits": false,
+    "validators_run": false
+  },
+  "other_review_dispositions": {
+    "1789": "No blocking defect found in the exact metadata-link exception: whole archive/commit, consumed regular files, exact link targets, target kinds, duplicate paths and non-directory ancestors remain checked; no extraction or following.",
+    "1790": "Actual six affirmative claims are split into exact identity vs broader projection; four derived relations retain both full input row hashes. New modifier finding above remains to fix.",
+    "1791": "Explicit SKOS header for incoming broader rows; baseline legacy asymmetric rows are refused, preexisting SKOS relation retains direction, second-cycle scope recognizes full derived row identity. Shared runtime broader route returns before alias/formula/xref identity insertion.",
+    "1792": "Per-subset maximum valid calendar date matches explicit header date/version; legacy equal version-only headers remain backward compatible. Pinned immutable source/review/product/partition checks are unchanged."
+  },
+  "pending_acceptance": [
+    "Author fix and coordinated focused execution for new modifier controls",
+    "Actual complete upstream candidate construction and native consumer/runtime reviews",
+    "Actual rebuilt source and merged graph admission; current code review is not those gates"
+  ],
+  "reachability": "Schema permits Not; supported predicate and exact sibling admission ignore it; projection selects only actual unified columns without modifier; later route classifier sees an affirmative row. This is static data-flow reasoning, not an executed probe.",
+  "recorded_at": "2026-11-07T09:56:59.008409+00:00",
+  "reviewed_files": {
+    ".venv/lib/python3.10/site-packages/sssom_schema/schema/sssom_schema.yaml": {
+      "bytes": 58964,
+      "path": ".venv/lib/python3.10/site-packages/sssom_schema/schema/sssom_schema.yaml",
+      "sha256": "557b3931590a9c9382cd0ca7d0ba71c4c2324bdc3eb623e8869b805d5317421e"
+    },
+    "kg_microbe/utils/sssom_identity_policy.py": {
+      "bytes": 2969,
+      "path": "kg_microbe/utils/sssom_identity_policy.py",
+      "sha256": "3685d46f1621ee471cf5b8c0a94f333f7ff037eac0bf4bc23412bc14e493e53f"
+    },
+    "scripts/mim_conservative_refresh.py": {
+      "bytes": 48147,
+      "path": "scripts/mim_conservative_refresh.py",
+      "sha256": "1506c98fede18ea220bf8b452b6d79980677e3b76d75eaa53a686e2479d17fba"
+    },
+    "scripts/mim_reviewed_release.py": {
+      "bytes": 15341,
+      "path": "scripts/mim_reviewed_release.py",
+      "sha256": "60c4697ae7cd01d755249bdce4cd3d19259a468dc3b051b717a88a8c52cf37f9"
+    },
+    "scripts/refresh_reviewed_mim.py": {
+      "bytes": 13747,
+      "path": "scripts/refresh_reviewed_mim.py",
+      "sha256": "f3430933eb126190fa0c551c2f5e680dd74bf670e7fccf403508b8d76f62dee1"
+    },
+    "tests/resources/mim_reviewed_broader_20261107/README.md": {
+      "bytes": 868,
+      "path": "tests/resources/mim_reviewed_broader_20261107/README.md",
+      "sha256": "ff7374279c0f9aeacb151d7b768a5f0eca9aa02c42d588a9306cb163ab45643c"
+    },
+    "tests/resources/mim_reviewed_broader_20261107/source-claims.json": {
+      "bytes": 11629,
+      "path": "tests/resources/mim_reviewed_broader_20261107/source-claims.json",
+      "sha256": "a08a231ea586e84b549736c76b3e8c5d6c8c4d9a8977da69cdfa481b8ef378c0"
+    },
+    "tests/test_mim_broader_refresh.py": {
+      "bytes": 15468,
+      "path": "tests/test_mim_broader_refresh.py",
+      "sha256": "43d1bceeaa290950048ecb94f0ecd1418545330867e95f2c995c2aa27afff28d"
+    },
+    "tests/test_mim_immutable_pin.py": {
+      "bytes": 18658,
+      "path": "tests/test_mim_immutable_pin.py",
+      "sha256": "b455427bb28188092711f651e5bb46abfd629d79495dc03ea792e9bac1f68902"
+    },
+    "tests/test_mim_reviewed_release.py": {
+      "bytes": 22097,
+      "path": "tests/test_mim_reviewed_release.py",
+      "sha256": "8d750881d0a8653edaa6580a5b415846b5aa862e3b388f34449a8e7c7ec13e44"
+    },
+    "tests/test_sssom_identity_policy.py": {
+      "bytes": 11744,
+      "path": "tests/test_sssom_identity_policy.py",
+      "sha256": "b4aba67d104eecc1c8f865e320312c1858bfe363e5942534cebe60cd7fc4ec2f"
+    }
+  },
+  "schema_version": 1,
+  "status": "new_static_semantic_guard_finding_before_fix",
+  "test_review_only": [
+    "Two actual broader claims/four derived rows with dual provenance",
+    "No parent name/xref alias leakage; same-subject exact supplied-form identities",
+    "Withheld exact sibling excluded; hydration disagreement/parent-as-exact refused",
+    "Source row order independence and second-cycle byte/scope stability",
+    "Mixed absent/unknown legacy asymmetric baseline refused; existing SKOS edge preserved",
+    "Metadata symlink positive/negative and archive order controls",
+    "Subset date/calendar/mismatch plus complete partition controls"
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "status": "partial_checkpoint_not_candidate_acceptance",
+  "records": [
+    {
+      "name": "native-product-kgm-validation-r1.json",
+      "bytes": 8137,
+      "sha256": "69adba7b29cb1720672a04202cf79251eeca8c5afb402f626c9efd8daa3b1ad8",
+      "source": "data/rebuild-evidence/mim-1788-20261107/native-product-kgm-validation-r1.json"
+    },
+    {
+      "name": "compatibility-adversarial-review-r1.json",
+      "bytes": 5556,
+      "sha256": "9f78db49c674734dd3dd3eb1b0abae1754fd09c23c6332e1c6e12d32793fe909",
+      "source": "data/rebuild-evidence/mim-1788-20261107/compatibility-adversarial-review-r1.json"
+    },
+    {
+      "name": "compatibility-repair-independent-review-r2.json",
+      "bytes": 3179,
+      "sha256": "89e949e7172135eb823fda5746ef3b15eb3ad9d1a36df1861c8c3dcbb153d14e",
+      "source": "data/rebuild-evidence/mim-1788-20261107/compatibility-repair-independent-review-r2.json"
+    },
+    {
+      "name": "p3556-downstream-held-design-review-r1.json",
+      "bytes": 5281,
+      "sha256": "c63041600a48eb293c511cd6d01898b08b5e4e1d6a1dc44f6ae9d6338a3f1cf2",
+      "source": "data/rebuild-evidence/mim-1788-20261107/p3556-downstream-held-design-review-r1.json"
+    },
+    {
+      "name": "finding-supported-downstream-hold-r1.json",
+      "bytes": 774314,
+      "sha256": "497ebbc67c6657b6479c9a565e1b4db809fe7541260956fa67ec852ff179921b",
+      "source": "data/rebuild-evidence/mim-1788-20261107/finding-supported-downstream-hold-r1.json"
+    },
+    {
+      "name": "lpsn-prerequisites-independent-review-r1.json",
+      "bytes": 1606,
+      "sha256": "156ae6805609ea28e862b0cb923af7032a3cf050c4c15234c1e13bc40631be6c",
+      "source": "data/rebuild-evidence/mim-1788-20261107/lpsn-prerequisites-independent-review-r1.json"
+    }
+  ]
+}

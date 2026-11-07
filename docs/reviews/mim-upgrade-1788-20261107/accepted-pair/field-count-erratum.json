@@ -1,0 +1,39 @@
+{
+  "additional_transport_field_count": 2,
+  "additional_transport_fields": [
+    "description",
+    "provided_by"
+  ],
+  "affected_check_name": "held_native_eight_reviewed_fields_equal",
+  "complete_tsv_field_count": 9,
+  "complete_tsv_fields": [
+    "category",
+    "deprecated",
+    "description",
+    "id",
+    "name",
+    "provided_by",
+    "same_as",
+    "synonym",
+    "xref"
+  ],
+  "correction": "The prose/check name says eight reviewed fields, and an earlier commentary described ten total fields. The exact compared policy has seven fields; the complete TSV row has nine fields, including two extra transport fields. The explicit key list and executed equality comparison were already correct.",
+  "exact_policy_projection_equals_actual": true,
+  "kind": "append_only_wording_erratum",
+  "policy_field_count": 7,
+  "policy_fields": [
+    "category",
+    "deprecated",
+    "id",
+    "name",
+    "same_as",
+    "synonym",
+    "xref"
+  ],
+  "production_or_original_evidence_changed": false,
+  "recorded_at": "2026-11-07T10:41:20.096974+00:00",
+  "rerun_performed": false,
+  "review_path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/data/rebuild-evidence/mim-1788-20261107/candidate-r2-scientific-review-r1/final-review-r2.json",
+  "review_sha256": "d8088826909f15c2c0f21272403d16ec313138a3675cbe9f9e22c68efbe2a73c",
+  "scientific_result_unchanged": true
+}

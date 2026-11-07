@@ -1,0 +1,573 @@
+{
+  "actual_old_records": {
+    "bacdive": {
+      "absolute_authority_examples": [
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw/bacdive_strains.json",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw/envo.json",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw/foodon.json"
+      ],
+      "consumed_snapshot_count": 18,
+      "declared_promoted_inputs": [
+        "mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz"
+      ],
+      "finalization": {
+        "bytes": 84768577,
+        "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/bacdive/source_finalization.json",
+        "sha256": "fa2202cffd6c29a179509483a2d627479682820be1ff855b545b183538b3cac7"
+      },
+      "finalization_promoted_inputs": [
+        "mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz"
+      ],
+      "marker": {
+        "bytes": 3461,
+        "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/bacdive/source_fingerprint.json",
+        "sha256": "09c60f846cd16ba5872380a06ee4a36b2907d72ecc15064179657d61120c9e03"
+      },
+      "producer_directory": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/kg_microbe/transform_utils/bacdive",
+      "raw_input_directory": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw",
+      "raw_input_locator": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw"
+    },
+    "bactotraits": {
+      "absolute_authority_examples": [
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw/taxdump.tar.gz",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/kg_microbe/profiles/ingredient_bundle_v1.schema.json",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/kg_microbe/profiles/ingredient_kgx_v1.yaml"
+      ],
+      "consumed_snapshot_count": 2,
+      "declared_promoted_inputs": [],
+      "finalization": {
+        "bytes": 9777,
+        "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/bactotraits/source_finalization.json",
+        "sha256": "3faceda7ebe84d7dda0566940cd2772f1578bfef51c6c6a0d1b7b8258cf763b6"
+      },
+      "finalization_promoted_inputs": [],
+      "marker": {
+        "bytes": 1937,
+        "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/bactotraits/source_fingerprint.json",
+        "sha256": "2c9e2ab782464584ed0a072e9f690cb4ee3540e600fecda0b54784c3e516cadc"
+      },
+      "producer_directory": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/kg_microbe/transform_utils/bactotraits",
+      "raw_input_directory": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw",
+      "raw_input_locator": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw"
+    },
+    "gold": {
+      "absolute_authority_examples": [
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw/gold/GOLD_edges.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw/gold/GOLD_nodes.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw/gold_ontology.owl"
+      ],
+      "consumed_snapshot_count": 13,
+      "declared_promoted_inputs": [],
+      "finalization": {
+        "bytes": 26568,
+        "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/gold/source_finalization.json",
+        "sha256": "0056510879762434ff7779d9388b741dbd27ef12a26fe02860fbe04e1720ac31"
+      },
+      "finalization_promoted_inputs": [],
+      "marker": {
+        "bytes": 2945,
+        "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/gold/source_fingerprint.json",
+        "sha256": "d9a382e4156b4b73076ceb290313751ac0002155af2f44223a0df04a27463a36"
+      },
+      "producer_directory": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/kg_microbe/transform_utils/gold",
+      "raw_input_directory": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw",
+      "raw_input_locator": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw"
+    },
+    "gtdb": {
+      "absolute_authority_examples": [
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw/taxdump.tar.gz",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/kg_microbe/profiles/ingredient_bundle_v1.schema.json",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/kg_microbe/profiles/ingredient_kgx_v1.yaml"
+      ],
+      "consumed_snapshot_count": 1,
+      "declared_promoted_inputs": [],
+      "finalization": {
+        "bytes": 12663,
+        "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/gtdb/source_finalization.json",
+        "sha256": "c8547994aff76461f995e8d7e6747c594042b114a2116fb169662ea1ebf9e10a"
+      },
+      "finalization_promoted_inputs": [],
+      "marker": {
+        "bytes": 2585,
+        "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/gtdb/source_fingerprint.json",
+        "sha256": "8cfb388a1182d8ff79a31af2fbc206dd74f464144640455c570cb1899f9ac4df"
+      },
+      "producer_directory": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/kg_microbe/transform_utils/gtdb",
+      "raw_input_directory": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw",
+      "raw_input_locator": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw"
+    },
+    "lpsn": {
+      "absolute_authority_examples": [
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw/lpsn_gss.csv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw/taxdump.tar.gz",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/kg_microbe/profiles/ingredient_bundle_v1.schema.json"
+      ],
+      "consumed_snapshot_count": 2,
+      "declared_promoted_inputs": [],
+      "finalization": {
+        "bytes": 13387,
+        "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/lpsn/source_finalization.json",
+        "sha256": "9d74efc58b584f90cb5f68442eef1dfcaffd8ff4ab86627abbe743f80cf7a5a5"
+      },
+      "finalization_promoted_inputs": [],
+      "marker": {
+        "bytes": 2614,
+        "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/lpsn/source_fingerprint.json",
+        "sha256": "bf60f75e5a381acf1911f6f05fe0cf29ac2a8cbf17edb2ebfa97ef3421dd12f1"
+      },
+      "producer_directory": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/kg_microbe/transform_utils/lpsn",
+      "raw_input_directory": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw",
+      "raw_input_locator": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw"
+    },
+    "lpsn_api": {
+      "absolute_authority_examples": [
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/kg_microbe/profiles/ingredient_bundle_v1.schema.json",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/kg_microbe/profiles/ingredient_kgx_v1.yaml",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/kg_microbe/profiles/ingredient_scope_v1.yaml"
+      ],
+      "consumed_snapshot_count": 0,
+      "declared_promoted_inputs": [],
+      "finalization": {
+        "bytes": 8400,
+        "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/lpsn_api/source_finalization.json",
+        "sha256": "fc6e82a99e7be77d58aac4d97c9ad2fd15674390e4c228c4bd7ca86514ea15e2"
+      },
+      "finalization_promoted_inputs": [],
+      "marker": {
+        "bytes": 1817,
+        "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/lpsn_api/source_fingerprint.json",
+        "sha256": "15561daaf8fbcec482a1be5194f236871a640cdca6c6e3730f918372111cc0c9"
+      },
+      "producer_directory": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/kg_microbe/transform_utils/lpsn_api",
+      "raw_input_directory": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw",
+      "raw_input_locator": null
+    },
+    "madin_etal": {
+      "absolute_authority_examples": [
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw/go.db",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw/go.owl",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw/taxdump.tar.gz"
+      ],
+      "consumed_snapshot_count": 3,
+      "declared_promoted_inputs": [
+        "mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz"
+      ],
+      "finalization": {
+        "bytes": 14404,
+        "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/madin_etal/source_finalization.json",
+        "sha256": "d6eb380abdc2f82961d54e6d7f7487fe5f152898f2cd91f82d16d18d0417559c"
+      },
+      "finalization_promoted_inputs": [
+        "mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz"
+      ],
+      "marker": {
+        "bytes": 2746,
+        "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/madin_etal/source_fingerprint.json",
+        "sha256": "7619f4f3e44dc86763aa4924e24c1e000bbcd3b05d810249785a3e94e9b12649"
+      },
+      "producer_directory": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/kg_microbe/transform_utils/madin_etal",
+      "raw_input_directory": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw",
+      "raw_input_locator": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw"
+    },
+    "mediadive": {
+      "absolute_authority_examples": [
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw/biolink-model.yaml",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw/compound_mappings_strict.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw/compound_mappings_strict_hydrate.tsv"
+      ],
+      "consumed_snapshot_count": 38,
+      "declared_promoted_inputs": [
+        "mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz"
+      ],
+      "finalization": {
+        "bytes": 172931,
+        "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/mediadive/source_finalization.json",
+        "sha256": "555db90c43c72c0155e9dbf146768e4a7144840f7e8845c94cb1930a48dba2c3"
+      },
+      "finalization_promoted_inputs": [
+        "mappings/ingredient_mappings.sssom.tsv",
+        "mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz"
+      ],
+      "marker": {
+        "bytes": 4138,
+        "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/mediadive/source_fingerprint.json",
+        "sha256": "84fdf383d32fbefbbc5a474cbb5096eedb2fd2df9dc6c98773645b2bc683efff"
+      },
+      "producer_directory": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/kg_microbe/transform_utils/mediadive",
+      "raw_input_directory": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw",
+      "raw_input_locator": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw"
+    },
+    "metatraits": {
+      "absolute_authority_examples": [
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw/ec2go.txt",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw/foodon.json",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw/foodon.owl"
+      ],
+      "consumed_snapshot_count": 9,
+      "declared_promoted_inputs": [
+        "mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz"
+      ],
+      "finalization": {
+        "bytes": 21727,
+        "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/metatraits/source_finalization.json",
+        "sha256": "ab284b0da84ad2ef9b71f1028cd3e34e6c3ddc04cd30740a425b280f6c038abb"
+      },
+      "finalization_promoted_inputs": [
+        "mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz"
+      ],
+      "marker": {
+        "bytes": 3687,
+        "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/metatraits/source_fingerprint.json",
+        "sha256": "f0a4ab8c8eda136d5ffc03c154cf89016b150834c2650197ee0f2df7ae5dbc3b"
+      },
+      "producer_directory": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/kg_microbe/transform_utils/metatraits",
+      "raw_input_directory": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw",
+      "raw_input_locator": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw"
+    },
+    "metatraits_gtdb": {
+      "absolute_authority_examples": [
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw/ec2go.txt",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw/foodon.json",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw/foodon.owl"
+      ],
+      "consumed_snapshot_count": 10,
+      "declared_promoted_inputs": [
+        "mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz"
+      ],
+      "finalization": {
+        "bytes": 22546,
+        "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/metatraits_gtdb/source_finalization.json",
+        "sha256": "33364c9864b7d2646035df1f30cc55e174a223e47c3aba88e687162a4b1e653f"
+      },
+      "finalization_promoted_inputs": [
+        "mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz"
+      ],
+      "marker": {
+        "bytes": 3726,
+        "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/metatraits_gtdb/source_fingerprint.json",
+        "sha256": "8b531e539a11779ab9b105d36fedac32dd99c26223bbc14165e57d29ccfb2a23"
+      },
+      "producer_directory": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/kg_microbe/transform_utils/metatraits_gtdb",
+      "raw_input_directory": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw",
+      "raw_input_locator": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw"
+    },
+    "microbedecoder": {
+      "absolute_authority_examples": [
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw/database.csv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw/go.db",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw/go.owl"
+      ],
+      "consumed_snapshot_count": 17,
+      "declared_promoted_inputs": [
+        "mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz"
+      ],
+      "finalization": {
+        "bytes": 279988,
+        "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/microbedecoder/source_finalization.json",
+        "sha256": "fc5e19b6dccc719ac91bfb0921da1946ebe330cd6a036c130d31a983f980e125"
+      },
+      "finalization_promoted_inputs": [
+        "mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz"
+      ],
+      "marker": {
+        "bytes": 3600,
+        "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/microbedecoder/source_fingerprint.json",
+        "sha256": "93d54d6f187ac8d303ac855cbcf5ef5d6660a3550acc2aeab097ba67233bcec0"
+      },
+      "producer_directory": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/kg_microbe/transform_utils/microbedecoder",
+      "raw_input_directory": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw",
+      "raw_input_locator": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw"
+    },
+    "ontologies": {
+      "absolute_authority_examples": [
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw/biolink-model.yaml",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw/chebi.json",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw/ec.json"
+      ],
+      "consumed_snapshot_count": 69,
+      "declared_promoted_inputs": [],
+      "finalization": {
+        "bytes": 48779,
+        "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies/source_finalization.json",
+        "sha256": "99f0aa27a0b7653c479f1bd96af3dd248d72ac3e57cb671828ad30e3c73a34f9"
+      },
+      "finalization_promoted_inputs": [],
+      "marker": {
+        "bytes": 4385,
+        "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies/source_fingerprint.json",
+        "sha256": "3c73c1f6450ceeb61f5772b9d92a99b0fcf34638a1aae04e4431da57cae17d60"
+      },
+      "producer_directory": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/kg_microbe/transform_utils/ontologies",
+      "raw_input_directory": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw",
+      "raw_input_locator": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw"
+    },
+    "ontologies_stubs": {
+      "absolute_authority_examples": [
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw/biolink-model.yaml",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw/mesh2026.nt.gz",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw/micro.owl"
+      ],
+      "consumed_snapshot_count": 10,
+      "declared_promoted_inputs": [
+        "mappings/ingredient_mappings.sssom.tsv",
+        "mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz"
+      ],
+      "finalization": {
+        "bytes": 26077,
+        "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies_stubs/source_finalization.json",
+        "sha256": "56f3a21824b89e14029cb295ae7ab3ac2e476d009b8c9fb424fc40285f72c7e9"
+      },
+      "finalization_promoted_inputs": [
+        "mappings/ingredient_mappings.sssom.tsv",
+        "mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz"
+      ],
+      "marker": {
+        "bytes": 3406,
+        "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies_stubs/source_fingerprint.json",
+        "sha256": "4405d20ac2a12a5188ce7ba5f3cdaff13e197c41f71a48c06f7b35cbe541b08c"
+      },
+      "producer_directory": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/kg_microbe/transform_utils/ontologies_stubs",
+      "raw_input_directory": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw",
+      "raw_input_locator": null
+    },
+    "prego": {
+      "absolute_authority_examples": [
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw/envo.json",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw/foodon.json",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw/foodon.owl"
+      ],
+      "consumed_snapshot_count": 15,
+      "declared_promoted_inputs": [],
+      "finalization": {
+        "bytes": 21235,
+        "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/prego_habitat/source_finalization.json",
+        "sha256": "1b63da25aa8d91f548725d7bc52decb65fc989dc019f61931a3037c3fe97eb3d"
+      },
+      "finalization_promoted_inputs": [],
+      "marker": {
+        "bytes": 3108,
+        "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/prego_habitat/source_fingerprint.json",
+        "sha256": "3f824dc263e0aae94d580e634cd10a0b775e2e9ec199e8b4286be35a45203a05"
+      },
+      "producer_directory": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/kg_microbe/transform_utils/prego",
+      "raw_input_directory": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw",
+      "raw_input_locator": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw"
+    },
+    "rhea_mappings": {
+      "absolute_authority_examples": [
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw/chebi.db",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw/ec.db",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw/go.db"
+      ],
+      "consumed_snapshot_count": 7,
+      "declared_promoted_inputs": [],
+      "finalization": {
+        "bytes": 16150,
+        "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/rhea_mappings/source_finalization.json",
+        "sha256": "0566c9e33f91a4b557bcd703dbc85551067fa1f829c6bb23fa88ef4d8298006d"
+      },
+      "finalization_promoted_inputs": [],
+      "marker": {
+        "bytes": 2774,
+        "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/rhea_mappings/source_fingerprint.json",
+        "sha256": "aca5c5dfa7e8e00ee35b1f62ddfcdb05f65b7aa88f243f70b00c449d2a3f6321"
+      },
+      "producer_directory": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/kg_microbe/transform_utils/rhea_mappings",
+      "raw_input_directory": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw",
+      "raw_input_locator": null
+    }
+  },
+  "binding_constraints": [
+    {
+      "basis": "kg_microbe/merge_utils/source_freshness.py::_producer, lines 72-99",
+      "effect": "Recorded producer_code.directory must resolve to the executing root/kg_microbe/transform_utils/<registered source>; the registered class actual source directory must equal it. Every old receipt inspected names W. W2 immediately refuses it; content equality does not erase this locator guard."
+    },
+    {
+      "basis": "source_freshness.py::_check_record/_check_marker, lines 115-216",
+      "effect": "Complete members and audits are bound beside the selected finalization; all absolute input paths are read; finalizer/shared/schema/data identities must be current; declarations resolve curation under current code root while raw declarations use recorded raw root; complete upstream records and marker digests are checked recursively in the selected output siblings."
+    },
+    {
+      "basis": "kg_microbe/utils/source_finalization.py::_verify_recorded_consumed_inputs, lines 231-322",
+      "effect": "Consumed input snapshots must agree exactly with absolute input paths and hashes. NCBI raw_input_locator must still resolve to the original raw_input_directory and selected taxdump path. Source-native replay and optional-input contracts add their own locator and policy selection checks."
+    },
+    {
+      "basis": "kg_microbe/utils/optional_consumed_inputs.py::verify_recorded_optional_inputs, lines 137-186",
+      "effect": "Selected optional raw locator/root and current repository role resolution remain evidence, including intentional absence. Moving only the graph files cannot preserve all these bindings."
+    },
+    {
+      "basis": "kg_microbe/utils/transform_fingerprint.py::code_fingerprint/data_fingerprint/finalization_inputs_current, lines 234-360 and 466-473",
+      "effect": "Some fingerprint digests deliberately fold repository-relative logical names, supporting content-stable comparison across roots. That narrower property does not override absolute finalization producer/consumed-input/native contracts. Relative finalization_inputs also resolve under W2 and must match their actual authorities."
+    },
+    {
+      "basis": "scripts/adhoc/kgm_rebuild_admission_20261105.py::build_plan/verify_sources/main, lines 74-140, 155-161, 362-376",
+      "effect": "The helper additionally requires configured resolved graph paths inside the selected owned transformed directory, owned data roots, and each report raw directory equal to the plan raw directory. Its canonical normalization permits path/output/stats relocation only; it does not relocate source evidence or change production admission."
+    },
+    {
+      "basis": "kg_microbe/merge_utils/merge_contract.py::validate_merge_semantics",
+      "effect": "Production canonical semantics permit TSV locators and output routing without semantic edits, but every selected TSV still traverses verify_source_freshness. An absolute old graph path is not an exception."
+    },
+    {
+      "basis": "kg_microbe/utils/source_finalization.py::_repeat_finalization/_stage_source, lines 700-777 and 1054-1086",
+      "effect": "Repeat finalization reuses original evidence only after the original raw selection and consumed identities agree. Fresh producer completion writes actual current producer/consumed paths. Running a marker-only writer, rewriting old producer/raw strings, or re-finalizing copied graphs solely to relabel their origin is not a legitimate producer rebuild."
+    }
+  ],
+  "candidate_head": "3b07c58bb63776fdf1482dae34a8ca2212980620",
+  "candidate_root": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107",
+  "cohorts": {
+    "actual_inventory_result": "None of these six old finalization/marker input inventories names either promoted mapping artifact. BactoTraits and GOLD are affected transitively through BacDive and ontology stubs; their own inventories need not name the pair.",
+    "counting_boundary": "Nine plus six equals all fifteen. The unchanged five are gtdb, lpsn, lpsn_api, rhea_mappings and prego; the whole ontologies producer is an additional prerequisite.",
+    "mapping_only_documented_closure": [
+      "ontologies_stubs",
+      "bacdive",
+      "mediadive",
+      "madin_etal",
+      "metatraits",
+      "metatraits_gtdb",
+      "bactotraits",
+      "gold",
+      "microbedecoder"
+    ],
+    "otherwise_unchanged_canonical_owners": [
+      "ontologies",
+      "gtdb",
+      "lpsn",
+      "lpsn_api",
+      "rhea_mappings",
+      "prego"
+    ]
+  },
+  "decision": "Current production admission cannot reuse old W finalizations as current W2 source evidence, even when code, raw data and graph bytes are identical. A fully isolated W2 build using unchanged contracts needs genuine W2 producer runs/fresh finalization for all 15 canonical owners. Native acquisition inputs may be independently copied and reused where their real validators accept them; redownloading every input is not implied.",
+  "legitimate_staging_plan": [
+    "Keep old W graph/raw/code/receipts untouched through the running merge and its final gates; do not reuse its output directories as writable W2 producer destinations.",
+    "Preserve actual old finalization/marker/native receipts byte-for-byte as history. Record independent source/destination identities for any later authorized raw-data copies; independent copies or copy-on-write clones must not share writable hardlinks or retarget live symlinks.",
+    "Raw scientific bytes and sealed MediaDive generation members are candidate inputs, not transported success receipts. Retain complete acquisition/raw-body/cache/evidence files and current tracked policy bytes; let real W2 consumers validate them. Do not assume every derived cache or embedded locator is portable; rebuild a derived cache when its existing validator requires it.",
+    "Keep imports rooted in W2 with a correctly bound environment and the approved package closure. Do not run W2 under old imported KG modules to make the old producer directory comparison pass.",
+    "Run genuine W2 producer/finalizer lifecycle in canonical dependency phases, including ontologies and the five other sources beyond the documented mapping-only nine. Fresh outputs may be byte-identical, but their origin proof must come from the actual run.",
+    "LPSN API still requires successful nonempty access/refresh token initialization even with a warm valid cache; any credential handling or real authentication remains root-owned and is not performed or authorized by this review.",
+    "Re-evaluate closure if mapping acceptance requires shared runtime or policy changes; current all-source freshness and release gates remain the authority. Preserve 632 MediaDive reviewed unknown outcomes and incomplete association coverage through the new producer and merge."
+  ],
+  "method_limits": {
+    "credentials": false,
+    "data_copies": false,
+    "graph_or_raw_rehash": false,
+    "native_replay": false,
+    "network": false,
+    "old_merge_result_assessed": false,
+    "only_writes": "New E2 analysis artifacts",
+    "production_or_tracked_writes": false,
+    "test_runs": false
+  },
+  "old_generation_root": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105",
+  "options": [
+    {
+      "disposition": "Valid as historical baseline/comparison, or its own unchanged original release gates. It cannot certify a mixed W2 MIM candidate: W2 outputs bind W2 producer code, old outputs bind W, and current production gate accepts one executing root. Old W remains frozen while merge and its gates complete.",
+      "option": "Preserve and read old immutable generation through its original W runtime"
+    },
+    {
+      "disposition": "Not admissible under current code. Independent inodes preserve original bytes but not the required producer-root identity. Keep copies only as clearly historical source evidence, never current completion.",
+      "option": "Copy/reflink old finalized outputs into W2 unchanged"
+    },
+    {
+      "disposition": "Does not solve origin binding; also conflicts with the owned-directory helper guards after resolution. Do not symlink code, inject old package origins, monkeypatch roots or enable diagnostic opt-out.",
+      "option": "Select old outputs via absolute merge paths or symlinks"
+    },
+    {
+      "disposition": "Supported route: independently stage appropriate native inputs and evidence, keep mappings/code/pins scoped, run all fifteen actual producers in dependency order, retain new native/finalization/marker evidence, then run unchanged full source and archive gates. This is a localization-driven expansion, not evidence that the mapping pair scientifically changes all fifteen.",
+      "option": "Genuine isolated W2 rebuild with existing contracts"
+    },
+    {
+      "disposition": "Not present in the reviewed production path and not implemented or proposed as a quick bypass. Would require separately reviewed explicit origin, code/content, raw/curation selection, native contracts, upstream closure and immutable adoption evidence plus adversarial tests. Merely allowing old paths, updating receipt digests or accepting a caller whitelist would weaken existing admission.",
+      "option": "New portable source-bundle/relocation contract"
+    }
+  ],
+  "recorded_at": "2026-11-07T09:44:14.902463+00:00",
+  "reviewed_code_identities": {
+    "docs/MIM_REVIEWED_RELEASE.md": {
+      "byte_equal_to_old_checkout": true,
+      "candidate": {
+        "bytes": 16869,
+        "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/docs/MIM_REVIEWED_RELEASE.md",
+        "sha256": "11ec4ac4580f6de39a83920453851cc4e4a6465d7faaa6d3c5e863f61ba78e97"
+      }
+    },
+    "kg_microbe/merge_utils/merge_contract.py": {
+      "byte_equal_to_old_checkout": true,
+      "candidate": {
+        "bytes": 4525,
+        "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/kg_microbe/merge_utils/merge_contract.py",
+        "sha256": "ca0473e2dc9e7862049905e51b14c80cab16f4006bca707ca20a4377ccf857ff"
+      }
+    },
+    "kg_microbe/merge_utils/source_admission.py": {
+      "byte_equal_to_old_checkout": true,
+      "candidate": {
+        "bytes": 6750,
+        "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/kg_microbe/merge_utils/source_admission.py",
+        "sha256": "e31844f6f329909a0888f0e8f629052c0eee467ad344b9497180bbd04bea749c"
+      }
+    },
+    "kg_microbe/merge_utils/source_freshness.py": {
+      "byte_equal_to_old_checkout": true,
+      "candidate": {
+        "bytes": 12842,
+        "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/kg_microbe/merge_utils/source_freshness.py",
+        "sha256": "15527444fad4d5adf54c025da4b6789fc61430654c15f52ea757b6de80ca5620"
+      }
+    },
+    "kg_microbe/utils/optional_consumed_inputs.py": {
+      "byte_equal_to_old_checkout": true,
+      "candidate": {
+        "bytes": 8743,
+        "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/kg_microbe/utils/optional_consumed_inputs.py",
+        "sha256": "b6fd85c91217d9fcbc4f5c187c341b1ec06aeb45b364d63ba6685e702e374f9a"
+      }
+    },
+    "kg_microbe/utils/source_finalization.py": {
+      "byte_equal_to_old_checkout": true,
+      "candidate": {
+        "bytes": 65662,
+        "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/kg_microbe/utils/source_finalization.py",
+        "sha256": "4a218471634517d617ef2dade4d511531ef3a42ec442480932654d5a2beffc24"
+      }
+    },
+    "kg_microbe/utils/transform_fingerprint.py": {
+      "byte_equal_to_old_checkout": true,
+      "candidate": {
+        "bytes": 26921,
+        "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/kg_microbe/utils/transform_fingerprint.py",
+        "sha256": "90272b22dfa0f4b0c690b28a3ef7591ac88f2b52a05925da1061eb5190937e9c"
+      }
+    },
+    "merge.yaml": {
+      "byte_equal_to_old_checkout": true,
+      "candidate": {
+        "bytes": 11627,
+        "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/merge.yaml",
+        "sha256": "926c238e577931db06f6674ec96bdf0d85d185a7bcc5028ed6f5bde293d5d1d2"
+      }
+    },
+    "scripts/adhoc/kgm_rebuild_admission_20261105.py": {
+      "byte_equal_to_old_checkout": true,
+      "candidate": {
+        "bytes": 19537,
+        "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/scripts/adhoc/kgm_rebuild_admission_20261105.py",
+        "sha256": "8f952582e4e1d626fd7fddfb738ee5d5df10a0f93275d5601024093ce15a0c0f"
+      }
+    },
+    "tests/test_merge_source_freshness.py": {
+      "byte_equal_to_old_checkout": true,
+      "candidate": {
+        "bytes": 37050,
+        "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/tests/test_merge_source_freshness.py",
+        "sha256": "587743b12e06c7bbf582d6066297056acf6dae99d5a78bf24f76adaf9d9af63e"
+      }
+    }
+  },
+  "schema_version": 1,
+  "search_scope": "Ignored-inclusive rg -uu search across kg_microbe, scripts, tests and docs for producer relocation/cross-checkout/finalization paths. No portable-finalization override was found in the actual public admission path; this is a bounded code-path finding, not a claim about all historical repository data.",
+  "status": "static_blocker_for_cross_checkout_finalized_output_reuse_under_unchanged_contracts",
+  "test_evidence_reviewed_not_executed": [
+    "tests/test_merge_source_freshness.py::test_unknown_producer_metadata_is_not_a_silent_exemption (line 710)",
+    "Existing strict source/raw/consumed input mechanisms inspected statically; no tests or admission validators executed."
+  ]
+}

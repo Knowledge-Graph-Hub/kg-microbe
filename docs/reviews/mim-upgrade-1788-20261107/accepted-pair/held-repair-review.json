@@ -1,0 +1,72 @@
+{
+  "1800": {
+    "controls_reviewed": [
+      "empty-object corruption",
+      "schema_version boolean substitution",
+      "downstream_held_count boolean substitution",
+      "post-report ledger drift",
+      "valid full payload/native controls and second-cycle positive tests retained"
+    ],
+    "repair": "The builder serializes the intended ledger once, compares the actual written UTF-8 bytes exactly, and computes the reported digest from the intended bytes. A final digest check immediately before atomic publication rejects post-report ledger drift.",
+    "result": "No bool/int or duplicate-key semantic-equality shortcut remains at this mandatory-ledger write boundary."
+  },
+  "1801": {
+    "controls_reviewed": [
+      "Immutable original TSV header+record fixture with exact SHA",
+      "Tracked policy checked against original decision before synthetic fixture rebinding",
+      "Actual source/manifest/archive/product and record/owner identities retained"
+    ],
+    "repair": "Policy now contains the exact complete native eleven-field exported decision, including subject/predicate/object and owner_record_sha256. Full equality and archive owner proof remain unchanged.",
+    "result": "The actual genuine product decision now matches; no shared-subset comparison or source-data modification was used."
+  },
+  "checks": {
+    "fixture_is_exact_original_header_plus_selected_row": true,
+    "one_actual_native_disposition": true,
+    "policy_exactly_equals_all_11_actual_fields": true,
+    "policy_science_unchanged": true,
+    "prior_decision_common_fields_unchanged": true
+  },
+  "identities": {
+    "mappings/mim_downstream_holds.json": {
+      "bytes": 3898,
+      "sha256": "ed136aca89d76107a456ddc11f3da49ce31bec8a474abdcab71c8cda9b6a9ddf"
+    },
+    "scripts/mim_conservative_refresh.py": {
+      "bytes": 57113,
+      "sha256": "ade61c8ac18bd7f1883e7c43a7ef7c5637c4774af7b8f4593ae4e6f5682fd95f"
+    },
+    "tests/resources/mim_downstream_hold_20261107/exported-decision.tsv": {
+      "bytes": 786,
+      "sha256": "62fe14137bddd13f164ad14ca804fc2b915df7292bd1df09bfd58fec8ca5d09e"
+    },
+    "tests/resources/mim_downstream_hold_20261107/provenance.json": {
+      "bytes": 798,
+      "sha256": "26baf637feaeaab761ac962ef02c56a4de69262307ccf20af25af3fd3c81ad05"
+    },
+    "tests/test_mim_downstream_holds.py": {
+      "bytes": 17052,
+      "sha256": "e88ded1dcea965e2d69b4a6cf953b3f9fda8f16dcded5bde9591750797a3da24"
+    }
+  },
+  "issues": [
+    1800,
+    1801
+  ],
+  "method": "Read-only frozen source/test review and exact retained native TSV/fixture/policy comparison; no test, builder, candidate, source producer, credential or network execution.",
+  "native_product": {
+    "bytes": 1814722,
+    "path": "data/rebuild-evidence/mim-1788-20261107/official-export-0dac2784/mapping-dispositions.tsv",
+    "sha256": "2a075c9c4a699c9d22a5e8b736bc6d7c00c344f19363f28178c0b50b6b590a19"
+  },
+  "pending": [
+    "root-coordinated focused tests",
+    "actual complete repaired candidate and independent paired-artifact review",
+    "exact four broader runtime relations/no index leakage",
+    "all55 runtime override replay",
+    "actual whole second-cycle and genuine source/graph gates"
+  ],
+  "recorded_at": "2026-11-07T10:21:50.206993+00:00",
+  "schema_version": 1,
+  "scope": "The two concrete blockers in downstream-held-independent-review-r1.json are repaired at these exact identities. This is not candidate/scientific/runtime admission.",
+  "status": "pass_independent_static_rereview"
+}

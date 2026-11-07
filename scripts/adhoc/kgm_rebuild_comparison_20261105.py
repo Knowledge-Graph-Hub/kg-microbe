@@ -42,7 +42,7 @@ def unlinked(path):
     """Reject symbolic links in an artifact's entire lexical locator."""
     path = Path(path).absolute()
     require(not any(item.is_symlink() for item in (path, *path.parents)), f"Linked locator: {path}")
-    return path
+    return path.resolve()
 
 
 def save(path, value):
@@ -209,7 +209,7 @@ def deltas(previous, current):
     }
 
 
-def compare():
+def compare(*, original=ORIGINAL, baseline=BASELINE):
     """Compare actual artifacts while keeping every read bound through the completed report."""
     import yaml
 
@@ -218,7 +218,7 @@ def compare():
 
     guard = SourceAdmission()
     guard.capture(Path(__file__).resolve())
-    old = baseline_inputs(guard)
+    old = baseline_inputs(guard, original=original, baseline=baseline)
     new = {relative: unlinked(ROOT / relative) for relative in FILES}
     for path in new.values():
         guard.capture(path)
@@ -315,15 +315,28 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("command", choices=("preserve", "compare"))
     parser.add_argument("--receipt", type=Path, required=True)
+    parser.add_argument("--original-checkout", type=Path, help="Explicit preserved comparison checkout.")
+    parser.add_argument(
+        "--baseline-directory", type=Path, help="New/existing preservation directory under task evidence."
+    )
     args = parser.parse_args(argv)
     require(Path.cwd().resolve() == ROOT, "Run from the owned helper worktree")
-    receipt = unlinked(args.receipt.resolve())
+    receipt = unlinked(args.receipt)
     require(receipt.is_relative_to(EVIDENCE) and not receipt.exists(), "Use a new task evidence receipt")
-    require(receipt != BASELINE / "preservation.json", "Preservation manifest is reserved")
+    require(bool(args.original_checkout) == bool(args.baseline_directory), "Supply both explicit baseline locators")
+    original = unlinked(args.original_checkout or ORIGINAL)
+    baseline = unlinked(args.baseline_directory or BASELINE)
+    require(original.is_dir() and not original.is_relative_to(ROOT), "Wrong original comparison checkout")
+    require(baseline.is_relative_to(EVIDENCE), "Baseline must remain in rebuild evidence")
+    require(receipt != baseline / "preservation.json", "Preservation manifest is reserved")
     sys.path.insert(0, str(ROOT))
     result = {"command": args.command, "checked_at": datetime.now(timezone.utc).isoformat(), "root": str(ROOT)}
     try:
-        result["result"] = preserve() if args.command == "preserve" else compare()
+        result["result"] = (
+            preserve(original=original, baseline=baseline)
+            if args.command == "preserve"
+            else compare(original=original, baseline=baseline)
+        )
         result["status"] = result["result"]["status"]
     except (Exception, SystemExit) as error:  # noqa: BLE001 - preserve failures without accepting or restamping inputs
         result.update(status="failed", error=f"{type(error).__name__}: {error}")

@@ -1,0 +1,265 @@
+{
+  "directional_annotations": [
+    {
+      "direction": "LR",
+      "master": "RHEA:25074",
+      "object": "GO:0009978",
+      "passed": true,
+      "subject": "RHEA:25075"
+    },
+    {
+      "direction": "LR",
+      "master": "RHEA:33751",
+      "object": "GO:0008962",
+      "passed": true,
+      "subject": "RHEA:33752"
+    },
+    {
+      "direction": "LR",
+      "master": "RHEA:42304",
+      "object": "GO:0008962",
+      "passed": true,
+      "subject": "RHEA:42305"
+    },
+    {
+      "direction": "LR",
+      "master": "RHEA:57720",
+      "object": "GO:0046961",
+      "passed": true,
+      "subject": "RHEA:57721"
+    },
+    {
+      "direction": "RL",
+      "master": "RHEA:57720",
+      "object": "GO:0046933",
+      "passed": true,
+      "subject": "RHEA:57722"
+    },
+    {
+      "direction": "LR",
+      "master": "RHEA:58156",
+      "object": "GO:0046962",
+      "passed": true,
+      "subject": "RHEA:58157"
+    },
+    {
+      "direction": "RL",
+      "master": "RHEA:58156",
+      "object": "GO:0046932",
+      "passed": true,
+      "subject": "RHEA:58158"
+    }
+  ],
+  "exclusions": [
+    {
+      "errors": [],
+      "normalized_object": "EC:3.5.3.21",
+      "original_object": "EC:3.5.3.21",
+      "passed": true,
+      "required_native_assertions": [
+        {
+          "predicate": "http://rdf.rhea-db.org/status",
+          "subject": "RHEA:15929",
+          "value": "http://rdf.rhea-db.org/Approved"
+        },
+        {
+          "predicate": "http://www.w3.org/2000/01/rdf-schema#label",
+          "subject": "RHEA:15929",
+          "value": "methylenediurea + 2 H2O + 2 H(+) = urea + formaldehyde + 2 NH4(+) + CO2"
+        },
+        {
+          "predicate": "http://rdf.rhea-db.org/ec",
+          "subject": "RHEA:15929",
+          "value": "http://purl.uniprot.org/enzyme/3.5.1.141"
+        },
+        {
+          "predicate": "http://www.w3.org/2000/01/rdf-schema#seeAlso",
+          "subject": "RHEA:15929",
+          "value": "http://purl.obolibrary.org/obo/GO_0047424"
+        }
+      ],
+      "subject": "RHEA:15929"
+    },
+    {
+      "errors": [],
+      "normalized_object": "GO:0047074",
+      "original_object": "GO:0018581",
+      "passed": true,
+      "required_native_assertions": [
+        {
+          "predicate": "http://rdf.rhea-db.org/status",
+          "subject": "RHEA:19441",
+          "value": "http://rdf.rhea-db.org/Approved"
+        },
+        {
+          "predicate": "http://www.w3.org/2000/01/rdf-schema#label",
+          "subject": "RHEA:19441",
+          "value": "benzene-1,2,4-triol + O2 = 3-hydroxy-cis,cis-muconate + 2 H(+)"
+        },
+        {
+          "predicate": "http://rdf.rhea-db.org/status",
+          "subject": "RHEA:35595",
+          "value": "http://rdf.rhea-db.org/Approved"
+        },
+        {
+          "predicate": "http://www.w3.org/2000/01/rdf-schema#label",
+          "subject": "RHEA:35595",
+          "value": "benzene-1,2,4-triol + O2 = maleylacetate + 2 H(+)"
+        },
+        {
+          "predicate": "http://www.w3.org/2000/01/rdf-schema#seeAlso",
+          "subject": "RHEA:35595",
+          "value": "http://purl.obolibrary.org/obo/GO_0047074"
+        }
+      ],
+      "subject": "RHEA:19441"
+    },
+    {
+      "errors": [],
+      "normalized_object": "GO:0008252",
+      "original_object": "GO:0008252",
+      "passed": true,
+      "required_native_assertions": [
+        {
+          "predicate": "http://rdf.rhea-db.org/status",
+          "subject": "RHEA:22140",
+          "value": "http://rdf.rhea-db.org/Approved"
+        },
+        {
+          "predicate": "http://www.w3.org/2000/01/rdf-schema#label",
+          "subject": "RHEA:22140",
+          "value": "a nucleoside 5'-phosphate + H2O = a nucleoside + phosphate"
+        },
+        {
+          "predicate": "http://www.w3.org/2000/01/rdf-schema#seeAlso",
+          "subject": "RHEA:22140",
+          "value": "http://purl.obolibrary.org/obo/GO_0008253"
+        }
+      ],
+      "subject": "RHEA:22140"
+    },
+    {
+      "errors": [],
+      "normalized_object": "GO:0008735",
+      "original_object": "GO:0008735",
+      "passed": true,
+      "required_native_assertions": [
+        {
+          "predicate": "http://rdf.rhea-db.org/status",
+          "subject": "RHEA:28338",
+          "value": "http://rdf.rhea-db.org/Approved"
+        },
+        {
+          "predicate": "http://www.w3.org/2000/01/rdf-schema#label",
+          "subject": "RHEA:28338",
+          "value": "(R)-carnitinyl-CoA = crotonobetainyl-CoA + H2O"
+        },
+        {
+          "predicate": "http://rdf.rhea-db.org/ec",
+          "subject": "RHEA:28338",
+          "value": "http://purl.uniprot.org/enzyme/4.2.1.149"
+        },
+        {
+          "predicate": "http://www.w3.org/2000/01/rdf-schema#seeAlso",
+          "subject": "RHEA:28338",
+          "value": "http://purl.obolibrary.org/obo/GO_0140427"
+        },
+        {
+          "predicate": "http://rdf.rhea-db.org/status",
+          "subject": "RHEA:28526",
+          "value": "http://rdf.rhea-db.org/Approved"
+        },
+        {
+          "predicate": "http://www.w3.org/2000/01/rdf-schema#label",
+          "subject": "RHEA:28526",
+          "value": "crotonobetainyl-CoA + (R)-carnitine = crotonobetaine + (R)-carnitinyl-CoA"
+        },
+        {
+          "predicate": "http://www.w3.org/2000/01/rdf-schema#seeAlso",
+          "subject": "RHEA:28526",
+          "value": "http://purl.obolibrary.org/obo/GO_0008735"
+        },
+        {
+          "predicate": "http://rdf.rhea-db.org/ec",
+          "subject": "RHEA:28526",
+          "value": "http://purl.uniprot.org/enzyme/2.8.3.21"
+        }
+      ],
+      "subject": "RHEA:28338"
+    },
+    {
+      "errors": [],
+      "normalized_object": "GO:0004029",
+      "original_object": "GO:0004029",
+      "passed": true,
+      "required_native_assertions": [
+        {
+          "predicate": "http://rdf.rhea-db.org/status",
+          "subject": "RHEA:47152",
+          "value": "http://rdf.rhea-db.org/Approved"
+        },
+        {
+          "predicate": "http://www.w3.org/2000/01/rdf-schema#label",
+          "subject": "RHEA:47152",
+          "value": "2,5-dioxopentanoate + NAD(+) + H2O = 2-oxoglutarate + NADH + 2 H(+)"
+        },
+        {
+          "predicate": "http://www.w3.org/2000/01/rdf-schema#seeAlso",
+          "subject": "RHEA:47152",
+          "value": "http://purl.obolibrary.org/obo/GO_0044104"
+        },
+        {
+          "predicate": "http://rdf.rhea-db.org/status",
+          "subject": "RHEA:16185",
+          "value": "http://rdf.rhea-db.org/Approved"
+        },
+        {
+          "predicate": "http://www.w3.org/2000/01/rdf-schema#label",
+          "subject": "RHEA:16185",
+          "value": "an aldehyde + NAD(+) + H2O = a carboxylate + NADH + 2 H(+)"
+        },
+        {
+          "predicate": "http://www.w3.org/2000/01/rdf-schema#seeAlso",
+          "subject": "RHEA:16185",
+          "value": "http://purl.obolibrary.org/obo/GO_0004029"
+        }
+      ],
+      "subject": "RHEA:47152"
+    },
+    {
+      "errors": [],
+      "normalized_object": "GO:0102177",
+      "original_object": "GO:0102177",
+      "passed": true,
+      "required_native_assertions": [
+        {
+          "predicate": "http://rdf.rhea-db.org/status",
+          "subject": "RHEA:58872",
+          "value": "http://rdf.rhea-db.org/Approved"
+        },
+        {
+          "predicate": "http://www.w3.org/2000/01/rdf-schema#label",
+          "subject": "RHEA:58872",
+          "value": "24-methylidenelophenol + 2 Fe(II)-[cytochrome b5] + O2 + 2 H(+) = 4alpha-hydroxymethyl-ergosta-7,24(24(1))-dien-3beta-ol + 2 Fe(III)-[cytochrome b5] + H2O"
+        },
+        {
+          "predicate": "http://rdf.rhea-db.org/status",
+          "subject": "RHEA:58868",
+          "value": "http://rdf.rhea-db.org/Approved"
+        },
+        {
+          "predicate": "http://www.w3.org/2000/01/rdf-schema#label",
+          "subject": "RHEA:58868",
+          "value": "24-methylidenelophenol + 6 Fe(II)-[cytochrome b5] + 3 O2 + 5 H(+) = 4alpha-carboxy-ergosta-7,24(24(1))-dien-3beta-ol + 6 Fe(III)-[cytochrome b5] + 4 H2O"
+        },
+        {
+          "predicate": "http://www.w3.org/2000/01/rdf-schema#seeAlso",
+          "subject": "RHEA:58868",
+          "value": "http://purl.obolibrary.org/obo/GO_0102177"
+        }
+      ],
+      "subject": "RHEA:58872"
+    }
+  ],
+  "passed": true
+}

@@ -1,0 +1,15 @@
+{
+  "pid": 98966,
+  "sample": {
+    "path": "data/rebuild-evidence/20261105/mediadive-resolution-1734/phase3-admission-stack-sample-r1.txt",
+    "sha256": "823848e626a95bd7c2fa7e27e9de24a57a4211d1db781c270e8988b760e74018",
+    "bytes": 414526,
+    "duration_seconds": 1
+  },
+  "observation": "Native stack sample includes active lstat/stat, JSON encoding and garbage collection on the main Python thread. Other OpenBLAS threads were waiting.",
+  "limits": [
+    "One-second sample only; no Python source-frame attribution, complete-run time breakdown, completion estimate or pass claim.",
+    "Consistent with the previously filed metadata/serialization cost in #1775; not proof that one specific source or function accounts for all elapsed time."
+  ],
+  "intervention": "Read-only OS sampling of owned PID; no process code injection, no input or guard changes; current admission remains running."
+}

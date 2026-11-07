@@ -1,0 +1,10 @@
+{
+  "change": "Replace io.TextIOWrapper with codecs.iterdecode for stream-mode tar member TSV lines.",
+  "failed_log_sha256": "95dab4657ef19189afda8b1117acacd0d942f6b137d247ee77aa5dde6c0a5ffb",
+  "helper_after_sha256": "48e7117bf6d8220aa570d50ba7ed824dbd4460d236073a55a4bd51d86590ddbe",
+  "helper_before_sha256": "8601f3186cdbdc541e136bd8ed9cce98f954d3de2cce71c2d52856466a3607bb",
+  "recorded_at": "2026-11-05T21:51:41.361656+00:00",
+  "test_sha256": "b339bb0b418b08b399c935346580b3f00d5a70be18defd5c4d756c27e9a38a1d",
+  "test_status": "Existing actual archive regressions retained; no tests run by this agent.",
+  "title": "Keep MediaDive archive qualification streaming compatible with Python 3.10"
+}

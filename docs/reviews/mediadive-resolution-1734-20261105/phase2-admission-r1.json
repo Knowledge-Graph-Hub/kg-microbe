@@ -1,0 +1,705 @@
+{
+  "checked_at": "2026-11-05T23:08:44.431784+00:00",
+  "command": "verify-sources",
+  "plan": {
+    "excluded": [
+      "bakta",
+      "cog",
+      "kegg"
+    ],
+    "merge_config": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/merge.yaml",
+    "merged_directory": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/merged",
+    "phases": [
+      [
+        "ontologies"
+      ],
+      [
+        "ontologies_stubs",
+        "bacdive",
+        "gtdb",
+        "madin_etal",
+        "metatraits",
+        "rhea_mappings",
+        "prego"
+      ],
+      [
+        "lpsn",
+        "mediadive",
+        "metatraits_gtdb",
+        "bactotraits",
+        "gold"
+      ],
+      [
+        "lpsn_api",
+        "microbedecoder"
+      ]
+    ],
+    "raw_directory": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw",
+    "sources": {
+      "bacdive": [
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/bacdive/nodes.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/bacdive/edges.tsv"
+      ],
+      "bactotraits": [
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/bactotraits/nodes.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/bactotraits/edges.tsv"
+      ],
+      "gold": [
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/gold/nodes.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/gold/edges.tsv"
+      ],
+      "gtdb": [
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/gtdb/nodes.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/gtdb/edges.tsv"
+      ],
+      "lpsn": [
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/lpsn/nodes.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/lpsn/edges.tsv"
+      ],
+      "lpsn_api": [
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/lpsn_api/nodes.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/lpsn_api/edges.tsv"
+      ],
+      "madin_etal": [
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/madin_etal/nodes.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/madin_etal/edges.tsv"
+      ],
+      "mediadive": [
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/mediadive/nodes.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/mediadive/edges.tsv"
+      ],
+      "metatraits": [
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/metatraits/nodes.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/metatraits/edges.tsv"
+      ],
+      "metatraits_gtdb": [
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/metatraits_gtdb/nodes.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/metatraits_gtdb/edges.tsv"
+      ],
+      "microbedecoder": [
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/microbedecoder/nodes.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/microbedecoder/edges.tsv"
+      ],
+      "ontologies": [
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies/chebi_nodes.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies/chebi_edges.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies/ec_nodes.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies/ec_edges.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies/envo_nodes.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies/envo_edges.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies/foodon_nodes.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies/foodon_edges.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies/go_nodes.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies/go_edges.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies/hp_nodes.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies/hp_edges.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies/metpo_nodes.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies/metpo_edges.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies/mondo_nodes.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies/mondo_edges.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies/ncbitaxon_nodes.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies/ncbitaxon_edges.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies/pato_nodes.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies/pato_edges.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies/ro_nodes.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies/ro_edges.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies/taxrank_nodes.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies/taxrank_edges.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies/uberon_nodes.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies/uberon_edges.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies/upa_nodes.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies/upa_edges.tsv"
+      ],
+      "ontologies_stubs": [
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies_stubs/ncit_nodes.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies_stubs/ncit_edges.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies_stubs/mesh_nodes.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies_stubs/mesh_edges.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies_stubs/bto_nodes.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies_stubs/po_nodes.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies_stubs/po_edges.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies_stubs/micro_nodes.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies_stubs/micro_edges.tsv"
+      ],
+      "prego": [
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/prego_habitat/nodes.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/prego_habitat/edges.tsv"
+      ],
+      "rhea_mappings": [
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/rhea_mappings/nodes.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/rhea_mappings/edges.tsv"
+      ]
+    },
+    "transformed_directory": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed"
+  },
+  "root": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105",
+  "status": "pass",
+  "verification": {
+    "admitted_file_count": 351,
+    "sources": {
+      "bacdive": {
+        "audits": {
+          "clinical_isolation_category_dispositions.tsv": {
+            "bytes": 8499165,
+            "sha256": "af51eec169b9c50ca63621a099b083c10da1eab05e3c4026951df931a854dca3"
+          },
+          "ec_substrate_corrections.tsv": {
+            "bytes": 5756,
+            "sha256": "0aad21d1ea7fc99a1bbbfddc4ceafa2a13f42c4a963a5ccf61e07229c4a624ce"
+          },
+          "go_reference_resolution.tsv": {
+            "bytes": 12481,
+            "sha256": "b3eaac1fdf6d220f3985a924c41715b0282118e3c1f4ff1b9e02555102894343"
+          },
+          "isolation_category_identity_dispositions.tsv": {
+            "bytes": 79083952,
+            "sha256": "e5d48afe26b38005ccc8df406e208f3efe671819a5f259afce033391275edb57"
+          },
+          "ncit_isolation_category_dispositions.tsv": {
+            "bytes": 30683,
+            "sha256": "1932d68b8a4b1bd7699bf9f925761cbddeeda65d0fc050e4513e6409f5365ae9"
+          },
+          "source_canonicalization.tsv": {
+            "bytes": 1149,
+            "sha256": "3d89d88a6f9ba4d528f031171ebf51f40db0c9b286255d281b8e33913b71abd0"
+          },
+          "source_metadata_exclusions.tsv": {
+            "bytes": 62,
+            "sha256": "f0bfb347a870f737dd13e48920e6eda693bc99db3f081a4326bc76efdd538564"
+          },
+          "source_reference_resolution.tsv": {
+            "bytes": 1281030,
+            "sha256": "32861964847e8a0b20c2d1ce375a460480ce51951828d88c0a2c6edd409b90a4"
+          },
+          "taxonomy_assertion_dispositions.tsv": {
+            "bytes": 27955217,
+            "sha256": "9fd33a5bb41a0aa1f2d5a2ce03f6bc7c13a60f95909d77161c34e6bfa0e2942c"
+          }
+        },
+        "finalization": {
+          "bytes": 84768577,
+          "sha256": "fa2202cffd6c29a179509483a2d627479682820be1ff855b545b183538b3cac7"
+        },
+        "graphs": {
+          "edges.tsv": {
+            "bytes": 730594382,
+            "rows": 4454892,
+            "sha256": "c5e772d4710586a89fb9365c0fe9bf79a2499992f9d17208546c678a3eaa0cc7"
+          },
+          "nodes.tsv": {
+            "bytes": 40013034,
+            "rows": 298474,
+            "sha256": "edeb4de9a7ccd4b759c7547bb64ddfb008425a8013d98ba1ccb4bff2d240cf62"
+          }
+        },
+        "ncbi_authority": {
+          "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw/taxdump.tar.gz",
+          "sha256": "8f784a79de31b8b134e5bd34b0432e33a3b776da88e7209dd5307cd1caf3a9d5"
+        },
+        "producer_marker": {
+          "bytes": 3461,
+          "sha256": "09c60f846cd16ba5872380a06ee4a36b2907d72ecc15064179657d61120c9e03"
+        }
+      },
+      "gtdb": {
+        "audits": {
+          "go_reference_resolution.tsv": {
+            "bytes": 204,
+            "sha256": "082792210b81208e4bfab7db9686e1d64a7bc98366f9bc0b7a4a302d1e8cfacc"
+          },
+          "source_canonicalization.tsv": {
+            "bytes": 48,
+            "sha256": "4e6a2e08ad0ec3ed46d69cf49c5790c4c0bc253c6cb18d9f1866363bedbd4870"
+          },
+          "source_metadata_exclusions.tsv": {
+            "bytes": 62,
+            "sha256": "f0bfb347a870f737dd13e48920e6eda693bc99db3f081a4326bc76efdd538564"
+          },
+          "source_reference_resolution.tsv": {
+            "bytes": 1047,
+            "sha256": "9344120033dc7c243e6c905bf160ab54fd0fd979d39800b8e455589d8d528175"
+          }
+        },
+        "finalization": {
+          "bytes": 12663,
+          "sha256": "c8547994aff76461f995e8d7e6747c594042b114a2116fb169662ea1ebf9e10a"
+        },
+        "graphs": {
+          "edges.tsv": {
+            "bytes": 198270277,
+            "rows": 1471034,
+            "sha256": "596aaefd015c1dcead233449d4c88caa8884035ba060b07b32b78a5f11bde53b"
+          },
+          "nodes.tsv": {
+            "bytes": 140085548,
+            "rows": 1148711,
+            "sha256": "c43852886b55bf396ff77d5db61de3054af9f69887b673fa4f08d4cafcb2c4a1"
+          }
+        },
+        "ncbi_authority": {
+          "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw/taxdump.tar.gz",
+          "sha256": "8f784a79de31b8b134e5bd34b0432e33a3b776da88e7209dd5307cd1caf3a9d5"
+        },
+        "producer_marker": {
+          "bytes": 2585,
+          "sha256": "8cfb388a1182d8ff79a31af2fbc206dd74f464144640455c570cb1899f9ac4df"
+        }
+      },
+      "madin_etal": {
+        "audits": {
+          "go_reference_resolution.tsv": {
+            "bytes": 11778,
+            "sha256": "973c882238b33ed8b5b736ee0415512a0dbd25ec666cb0abde031a0c12fa4138"
+          },
+          "source_canonicalization.tsv": {
+            "bytes": 48,
+            "sha256": "4e6a2e08ad0ec3ed46d69cf49c5790c4c0bc253c6cb18d9f1866363bedbd4870"
+          },
+          "source_metadata_exclusions.tsv": {
+            "bytes": 62,
+            "sha256": "f0bfb347a870f737dd13e48920e6eda693bc99db3f081a4326bc76efdd538564"
+          },
+          "source_reference_resolution.tsv": {
+            "bytes": 1936973,
+            "sha256": "991393246093d0dab9fa116e23a6d6821de6e7b0948ba85848ccda19aca1a181"
+          }
+        },
+        "finalization": {
+          "bytes": 14404,
+          "sha256": "d6eb380abdc2f82961d54e6d7f7487fe5f152898f2cd91f82d16d18d0417559c"
+        },
+        "graphs": {
+          "edges.tsv": {
+            "bytes": 21234468,
+            "rows": 192394,
+            "sha256": "987f22ce991d1baf73ce6f5f1539ed5d94ea5caad0247ca43a346172478e02e1"
+          },
+          "nodes.tsv": {
+            "bytes": 4586064,
+            "rows": 49036,
+            "sha256": "658d35f2566e9503cb11c1d1383698cc572f1193e68815d5e5b49bc5e904d02d"
+          }
+        },
+        "ncbi_authority": {
+          "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw/taxdump.tar.gz",
+          "sha256": "8f784a79de31b8b134e5bd34b0432e33a3b776da88e7209dd5307cd1caf3a9d5"
+        },
+        "producer_marker": {
+          "bytes": 2746,
+          "sha256": "7619f4f3e44dc86763aa4924e24c1e000bbcd3b05d810249785a3e94e9b12649"
+        }
+      },
+      "metatraits": {
+        "audits": {
+          "go_reference_resolution.tsv": {
+            "bytes": 47843,
+            "sha256": "1206231ea625470a4c67d500f24edad579655eb127bc3c51cbb8b25246bfb9b1"
+          },
+          "source_canonicalization.tsv": {
+            "bytes": 1110,
+            "sha256": "56a94301682ed26879c3d47963460bb0ff80c5af6ea751b0c98e709e2329248b"
+          },
+          "source_metadata_exclusions.tsv": {
+            "bytes": 62,
+            "sha256": "f0bfb347a870f737dd13e48920e6eda693bc99db3f081a4326bc76efdd538564"
+          },
+          "source_reference_resolution.tsv": {
+            "bytes": 4456670,
+            "sha256": "18e596feaf36978bc84be05838f30e7edde73b0329d7828883ba338bf264cebd"
+          }
+        },
+        "finalization": {
+          "bytes": 21727,
+          "sha256": "ab284b0da84ad2ef9b71f1028cd3e34e6c3ddc04cd30740a425b280f6c038abb"
+        },
+        "graphs": {
+          "edges.tsv": {
+            "bytes": 501963299,
+            "rows": 4365900,
+            "sha256": "cb29813875201bbd742c9254d74b1840a5acba5830b920ed9471b09f4b826c72"
+          },
+          "nodes.tsv": {
+            "bytes": 5166195,
+            "rows": 55395,
+            "sha256": "afb24bec2dc0975ec85fe05b7161eeeca2b55fe7c6c1f8565c6ffdd33716b285"
+          }
+        },
+        "ncbi_authority": {
+          "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw/taxdump.tar.gz",
+          "sha256": "8f784a79de31b8b134e5bd34b0432e33a3b776da88e7209dd5307cd1caf3a9d5"
+        },
+        "producer_marker": {
+          "bytes": 3687,
+          "sha256": "f0a4ab8c8eda136d5ffc03c154cf89016b150834c2650197ee0f2df7ae5dbc3b"
+        }
+      },
+      "ontologies": {
+        "audits": {
+          "foodon_kernel_quarantine.tsv": {
+            "bytes": 94987,
+            "sha256": "c8dcd4fdec884a4f8f43c25efa71e8d21d6c98d19196731df18439d181019b15"
+          },
+          "go_reference_resolution.tsv": {
+            "bytes": 51121937,
+            "sha256": "f42ed541dd1467a683bbbb3743d14eaa75cc702d13f16142ef6b2d1acb8e24f8"
+          },
+          "native_relation_dispositions.tsv": {
+            "bytes": 1198494,
+            "sha256": "8f5d8ff5ab56f217a88a0d4d2d5f0c4b2b38e56096390a1263ec8499f2940b05"
+          },
+          "ontology_metadata_exclusions.tsv": {
+            "bytes": 847486,
+            "sha256": "5f87736bdaed9ed4b234a306b03fe1882a31ab8bee794011051e60d1806021f5"
+          },
+          "ontology_parent_dispositions.tsv": {
+            "bytes": 15480625,
+            "sha256": "3d6dc70d95cdcb162247c50c4805db3dd2996d5f4880a60a9704bf81316e78bb"
+          },
+          "source_canonicalization.tsv": {
+            "bytes": 25524472,
+            "sha256": "c3e9b35325164fd3d015c59e3536f67fc98454bed2a071ab8220a99c6214ce29"
+          },
+          "source_metadata_exclusions.tsv": {
+            "bytes": 62,
+            "sha256": "f0bfb347a870f737dd13e48920e6eda693bc99db3f081a4326bc76efdd538564"
+          },
+          "source_reference_resolution.tsv": {
+            "bytes": 579409,
+            "sha256": "d4eae582a3a5a5e88fa58984610c4ffaf35ccce0297bab3530b7fb61ef0c8d4d"
+          },
+          "upa_route_review.tsv": {
+            "bytes": 23692164,
+            "sha256": "347f30dec4ce3cfff617f6080095ef2a612e2f4b51f07156fbcd38b3c58107ed"
+          }
+        },
+        "finalization": {
+          "bytes": 48779,
+          "sha256": "99f0aa27a0b7653c479f1bd96af3dd248d72ac3e57cb671828ad30e3c73a34f9"
+        },
+        "graphs": {
+          "chebi_edges.tsv": {
+            "bytes": 46268462,
+            "rows": 417073,
+            "sha256": "9a74dd1a3d92a5f82fd7361c58d1ba971abde1f8ebb5c8f2ed0c77990544e1e1"
+          },
+          "chebi_nodes.tsv": {
+            "bytes": 66294335,
+            "rows": 218284,
+            "sha256": "02024ca0a29cafaac16b43a06a786edd0368a8a646b75ab1002b6239c1219f60"
+          },
+          "ec_edges.tsv": {
+            "bytes": 1260656,
+            "rows": 12021,
+            "sha256": "e82f101c54b8864e5d22cba492ef770867b5751907d533f4870b628b737c1dbe"
+          },
+          "ec_nodes.tsv": {
+            "bytes": 2065473,
+            "rows": 11835,
+            "sha256": "84418ecbd7f46a4d08e63c90d4c5f2a6bb1f3ba88b0b564d8e02053c7a1a0ca1"
+          },
+          "envo_edges.tsv": {
+            "bytes": 1215225,
+            "rows": 10824,
+            "sha256": "e7b0528ef3eafa7ec252ba04a7934c4ffb6c6b84cf9a81105b8019c8ef923d41"
+          },
+          "envo_nodes.tsv": {
+            "bytes": 1292759,
+            "rows": 6696,
+            "sha256": "ff195ed17339df155c90e3af7677f6f6c6a02a0a4b8222f86d7665c68641db0a"
+          },
+          "foodon_edges.tsv": {
+            "bytes": 6566906,
+            "rows": 55358,
+            "sha256": "6a3aaaea4bbcca4ced871f6f09b81719ceda73ffb1ba23948552df050770c035"
+          },
+          "foodon_nodes.tsv": {
+            "bytes": 7066415,
+            "rows": 39215,
+            "sha256": "9c3d62584031d908a58fb1916759588b9cdab1ac4d6135ce38d261fbf21630b5"
+          },
+          "go_edges.tsv": {
+            "bytes": 7735534,
+            "rows": 74033,
+            "sha256": "dfa175a58b2317e112b3d920aee93eab4046bb76af2a3b03b3e4f28b3a180125"
+          },
+          "go_nodes.tsv": {
+            "bytes": 15147094,
+            "rows": 38254,
+            "sha256": "23df80dbbbc80cf7a6ac411eff2265b9c0b1cc5c15793ec8495ca74fb59d6ac3"
+          },
+          "hp_edges.tsv": {
+            "bytes": 2584221,
+            "rows": 24378,
+            "sha256": "0adb692f275158d3d1d35eff6b0239315dfb7f52d320ecc7fbf7a1eb8b4a4c88"
+          },
+          "hp_nodes.tsv": {
+            "bytes": 5094035,
+            "rows": 19843,
+            "sha256": "2eedfe6bb7c1bed2a5d96a7af9837e10c155cf608ff9002d2321ce0d20e9768c"
+          },
+          "metpo_edges.tsv": {
+            "bytes": 34308,
+            "rows": 297,
+            "sha256": "57dfb68fa09db5e7b9284470df4c717b9b3f9830e151a731cbed5a1c91abf8cb"
+          },
+          "metpo_nodes.tsv": {
+            "bytes": 65883,
+            "rows": 405,
+            "sha256": "6483bee2d730fb55ab58830aa1a87106fbf2531192a4018324a8579169f48266"
+          },
+          "mondo_edges.tsv": {
+            "bytes": 12725676,
+            "rows": 113325,
+            "sha256": "49ded69d2f533c4ec8dddfa448c4f8171f2207f5fa212b1f6197b83f7b33ed84"
+          },
+          "mondo_nodes.tsv": {
+            "bytes": 17218340,
+            "rows": 59002,
+            "sha256": "137e016f3a80718ffafda5c4bcaeabbc26ea675f046c45d22f93edc1616a1777"
+          },
+          "ncbitaxon_edges.tsv": {
+            "bytes": 116396910,
+            "rows": 925267,
+            "sha256": "43ce719b5ef439cdb3b4e7c3f86033845383a3024db1ec9aa7b9aeba7f6bd178"
+          },
+          "ncbitaxon_nodes.tsv": {
+            "bytes": 104641219,
+            "rows": 924872,
+            "sha256": "f76fdbed252beeba9f48fe9780efa39afb40df3e19b036317a73fe94e6d5da56"
+          },
+          "pato_edges.tsv": {
+            "bytes": 2065504,
+            "rows": 18895,
+            "sha256": "ddd87acf3c8d9163c2b3dfa7c62f56d6dbe61f50883d3561e233214e38671743"
+          },
+          "pato_nodes.tsv": {
+            "bytes": 2341468,
+            "rows": 7870,
+            "sha256": "45734a73037daa50601d4262c704129b7488f88ed93d7d56bbc54037573747c8"
+          },
+          "ro_edges.tsv": {
+            "bytes": 9271,
+            "rows": 85,
+            "sha256": "015699c43eede656b82759b30ae68ee873b59dd910cf62306fe54bc78772b9ca"
+          },
+          "ro_nodes.tsv": {
+            "bytes": 177483,
+            "rows": 880,
+            "sha256": "94a72f26e170a9fb28e00712ecc1f09551273f18dcbb0ff749dcc5bbc365efe9"
+          },
+          "taxrank_edges.tsv": {
+            "bytes": 9228,
+            "rows": 75,
+            "sha256": "0a6d62353510003c438a82d66eb4fafd5c0be9e034ae771686512334fa81ff11"
+          },
+          "taxrank_nodes.tsv": {
+            "bytes": 9046,
+            "rows": 77,
+            "sha256": "b4ded9e2479674558e8c3100fbd07fcc27b6690ea46feb79fb159640c873973e"
+          },
+          "uberon_edges.tsv": {
+            "bytes": 8351905,
+            "rows": 74852,
+            "sha256": "1eec392d80d6da6a05988b06f2a5f406f5053b58bb70136d1e3a216da36cf416"
+          },
+          "uberon_nodes.tsv": {
+            "bytes": 8122603,
+            "rows": 25541,
+            "sha256": "23f96f9a513b081b0ef24a22d9f4c7d662489bfbac014679fe4492196f04586a"
+          },
+          "upa_edges.tsv": {
+            "bytes": 308154,
+            "rows": 2770,
+            "sha256": "b1462bdf16f434494ba84b2201f9eb7db546a355f56cad6a31816dda0ae90d7f"
+          },
+          "upa_nodes.tsv": {
+            "bytes": 398234,
+            "rows": 2049,
+            "sha256": "4cb2b06ffe73eed9a66e6c1f29e4afd3010eb9a667cbdef412e488d3e30c9fd2"
+          }
+        },
+        "ncbi_authority": {
+          "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw/taxdump.tar.gz",
+          "sha256": "8f784a79de31b8b134e5bd34b0432e33a3b776da88e7209dd5307cd1caf3a9d5"
+        },
+        "producer_marker": {
+          "bytes": 4385,
+          "sha256": "3c73c1f6450ceeb61f5772b9d92a99b0fcf34638a1aae04e4431da57cae17d60"
+        }
+      },
+      "ontologies_stubs": {
+        "audits": {
+          "go_reference_resolution.tsv": {
+            "bytes": 204,
+            "sha256": "082792210b81208e4bfab7db9686e1d64a7bc98366f9bc0b7a4a302d1e8cfacc"
+          },
+          "source_canonicalization.tsv": {
+            "bytes": 81113,
+            "sha256": "a24081fc8a280a81506b43a0eeb985a97a4fe086fcd17cf389e5cccfa4fb95e3"
+          },
+          "source_metadata_exclusions.tsv": {
+            "bytes": 62,
+            "sha256": "f0bfb347a870f737dd13e48920e6eda693bc99db3f081a4326bc76efdd538564"
+          },
+          "source_reference_resolution.tsv": {
+            "bytes": 519,
+            "sha256": "2a7ed275e8344fc71ebafc809155b815f9d479cf2b00d19fd0eaa5610ffb4c5f"
+          }
+        },
+        "finalization": {
+          "bytes": 26077,
+          "sha256": "56f3a21824b89e14029cb295ae7ab3ac2e476d009b8c9fb424fc40285f72c7e9"
+        },
+        "graphs": {
+          "bto_nodes.tsv": {
+            "bytes": 420,
+            "rows": 4,
+            "sha256": "3fd4a0311b1fa62810afa9645d2a34e6135e929ea1f5854301f77b6add345d23"
+          },
+          "mesh_edges.tsv": {
+            "bytes": 58194,
+            "rows": 477,
+            "sha256": "e476288075a19659868a83ec359e88720a32c77ec8d253962cb022b2d8da75a0"
+          },
+          "mesh_nodes.tsv": {
+            "bytes": 29017,
+            "rows": 396,
+            "sha256": "1117ef3188f8207b17726af0c3252caf4e0092ed6872506a4fa1ff62e5d78307"
+          },
+          "micro_edges.tsv": {
+            "bytes": 10419,
+            "rows": 88,
+            "sha256": "4dadd00531c1b65860ba4bbd377abba28f526aa48c3c2dc9a7d76ac1f0999b2b"
+          },
+          "micro_nodes.tsv": {
+            "bytes": 8475,
+            "rows": 89,
+            "sha256": "df68f3df8a7eb83f97c74c4ca35fd94d730d405a688fc3a1f67938b985262a44"
+          },
+          "ncit_edges.tsv": {
+            "bytes": 27604,
+            "rows": 247,
+            "sha256": "684dae5e76c9aa4815f2f156348ca4aa450dd812772351b4b40e8a7ef350bb81"
+          },
+          "ncit_nodes.tsv": {
+            "bytes": 27529,
+            "rows": 239,
+            "sha256": "5a8bcb7498456cd9624a57f17ec80c1e9125b3dedd03fccca9929310d3b15450"
+          },
+          "po_edges.tsv": {
+            "bytes": 2848,
+            "rows": 25,
+            "sha256": "6ea816502d2687a0f2e64cfb41329eb5047bae22e8640bfe0f106baf17eb8569"
+          },
+          "po_nodes.tsv": {
+            "bytes": 5081,
+            "rows": 22,
+            "sha256": "b43d1c5fc604cac0a0651528aaba741184293047df89bf3dfb74949ebeb8dac3"
+          }
+        },
+        "ncbi_authority": null,
+        "producer_marker": {
+          "bytes": 3406,
+          "sha256": "4405d20ac2a12a5188ce7ba5f3cdaff13e197c41f71a48c06f7b35cbe541b08c"
+        }
+      },
+      "prego": {
+        "audits": {
+          "go_reference_resolution.tsv": {
+            "bytes": 204,
+            "sha256": "082792210b81208e4bfab7db9686e1d64a7bc98366f9bc0b7a4a302d1e8cfacc"
+          },
+          "prego_envo_identity.tsv": {
+            "bytes": 54390227,
+            "sha256": "0f1bb7fd8b86c3e4d4b7ffc4f6d193c536494fc111100ef3ae04c056be8a57c5"
+          },
+          "source_canonicalization.tsv": {
+            "bytes": 212976,
+            "sha256": "dffcf1eafe91997cb31a3de9deec462ea8150853c018cf34f8bc64f75d2c05c7"
+          },
+          "source_metadata_exclusions.tsv": {
+            "bytes": 62,
+            "sha256": "f0bfb347a870f737dd13e48920e6eda693bc99db3f081a4326bc76efdd538564"
+          },
+          "source_reference_resolution.tsv": {
+            "bytes": 2586780,
+            "sha256": "12b5d2c70b1281b5a339a9068ced89344ea5d6c32a0d2c4a60b1b01caa63e4d4"
+          }
+        },
+        "finalization": {
+          "bytes": 21235,
+          "sha256": "1b63da25aa8d91f548725d7bc52decb65fc989dc019f61931a3037c3fe97eb3d"
+        },
+        "graphs": {
+          "edges.tsv": {
+            "bytes": 60656909,
+            "rows": 237745,
+            "sha256": "a9dd662e582afcf95ed789583a65a0f4d48e52ac2d69332eca62c132ba0b8ccb"
+          },
+          "nodes.tsv": {
+            "bytes": 9286830,
+            "rows": 22033,
+            "sha256": "e742cdfb6d20bd31c5cf40e48573a1dc2b98939cdd1457a80dde5897b3121c1a"
+          }
+        },
+        "ncbi_authority": {
+          "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw/taxdump.tar.gz",
+          "sha256": "8f784a79de31b8b134e5bd34b0432e33a3b776da88e7209dd5307cd1caf3a9d5"
+        },
+        "producer_marker": {
+          "bytes": 3108,
+          "sha256": "3f824dc263e0aae94d580e634cd10a0b775e2e9ec199e8b4286be35a45203a05"
+        }
+      },
+      "rhea_mappings": {
+        "audits": {
+          "go_reference_resolution.tsv": {
+            "bytes": 4004950,
+            "sha256": "338a260b3937959dfec44ab2bd44589f9154e3e3de07b360c266fe947d9cf321"
+          },
+          "rhea_legacy_xref_dispositions.tsv": {
+            "bytes": 11314,
+            "sha256": "cecce55e99135af33567f306356c7aa3f85326d8e347791bdd0490d588c01704"
+          },
+          "rhea_reaction_dispositions.tsv": {
+            "bytes": 5860714,
+            "sha256": "8954445c96a9f9a639bb3058dcd2a2688ee6147bfec38efd27c19aa18f1ae5f7"
+          },
+          "source_canonicalization.tsv": {
+            "bytes": 48,
+            "sha256": "4e6a2e08ad0ec3ed46d69cf49c5790c4c0bc253c6cb18d9f1866363bedbd4870"
+          },
+          "source_metadata_exclusions.tsv": {
+            "bytes": 62,
+            "sha256": "f0bfb347a870f737dd13e48920e6eda693bc99db3f081a4326bc76efdd538564"
+          },
+          "source_reference_resolution.tsv": {
+            "bytes": 102,
+            "sha256": "727041d59de466a4823b0c919310b7efcea1d8695f53b0b09e2e5192656798c8"
+          }
+        },
+        "finalization": {
+          "bytes": 16150,
+          "sha256": "0566c9e33f91a4b557bcd703dbc85551067fa1f829c6bb23fa88ef4d8298006d"
+        },
+        "graphs": {
+          "edges.tsv": {
+            "bytes": 80138698,
+            "rows": 446309,
+            "sha256": "3ff2390bccb01bef6dec08be209dfd869a168f731971d5b40418b5b44a399490"
+          },
+          "nodes.tsv": {
+            "bytes": 17280376,
+            "rows": 105942,
+            "sha256": "379b7f3da74a3f060d669d02f42ce5a7559d2c18c6a06447b10779dbbd415007"
+          }
+        },
+        "ncbi_authority": null,
+        "producer_marker": {
+          "bytes": 2774,
+          "sha256": "aca5c5dfa7e8e00ee35b1f62ddfcdb05f65b7aa88f243f70b00c449d2a3f6321"
+        }
+      }
+    }
+  }
+}

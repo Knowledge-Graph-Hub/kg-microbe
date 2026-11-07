@@ -1,0 +1,115 @@
+{
+  "additional_assessments": [
+    "The native source and its tests are byte-identical to the positively reviewed fail-closed factory/count-error patch. No scientific decisions or fallback meanings changed in this correction.",
+    "The HTTP ledger persists only fixed method/route/outcome categories, numeric record IDs, bounded HTTP status, elapsed seconds and fixed exception categories; no request headers, bodies, query strings, complete URLs or arbitrary error text are serialized.",
+    "The ledger observes logical Session.request calls. It does not enumerate every low-level adapter retry or internally followed redirect; publication language must retain this limitation.",
+    "Native phase still selects lpsn_api alone through the dispatcher and marks full_source_admission_pending on producer success. No complete phase-four, graph or release admission is inferred."
+  ],
+  "constraints": {
+    "credential_files_or_values_read": false,
+    "network_requests": false,
+    "prior_evidence_modified": false,
+    "tests_or_producers_run": false,
+    "tracked_files_modified": false
+  },
+  "coordinator_disposition": "Root accepted both residual cases under existing issues 1785 and 1786, held all real credential loading, and requested this immutable checkpoint before patching. Reviewed files released for those fixes; a further exact-byte review and focused result are required.",
+  "created_utc": "2026-11-07T03:14:37.837887+00:00",
+  "focused_tests": {
+    "every_source_and_test_hash_matches": true,
+    "log": {
+      "bytes": 2801,
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/mediadive-resolution-1734/lpsn-continuation-20261106/focused-combined-r2.log",
+      "sha256": "e279be275160e51826e87d57c3f62daf64a90292f92d31c243c3c49923053bf6"
+    },
+    "receipt": {
+      "bytes": 1215,
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/mediadive-resolution-1734/lpsn-continuation-20261106/focused-combined-result-r2.json",
+      "sha256": "96721a65a2cbd12fe971504b16c531a7611a5788ccb71e5022548915914ce3cd"
+    },
+    "summary": {
+      "exit_code": 0,
+      "passed": 157,
+      "seconds": 2.45,
+      "warnings": 4
+    },
+    "tests_run_by_reviewer": false
+  },
+  "head": "325ead9101d4e6561c8e3827bec2c665ec330645",
+  "method": "Read-only static composition review of the actual frozen six files and inspection of retained offline tests/results. No new executable probes.",
+  "previous_review": {
+    "bytes": 10162,
+    "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/mediadive-resolution-1734/lpsn-continuation-20261106/authenticated-boundary-independent-review-r2.json",
+    "sha256": "44c79958cbf1fd8bfe16f4769ed1b0ec543bee17ecff11d3be14ff983c6097e5"
+  },
+  "remaining_findings": [
+    {
+      "acceptance": "Read one captured byte string, hash and parse those same bytes, validate all members, and require the manifest still has the exact captured/expected identity at the end. Add an offline mutation-during-verification control. Do not weaken member-byte checks.",
+      "classification": "Residual of accepted manifest-invariance finding",
+      "issue": 1786,
+      "locations": [
+        "scripts/adhoc/kgm_lpsn_authenticated_20261106.py:422",
+        "scripts/adhoc/kgm_lpsn_authenticated_20261106.py:425",
+        "scripts/adhoc/kgm_lpsn_authenticated_20261106.py:440"
+      ],
+      "trace": "verify_preserved_cache hashes the manifest, checks that first digest, then reads a separate mutable file for parsing, and returns a fresh digest after member verification without comparing it to the first or expected digest. A concurrent replacement after the initial digest can remove an altered original member from the parsed cohort; the new final hash is returned but not rejected by phase. The already fixed before-call mutation control does not cover this window."
+    },
+    {
+      "acceptance": "Before any actual authenticated phase, enforce the same in-memory credential/token nonpersistence boundary on newly acquired native cache records, preserving legitimate original fields and native scientific semantics. Capture refreshed tokens too where relevant; reject before a cache file is created or overwritten. Keep auth bodies and sensitive-value hashes out of evidence. Add offline harmless-record and credential/token-echo controls.",
+      "classification": "Unfinished production-artifact portion of accepted credential-persistence boundary",
+      "issue": 1785,
+      "locations": [
+        "kg_microbe/transform_utils/lpsn_api/lpsn_api.py:424",
+        "kg_microbe/transform_utils/lpsn_api/lpsn_api.py:442",
+        "scripts/adhoc/kgm_lpsn_authenticated_20261106.py:515"
+      ],
+      "trace": "The corrected scanner is invoked only for the bounded canary response. During actual native phase, _fetch serializes newly returned native records directly into api_cache before any credential/token-content guard. The new request ledger suppresses diagnostic details but intentionally returns the original response unchanged; it cannot prevent an echoed current token under an ordinary response key from entering a native cache artifact. No such upstream response is claimed to have occurred."
+    }
+  ],
+  "resolved_findings": [
+    {
+      "assessment": "The launcher validates command arguments before hashing canonical UTF-8 JSON with ensure_ascii=false and compact separators. Plan, started and completed result carry the same digest while plaintext is withheld. The runner independently computes the exact expected canary command digest and requires both actual plan and completed result identities. Wrong/missing digest, failed stage and wrong public taxon controls are present.",
+      "issue": 1784
+    },
+    {
+      "assessment": "The bounded canary now refuses duplicate JSON keys, scans raw bytes and decoded keys/values against in-memory authorized values plus both client tokens before writing/hashing the public body, and uses fixed exception categories. Shadowed/encoded values and token/key controls are present. Native production-cache coverage remains unresolved below.",
+      "issue": 1785
+    },
+    {
+      "assessment": "Preservation now uses the existing traversal-error-propagating inventory, before/after membership and metadata checks, independent copied bytes and inodes, and an expected manifest digest on final validation. Ordinary manifest cohort shrink plus changed cache bytes is rejected. Mutation within the validator itself remains unresolved below.",
+      "issue": 1786
+    },
+    {
+      "assessment": "The first credential-bearing subprocess now receives stdout=DEVNULL and stderr=DEVNULL before Python startup. The synthetic pre-main output control verifies silence; inner worker FD/Python/logging/atexit suppression remains intact.",
+      "issue": 1787
+    }
+  ],
+  "reviewed_files": {
+    "kg_microbe/transform_utils/lpsn_api/lpsn_api.py": {
+      "bytes": 34234,
+      "sha256": "94c7045915ed383b8c544ffc1cb62bc0a0c31e2f32d0e024902fa08feb37ef41"
+    },
+    "scripts/adhoc/kgm_lpsn_authenticated_20261106.py": {
+      "bytes": 26516,
+      "sha256": "f4401bcda18b6dc10b73b6f315704d2938a61e86c1c22e2f8c333f1e938b757e"
+    },
+    "scripts/adhoc/kgm_rebuild_20261105.py": {
+      "bytes": 23264,
+      "sha256": "af834e3ddca4fa085af433a75257c563c8c31d7b6261b7f4080375f15e75d1d1"
+    },
+    "tests/test_lpsn_api_transform.py": {
+      "bytes": 30571,
+      "sha256": "493ac911ae3b6635428510dec0425704e580048db41479717103c1aaebef6664"
+    },
+    "tests/test_lpsn_authenticated_20261106.py": {
+      "bytes": 19112,
+      "sha256": "1b33bf08f914efc39f22c673f9cf2b02713c07fb623e28ae201d941080ae1b13"
+    },
+    "tests/test_rebuild_launcher_20261105.py": {
+      "bytes": 32187,
+      "sha256": "4a7ddb47bad42c5b9037f89cd56aea92078e4196166e3e1ec6bfc7ccb43fa4c2"
+    }
+  },
+  "root": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105",
+  "schema": "lpsn-authenticated-boundary-independent-review/v1",
+  "status": "changes_required_before_live_execution"
+}

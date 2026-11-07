@@ -272,8 +272,14 @@
     }
   },
   "model_file": "biolink-model.yaml",
-  "model_sha256": "b6a1320772a92d69e84b8c700cd6386dffe45ed635c8197d61e22b6a6fa3b35e",
-  "model_version": "4.4.2",
+  "model_review": {
+    "file": "mappings/biolink_4_4_6_category_review.json",
+    "issue": 1724,
+    "native_decisions": "unchanged finite cohort; no incident-edge acceptance",
+    "sha256": "331f4ad46b9f25d627089c511d2b2694d5a8d8d94e6037303592af63e68a3708"
+  },
+  "model_sha256": "5837907e1eb579812856579feea5a099665252f2454bd6f950d63fbb00f4c9f0",
+  "model_version": "4.4.6",
   "native_file": "mesh2026.nt.gz",
   "native_namespace": "http://id.nlm.nih.gov/mesh/2026/",
   "native_reviewed_export": {

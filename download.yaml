@@ -66,11 +66,11 @@
 # **** ROBOT ****
 #
 -
-  url: https://github.com/ontodev/robot/releases/download/v1.9.8/robot.jar
+  url: https://github.com/ontodev/robot/releases/download/v1.9.11/robot.jar
   local_name: robot.jar
   tag: tools
 -
-  url: https://raw.githubusercontent.com/ontodev/robot/v1.9.8/bin/robot
+  url: https://raw.githubusercontent.com/ontodev/robot/v1.9.11/bin/robot
   local_name: robot
   tag: tools
 
@@ -252,18 +252,18 @@
   local_name: upa.owl
   tag: ontologies
 
-# Native Rhea acquisition quarantine. The archived release 142 tarball is an
+# Native Rhea acquisition quarantine. The archived release 143 tarball is an
 # immutable location: its two reviewed members are byte-identical to the pins in
-# mappings/rhea_release.json (#1420), unlike the rolling tsv/ and rdf/ paths,
+# mappings/rhea_release.json (reviewed 2026-11-05), unlike rolling tsv/ and rdf/ paths,
 # which move with every Rhea release. Nothing here writes the admitted raw/rhea
 # inputs. After download, explicitly extract and promote the pair:
 # poetry run python -m kg_microbe.transform_utils.rhea_mappings.stage_snapshot \
-#   --source-archive data/raw/rhea_download/142.tar.bz2 --input-dir data/raw
+#   --source-archive data/raw/rhea_download/143.tar.bz2 --input-dir data/raw
 # A member that differs from its pin fails closed; review a new snapshot before
 # changing pins.
 - 
-  url: https://ftp.expasy.org/databases/rhea/old_releases/142.tar.bz2
-  local_name: rhea_download/142.tar.bz2
+  url: https://ftp.expasy.org/databases/rhea/old_releases/143.tar.bz2
+  local_name: rhea_download/143.tar.bz2
   tag: rhea
 
 #
@@ -735,15 +735,15 @@
 #
 # Biolink Model
 # The standard schema for biological knowledge graphs
-# Version 4.4.2, aligned with the locked biolink-model package
+# Version 4.4.6, aligned with the locked biolink-model package
 # NOTE: is_assessed_by predicate was removed after v3.6.0
 #
 -
-  url: https://raw.githubusercontent.com/biolink/biolink-model/v4.4.2/biolink-model.yaml
+  url: https://raw.githubusercontent.com/biolink/biolink-model/v4.4.6/biolink-model.yaml
   local_name: biolink-model.yaml
   tag: schema
 -
-  url: https://raw.githubusercontent.com/biolink/biolink-model/v4.4.2/predicate_mapping.yaml
+  url: https://raw.githubusercontent.com/biolink/biolink-model/v4.4.6/predicate_mapping.yaml
   local_name: predicate_mapping.yaml
   tag: schema
 # biolink-model.yaml declares `imports: [linkml:types, attributes]`, and linkml
@@ -752,7 +752,7 @@
 # extra (#939). It must move with biolink-model.yaml: pairing the two halves at
 # different versions is worse than either version alone.
 -
-  url: https://raw.githubusercontent.com/biolink/biolink-model/v4.4.2/attributes.yaml
+  url: https://raw.githubusercontent.com/biolink/biolink-model/v4.4.6/attributes.yaml
   local_name: attributes.yaml
   tag: schema
 

@@ -1,0 +1,894 @@
+<rdf:RDF xmlns="http://purl.obolibrary.org/obo/upa.owl#"
+     xml:base="http://purl.obolibrary.org/obo/upa.owl"
+     xmlns:dc="http://purl.org/dc/elements/1.1/"
+     xmlns:obo="http://purl.obolibrary.org/obo/"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:upa="http://purl.obolibrary.org/obo/upa#"
+     xmlns:xml="http://www.w3.org/XML/1998/namespace"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:foaf="http://xmlns.com/foaf/0.1/"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:swrl="http://www.w3.org/2003/11/swrl#"
+     xmlns:swrla="http://swrl.stanford.edu/ontologies/3.3/swrla.owl#"
+     xmlns:swrlb="http://www.w3.org/2003/11/swrlb#"
+     xmlns:oboInOwl="http://www.geneontology.org/formats/oboInOwl#">
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/UPa_UER00134">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000015"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000050"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/UPa_ULS00055"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0002233"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/UPa_UPC00002"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0002233"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/UPa_UPC00058"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0002233"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/UPa_UPC04677"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0002234"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/UPa_UPC00008"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0002234"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/UPa_UPC00009"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0002234"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/UPa_UPC04734"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf rdf:nodeID="genid16732"/>
+        <rdfs:subClassOf rdf:nodeID="genid16734"/>
+        <rdfs:subClassOf rdf:nodeID="genid16736"/>
+        <rdfs:subClassOf rdf:nodeID="genid16738"/>
+        <rdfs:subClassOf rdf:nodeID="genid16740"/>
+        <rdfs:subClassOf rdf:nodeID="genid16742"/>
+        <rdfs:subClassOf rdf:nodeID="genid16744"/>
+        <obo:IAO_0000115>1 5-amino-1-(5-phospho-D-ribosyl)imidazole-4-carboxamide + 1 ATP + 1 formate =&amp;gt; 1 5-formamido-1-(5-phospho-D-ribosyl)imidazole-4-carboxamide + 1 ADP + 1 phosphate.</obo:IAO_0000115>
+        <oboInOwl:hasDbXref>EC:6.3.4</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>GO:0016979</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>GO:0018271</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>GO:0032267</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>GO:0071734</oboInOwl:hasDbXref>
+        <oboInOwl:hasOBONamespace>enzymatic_reaction</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>UPa:UER00134</oboInOwl:id>
+        <rdfs:label>5-formamido-1-(5-phospho-D-ribosyl)imidazole-4-carboxamide from 5-amino-1-(5-phospho-D-ribosyl)imidazole-4-carboxamide (formate route): step 1/1</rdfs:label>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/UPa_UER00367">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000015"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000050"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/UPa_ULS00165"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0002233"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/UPa_UPC00003"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0002233"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/UPa_UPC00010"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0002233"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/UPa_UPC00418"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0002234"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/UPa_UPC00004"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0002234"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/UPa_UPC00080"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0002234"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/UPa_UPC00356"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf rdf:nodeID="genid20936"/>
+        <rdfs:subClassOf rdf:nodeID="genid20938"/>
+        <rdfs:subClassOf rdf:nodeID="genid20940"/>
+        <rdfs:subClassOf rdf:nodeID="genid20942"/>
+        <rdfs:subClassOf rdf:nodeID="genid20944"/>
+        <rdfs:subClassOf rdf:nodeID="genid20946"/>
+        <rdfs:subClassOf rdf:nodeID="genid20948"/>
+        <obo:IAO_0000115>1 (R)-mevalonate + 1 CoA + 2 NAD(+) =&amp;gt; 1 (S)-3-hydroxy-3-methylglutaryl-CoA + 2 H(+) + 2 NADH.</obo:IAO_0000115>
+        <oboInOwl:hasDbXref>EC:1.1.1.88</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>GO:0042282</oboInOwl:hasDbXref>
+        <oboInOwl:hasOBONamespace>enzymatic_reaction</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>UPa:UER00367</oboInOwl:id>
+        <rdfs:label>(S)-3-hydroxy-3-methylglutaryl-CoA from (R)-mevalonate: step 1/1</rdfs:label>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/UPa_UER00448">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000015"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000050"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/UPa_ULS00213"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0002233"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/UPa_UPC00097"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0002233"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/UPa_UPC01077"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0002234"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/UPa_UPC00033"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0002234"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/UPa_UPC02291"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf rdf:nodeID="genid22350"/>
+        <rdfs:subClassOf rdf:nodeID="genid22352"/>
+        <rdfs:subClassOf rdf:nodeID="genid22354"/>
+        <rdfs:subClassOf rdf:nodeID="genid22356"/>
+        <rdfs:subClassOf rdf:nodeID="genid22358"/>
+        <obo:IAO_0000115>1 L-cysteine + 1 O-acetyl-L-homoserine =&amp;gt; 1 L-cystathionine + 1 acetate.</obo:IAO_0000115>
+        <oboInOwl:hasDbXref>EC:2.5.1</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>GO:0004659</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>GO:0004661</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>GO:0008318</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>GO:0008412</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>GO:0008495</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>GO:0016765</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>GO:0043888</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>GO:0043918</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>GO:0043919</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>GO:0046428</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>GO:0048045</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>GO:0052622</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>GO:0052623</oboInOwl:hasDbXref>
+        <oboInOwl:hasOBONamespace>enzymatic_reaction</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>UPa:UER00448</oboInOwl:id>
+        <rdfs:label>L-cystathionine from O-acetyl-L-homoserine: step 1/1</rdfs:label>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/UPa_UER00587">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000015"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000050"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/UPa_ULS00278"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0002233"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/UPa_UPC00003"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0002233"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/UPa_UPC00114"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0002234"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/UPa_UPC00004"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0002234"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/UPa_UPC00080"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0002234"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/UPa_UPC00576"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf rdf:nodeID="genid24863"/>
+        <rdfs:subClassOf rdf:nodeID="genid24865"/>
+        <rdfs:subClassOf rdf:nodeID="genid24867"/>
+        <rdfs:subClassOf rdf:nodeID="genid24869"/>
+        <rdfs:subClassOf rdf:nodeID="genid24871"/>
+        <rdfs:subClassOf rdf:nodeID="genid24873"/>
+        <obo:IAO_0000115>1 NAD(+) + 1 choline =&amp;gt; 1 H(+) + 1 NADH + 1 betaine aldehyde.</obo:IAO_0000115>
+        <oboInOwl:hasDbXref>EC:1.1.1</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>GO:0000252</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>GO:0004033</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>GO:0004448</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>GO:0004495</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>GO:0008875</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>GO:0016229</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>GO:0016616</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>GO:0018451</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>GO:0018452</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>GO:0018453</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>GO:0019152</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>GO:0032442</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>GO:0032866</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>GO:0032867</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>GO:0033709</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>GO:0033764</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>GO:0033765</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>GO:0034831</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>GO:0034840</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>GO:0035380</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>GO:0035410</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>GO:0043713</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>GO:0044103</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>GO:0044105</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>GO:0048258</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>GO:0051990</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>GO:0052677</oboInOwl:hasDbXref>
+        <oboInOwl:hasOBONamespace>enzymatic_reaction</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>UPa:UER00587</oboInOwl:id>
+        <rdfs:label>betaine aldehyde from choline (dehydrogenase route): step 1/1</rdfs:label>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/UPa_UER00712">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000015"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000050"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/UPa_ULS00393"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0002233"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/UPa_UPC00001"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0002233"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/UPa_UPC00032"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0002233"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/UPa_UPC00448"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0002234"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/UPa_UPC00013"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0002234"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/UPa_UPC15672"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf rdf:nodeID="genid26979"/>
+        <rdfs:subClassOf rdf:nodeID="genid26981"/>
+        <rdfs:subClassOf rdf:nodeID="genid26983"/>
+        <rdfs:subClassOf rdf:nodeID="genid26985"/>
+        <rdfs:subClassOf rdf:nodeID="genid26987"/>
+        <rdfs:subClassOf rdf:nodeID="genid26989"/>
+        <obo:IAO_0000115>1 H(2)O + 1 farnesyl diphosphate + 1 protoheme =&amp;gt; 1 diphosphate + 1 heme O.</obo:IAO_0000115>
+        <oboInOwl:hasDbXref>EC:2.5.1</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>GO:0004659</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>GO:0004661</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>GO:0008318</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>GO:0008412</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>GO:0008495</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>GO:0016765</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>GO:0043888</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>GO:0043918</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>GO:0043919</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>GO:0046428</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>GO:0048045</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>GO:0052622</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>GO:0052623</oboInOwl:hasDbXref>
+        <oboInOwl:hasOBONamespace>enzymatic_reaction</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>UPa:UER00712</oboInOwl:id>
+        <rdfs:label>heme O from protoheme: step 1/1</rdfs:label>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/UPa_UER00846">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000015"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000050"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/UPa_ULS00420"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0002233"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/UPa_UPC00001"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0002233"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/UPa_UPC00003"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0002233"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/UPa_UPC03273"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0002234"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/UPa_UPC00004"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0002234"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/UPa_UPC00080"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0002234"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/UPa_UPC00489"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf rdf:nodeID="genid29614"/>
+        <rdfs:subClassOf rdf:nodeID="genid29616"/>
+        <rdfs:subClassOf rdf:nodeID="genid29618"/>
+        <rdfs:subClassOf rdf:nodeID="genid29620"/>
+        <rdfs:subClassOf rdf:nodeID="genid29622"/>
+        <rdfs:subClassOf rdf:nodeID="genid29624"/>
+        <rdfs:subClassOf rdf:nodeID="genid29626"/>
+        <obo:IAO_0000115>1 5-oxopentanoate + 1 H(2)O + 1 NAD(+) =&amp;gt; 1 H(+) + 1 NADH + 1 glutarate.</obo:IAO_0000115>
+        <oboInOwl:hasDbXref>EC:1.2.1.20</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>GO:0047949</oboInOwl:hasDbXref>
+        <oboInOwl:hasOBONamespace>enzymatic_reaction</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>UPa:UER00846</oboInOwl:id>
+        <rdfs:label>glutarate from L-lysine: step 6/6</rdfs:label>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/UPa_UER00879">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000015"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000050"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/UPa_ULS00434"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0002233"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/UPa_UPC00025"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0002233"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/UPa_UPC01180"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0002234"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/UPa_UPC00026"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0002234"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/UPa_UPC00073"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf rdf:nodeID="genid30266"/>
+        <rdfs:subClassOf rdf:nodeID="genid30268"/>
+        <rdfs:subClassOf rdf:nodeID="genid30270"/>
+        <rdfs:subClassOf rdf:nodeID="genid30272"/>
+        <rdfs:subClassOf rdf:nodeID="genid30274"/>
+        <obo:IAO_0000115>1 4-methylthio-2-oxobutanoate + 1 L-glutamate =&amp;gt; 1 2-oxoglutarate + 1 L-methionine.</obo:IAO_0000115>
+        <oboInOwl:hasDbXref>EC:2.6.1</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>GO:0008483</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>GO:0010326</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>GO:0018719</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>GO:0043746</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>GO:0043760</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>GO:0043840</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>GO:0043911</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>GO:0046571</oboInOwl:hasDbXref>
+        <oboInOwl:hasOBONamespace>enzymatic_reaction</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>UPa:UER00879</oboInOwl:id>
+        <rdfs:label>L-methionine from S-methyl-5-thio-alpha-D-ribose 1-phosphate: step 6/6</rdfs:label>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/UPa_ULS00055">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000015"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/UPa_ULS00000"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000050"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/UPa_UPA00074"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0002233"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/UPa_UPC04677"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0002234"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/UPa_UPC04734"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000050"/>
+                <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onClass rdf:resource="http://purl.obolibrary.org/obo/UPa_UPA00074"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0002233"/>
+                <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onClass rdf:resource="http://purl.obolibrary.org/obo/UPa_UPC04677"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0002234"/>
+                <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onClass rdf:resource="http://purl.obolibrary.org/obo/UPa_UPC04734"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <oboInOwl:hasOBONamespace>linear_sub_pathway</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>UPa:ULS00055</oboInOwl:id>
+        <rdfs:label>5-formamido-1-(5-phospho-D-ribosyl)imidazole-4-carboxamide from 5-amino-1-(5-phospho-D-ribosyl)imidazole-4-carboxamide (formate route)</rdfs:label>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/UPa_ULS00165">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000015"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/UPa_ULS00000"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000050"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/UPa_UPA00257"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0002233"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/UPa_UPC00418"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0002234"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/UPa_UPC00356"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000050"/>
+                <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onClass rdf:resource="http://purl.obolibrary.org/obo/UPa_UPA00257"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0002233"/>
+                <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onClass rdf:resource="http://purl.obolibrary.org/obo/UPa_UPC00418"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0002234"/>
+                <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onClass rdf:resource="http://purl.obolibrary.org/obo/UPa_UPC00356"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <oboInOwl:hasOBONamespace>linear_sub_pathway</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>UPa:ULS00165</oboInOwl:id>
+        <rdfs:label>(S)-3-hydroxy-3-methylglutaryl-CoA from (R)-mevalonate</rdfs:label>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/UPa_ULS00213">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000015"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/UPa_ULS00000"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000050"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/UPa_UPA00051"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0002233"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/UPa_UPC01077"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0002234"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/UPa_UPC02291"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000050"/>
+                <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onClass rdf:resource="http://purl.obolibrary.org/obo/UPa_UPA00051"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0002233"/>
+                <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onClass rdf:resource="http://purl.obolibrary.org/obo/UPa_UPC01077"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0002234"/>
+                <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onClass rdf:resource="http://purl.obolibrary.org/obo/UPa_UPC02291"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <oboInOwl:hasOBONamespace>linear_sub_pathway</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>UPa:ULS00213</oboInOwl:id>
+        <rdfs:label>L-cystathionine from O-acetyl-L-homoserine</rdfs:label>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/UPa_ULS00278">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000015"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/UPa_ULS00000"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000050"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/UPa_UPA00529"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0002233"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/UPa_UPC00114"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0002234"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/UPa_UPC00576"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000050"/>
+                <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onClass rdf:resource="http://purl.obolibrary.org/obo/UPa_UPA00529"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0002233"/>
+                <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onClass rdf:resource="http://purl.obolibrary.org/obo/UPa_UPC00114"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0002234"/>
+                <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onClass rdf:resource="http://purl.obolibrary.org/obo/UPa_UPC00576"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <oboInOwl:hasOBONamespace>linear_sub_pathway</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>UPa:ULS00278</oboInOwl:id>
+        <rdfs:label>betaine aldehyde from choline (dehydrogenase route)</rdfs:label>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/UPa_ULS00393">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000015"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/UPa_ULS00000"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000050"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/UPa_UPA00834"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0002233"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/UPa_UPC00032"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0002234"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/UPa_UPC15672"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000050"/>
+                <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onClass rdf:resource="http://purl.obolibrary.org/obo/UPa_UPA00834"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0002233"/>
+                <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onClass rdf:resource="http://purl.obolibrary.org/obo/UPa_UPC00032"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0002234"/>
+                <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onClass rdf:resource="http://purl.obolibrary.org/obo/UPa_UPC15672"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <oboInOwl:hasOBONamespace>linear_sub_pathway</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>UPa:ULS00393</oboInOwl:id>
+        <rdfs:label>heme O from protoheme</rdfs:label>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/UPa_ULS00420">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000015"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/UPa_ULS00000"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000050"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/UPa_UPA00869"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0002233"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/UPa_UPC00047"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0002234"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/UPa_UPC00489"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000050"/>
+                <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onClass rdf:resource="http://purl.obolibrary.org/obo/UPa_UPA00869"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0002233"/>
+                <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onClass rdf:resource="http://purl.obolibrary.org/obo/UPa_UPC00047"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0002234"/>
+                <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onClass rdf:resource="http://purl.obolibrary.org/obo/UPa_UPC00489"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <oboInOwl:hasOBONamespace>linear_sub_pathway</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>UPa:ULS00420</oboInOwl:id>
+        <rdfs:label>glutarate from L-lysine</rdfs:label>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/UPa_ULS00434">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000015"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/UPa_ULS00000"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000050"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/UPa_UPA00904"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0002233"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/UPa_UPC04188"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0002234"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/UPa_UPC00073"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000050"/>
+                <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onClass rdf:resource="http://purl.obolibrary.org/obo/UPa_UPA00904"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0002233"/>
+                <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onClass rdf:resource="http://purl.obolibrary.org/obo/UPa_UPC04188"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0002234"/>
+                <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onClass rdf:resource="http://purl.obolibrary.org/obo/UPa_UPC00073"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <oboInOwl:hasOBONamespace>linear_sub_pathway</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>UPa:ULS00434</oboInOwl:id>
+        <rdfs:label>L-methionine from S-methyl-5-thio-alpha-D-ribose 1-phosphate</rdfs:label>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/UPa_UPA00051">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/UPa_UPA00903"/>
+        <obo:IAO_0000115>Sulfur-containing amino-acid L-methionine (2-amino-4-(methylthio)butanoic acid) is synthesized de novo by most microorganisms and plants after the initial steps of inorganic sulfate assimilation and synthesis of cysteine or homocysteine. There are two alternative pathways of methionine synthesis in microorganisms. The enterobacterial type trans-sulfuration pathway involves cystathionine as an intermediate and utilizes cysteine as the sulfur source. In contrast, the direct sulfhydrylation pathway found in yeast (Saccharomyces cerevisiae), spirochete (Leptospira meyeri) and actinomycetes (Corynebacterium glutamicum) bypasses cystathionine and uses inorganic sulfur instead. Although yeast, fungi and higher plants have both transsulfuration and direct sulfhydrylation pathways, only the bacteria C. glutamicum, B. subtilis, P. aeruginosa, P. putida and L. meyeri have been shown to have both pathways. Methionine biosynthesis is a central pathway, as it controls a large number of cellular processes such as translation of mRNA into proteins (not only as a substrate for protein elongation but also as the initiator of protein synthesis) and transmethylation reactions via the formation of S-adenosylmethionine (SAM) (cf activated methyl cycle pathway).</obo:IAO_0000115>
+        <upa:uniprot_super_pathway rdf:resource="http://purl.obolibrary.org/obo/UPa_UPA00402"/>
+        <oboInOwl:hasDbXref>KEGG:map00260</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>KEGG:map00270</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>KEGG:map00300</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>KEGG:map00670</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>KEGG:map00920</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>KEGG:map01100</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>KEGG:map01110</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>KEGG:map01120</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>PMID:10469143</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>PMID:12845493</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>PMID:12948640</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>PMID:12951250</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>PMID:15215334</oboInOwl:hasDbXref>
+        <oboInOwl:hasExactSynonym>2-amino-4-(methylthio)butanoic acid biosynthesis</oboInOwl:hasExactSynonym>
+        <oboInOwl:hasOBONamespace>pathway</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>UPa:UPA00051</oboInOwl:id>
+        <rdfs:label>L-methionine biosynthesis via de novo pathway</rdfs:label>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/UPa_UPA00074">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/UPa_UPA00593"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/UPa_UPA00648"/>
+        <obo:IAO_0000115>The formation from simpler components of purine nucleotide IMP (inosine 5&apos;phosphate).</obo:IAO_0000115>
+        <upa:uniprot_super_pathway rdf:resource="http://purl.obolibrary.org/obo/UPa_UPA00583"/>
+        <oboInOwl:hasDbXref>GO:0006189</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>KEGG:map00230</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>KEGG:map00250</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>KEGG:map00340</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>KEGG:map00630</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>KEGG:map00670</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>KEGG:map01100</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>KEGG:map01110</oboInOwl:hasDbXref>
+        <oboInOwl:hasExactSynonym>de novo purine biosynthesis</oboInOwl:hasExactSynonym>
+        <oboInOwl:hasExactSynonym>inosine 5&apos;-phosphate biosynthesis via de novo pathway</oboInOwl:hasExactSynonym>
+        <oboInOwl:hasExactSynonym>inosine monophosphate biosynthesis via de novo pathway</oboInOwl:hasExactSynonym>
+        <oboInOwl:hasOBONamespace>pathway</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>UPa:UPA00074</oboInOwl:id>
+        <rdfs:label>IMP biosynthesis via de novo pathway</rdfs:label>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/UPa_UPA00257">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/UPa_UPA00497"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/UPa_UPA00498"/>
+        <obo:IAO_0000115>Degradation of mevalonic acid, a key metabolic intermediate.</obo:IAO_0000115>
+        <upa:uniprot_super_pathway rdf:resource="http://purl.obolibrary.org/obo/UPa_UPA00496"/>
+        <oboInOwl:hasDbXref>KEGG:map00900</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>KEGG:map01110</oboInOwl:hasDbXref>
+        <oboInOwl:hasExactSynonym>mevalonate degradation</oboInOwl:hasExactSynonym>
+        <oboInOwl:hasOBONamespace>pathway</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>UPa:UPA00257</oboInOwl:id>
+        <rdfs:label>(R)-mevalonate degradation</rdfs:label>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/UPa_UPA00529">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/UPa_UPA00264"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/UPa_UPA00503"/>
+        <obo:IAO_0000115>Biosynthesis of betaine (glycine betaine, N,N,N-trimethylglycine) by a two- step oxidation of choline. An alternative pathway converts glycine to betaine through two N-methyltransferases.</obo:IAO_0000115>
+        <upa:uniprot_super_pathway rdf:resource="http://purl.obolibrary.org/obo/UPa_UPA00289"/>
+        <oboInOwl:hasDbXref>GO:0019285</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>KEGG:map00260</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>MetaCyc:BETSYN-PWY</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>MetaCyc:PWY-3722</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>MetaCyc:PWY1F-353</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>PMID:11685374</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>PMID:12192001</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>PMID:8752328</oboInOwl:hasDbXref>
+        <oboInOwl:hasOBONamespace>pathway</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>UPa:UPA00529</oboInOwl:id>
+        <rdfs:label>betaine biosynthesis via choline pathway</rdfs:label>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/UPa_UPA00834">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/UPa_UPA00399"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/UPa_UPA00678"/>
+        <obo:IAO_0000115>Biosynthesis of heme O, a derivative of heme containing a 17-carbon hydroxyethylfarnesyl side chain at position 8 of the tetrapyrrole macrocycle. Heme O is a precursor in heme A biosyntesis. Warning: the biochemical reactions composing this pathway are not yet clearly defined.</obo:IAO_0000115>
+        <upa:uniprot_super_pathway rdf:resource="http://purl.obolibrary.org/obo/UPa_UPA00677"/>
+        <oboInOwl:hasDbXref>GO:0048034</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>KEGG:map00860</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>KEGG:map01110</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>PMID:1336371</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>PMID:8082800</oboInOwl:hasDbXref>
+        <oboInOwl:hasOBONamespace>pathway</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>UPa:UPA00834</oboInOwl:id>
+        <rdfs:label>heme O biosynthesis</rdfs:label>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/UPa_UPA00869">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/UPa_UPA00867"/>
+        <obo:IAO_0000115>Degradation of L-lysine via acetylation pathway. In this fungal pathway, L-lysine is degraded to glutarate via acetylation of the 6-amino group to the initial product N6-acetyl-L-lysine. This is followed by transamination, oxidative decarboxylation, deacetylation, transamination with loss of the second amino group, and oxidation to glutarate.</obo:IAO_0000115>
+        <upa:uniprot_super_pathway rdf:resource="http://purl.obolibrary.org/obo/UPa_UPA00427"/>
+        <oboInOwl:hasDbXref>GO:0019473</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>KEGG:map00310</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>MetaCyc:LYSDEGII-PWY</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>PMID:15229592</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>PMID:8082161</oboInOwl:hasDbXref>
+        <oboInOwl:hasOBONamespace>pathway</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>UPa:UPA00869</oboInOwl:id>
+        <rdfs:label>L-lysine degradation via acetylation pathway</rdfs:label>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/UPa_UPA00904">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/UPa_UPA00903"/>
+        <obo:IAO_0000115>The methionine salvage pathway (MSP) is an important metabolic pathway in maintaining the amount of L-methionine as the amount of methionine in cells is typically limiting and its de novo biosynthesis is energetically expensive. Therefore, L-methionine is salvaged from S-methyl-5&apos;-thioadenosine (MTA), the end-product of spermidine biosynthesis.</obo:IAO_0000115>
+        <upa:uniprot_super_pathway rdf:resource="http://purl.obolibrary.org/obo/UPa_UPA00402"/>
+        <oboInOwl:hasDbXref>GO:0019509</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>KEGG:map00270</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>KEGG:map01100</oboInOwl:hasDbXref>
+        <oboInOwl:hasExactSynonym>2-amino-4-(methylthio)butanoic acid salvage</oboInOwl:hasExactSynonym>
+        <oboInOwl:hasExactSynonym>methionine salvage pathway (MSP)</oboInOwl:hasExactSynonym>
+        <oboInOwl:hasOBONamespace>pathway</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>UPa:UPA00904</oboInOwl:id>
+        <rdfs:label>L-methionine biosynthesis via salvage pathway</rdfs:label>
+    </owl:Class>
+
+</rdf:RDF>

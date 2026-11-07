@@ -1,0 +1,225 @@
+{
+  "additional_rdf_context": {
+    "growthTemperature": "\"26\"^^<http://www.w3.org/2001/XMLSchema#int> on growth/9 only",
+    "interpretation": "Retain the exact predicate/literal. The retained REST endpoint/inverse control payloads provide no temperature field for comparison; no unit or equality claim is added."
+  },
+  "association_coverage_complete": false,
+  "complete_returned_strain_properties": {
+    "<http://purl.org/dc/terms/identifier>": [
+      "\"8\"^^<http://www.w3.org/2001/XMLSchema#int>"
+    ],
+    "<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>": [
+      "<https://purl.dsmz.de/schema/Strain>"
+    ],
+    "<https://purl.dsmz.de/schema/belongsTaxGroup>": [
+      "\"Bacterium\""
+    ],
+    "<https://purl.dsmz.de/schema/hasBacDiveID>": [
+      "\"683\"^^<http://www.w3.org/2001/XMLSchema#int>"
+    ],
+    "<https://purl.dsmz.de/schema/hasDSMNumber>": [
+      "\"9\"^^<http://www.w3.org/2001/XMLSchema#int>"
+    ],
+    "<https://purl.dsmz.de/schema/hasSpecies>": [
+      "\"Lederbergia lenta\""
+    ],
+    "<https://purl.dsmz.de/schema/hasSynonym>": [
+      "\"ATCC 10840\"",
+      "\"BCRC 11735\"",
+      "\"CCM 2214\"",
+      "\"CCUG 1816\"",
+      "\"CECT 18\"",
+      "\"CIP 52.74\"",
+      "\"DSM 9\"",
+      "\"HAMBI 1918\"",
+      "\"IAM 12466\"",
+      "\"IAM 14178\"",
+      "\"IFO 15655\"",
+      "\"IFO 16413\"",
+      "\"IFO 16444\"",
+      "\"JCM 2511\"",
+      "\"LMG 12355\"",
+      "\"LMG 16798\"",
+      "\"LMG 9579\"",
+      "\"NBRC 15655\"",
+      "\"NBRC 16413\"",
+      "\"NBRC 16444\"",
+      "\"NCCB 48017\"",
+      "\"NCFB 1127\"",
+      "\"NCIB 8773\"",
+      "\"NCIMB 8713\"",
+      "\"NCIMB 8773\"",
+      "\"NCTC 4824\"",
+      "\"NRRL B-396\"",
+      "\"NRRL NRS-883\"",
+      "\"NRS 670\"",
+      "\"VKM B-500\""
+    ]
+  },
+  "dataset_freshness_established": false,
+  "growth_contexts": [
+    {
+      "all_growth_node_properties": {
+        "<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>": [
+          "<https://purl.dsmz.de/schema/GrowthCondition>"
+        ],
+        "<https://purl.dsmz.de/schema/growthTemperature>": [
+          "\"26\"^^<http://www.w3.org/2001/XMLSchema#int>"
+        ],
+        "<https://purl.dsmz.de/schema/hasGrowthIndicator>": [
+          "\"true\"^^<http://www.w3.org/2001/XMLSchema#boolean>"
+        ],
+        "<https://purl.dsmz.de/schema/modifiedBy>": [
+          "<https://purl.dsmz.de/mediadive/modification/471>"
+        ],
+        "<https://purl.dsmz.de/schema/partOfMedium>": [
+          "<https://purl.dsmz.de/mediadive/medium/220>"
+        ],
+        "<https://purl.dsmz.de/schema/relatedToStrain>": [
+          "<https://purl.dsmz.de/mediadive/strain/8>"
+        ]
+      },
+      "checks": {
+        "bacdive_id": true,
+        "collection_synonym": true,
+        "dsm_number": true,
+        "exact_medium": true,
+        "exact_strain": true,
+        "growth_type": true,
+        "native_id": true,
+        "positive_indicator_matches_rest": true,
+        "species": true
+      },
+      "growth_node": "<https://purl.dsmz.de/mediadive/growth/9>",
+      "medium_id": "220",
+      "rest_endpoint_record": {
+        "bacdive_id": 683,
+        "ccno": "DSM 9",
+        "domain": "B",
+        "growth": 1,
+        "id": 8,
+        "species": "Lederbergia lenta"
+      },
+      "strain_node": "<https://purl.dsmz.de/mediadive/strain/8>",
+      "strain_property_count": 36
+    },
+    {
+      "all_growth_node_properties": {
+        "<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>": [
+          "<https://purl.dsmz.de/schema/GrowthCondition>"
+        ],
+        "<https://purl.dsmz.de/schema/hasGrowthIndicator>": [
+          "\"true\"^^<http://www.w3.org/2001/XMLSchema#boolean>"
+        ],
+        "<https://purl.dsmz.de/schema/partOfMedium>": [
+          "<https://purl.dsmz.de/mediadive/medium/J22>"
+        ],
+        "<https://purl.dsmz.de/schema/relatedToStrain>": [
+          "<https://purl.dsmz.de/mediadive/strain/8>"
+        ]
+      },
+      "checks": {
+        "bacdive_id": true,
+        "collection_synonym": true,
+        "dsm_number": true,
+        "exact_medium": true,
+        "exact_strain": true,
+        "growth_type": true,
+        "native_id": true,
+        "positive_indicator_matches_rest": true,
+        "species": true
+      },
+      "growth_node": "<https://purl.dsmz.de/mediadive/growth/37970>",
+      "medium_id": "J22",
+      "rest_endpoint_record": {
+        "bacdive_id": 683,
+        "ccno": "DSM 9",
+        "domain": "B",
+        "growth": 1,
+        "id": 8,
+        "species": "Lederbergia lenta"
+      },
+      "strain_node": "<https://purl.dsmz.de/mediadive/strain/8>",
+      "strain_property_count": 36
+    }
+  ],
+  "inputs": [
+    {
+      "bytes": 703,
+      "path": "data/rebuild-evidence/20261105/mediadive-resolution-1734/sparql-probes/control-r2/request.json",
+      "sha256": "236474f4696b7a66033e3361bbe1ec2cb13a8dbe48baa15c0075bac92e67d1fe"
+    },
+    {
+      "bytes": 957,
+      "path": "data/rebuild-evidence/20261105/mediadive-resolution-1734/sparql-probes/control-r2/query.rq",
+      "sha256": "9080457431bfd46d5f5f1a19f870c5f7d944abf93c1c1dd520942a1cffde8617"
+    },
+    {
+      "bytes": 41052,
+      "path": "data/rebuild-evidence/20261105/mediadive-resolution-1734/sparql-probes/control-r2/response.body",
+      "sha256": "fe96dfad9c5aac8ae2c37d3bac903a658d5cba569df41ccd8ad98fadc2cb123d"
+    },
+    {
+      "bytes": 71649,
+      "path": "data/rebuild-evidence/20261105/mediadive-resolution-1734/sparql-probes/control-r2/parsed.json",
+      "sha256": "9110f14ea45a9c7d6579cdf70fc3ddc037b29e1de9cb7926eebfab0aaec2bea5"
+    },
+    {
+      "bytes": 1019,
+      "path": "data/rebuild-evidence/20261105/mediadive-resolution-1734/sparql-probes/control-r2/receipt.json",
+      "sha256": "8be8372699d73b369c91ba4c74476462a61d1b5eeacd33de1e396a3745cb5dd9"
+    },
+    {
+      "bytes": 1673,
+      "path": "data/rebuild-evidence/20261105/mediadive-resolution-1734/official-review/positive-control-evidence.json",
+      "sha256": "933d50dd2b6074123d70b11a2b04e86e0399ab2ec25fb2a0df32bf526d21dccc"
+    },
+    {
+      "bytes": 8970,
+      "path": "data/rebuild-evidence/20261105/mediadive-resolution-1734/identity-comparison-1.json",
+      "sha256": "ad51dd3ea92e506899a0c6fc57f7a44e83eda9a61eab581141dabd5ceeca97d3"
+    }
+  ],
+  "modification_context": {
+    "J22": {
+      "interpretation": "No modification reference appears among the returned condition properties, consistent with the REST null field. This is not a biological assertion that no modification can exist.",
+      "rdf_modifiedBy_returned": false,
+      "rest_inverse_modification": null
+    },
+    "medium220": {
+      "interpretation": "Both sources report a modification context, but the RDF object description was not included in this query. Its equivalence to the retained urea description is not yet established. Do not flatten the observation to an unmodified base medium.",
+      "rdf_reference": "https://purl.dsmz.de/mediadive/modification/471",
+      "rest_inverse_text": "Plus  0.1% urea"
+    }
+  },
+  "next_probe": {
+    "permitted_scope": "Parent-coordinated discovery for exact medium1366 only, under the same saved launcher/bounds and manual review; no batch or association admission.",
+    "positive_rows": "Any candidate row still requires exact medium/strain identities, actual typed indicator and complete retained condition/modification context review.",
+    "query": {
+      "bytes": 727,
+      "path": "data/rebuild-evidence/20261105/mediadive-resolution-1734/official-review/03-unresolved-1366-native-terms-r2.rq",
+      "sha256": "d0ec0bdad18907d963bc2cf0a02f6de11a10c21e45f2df1533c9b54eef7cd2a8"
+    },
+    "zero_rows": "No matching query rows cannot become valid-empty REST success, biological absence or source-declared unavailability."
+  },
+  "polarity_scope": {
+    "actual_positive_value": "\"true\"^^<http://www.w3.org/2001/XMLSchema#boolean>",
+    "actual_predicate": "https://purl.dsmz.de/schema/hasGrowthIndicator",
+    "established": "These two exact positive controls agree with the official REST Boolean-growth description. Their actual RDF encoding differs from the previously hypothetical growthObserved/hasMediumGrowth vocabulary.",
+    "not_established": [
+      "negative-value mapping",
+      "missing/unknown/qualitative-value meaning",
+      "global association completeness",
+      "dataset generation date or freshness relative to REST",
+      "the text of modification471"
+    ],
+    "rest_control_value": 1
+  },
+  "result_rows": 82,
+  "reviewed_at": "2026-11-05T21:21:40.081362+00:00",
+  "same_strain_properties_in_both_contexts": true,
+  "schema": "kg-microbe.mediadive-sparql-control-review.v1",
+  "scope": "Bounded local comparison only; no HTTP, tests, source edits or Git operations. This exclusive review is the only write.",
+  "source_association_admission": false,
+  "status": "positive_controls_agree_bounded_unknown_discovery_justified"
+}

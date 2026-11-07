@@ -15,9 +15,14 @@ REQUIRED_AUDIT_FILES = (AUDIT_FILE,)
 DISPOSITION = "legacy_only_selected_snapshot_exclusion"
 RUNTIME_SCOPE = "selected_indexed_labels_statuses_xrefs_variant_roles; historical_explanations_not_revalidated"
 # Prevent an explicit no-prior-history contract from waiving this
-# reviewed production cohort, even if only one of its identity fields changes.
-REVIEWED_SNAPSHOT_ID = "rhea-cache-142-20260907"
-REVIEWED_RDF_SHA256 = "8ee48d7044cf3eef1001fa730dae2a491902ab25b259b519d6826796bb8acedf"
+# reviewed production cohorts, even if only one identity field changes.
+REVIEWED_SNAPSHOT_IDS = frozenset({"rhea-cache-142-20260907", "rhea-release-143-20261105"})
+REVIEWED_RDF_SHA256S = frozenset(
+    {
+        "8ee48d7044cf3eef1001fa730dae2a491902ab25b259b519d6826796bb8acedf",
+        "8f858aff8d984d8e882b90fac0d81d6980589fb819b460da388ccb796195fa25",
+    }
+)
 AUDIT_HEADER = (
     "subject",
     "native_predicate",
@@ -188,8 +193,8 @@ def read_legacy_policy(stream):
     _identity(selected["rdf"])
     if policy["expected_count"] == 0:
         if (
-            selected["snapshot_id"] == REVIEWED_SNAPSHOT_ID
-            or selected["rdf"]["sha256"] == REVIEWED_RDF_SHA256
+            selected["snapshot_id"] in REVIEWED_SNAPSHOT_IDS
+            or selected["rdf"]["sha256"] in REVIEWED_RDF_SHA256S
             or policy["historical_snapshot"] is not None
             or policy["legacy_sources"] != {}
             or policy["exclusions"] != []

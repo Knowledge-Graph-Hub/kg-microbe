@@ -75,6 +75,14 @@ def test_all_eight_native_observations_keep_source_owned_identity_and_full_evide
     expected = {row["source_assertion_id"]: row["raw"] for row in _saved()["occurrences"]}
     with producer.output_edge_file.open() as stream:
         edges = [row for row in csv.DictReader(stream, delimiter="\t") if row.get("source_assertion_id")]
+    # The separate synthetic catalogue context supplies the unchanged first
+    # occurrence claim; it is not one of the eight retained native observations.
+    carrier = f"mediadive.solution:{material.CARRIER_SOLUTION}"
+    catalogue_edges = [row for row in edges if row["subject"] == carrier]
+    assert len(catalogue_edges) == 1
+    assert catalogue_edges[0]["source_assertion_id"] == carrier + "#recipe/1"
+    assert json.loads(catalogue_edges[0]["source_record"]) == _saved()["catalog"]
+    edges = [row for row in edges if row["subject"] != carrier]
     assert len(edges) == 8
     assert {row["source_assertion_id"]: json.loads(row["source_record"]) for row in edges} == expected
     assert {row["object"] for row in edges} == {"mediadive.ingredient:270"}

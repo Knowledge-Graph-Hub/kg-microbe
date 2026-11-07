@@ -22,7 +22,7 @@ from kg_microbe.transform_utils.constants import (
 from kg_microbe.utils.native_rdf import decoded_iri_subject
 
 POLICY_FILE = Path(__file__).resolve().parents[2] / "mappings/mesh_finite_category_dispositions.json"
-POLICY_SHA256 = "d87a82595c9b0fa124f98db30e1531be2dce49dd0fd9f77303640c68ec5f8f15"
+POLICY_SHA256 = "d6302a5416921f9419b54fe0ba4a76a2f62cd257ecd1bb7895caefa9b5574a55"
 CONTRACT_KEY = "mesh_finite_category_authority"
 NATIVE_ROLE = "category_authority_mesh2026.nt"
 POLICY_ROLE = "category_authority_mesh_finite_category_dispositions"

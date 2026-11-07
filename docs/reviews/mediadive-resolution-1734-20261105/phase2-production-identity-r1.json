@@ -1,0 +1,9 @@
+{
+  "stage": "mediadive-resolution-phase2-r1",
+  "exit_code": 0,
+  "elapsed_seconds": 3611.174,
+  "result_sha256": "8a19458f0712b3280f1dafcd2e15b4230dcd88479b852f20077c98378244b65a",
+  "owned_module_count": 123,
+  "module_origins_and_current_bytes_match": true,
+  "interpretation": "Producer command succeeded; persisted source admission is a separate pending gate."
+}

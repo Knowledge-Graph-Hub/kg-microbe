@@ -1,0 +1,34 @@
+{
+  "all_added_annotation_values_source_backed": true,
+  "complete_source_annotation_equality": false,
+  "disposition": {
+    "bytes": 4579,
+    "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/upgrades/robot-bindings/uberon-1737-disposition.json",
+    "sha256": "135f5acac2897b470b34cd834844136ebe026ca47804516247ca16700acf6ace"
+  },
+  "exact_disposition_valid": true,
+  "newly_lost_source_annotations": [],
+  "production_files_mutated": false,
+  "release_ready": false,
+  "review5": {
+    "bytes": 10701379,
+    "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/upgrades/robot-bindings/review-5/binding-review.json",
+    "sha256": "011a413ce69ef54ca7d12c0e93f4e56df0555ab4284159f53876a689f241052b"
+  },
+  "review5_inputs": {
+    "bytes": 15814,
+    "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/upgrades/robot-bindings/review-5/inputs.json",
+    "sha256": "e141d7459b6bfd760a8f1e72b2bd85236b2e053c4f4c407f98694b2afcf65cea"
+  },
+  "source_completeness_exception_count": 1,
+  "source_owl": {
+    "bytes": 95887167,
+    "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/upgrades/robot-conversions/uberon.owl",
+    "sha256": "938f51e7c3fc9fcbe5a2863eb346da8033737e568af5836958891c4c6bfb1192"
+  },
+  "validator": {
+    "bytes": 15993,
+    "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/scripts/adhoc/kgm_robot_binding_acceptance_20261105.py",
+    "sha256": "5c83ec8c81067cff5c0f6e18cc75c917dbdc79669dec10ea3ee40131b29180b1"
+  }
+}

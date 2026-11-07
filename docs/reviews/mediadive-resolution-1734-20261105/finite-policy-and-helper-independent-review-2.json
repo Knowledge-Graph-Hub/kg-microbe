@@ -1,0 +1,135 @@
+{
+  "schema_version": 1,
+  "status": "pass",
+  "policy_sha256": "2e1915efda265be4cbaea8921f126a7a1ea04e7c8110194ead915cfc1cecbd08",
+  "recorded_at": "2026-11-05T21:49:08.007997+00:00",
+  "reviewer": "Independent environment/scientific evidence reviewer",
+  "review_scope": [
+    "Exact finite policy candidate bytes",
+    "Corrected reviewed-policy activation helper",
+    "Current-reader replay of unchanged actual batch",
+    "Retained root-coordinated focused test result"
+  ],
+  "policy": {
+    "path": "data/rebuild-evidence/20261105/mediadive-resolution-1734/unknown-policy-candidate-r1.json",
+    "bytes": 176020,
+    "sha256": "2e1915efda265be4cbaea8921f126a7a1ea04e7c8110194ead915cfc1cecbd08"
+  },
+  "bound_code_and_controls": {
+    "scripts/adhoc/kgm_mediadive_disposition_20261105.py": {
+      "path": "scripts/adhoc/kgm_mediadive_disposition_20261105.py",
+      "bytes": 10378,
+      "sha256": "1817582a7c00e2d4899300f933fc19aa5a767a90b0315eb5b509754661993a4e"
+    },
+    "kg_microbe/transform_utils/mediadive/endpoint_outcomes.py": {
+      "path": "kg_microbe/transform_utils/mediadive/endpoint_outcomes.py",
+      "bytes": 29389,
+      "sha256": "aee8286eebf40a2a26ff4585623af930cd2305f48a6bb26e6266b480f3e81168"
+    },
+    "kg_microbe/transform_utils/mediadive/acquisition.py": {
+      "path": "kg_microbe/transform_utils/mediadive/acquisition.py",
+      "bytes": 30012,
+      "sha256": "4052142e440bcda181d2c106de8c405cacb545be18792740f869b36a1509ac9e"
+    },
+    "tests/test_mediadive_disposition_20261105.py": {
+      "path": "tests/test_mediadive_disposition_20261105.py",
+      "bytes": 4053,
+      "sha256": "792bccc581da84cc7496b19c34b38daa05cbc6d9fbf358345d0b10a0208efb26"
+    },
+    "tests/test_mediadive_endpoint_outcomes.py": {
+      "path": "tests/test_mediadive_endpoint_outcomes.py",
+      "bytes": 11220,
+      "sha256": "54c559b24aa0fcb46072fc87ce58d60c8b17bd6f112342e59a4c17f2673fc9f7"
+    }
+  },
+  "findings": [],
+  "prior_review_and_resolved_finding": {
+    "review": {
+      "path": "data/rebuild-evidence/20261105/mediadive-resolution-1734/finite-policy-and-helper-independent-review-1.json",
+      "bytes": 4245,
+      "sha256": "4d2ac1cbfeab6bd3d18dbe5cebacf2da4d46363c78399efc8cfaf684ed902931"
+    },
+    "issue": 1769,
+    "resolution": "Reviewed policy and independent review are captured before parsing, their original admission guard is verified after checkpoint and before publication, and both sealed policy and current curated-policy SHA must equal the approved policy SHA. Real-generation controls pass for unchanged activation, post-check policy/review mutation refusal, and wrong-policy review refusal before staging."
+  },
+  "multiplicity_assessment": {
+    "issue": 1770,
+    "official_evidence": {
+      "path": "data/rebuild-evidence/20261105/mediadive-resolution-1734/native-strain-id-multiplicity-official-assessment-1.json",
+      "bytes": 3398,
+      "sha256": "5fd50601d1bd2e69ef87ca1eb10a6b770a5e0c2daf462b38e826b309c59ab296"
+    },
+    "exact_one_line_removal_verified": true,
+    "previous_reader_sha256": "9b181ef25ff9d9eaed8b6f83234c97b63d05f319b635b5f09459774efb77e3ee",
+    "meaning": "Native strain identity is not an observation identifier. The corrected reader preserves repeated native IDs, original list order, exact duplicate and opposite-polarity observations; strict ID shape, source count and body/typed native replay remain enforced.",
+    "new_fixture": {
+      "path": "tests/resources/mediadive_repeated_strain_observations.json",
+      "bytes": 315,
+      "sha256": "c5318afe315792424b1a26209c9ec82fe25c0c83809ef7f2e02e71a4bb622b9d"
+    }
+  },
+  "actual_evidence": {
+    "independent_three_generation_audit": {
+      "path": "data/rebuild-evidence/20261105/mediadive-resolution-1734/seed-canary-batch-independent-audit-1.json",
+      "bytes": 30877,
+      "sha256": "6476c469189bdc29b9193ce1bfbb461b952d0810b59490a767c54f035eac01dc"
+    },
+    "current_reader_production_replay": {
+      "path": "data/rebuild-evidence/20261105/mediadive-resolution-1734/current-reader-batch-replay-1.json",
+      "bytes": 41584,
+      "sha256": "309f1932d4b12e024dd0da0509a23d71ff06ec495e63169c7794900451c60ef7"
+    },
+    "historical_receipts_restamped": false,
+    "original_cache_blobs_unchanged": 6056,
+    "four_native_json_files_unchanged": true,
+    "protected_original_files_checked": 69
+  },
+  "finite_policy_case_checks": {
+    "exact_latest_unknown_cases": 632,
+    "historical_unknown_heads_preserved": 583,
+    "fresh_unknown_heads_after_transport": 49,
+    "extra_or_missing_cases": 0,
+    "unknown_ID_family_counts": {
+      "numeric-leading": 215,
+      "C": 47,
+      "J": 359,
+      "P": 11
+    },
+    "catalogue_digest_matches": true,
+    "basis_generation_matches": true,
+    "official_document_digest_matches": true,
+    "all_supporting_review_digests_match": true,
+    "association_coverage_complete": false,
+    "endpoint_accounting_complete": true
+  },
+  "scientific_conclusion": {
+    "approved_disposition": "The exact 632 latest source-declared unknown/unavailable strain-association cases may be admitted with this reviewed policy, preserving their uncertainty and provenance.",
+    "latest_case_basis": "583 unchanged historical unknown observations plus 49 subsequent actual documented 404 observations resolving former transport failures. No older 404 substitutes for a later transport failure.",
+    "native_evidence_retained": "All 3344 recipe endpoints and 2712 nonempty strain endpoints retain their original response support. No explicit-empty responses or newly recovered associations were observed.",
+    "omitted_assertions": "Unknown endpoints support no inferred strain association, positive growth, negative growth, absence or nonexistent-medium assertion. Other independently evidenced sources keep their own claims.",
+    "association_coverage_complete": false,
+    "endpoint_accounting_complete": true,
+    "dataset_freshness_established": false,
+    "alternative_source_admission": false,
+    "source_limits": "Limited SPARQL identity/positive controls and the zero-row query for medium 1366 do not establish complete association data or a fresh atomic source snapshot."
+  },
+  "required_downstream_handling": "Preserve exact consumed policy/generation identities, current producer completion and native replay; retain the mandatory per-endpoint audit, incomplete association coverage and omitted-assertion interpretation in direct and inherited release qualifications.",
+  "focused_validation": {
+    "evidence": {
+      "path": "data/rebuild-evidence/20261105/mediadive-resolution-1734/disposition-and-fixture-focused-r1.log",
+      "bytes": 2820,
+      "sha256": "24a2392302a85b3c986889a9f7e0f5ff71b5085c6c3ac98f64f717b5488ac5dc"
+    },
+    "result": "118 passed, 4 warnings in 231.65s",
+    "executed_by": "Root-coordinated focused pytest",
+    "reviewer_executed_tests": false
+  },
+  "activation_scope": "Approval applies to these exact policy bytes and the reviewed helper/code. It permits the planned newly sealed qualified child generation; it does not itself publish a pointer, run a graph producer, validate a final graph release, merge GitHub code or publish externally.",
+  "current_pointer_absent_at_review": true,
+  "review_operations": {
+    "http_requests": 0,
+    "tests": 0,
+    "source_edits": 0,
+    "policy_activation": false
+  }
+}

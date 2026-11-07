@@ -1,0 +1,8 @@
+{
+  "description": "Synthetic offline repeated observations for one strain entity; not live biological evidence.",
+  "data": [
+    {"id": 7, "species": "Synthetic organism", "growth": 1},
+    {"id": 7, "species": "Synthetic organism", "growth": 1},
+    {"id": 7, "species": "Synthetic organism", "growth": 0}
+  ]
+}

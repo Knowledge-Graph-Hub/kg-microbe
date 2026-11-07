@@ -1,0 +1,138 @@
+{
+  "checked_at": "2026-11-05T07:33:13.903626+00:00",
+  "command": "verify-ontologies",
+  "error": "SourceFinalizationRequired: /Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies/chebi_nodes.tsv: no applicable producer completion record",
+  "plan": {
+    "excluded": [
+      "bakta",
+      "cog",
+      "kegg"
+    ],
+    "merge_config": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/merge.yaml",
+    "merged_directory": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/merged",
+    "phases": [
+      [
+        "ontologies"
+      ],
+      [
+        "ontologies_stubs",
+        "bacdive",
+        "gtdb",
+        "madin_etal",
+        "metatraits",
+        "rhea_mappings",
+        "prego"
+      ],
+      [
+        "lpsn",
+        "mediadive",
+        "metatraits_gtdb",
+        "bactotraits",
+        "gold"
+      ],
+      [
+        "lpsn_api",
+        "microbedecoder"
+      ]
+    ],
+    "raw_directory": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw",
+    "sources": {
+      "bacdive": [
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/bacdive/nodes.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/bacdive/edges.tsv"
+      ],
+      "bactotraits": [
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/bactotraits/nodes.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/bactotraits/edges.tsv"
+      ],
+      "gold": [
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/gold/nodes.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/gold/edges.tsv"
+      ],
+      "gtdb": [
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/gtdb/nodes.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/gtdb/edges.tsv"
+      ],
+      "lpsn": [
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/lpsn/nodes.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/lpsn/edges.tsv"
+      ],
+      "lpsn_api": [
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/lpsn_api/nodes.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/lpsn_api/edges.tsv"
+      ],
+      "madin_etal": [
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/madin_etal/nodes.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/madin_etal/edges.tsv"
+      ],
+      "mediadive": [
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/mediadive/nodes.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/mediadive/edges.tsv"
+      ],
+      "metatraits": [
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/metatraits/nodes.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/metatraits/edges.tsv"
+      ],
+      "metatraits_gtdb": [
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/metatraits_gtdb/nodes.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/metatraits_gtdb/edges.tsv"
+      ],
+      "microbedecoder": [
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/microbedecoder/nodes.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/microbedecoder/edges.tsv"
+      ],
+      "ontologies": [
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies/chebi_nodes.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies/chebi_edges.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies/ec_nodes.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies/ec_edges.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies/envo_nodes.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies/envo_edges.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies/foodon_nodes.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies/foodon_edges.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies/go_nodes.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies/go_edges.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies/hp_nodes.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies/hp_edges.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies/metpo_nodes.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies/metpo_edges.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies/mondo_nodes.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies/mondo_edges.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies/ncbitaxon_nodes.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies/ncbitaxon_edges.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies/pato_nodes.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies/pato_edges.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies/ro_nodes.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies/ro_edges.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies/taxrank_nodes.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies/taxrank_edges.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies/uberon_nodes.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies/uberon_edges.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies/upa_nodes.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies/upa_edges.tsv"
+      ],
+      "ontologies_stubs": [
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies_stubs/ncit_nodes.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies_stubs/ncit_edges.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies_stubs/mesh_nodes.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies_stubs/mesh_edges.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies_stubs/bto_nodes.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies_stubs/po_nodes.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies_stubs/po_edges.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies_stubs/micro_nodes.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/ontologies_stubs/micro_edges.tsv"
+      ],
+      "prego": [
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/prego_habitat/nodes.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/prego_habitat/edges.tsv"
+      ],
+      "rhea_mappings": [
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/rhea_mappings/nodes.tsv",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/rhea_mappings/edges.tsv"
+      ]
+    },
+    "transformed_directory": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed"
+  },
+  "root": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105",
+  "status": "fail"
+}

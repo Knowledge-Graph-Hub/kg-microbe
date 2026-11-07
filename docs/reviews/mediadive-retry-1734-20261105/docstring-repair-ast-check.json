@@ -1,0 +1,11 @@
+{
+  "issue": 1756,
+  "old_commit": "ff11e479f8575d3ddcf446a464451c8f42c16c34",
+  "path": "tests/test_mediadive_retry_20261105.py",
+  "before_sha256": "eb6bdd835d89d99d29a9f099e2ba3254e8ab82b121d4eaa4f012accb64db59c0",
+  "after_sha256": "4c31a79613be75df7b205de1b131a60056e597f4b2e4ef4a43e0107c766f77f6",
+  "docstring_stripped_ast_equal": true,
+  "normalized_ast_sha256": "1d9f4dbf9ccc260a6212d32f058fb0b97784f62f524184951f8649919e013498",
+  "production_retry_helper_sha256": "c4ef41f2aabb847404249f59dfc4be39f2fa4f58ba7a03af4dc8a05bf8908a9c",
+  "method": "Parse actual HEAD and prepared working file; remove only leading string expression docstrings from module/class/function nodes and compare ast.dump without locations."
+}

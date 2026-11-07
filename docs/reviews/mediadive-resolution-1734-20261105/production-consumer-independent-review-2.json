@@ -1,0 +1,81 @@
+{
+  "schema_version": 1,
+  "recorded_at": "2026-11-05T21:31:40.042685+00:00",
+  "review_type": "Independent read-only delta re-review of frozen consumer repairs",
+  "reviewed_files": {
+    "kg_microbe/transform_utils/mediadive/endpoint_consumer.py": {
+      "bytes": 13120,
+      "sha256": "0b14f6ec992476b73c5cf0cf9e1e92ad38acc59724fd5e20c75a2f35e29cea94"
+    },
+    "kg_microbe/transform_utils/mediadive/bulk_inputs.py": {
+      "bytes": 15065,
+      "sha256": "a7b6d87afbf530ae8a520f10b5edda3b52b8ab267431ffe3810b0b8614254d4b"
+    },
+    "kg_microbe/transform_utils/mediadive/mediadive.py": {
+      "bytes": 80386,
+      "sha256": "5dd9090519838615677c118bcdc95db5304e658dde0dc04876330193a5f7e855"
+    },
+    "kg_microbe/download.py": {
+      "bytes": 10100,
+      "sha256": "24da75437177503d266ebb99cb5f92aca7cccc5a0226f73a9ab8599746e2247b"
+    },
+    "tests/test_mediadive_endpoint_consumer.py": {
+      "bytes": 10167,
+      "sha256": "5579c10c0da741dbb02995b353c1fc066a57750218cf642734474c6b4d108a07"
+    },
+    "tests/test_mediadive_download_generation.py": {
+      "bytes": 2939,
+      "sha256": "2791da3b225dd4503c71737e3a6bf5936374a1f07d0a6cc231ce205735db858b"
+    }
+  },
+  "previous_review": {
+    "bytes": 5242,
+    "sha256": "32ea4b00e2b81c23921d10c0863a14277954cf9275a40dcbd84a69f45cd50fff"
+  },
+  "status": "static_review_pass_pending_root_focused_tests",
+  "new_findings": [],
+  "issue_assessments": {
+    "1765": {
+      "result": "consumer portion addressed",
+      "evidence": [
+        "endpoint_consumer.contracts_equal compares strict canonical JSON text and safely refuses values that cannot be encoded.",
+        "Both restore() and verify_recorded_endpoints() use that comparison, as does qualification registration. MediaDiveTransform.producer_native_inputs setter now uses the same type-preserving comparison.",
+        "Three new offline controls mutate sealed true to1, nonempty count1 totrue and coveragefalse to0; each exercises the real setter, public source replay and fresh-instance restoration."
+      ],
+      "scope_limit": "Acquisition/native replay portion is owned by a separate ongoing fix and is not accepted by this consumer-only review."
+    },
+    "1767": {
+      "result": "addressed",
+      "evidence": [
+        "verify_recorded_endpoints captures the actual source edge file in the shared admission before scanning omitted-assertion semantics.",
+        "The same admission verifies metadata after the scan, retaining the edge identity for later downstream checks.",
+        "New offline control changes edge bytes only after the actual omission scan and requires refusal from direct recorded replay."
+      ]
+    },
+    "1768": {
+      "result": "addressed",
+      "evidence": [
+        "Every _verify_cache call regenerates audit bytes from the original checked endpoint view and compares them with the cached projected audit. Existing encoded view/record checks remain intact.",
+        "Write/verify/contract paths invoke that check before trusting cached audit bytes or emitting completion evidence.",
+        "New offline control replaces unknown audit text with explicit_empty in memory, then requires verify/write/finalize refusal while preserving the actual audit and absence of a completion record."
+      ]
+    }
+  },
+  "unchanged_from_previous_review": [
+    "kg_microbe/transform_utils/mediadive/bulk_inputs.py",
+    "kg_microbe/download.py"
+  ],
+  "download_test_repair": "The test now imports the kg_microbe.download module explicitly with importlib, rather than the package-exported download function. The three original boundary assertions remain intact.",
+  "scientific_invariants": [
+    "Unknown remains None, explicit empty remains[], and nonempty still requires real native rows.",
+    "Current curated policy identity, native generation replay, required endpoint audit and both positive/negative omission guards remain in force.",
+    "No source outcome is upgraded or biological assertion invented by these repairs."
+  ],
+  "review_operations": {
+    "tests": 0,
+    "http_requests": 0,
+    "source_edits": 0,
+    "git_writes": 0
+  },
+  "reviewed_files_unchanged_at_completion": true
+}

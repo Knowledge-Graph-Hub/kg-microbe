@@ -1,0 +1,7 @@
+{
+  "description": "Synthetic offline acquisition fixture; not a scientific recipe or live HTTP evidence.",
+  "catalogue": {"data": [{"id": 2, "name": "Second medium"}, {"id": 1, "name": "Canary medium"}]},
+  "detail": {"data": {"medium": {"id": 1, "name": "Canary medium"}, "solutions": [{"id": 10, "name": "Synthetic solution", "recipe": [{"compound_id": 4, "compound": "Water", "amount": 1, "unit": "ml"}]}]}},
+  "empty_strains": {"data": []},
+  "strains": {"data": [{"id": 7, "species": "Synthetic organism", "growth": 1}]}
+}

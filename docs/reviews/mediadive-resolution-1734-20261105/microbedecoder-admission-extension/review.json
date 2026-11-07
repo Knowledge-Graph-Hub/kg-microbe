@@ -1,0 +1,39 @@
+{
+  "change": "New fixed verify-microbedecoder command delegates to unchanged verify_sources(plan, [microbedecoder]); complete canonical planner/path/origin guards remain shared and --through-phase remains exclusive to verify-sources. Successful receipt retains distinct command and explicit admitted_sources=[microbedecoder], phase4_certified=false.",
+  "checks": {
+    "ast_parse": "pass",
+    "pytest": "not run; root coordinates",
+    "ruff_check": "pass",
+    "ruff_format": "pass; both files left unchanged"
+  },
+  "files": [
+    {
+      "after_sha256": "8f952582e4e1d626fd7fddfb738ee5d5df10a0f93275d5601024093ce15a0c0f",
+      "before_sha256": "d4bfb37c20379ccb0db77a53b34524ca79b3bf7d75881bc7062abf5884d6aae0",
+      "bytes": 19537,
+      "path": "scripts/adhoc/kgm_rebuild_admission_20261105.py"
+    },
+    {
+      "after_sha256": "88b7ee0ddae0759881095f69e2a7ff27570d5e8a97ceff2feda4112f2348301e",
+      "before_sha256": "f1a421ba5981147e4d323caa143acfbc5b3a9dcfcca0e76482886376dc70ce5f",
+      "bytes": 17227,
+      "path": "tests/test_rebuild_admission_20261105.py"
+    }
+  ],
+  "new_controls": [
+    "real canonical planner with fixed-only public gate selection and separately labelled receipt",
+    "missing authority refuses at the public admission boundary",
+    "changed authority refuses at the public admission boundary",
+    "through-phase selector refuses before public admission"
+  ],
+  "recorded_at": "2026-11-05T23:37:44.878222+00:00",
+  "scope": {
+    "credential_access": false,
+    "historical_receipts_changed": false,
+    "http_or_github_operations": false,
+    "producer_or_admission_commands_executed": false,
+    "production_modules_policies_raw_data_changed": false
+  },
+  "status": "frozen_pending_root_focused_tests",
+  "test_method": "New controls keep the real canonical planner and verify_sources wrapper. Only the public freshness boundary is replaced with an explicit offline byte-bound authority/graph admission fixture; existing production freshness tests remain unchanged. No producer or scientific source evidence is fabricated for these wrapper controls."
+}

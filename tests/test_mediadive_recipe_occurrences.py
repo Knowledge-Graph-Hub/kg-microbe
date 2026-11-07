@@ -18,6 +18,7 @@ import yaml
 
 from kg_microbe.transform_utils.mediadive import mediadive as mod
 from kg_microbe.utils.source_finalization import graph_rows
+from tests.mediadive_consumer_fixtures import seal_consumer_fixture
 
 RESOURCE = Path(__file__).parent / "resources"
 
@@ -152,6 +153,7 @@ def _run_transform(tmp_path, monkeypatch, recipes):
         ("compounds.json", {}),
     ):
         (bulk / filename).write_text(json.dumps(payload))
+    seal_consumer_fixture(raw, monkeypatch)
     monkeypatch.setattr(mod, "BACDIVE_TMP_DIR", RESOURCE / "provenance_serialization")
     monkeypatch.setattr(mod, "MEDIADIVE_TMP_DIR", tmp_path)
     with (
@@ -178,6 +180,11 @@ def test_actual_emission_finalization_and_archive_preserve_equal_occurrences(tmp
     alternatives = json.loads((RESOURCE / "mediadive_recipe_alternatives.json").read_text())["excerpts"]
     recipes = {"5787": raw, "1": {"recipe": [repeated, copy.deepcopy(repeated)]}, "2": {"recipe": _collision_recipe()}}
     recipes.update({identifier: {"recipe": items} for identifier, items in alternatives.items()})
+    # Supply explicit synthetic native solution metadata before sealing; all
+    # retained occurrence records below remain byte-for-value identical.
+    for identifier, solution in recipes.items():
+        solution.setdefault("id", int(identifier))
+        solution.setdefault("name", "Fixture solution")
     transform = _run_transform(tmp_path, monkeypatch, recipes)
     # The producer's pandas deduplication writes conventional CSV quoting;
     # source finalization below is the boundary to literal canonical TSVs.

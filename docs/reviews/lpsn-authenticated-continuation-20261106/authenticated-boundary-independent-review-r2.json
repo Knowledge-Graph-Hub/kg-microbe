@@ -1,0 +1,137 @@
+{
+  "constraints": {
+    "credential_files_or_values_read": false,
+    "environment_dumped": false,
+    "network_requests": false,
+    "tests_or_producers_run": false,
+    "tracked_files_modified": false
+  },
+  "created_utc": "2026-11-07T03:04:39.460994+00:00",
+  "findings": [
+    {
+      "acceptance": "Bind a validated, explicitly nonsecret command identity consistently in actual plan/result and validator. Keep credentials out of arguments and hashes. Add a composed offline test using real authenticated launcher plan/result construction; reject wrong command, launcher and failed/incomplete stage.",
+      "id": "R1",
+      "locations": [
+        "scripts/adhoc/kgm_rebuild_20261105.py:488",
+        "scripts/adhoc/kgm_lpsn_authenticated_20261106.py:295"
+      ],
+      "priority": "high",
+      "title": "Authenticated plan intentionally omits the command required by canary admission",
+      "trace": "Both authorized keys reach the launcher environment. The authenticated plan stores command_withheld=true without command. validate_canary unconditionally compares plan.get(command) with the exact canary vector, so a successful actual authenticated stage is refused before phase execution."
+    },
+    {
+      "acceptance": "Refuse duplicate keys; inspect every decoded key/value against in-memory credentials and client tokens before any raw scientific-body persistence; preserve token-field refusal. Never serialize or hash the sensitive-value set. Add controls for shadowed values, encoded values, secret-valued keys and tokens under unreserved keys. Extend the preservation boundary to any newly acquired native cache artifact that can receive the same authenticated record content.",
+      "id": "R2",
+      "locations": [
+        "scripts/adhoc/kgm_lpsn_authenticated_20261106.py:91",
+        "scripts/adhoc/kgm_lpsn_authenticated_20261106.py:247"
+      ],
+      "priority": "high",
+      "title": "Public response scan does not cover the raw bytes that are persisted",
+      "trace": "json.loads collapses duplicate keys before public_payload scans only parsed string values; it does not scan object keys against sensitive values or include client access/refresh token values. The original unfiltered bytes are then written. A shadowed credential-bearing JSON value, a credential-valued key or an echoed token under an ordinary key can therefore be retained while credential_values_saved=false. No such upstream response is claimed to have occurred."
+    },
+    {
+      "acceptance": "Capture and require the exact pre-transform manifest identity and full preexisting cohort on the post-transform check. A simultaneous cache mutation plus manifest deletion must refuse completion; unchanged copies and legitimate new cache members remain allowed.",
+      "id": "R3",
+      "locations": [
+        "scripts/adhoc/kgm_lpsn_authenticated_20261106.py:350",
+        "scripts/adhoc/kgm_lpsn_authenticated_20261106.py:379"
+      ],
+      "priority": "medium",
+      "title": "Cache manifest changes can reduce the preserved cohort during the phase",
+      "trace": "Before and after verification independently read the manifest and return its current digest. The phase never compares those identities. Changing a preexisting cache record and removing its member entry between checks makes the reduced final cohort pass and allows producer_pass."
+    },
+    {
+      "acceptance": "Use a traversal that raises on scan errors and independently retains exact original membership. Add an offline scan-failure control; do not silently certify an incomplete cache inventory. This is the same known mechanism as earlier raw-staging issue 1722, in a new helper location.",
+      "id": "R4",
+      "locations": [
+        "scripts/adhoc/kgm_lpsn_authenticated_20261106.py:326",
+        "scripts/adhoc/kgm_rebuild_20261105.py:185"
+      ],
+      "priority": "medium",
+      "title": "Cache-copy traversal can silently skip an unreadable subtree",
+      "trace": "The new cache preservation uses Path.rglob without an explicit traversal error guard, whereas the existing raw-staging inventory already rejects os.walk traversal errors. Python pathlib may suppress permission errors and return an incomplete cohort, contradicting every-existing-cache-file preservation."
+    },
+    {
+      "acceptance": "Redirect stdout and stderr to DEVNULL on the outer credential-bearing subprocess as well. Verify with an offline startup hook that emits synthetic credential material before main; use only fixed nonsecret stage metadata for acknowledgements.",
+      "id": "R5",
+      "locations": [
+        "scripts/adhoc/kgm_lpsn_authenticated_20261106.py:450",
+        "scripts/adhoc/kgm_rebuild_20261105.py:536"
+      ],
+      "priority": "high",
+      "title": "First credential-bearing subprocess inherits diagnostic streams during Python startup",
+      "trace": "The outer runner launches the authenticated main launcher with inherited stdout/stderr. Only after interpreter startup and imports does that launcher redirect its own descriptors. The inner worker is correctly protected by parent DEVNULL, but that does not protect the first authenticated child from a startup/import diagnostic. No startup leak is claimed to have occurred."
+    }
+  ],
+  "focused_tests": {
+    "coordinator_report": "134 passed, 4 warnings, 2.23s, exit 0; review does not infer uncovered integration controls from that result.",
+    "identity": {
+      "bytes": 2721,
+      "sha256": "fa2dbb9a5f121853f0c579b7223bbc13d843b265c3623222d3ea0f57c7d2009e"
+    },
+    "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/mediadive-resolution-1734/lpsn-continuation-20261106/focused-combined-r1.log"
+  },
+  "head": "325ead9101d4e6561c8e3827bec2c665ec330645",
+  "known_coordinator_item": {
+    "description": "Dynamic exception class names enter failure_type; coordinator already committed to fixed exception categories and dedicated controls. Not reported as a duplicate new finding.",
+    "locations": [
+      "scripts/adhoc/kgm_lpsn_authenticated_20261106.py:261",
+      "scripts/adhoc/kgm_lpsn_authenticated_20261106.py:401"
+    ]
+  },
+  "limits": [
+    "No live authentication or source production was performed.",
+    "Existing native response semantics, graph conversion and dependency authenticity are not globally recertified by this narrow credential-boundary review.",
+    "The isolated installed client implementation was inspected and hashed locally; no claim that a live endpoint returned a particular envelope is made.",
+    "Prior review artifacts remain unchanged."
+  ],
+  "method": "Independent static source and offline-control review; no executable probes or tests by reviewer.",
+  "positive_findings": [
+    "Only the two authorized names are returned from the single-line noninterpolating dotenv parser; shell syntax is not executed. Duplicate/incomplete/multiline/symlink inputs are rejected.",
+    "Runner sets PYTHON_DOTENV_DISABLED before native imports. Installed python-dotenv 1.2.3 checks this before discovery/parsing; complete native credentials also bypass load_dotenv.",
+    "Launcher fingerprints only the explicit 27 reviewed nonsecret bindings. Credential rotation and arbitrary inherited variables do not affect the hash; known credential-bearing metadata and JVM options are refused before persistence.",
+    "Authenticated inner-worker descriptors, Python streams and logging are suppressed, including failure/atexit paths. Receipts omit raw exception text and use fixed categories and canonical owned KG module identities.",
+    "Bounded canary permits exactly one official authentication POST followed by one exact-ID GET for public genus Dryocola, record 35300. It disables transport retries and redirects and enforces a 90-second network section deadline. No production cache is read or replaced by the canary.",
+    "Native factory requires two nonblank string tokens before warm-cache reuse. Counted direct or linked fetch exceptions abort inside both atomic writers while successful native acquisitions remain resumable. Explicit successful API misses retain their existing distinction.",
+    "Phase selects only lpsn_api through the native dispatcher, retains the complete canonical prerequisite plan and marks producer success as full_source_admission_pending, so it does not falsely certify phase four or release admission.",
+    "Independent cache-copy inode and hash checks reject ordinary existing-member mutation; the remaining concerns are exhaustive inventory and invariant manifest identity."
+  ],
+  "reviewed_files": {
+    ".venv/lib/python3.10/site-packages/dotenv/main.py": {
+      "bytes": 15179,
+      "sha256": "697eb33eee75d78b73db61eaf96bf9a6547548c1811c93501b67e056e5470dea"
+    },
+    ".venv/lib/python3.10/site-packages/lpsn/client.py": {
+      "bytes": 9092,
+      "sha256": "5390a933174f0df4166a9d8ea81cfde82c0d404c008ce69953b068d8c4bcc4e2"
+    },
+    "kg_microbe/transform_utils/lpsn_api/lpsn_api.py": {
+      "bytes": 34234,
+      "sha256": "94c7045915ed383b8c544ffc1cb62bc0a0c31e2f32d0e024902fa08feb37ef41"
+    },
+    "scripts/adhoc/kgm_lpsn_authenticated_20261106.py": {
+      "bytes": 20714,
+      "sha256": "f60628dbb484e34b5ab377bc9d4f8c66bc15d5f22c6c7601837e6b2b6014fb57"
+    },
+    "scripts/adhoc/kgm_rebuild_20261105.py": {
+      "bytes": 22810,
+      "sha256": "b8836a1e02daf60acde83f47f86e3a368ac526bef957e5f06e8b9c890a6f5704"
+    },
+    "tests/test_lpsn_api_transform.py": {
+      "bytes": 30571,
+      "sha256": "493ac911ae3b6635428510dec0425704e580048db41479717103c1aaebef6664"
+    },
+    "tests/test_lpsn_authenticated_20261106.py": {
+      "bytes": 9129,
+      "sha256": "c341d4fba74d9adb6fe16535bfa1a013965d61824c6cd7ed0e616f2767cd30a7"
+    },
+    "tests/test_rebuild_launcher_20261105.py": {
+      "bytes": 29823,
+      "sha256": "eedc970aa36ecf9c812748321c3d594ed403dc0f368629c05d2019fd5cc93208"
+    }
+  },
+  "root": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105",
+  "schema": "lpsn-authenticated-boundary-independent-review/v1",
+  "status": "changes_required_before_credentials_or_live_requests"
+}

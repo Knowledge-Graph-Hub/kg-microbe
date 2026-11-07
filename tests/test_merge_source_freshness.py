@@ -84,10 +84,21 @@ def read_mediadive_bulk_inputs(transform, *, create=False):
             path.parent.mkdir(parents=True, exist_ok=True)
             if not path.exists():
                 path.write_text(json.dumps(payloads[role], sort_keys=True) + "\n")
+    from kg_microbe.transform_utils.mediadive.endpoint_consumer import GENERATION_INPUTS, EndpointConsumer
+    from tests.mediadive_generation_fixtures import seal_fixture_raw
+
+    transform.bulk_data_dir = transform.input_base_dir / "mediadive"
+    if not (transform.bulk_data_dir / "current.json").exists():
+        seal_fixture_raw(transform.input_base_dir)
+    transform._endpoint_consumer = EndpointConsumer(transform)
+    transform._bulk_input_admission = transform._endpoint_consumer.admission
     loaded = {}
-    for role, relative in paths.items():
-        loaded[role] = load_bulk_payload(transform, role, transform.input_base_dir / relative)
-        assert loaded[role] == payloads[role]
+    for role, path in transform._endpoint_consumer.native_paths.items():
+        loaded[role] = load_bulk_payload(transform, role, path)
+        if role == "mediadive_media_list":
+            assert loaded[role] == {"status": 200, "count": 0, "data": []}
+        else:
+            assert loaded[role] == payloads[role]
     assert payloads["mediadive_media_list"][DATA_KEY] == []
     transform.media_detailed = loaded["mediadive_media_detailed"]
     transform.media_strains = loaded["mediadive_media_strains"]
@@ -99,6 +110,7 @@ def read_mediadive_bulk_inputs(transform, *, create=False):
     assert transform._recipe_identity_guard.index["occurrences"] == {}
     return (
         *paths,
+        *GENERATION_INPUTS,
         REVIEWED_ROLE,
         POLICY_ROLE,
         INGREDIENT_CONTEXT_ROLE,
@@ -112,13 +124,16 @@ def read_mediadive_bulk_inputs(transform, *, create=False):
 def write_empty_mediadive_audit(transform):
     """Run the actual audit writer only for the consumed immutable zero-cohort fixture."""
     payloads = json.loads((FIXTURES.parent / "mediadive_bulk_inputs.json").read_text())
-    media_list = load_bulk_payload(transform, "mediadive_media_list", transform.input_base_dir / "mediadive.json")
-    assert media_list == payloads["mediadive_media_list"]
+    media_list = load_bulk_payload(
+        transform, "mediadive_media_list", transform._endpoint_consumer.native_paths["mediadive_media_list"]
+    )
+    assert media_list["data"] == payloads["mediadive_media_list"]["data"]
     assert media_list[DATA_KEY] == [], "Nonempty media require the actual producer's occurrence processing"
     transform._material_scope_audit = MaterialScopeAudit(transform, media_list)
     transform._material_scope_audit.write()
     assert transform._recipe_identity_guard.index["occurrences"] == {}
     transform._recipe_identity_guard.write()
+    transform._endpoint_consumer.write()
 
 
 def prepare_bacdive_ec_correction_inputs(transform):

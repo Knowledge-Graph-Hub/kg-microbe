@@ -1,0 +1,43 @@
+{
+  "confirmed_paths": [
+    "Source freshness admits selected inputs and their dependencies before qualification extraction; diagnostic opt-out remains explicitly marked.",
+    "Qualification metadata is detached before KGX callbacks and multiple MediaDive generation registrations are refused.",
+    "Required endpoint TSV is byte-bound to the admitted producer audit, its legal/unique endpoint states are counted, and an unknown-versus-complete-association contradiction is refused.",
+    "Qualification TSV bytes and scientific limitations are included in both archive and loose-manifest members/provenance.",
+    "The new output suffix participates in destination/protected-path collision checks.",
+    "All destination reports finish before packaging; exact copied qualification identities are included in mandatory packaging verification.",
+    "Shared admission verifies original inputs again before publishing staged files; a qualification validation error propagates and leaves prior published graphs intact.",
+    "Selected direct graph participation is distinguished from inherited dependency qualification without inferring biological assertions."
+  ],
+  "findings": [],
+  "limits": [
+    "Parent owns focused test execution; no runtime pass is claimed here.",
+    "This scoped review does not certify the separately owned acquisition generation or producer contracts, and grants no source/graph admission.",
+    "Existing per-file staged publication does not claim a new multi-file transaction."
+  ],
+  "reviewed_at": "2026-11-05T21:20:03.377666+00:00",
+  "reviewed_files": [
+    {
+      "bytes": 3912,
+      "path": "kg_microbe/merge_utils/source_qualifications.py",
+      "sha256": "3676bac4d9fc21d250b89c64c9a556b253d43461630d48903469b6edaa1308f2"
+    },
+    {
+      "bytes": 34948,
+      "path": "kg_microbe/merge_utils/merge_kg.py",
+      "sha256": "bbf2ca9d3b57762ccf2a279d4e8785775d526b09151e82d0a7ac4fe2abdf41ca"
+    },
+    {
+      "bytes": 5507,
+      "path": "tests/test_merge_source_qualifications.py",
+      "sha256": "10f50773acb8d50ab5ecfd0b1e918df21383dd2bb0c480c58e0fd4f3d77d292f"
+    }
+  ],
+  "scope": "Independent read-only static review of source_qualifications.py and merge_kg.py integration, plus relevant upstream registration/manifest code and focused test source. No tests or live merge executed.",
+  "status": "no_concrete_defect_found_in_current_scoped_diff",
+  "test_source_review": [
+    "Both tar/loose and direct/dependency cases retain unknown versus explicit-empty audit rows and false association completeness.",
+    "Audit mutation refusal retains the previous archive.",
+    "Contradictory complete-association summary and mutable-admission aliasing have negative controls."
+  ]
+}

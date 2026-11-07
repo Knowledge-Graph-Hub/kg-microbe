@@ -6,7 +6,7 @@
   "sources": {
     "upa.json": {
       "release": "http://purl.obolibrary.org/obo/upa/releases/2024-03-06/upa.owl",
-      "sha256": "cff92938a092dcc2e4e2e1a17266417edeacba8e7b9f51b3f183066a80fdb8bd"
+      "sha256": "28fcde5326b8856bd51a2b6df2b9bcb7e550347dda6a43fa53350947522ccfa8"
     },
     "upa.owl": "1ea0465c2222592bdeea3197a687ba26c74818263e1e6c5e8838baafcb6838ce",
     "go.db": {
@@ -43,7 +43,15 @@
                   "val": "EC:1.1.1.88"
                 },
                 {
-                  "val": "GO:0042282"
+                  "val": "GO:0042282",
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                        "val": "molecular_function:hydroxymethylglutaryl-CoA reductase activity"
+                      }
+                    ]
+                  }
                 }
               ],
               "basicPropertyValues": [
@@ -92,10 +100,26 @@
               ],
               "xrefs": [
                 {
-                  "val": "KEGG:map00900"
+                  "val": "KEGG:map00900",
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                        "val": "Terpenoid backbone biosynthesis"
+                      }
+                    ]
+                  }
                 },
                 {
-                  "val": "KEGG:map01110"
+                  "val": "KEGG:map01110",
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                        "val": "Biosynthesis of secondary metabolites"
+                      }
+                    ]
+                  }
                 }
               ],
               "basicPropertyValues": [
@@ -204,28 +228,92 @@
                   "val": "EC:2.6.1"
                 },
                 {
-                  "val": "GO:0008483"
+                  "val": "GO:0008483",
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                        "val": "molecular_function:transaminase activity"
+                      }
+                    ]
+                  }
                 },
                 {
-                  "val": "GO:0010326"
+                  "val": "GO:0010326",
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                        "val": "molecular_function:methionine-oxo-acid transaminase activity"
+                      }
+                    ]
+                  }
                 },
                 {
-                  "val": "GO:0018719"
+                  "val": "GO:0018719",
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                        "val": "molecular_function:6-aminohexanoate transaminase activity"
+                      }
+                    ]
+                  }
                 },
                 {
-                  "val": "GO:0043746"
+                  "val": "GO:0043746",
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                        "val": "molecular_function:N2-acetyl-L-lysine aminotransferase activity"
+                      }
+                    ]
+                  }
                 },
                 {
-                  "val": "GO:0043760"
+                  "val": "GO:0043760",
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                        "val": "molecular_function:acetyldiaminopimelate aminotransferase activity"
+                      }
+                    ]
+                  }
                 },
                 {
-                  "val": "GO:0043840"
+                  "val": "GO:0043840",
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                        "val": "molecular_function:branched-chain amino acid:2-keto-4-methylthiobutyrate aminotransferase activity"
+                      }
+                    ]
+                  }
                 },
                 {
-                  "val": "GO:0043911"
+                  "val": "GO:0043911",
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                        "val": "molecular_function:D-lysine transaminase activity"
+                      }
+                    ]
+                  }
                 },
                 {
-                  "val": "GO:0046571"
+                  "val": "GO:0046571",
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                        "val": "molecular_function:aspartate-2-keto-4-methylthiobutyrate transaminase activity"
+                      }
+                    ]
+                  }
                 }
               ],
               "basicPropertyValues": [
@@ -278,13 +366,37 @@
               ],
               "xrefs": [
                 {
-                  "val": "GO:0019509"
+                  "val": "GO:0019509",
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                        "val": "biological_process:L-methionine biosynthetic process from methylthioadenosine"
+                      }
+                    ]
+                  }
                 },
                 {
-                  "val": "KEGG:map00270"
+                  "val": "KEGG:map00270",
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                        "val": "Cysteine and methionine metabolism"
+                      }
+                    ]
+                  }
                 },
                 {
-                  "val": "KEGG:map01100"
+                  "val": "KEGG:map01100",
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                        "val": "Metabolic pathways"
+                      }
+                    ]
+                  }
                 }
               ],
               "basicPropertyValues": [
@@ -393,7 +505,15 @@
                   "val": "EC:1.2.1.20"
                 },
                 {
-                  "val": "GO:0047949"
+                  "val": "GO:0047949",
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                        "val": "molecular_function:glutarate-semialdehyde dehydrogenase activity"
+                      }
+                    ]
+                  }
                 }
               ],
               "basicPropertyValues": [
@@ -436,10 +556,26 @@
               },
               "xrefs": [
                 {
-                  "val": "GO:0019473"
+                  "val": "GO:0019473",
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                        "val": "biological_process:L-lysine catabolic process to glutarate, by acetylation"
+                      }
+                    ]
+                  }
                 },
                 {
-                  "val": "KEGG:map00310"
+                  "val": "KEGG:map00310",
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                        "val": "Lysine degradation"
+                      }
+                    ]
+                  }
                 },
                 {
                   "val": "MetaCyc:LYSDEGII-PWY"
@@ -557,43 +693,147 @@
                   "val": "EC:2.5.1"
                 },
                 {
-                  "val": "GO:0004659"
+                  "val": "GO:0004659",
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                        "val": "molecular_function:prenyltransferase activity"
+                      }
+                    ]
+                  }
                 },
                 {
-                  "val": "GO:0004661"
+                  "val": "GO:0004661",
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                        "val": "molecular_function:protein geranylgeranyltransferase activity"
+                      }
+                    ]
+                  }
                 },
                 {
-                  "val": "GO:0008318"
+                  "val": "GO:0008318",
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                        "val": "molecular_function:protein prenyltransferase activity"
+                      }
+                    ]
+                  }
                 },
                 {
-                  "val": "GO:0008412"
+                  "val": "GO:0008412",
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                        "val": "molecular_function:4-hydroxybenzoate octaprenyltransferase activity"
+                      }
+                    ]
+                  }
                 },
                 {
-                  "val": "GO:0008495"
+                  "val": "GO:0008495",
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                        "val": "molecular_function:protoheme IX farnesyltransferase activity"
+                      }
+                    ]
+                  }
                 },
                 {
-                  "val": "GO:0016765"
+                  "val": "GO:0016765",
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                        "val": "molecular_function:transferase activity, transferring alkyl or aryl (other than methyl) groups"
+                      }
+                    ]
+                  }
                 },
                 {
-                  "val": "GO:0043888"
+                  "val": "GO:0043888",
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                        "val": "molecular_function:(S)-2,3-di-O-geranylgeranylglyceryl phosphate synthase activity"
+                      }
+                    ]
+                  }
                 },
                 {
-                  "val": "GO:0043918"
+                  "val": "GO:0043918",
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                        "val": "molecular_function:cadaverine aminopropyltransferase activity"
+                      }
+                    ]
+                  }
                 },
                 {
-                  "val": "GO:0043919"
+                  "val": "GO:0043919",
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                        "val": "molecular_function:agmatine aminopropyltransferase activity"
+                      }
+                    ]
+                  }
                 },
                 {
-                  "val": "GO:0046428"
+                  "val": "GO:0046428",
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                        "val": "molecular_function:1,4-dihydroxy-2-naphthoate octaprenyltransferase activity"
+                      }
+                    ]
+                  }
                 },
                 {
-                  "val": "GO:0048045"
+                  "val": "GO:0048045",
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                        "val": "molecular_function:trans-pentaprenyltranstransferase activity"
+                      }
+                    ]
+                  }
                 },
                 {
-                  "val": "GO:0052622"
+                  "val": "GO:0052622",
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                        "val": "molecular_function:ATP dimethylallyltransferase activity"
+                      }
+                    ]
+                  }
                 },
                 {
-                  "val": "GO:0052623"
+                  "val": "GO:0052623",
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                        "val": "molecular_function:ADP dimethylallyltransferase activity"
+                      }
+                    ]
+                  }
                 }
               ],
               "basicPropertyValues": [
@@ -636,13 +876,37 @@
               },
               "xrefs": [
                 {
-                  "val": "GO:0048034"
+                  "val": "GO:0048034",
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                        "val": "biological_process:heme O biosynthetic process"
+                      }
+                    ]
+                  }
                 },
                 {
-                  "val": "KEGG:map00860"
+                  "val": "KEGG:map00860",
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                        "val": "Porphyrin and chlorophyll metabolism"
+                      }
+                    ]
+                  }
                 },
                 {
-                  "val": "KEGG:map01110"
+                  "val": "KEGG:map01110",
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                        "val": "Biosynthesis of secondary metabolites"
+                      }
+                    ]
+                  }
                 },
                 {
                   "val": "PMID:1336371"
@@ -757,43 +1021,147 @@
                   "val": "EC:2.5.1"
                 },
                 {
-                  "val": "GO:0004659"
+                  "val": "GO:0004659",
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                        "val": "molecular_function:prenyltransferase activity"
+                      }
+                    ]
+                  }
                 },
                 {
-                  "val": "GO:0004661"
+                  "val": "GO:0004661",
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                        "val": "molecular_function:protein geranylgeranyltransferase activity"
+                      }
+                    ]
+                  }
                 },
                 {
-                  "val": "GO:0008318"
+                  "val": "GO:0008318",
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                        "val": "molecular_function:protein prenyltransferase activity"
+                      }
+                    ]
+                  }
                 },
                 {
-                  "val": "GO:0008412"
+                  "val": "GO:0008412",
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                        "val": "molecular_function:4-hydroxybenzoate octaprenyltransferase activity"
+                      }
+                    ]
+                  }
                 },
                 {
-                  "val": "GO:0008495"
+                  "val": "GO:0008495",
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                        "val": "molecular_function:protoheme IX farnesyltransferase activity"
+                      }
+                    ]
+                  }
                 },
                 {
-                  "val": "GO:0016765"
+                  "val": "GO:0016765",
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                        "val": "molecular_function:transferase activity, transferring alkyl or aryl (other than methyl) groups"
+                      }
+                    ]
+                  }
                 },
                 {
-                  "val": "GO:0043888"
+                  "val": "GO:0043888",
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                        "val": "molecular_function:(S)-2,3-di-O-geranylgeranylglyceryl phosphate synthase activity"
+                      }
+                    ]
+                  }
                 },
                 {
-                  "val": "GO:0043918"
+                  "val": "GO:0043918",
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                        "val": "molecular_function:cadaverine aminopropyltransferase activity"
+                      }
+                    ]
+                  }
                 },
                 {
-                  "val": "GO:0043919"
+                  "val": "GO:0043919",
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                        "val": "molecular_function:agmatine aminopropyltransferase activity"
+                      }
+                    ]
+                  }
                 },
                 {
-                  "val": "GO:0046428"
+                  "val": "GO:0046428",
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                        "val": "molecular_function:1,4-dihydroxy-2-naphthoate octaprenyltransferase activity"
+                      }
+                    ]
+                  }
                 },
                 {
-                  "val": "GO:0048045"
+                  "val": "GO:0048045",
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                        "val": "molecular_function:trans-pentaprenyltranstransferase activity"
+                      }
+                    ]
+                  }
                 },
                 {
-                  "val": "GO:0052622"
+                  "val": "GO:0052622",
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                        "val": "molecular_function:ATP dimethylallyltransferase activity"
+                      }
+                    ]
+                  }
                 },
                 {
-                  "val": "GO:0052623"
+                  "val": "GO:0052623",
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                        "val": "molecular_function:ADP dimethylallyltransferase activity"
+                      }
+                    ]
+                  }
                 }
               ],
               "basicPropertyValues": [
@@ -842,28 +1210,92 @@
               ],
               "xrefs": [
                 {
-                  "val": "KEGG:map00260"
+                  "val": "KEGG:map00260",
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                        "val": "Glycine, serine and threonine metabolism"
+                      }
+                    ]
+                  }
                 },
                 {
-                  "val": "KEGG:map00270"
+                  "val": "KEGG:map00270",
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                        "val": "Cysteine and methionine metabolism"
+                      }
+                    ]
+                  }
                 },
                 {
-                  "val": "KEGG:map00300"
+                  "val": "KEGG:map00300",
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                        "val": "Lysine biosynthesis"
+                      }
+                    ]
+                  }
                 },
                 {
-                  "val": "KEGG:map00670"
+                  "val": "KEGG:map00670",
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                        "val": "One carbon pool by folate"
+                      }
+                    ]
+                  }
                 },
                 {
-                  "val": "KEGG:map00920"
+                  "val": "KEGG:map00920",
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                        "val": "Sulfur metabolism"
+                      }
+                    ]
+                  }
                 },
                 {
-                  "val": "KEGG:map01100"
+                  "val": "KEGG:map01100",
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                        "val": "Metabolic pathways"
+                      }
+                    ]
+                  }
                 },
                 {
-                  "val": "KEGG:map01110"
+                  "val": "KEGG:map01110",
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                        "val": "Biosynthesis of secondary metabolites"
+                      }
+                    ]
+                  }
                 },
                 {
-                  "val": "KEGG:map01120"
+                  "val": "KEGG:map01120",
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                        "val": "Microbial metabolism in diverse environments"
+                      }
+                    ]
+                  }
                 },
                 {
                   "val": "PMID:10469143"
@@ -987,85 +1419,301 @@
                   "val": "EC:1.1.1"
                 },
                 {
-                  "val": "GO:0000252"
+                  "val": "GO:0000252",
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                        "val": "molecular_function:C-3 sterol dehydrogenase (C-4 sterol decarboxylase) activity"
+                      }
+                    ]
+                  }
                 },
                 {
-                  "val": "GO:0004033"
+                  "val": "GO:0004033",
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                        "val": "molecular_function:aldo-keto reductase (NADP) activity"
+                      }
+                    ]
+                  }
                 },
                 {
-                  "val": "GO:0004448"
+                  "val": "GO:0004448",
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                        "val": "molecular_function:isocitrate dehydrogenase activity"
+                      }
+                    ]
+                  }
                 },
                 {
-                  "val": "GO:0004495"
+                  "val": "GO:0004495",
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                        "val": "molecular_function:mevaldate reductase activity"
+                      }
+                    ]
+                  }
                 },
                 {
-                  "val": "GO:0008875"
+                  "val": "GO:0008875",
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                        "val": "molecular_function:gluconate dehydrogenase activity"
+                      }
+                    ]
+                  }
                 },
                 {
-                  "val": "GO:0016229"
+                  "val": "GO:0016229",
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                        "val": "molecular_function:steroid dehydrogenase activity"
+                      }
+                    ]
+                  }
                 },
                 {
-                  "val": "GO:0016616"
+                  "val": "GO:0016616",
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                        "val": "molecular_function:oxidoreductase activity, acting on the CH-OH group of donors, NAD or NADP as acceptor"
+                      }
+                    ]
+                  }
                 },
                 {
-                  "val": "GO:0018451"
+                  "val": "GO:0018451",
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                        "val": "molecular_function:epoxide dehydrogenase activity"
+                      }
+                    ]
+                  }
                 },
                 {
-                  "val": "GO:0018452"
+                  "val": "GO:0018452",
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                        "val": "molecular_function:5-exo-hydroxycamphor dehydrogenase activity"
+                      }
+                    ]
+                  }
                 },
                 {
-                  "val": "GO:0018453"
+                  "val": "GO:0018453",
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                        "val": "molecular_function:2-hydroxytetrahydrofuran dehydrogenase activity"
+                      }
+                    ]
+                  }
                 },
                 {
-                  "val": "GO:0019152"
+                  "val": "GO:0019152",
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                        "val": "molecular_function:acetoin dehydrogenase activity"
+                      }
+                    ]
+                  }
                 },
                 {
-                  "val": "GO:0032442"
+                  "val": "GO:0032442",
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                        "val": "molecular_function:phenylcoumaran benzylic ether reductase activity"
+                      }
+                    ]
+                  }
                 },
                 {
-                  "val": "GO:0032866"
+                  "val": "GO:0032866",
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                        "val": "molecular_function:D-xylose:NADP reductase activity"
+                      }
+                    ]
+                  }
                 },
                 {
-                  "val": "GO:0032867"
+                  "val": "GO:0032867",
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                        "val": "molecular_function:L-arabinose:NADP reductase activity"
+                      }
+                    ]
+                  }
                 },
                 {
-                  "val": "GO:0033709"
+                  "val": "GO:0033709",
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                        "val": "molecular_function:D-arabinitol dehydrogenase, D-ribulose forming (NADP+) activity"
+                      }
+                    ]
+                  }
                 },
                 {
-                  "val": "GO:0033764"
+                  "val": "GO:0033764",
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                        "val": "molecular_function:steroid dehydrogenase activity, acting on the CH-OH group of donors, NAD or NADP as acceptor"
+                      }
+                    ]
+                  }
                 },
                 {
-                  "val": "GO:0033765"
+                  "val": "GO:0033765",
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                        "val": "molecular_function:steroid dehydrogenase activity, acting on the CH-CH group of donors"
+                      }
+                    ]
+                  }
                 },
                 {
-                  "val": "GO:0034831"
+                  "val": "GO:0034831",
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                        "val": "molecular_function:(R)-(-)-1,2,3,4-tetrahydronaphthol dehydrogenase activity"
+                      }
+                    ]
+                  }
                 },
                 {
-                  "val": "GO:0034840"
+                  "val": "GO:0034840",
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                        "val": "molecular_function:3-hydroxymenthone dehydrogenase activity"
+                      }
+                    ]
+                  }
                 },
                 {
-                  "val": "GO:0035380"
+                  "val": "GO:0035380",
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                        "val": "molecular_function:very long-chain-3-hydroxyacyl-CoA dehydrogenase activity"
+                      }
+                    ]
+                  }
                 },
                 {
-                  "val": "GO:0035410"
+                  "val": "GO:0035410",
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                        "val": "molecular_function:dihydrotestosterone 17-beta-dehydrogenase activity"
+                      }
+                    ]
+                  }
                 },
                 {
-                  "val": "GO:0043713"
+                  "val": "GO:0043713",
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                        "val": "molecular_function:(R)-2-hydroxyisocaproate dehydrogenase activity"
+                      }
+                    ]
+                  }
                 },
                 {
-                  "val": "GO:0044103"
+                  "val": "GO:0044103",
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                        "val": "molecular_function:L-arabinose 1-dehydrogenase (NADP+) activity"
+                      }
+                    ]
+                  }
                 },
                 {
-                  "val": "GO:0044105"
+                  "val": "GO:0044105",
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                        "val": "molecular_function:L-xylulose reductase (NAD+) activity"
+                      }
+                    ]
+                  }
                 },
                 {
-                  "val": "GO:0048258"
+                  "val": "GO:0048258",
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                        "val": "molecular_function:3-ketoglucose-reductase activity"
+                      }
+                    ]
+                  }
                 },
                 {
-                  "val": "GO:0051990"
+                  "val": "GO:0051990",
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                        "val": "molecular_function:(R)-2-hydroxyglutarate dehydrogenase activity"
+                      }
+                    ]
+                  }
                 },
                 {
-                  "val": "GO:0052677"
+                  "val": "GO:0052677",
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                        "val": "molecular_function:D-arabinitol dehydrogenase, D-xylulose forming (NADP+) activity"
+                      }
+                    ]
+                  }
                 }
               ],
               "basicPropertyValues": [
@@ -1108,10 +1756,26 @@
               },
               "xrefs": [
                 {
-                  "val": "GO:0019285"
+                  "val": "GO:0019285",
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                        "val": "biological_process:glycine betaine biosynthetic process from choline"
+                      }
+                    ]
+                  }
                 },
                 {
-                  "val": "KEGG:map00260"
+                  "val": "KEGG:map00260",
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                        "val": "Glycine, serine and threonine metabolism"
+                      }
+                    ]
+                  }
                 },
                 {
                   "val": "MetaCyc:BETSYN-PWY"
@@ -1238,16 +1902,48 @@
                   "val": "EC:6.3.4"
                 },
                 {
-                  "val": "GO:0016979"
+                  "val": "GO:0016979",
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                        "val": "molecular_function:lipoate-protein ligase activity"
+                      }
+                    ]
+                  }
                 },
                 {
-                  "val": "GO:0018271"
+                  "val": "GO:0018271",
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                        "val": "molecular_function:biotin-protein ligase activity"
+                      }
+                    ]
+                  }
                 },
                 {
-                  "val": "GO:0032267"
+                  "val": "GO:0032267",
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                        "val": "molecular_function:tRNA(Ile)-lysidine synthase activity"
+                      }
+                    ]
+                  }
                 },
                 {
-                  "val": "GO:0071734"
+                  "val": "GO:0071734",
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                        "val": "molecular_function:biotin-[pyruvate-carboxylase] ligase activity"
+                      }
+                    ]
+                  }
                 }
               ],
               "basicPropertyValues": [
@@ -1304,28 +2000,92 @@
               ],
               "xrefs": [
                 {
-                  "val": "GO:0006189"
+                  "val": "GO:0006189",
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                        "val": "biological_process:'de novo' IMP biosynthetic process"
+                      }
+                    ]
+                  }
                 },
                 {
-                  "val": "KEGG:map00230"
+                  "val": "KEGG:map00230",
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                        "val": "Purine metabolism"
+                      }
+                    ]
+                  }
                 },
                 {
-                  "val": "KEGG:map00250"
+                  "val": "KEGG:map00250",
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                        "val": "Alanine, aspartate and glutamate metabolism"
+                      }
+                    ]
+                  }
                 },
                 {
-                  "val": "KEGG:map00340"
+                  "val": "KEGG:map00340",
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                        "val": "Histidine metabolism"
+                      }
+                    ]
+                  }
                 },
                 {
-                  "val": "KEGG:map00630"
+                  "val": "KEGG:map00630",
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                        "val": "Glyoxylate and dicarboxylate metabolism"
+                      }
+                    ]
+                  }
                 },
                 {
-                  "val": "KEGG:map00670"
+                  "val": "KEGG:map00670",
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                        "val": "One carbon pool by folate"
+                      }
+                    ]
+                  }
                 },
                 {
-                  "val": "KEGG:map01100"
+                  "val": "KEGG:map01100",
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                        "val": "Metabolic pathways"
+                      }
+                    ]
+                  }
                 },
                 {
-                  "val": "KEGG:map01110"
+                  "val": "KEGG:map01110",
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                        "val": "Biosynthesis of secondary metabolites"
+                      }
+                    ]
+                  }
                 }
               ],
               "basicPropertyValues": [

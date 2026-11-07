@@ -1,0 +1,327 @@
+{
+  "current_code_and_control_identities": [
+    {
+      "bytes": 10100,
+      "matches_9cd059e5": true,
+      "path": "kg_microbe/download.py",
+      "sha256": "24da75437177503d266ebb99cb5f92aca7cccc5a0226f73a9ab8599746e2247b"
+    },
+    {
+      "bytes": 30012,
+      "matches_9cd059e5": true,
+      "path": "kg_microbe/transform_utils/mediadive/acquisition.py",
+      "sha256": "4052142e440bcda181d2c106de8c405cacb545be18792740f869b36a1509ac9e"
+    },
+    {
+      "bytes": 34745,
+      "matches_9cd059e5": true,
+      "path": "kg_microbe/transform_utils/mediadive/endpoint_outcomes.py",
+      "sha256": "4829dd7719172ecf6ce1b87f78b59b07b488395b2e68921ed8f87de0004938e6"
+    },
+    {
+      "bytes": 13120,
+      "matches_9cd059e5": true,
+      "path": "kg_microbe/transform_utils/mediadive/endpoint_consumer.py",
+      "sha256": "0b14f6ec992476b73c5cf0cf9e1e92ad38acc59724fd5e20c75a2f35e29cea94"
+    },
+    {
+      "bytes": 15065,
+      "matches_9cd059e5": true,
+      "path": "kg_microbe/transform_utils/mediadive/bulk_inputs.py",
+      "sha256": "a7b6d87afbf530ae8a520f10b5edda3b52b8ab267431ffe3810b0b8614254d4b"
+    },
+    {
+      "bytes": 80386,
+      "matches_9cd059e5": true,
+      "path": "kg_microbe/transform_utils/mediadive/mediadive.py",
+      "sha256": "5dd9090519838615677c118bcdc95db5304e658dde0dc04876330193a5f7e855"
+    },
+    {
+      "bytes": 3787,
+      "matches_9cd059e5": true,
+      "path": "kg_microbe/merge_utils/source_qualifications.py",
+      "sha256": "e7e6246389d889dd56c5e0c02499919eb771f491a7dc24ac95d94124713f139f"
+    },
+    {
+      "bytes": 34948,
+      "matches_9cd059e5": true,
+      "path": "kg_microbe/merge_utils/merge_kg.py",
+      "sha256": "bbf2ca9d3b57762ccf2a279d4e8785775d526b09151e82d0a7ac4fe2abdf41ca"
+    },
+    {
+      "bytes": 176020,
+      "matches_9cd059e5": true,
+      "path": "mappings/mediadive_unknown_dispositions.json",
+      "sha256": "2e1915efda265be4cbaea8921f126a7a1ea04e7c8110194ead915cfc1cecbd08"
+    },
+    {
+      "bytes": 15356,
+      "matches_9cd059e5": true,
+      "path": "scripts/adhoc/kgm_mediadive_artifact_admission_20261105.py",
+      "sha256": "6cd653f2c0274c249a687975de669d54fcec9c7a1e3c3ef381a7d2aa8162a150"
+    },
+    {
+      "bytes": 14043,
+      "matches_9cd059e5": true,
+      "path": "tests/test_mediadive_endpoint_outcomes.py",
+      "sha256": "c7e10da3f32b92f5ed01628df2d069fd34a2b4d491851ff0e40f621abd330ff9"
+    },
+    {
+      "bytes": 10254,
+      "matches_9cd059e5": true,
+      "path": "tests/test_mediadive_endpoint_consumer.py",
+      "sha256": "847c13719df205ec76ee65e541dd833a2a50cfbe2a05f81b32b8bec563d0b4b7"
+    },
+    {
+      "bytes": 16234,
+      "matches_9cd059e5": true,
+      "path": "tests/test_mediadive_acquisition_generations.py",
+      "sha256": "3d803c0e2fd056c490465cd40663ae024980e5c0b51a262d94df6b1d6531d58d"
+    },
+    {
+      "bytes": 21178,
+      "matches_9cd059e5": true,
+      "path": "tests/test_mediadive_bulk_inputs.py",
+      "sha256": "094a70bc0c3f57f45537720a10cfa650e793af6128591bbc3aeb78536518964c"
+    },
+    {
+      "bytes": 10145,
+      "matches_9cd059e5": true,
+      "path": "tests/test_mediadive_bulk_only.py",
+      "sha256": "e2cc693534e8e0a7cb99bf5d7c5c98d6d83190b2c0f4dccfc0277b3039160bda"
+    },
+    {
+      "bytes": 28676,
+      "matches_9cd059e5": true,
+      "path": "tests/test_mediadive_recipe_identity.py",
+      "sha256": "2808af34fd934c17887e02c65c2d1b5ee91814fb5ad99f3c898e1530316cf1f2"
+    },
+    {
+      "bytes": 2939,
+      "matches_9cd059e5": true,
+      "path": "tests/test_mediadive_download_generation.py",
+      "sha256": "2791da3b225dd4503c71737e3a6bf5936374a1f07d0a6cc231ce205735db858b"
+    },
+    {
+      "bytes": 4053,
+      "matches_9cd059e5": true,
+      "path": "tests/test_mediadive_disposition_20261105.py",
+      "sha256": "792bccc581da84cc7496b19c34b38daa05cbc6d9fbf358345d0b10a0208efb26"
+    },
+    {
+      "bytes": 5507,
+      "matches_9cd059e5": true,
+      "path": "tests/test_merge_source_qualifications.py",
+      "sha256": "10f50773acb8d50ab5ecfd0b1e918df21383dd2bb0c480c58e0fd4f3d77d292f"
+    },
+    {
+      "bytes": 9627,
+      "matches_9cd059e5": true,
+      "path": "tests/test_mediadive_artifact_admission_20261105.py",
+      "sha256": "b339bb0b418b08b399c935346580b3f00d5a70be18defd5c4d756c27e9a38a1d"
+    },
+    {
+      "bytes": 27107,
+      "matches_9cd059e5": true,
+      "path": "tests/test_mediadive_retry_20261105.py",
+      "sha256": "4ad5ebbc8de3dba3f4d394a6aeb9cc57a3a0a5ea669b377ad1319b0c3fb61a37"
+    }
+  ],
+  "dispositions": {
+    "1751": {
+      "acceptance_mapping": [
+        {
+          "controls": [
+            "test_complete_generation_replays_without_changing_original_inputs",
+            "test_current_contract_replays_in_a_fresh_consumer",
+            "test_historical_root_files_do_not_replace_the_selected_generation",
+            "test_missing_named_read_rejects_old_or_incomplete_receipt"
+          ],
+          "implementation": "acquisition.start_generation/record_event/checkpoint_generation retain original cache, bodies, chained observations and durable intents; endpoint_outcomes.load_generation/validate_generation replay the selected sealed generation; endpoint_consumer binds mandatory pointer/manifest/outcomes/current curated policy reads and endpoint audit; MediaDiveTransform producer_native_inputs v3 and verify_recorded_native_inputs require that contract.",
+          "original_requirement": "Carry original outcome evidence through acquisition, consumed inputs, producer completion and replay/admission; preserve history."
+        },
+        {
+          "controls": [
+            "test_source_success_empty_and_unknown_remain_distinct",
+            "test_malformed_success_never_becomes_explicit_empty",
+            "test_transport_and_missing_evidence_are_separate",
+            "test_typed_outcomes_preserve_recipe_without_invented_associations",
+            "test_latest_unmatched_intent_remains_missing"
+          ],
+          "implementation": "Six-state classify_observation and qualify; explicit_empty requires a strict HTTP200/count0/data[] response. get_json_object returns [] only for explicit_empty and None for reviewed unknown; transport_error/malformed/missing_evidence cannot be published or consumed.",
+          "original_requirement": "Distinguish explicit empty, unknown/unavailable, transport/malformed and missing evidence; missing must fail closed."
+        },
+        {
+          "controls": [
+            "test_redirect_and_wrong_medium_are_malformed",
+            "test_only_429_retries_and_redirects_never_follow",
+            "test_changed_generation_evidence_refuses_before_graph_writes",
+            "test_requested_bulk_records_fail_before_any_graph_write",
+            "test_finite_curated_unknown_policy_qualifies_without_complete_associations",
+            "test_post_review_mutation_cannot_reach_publication",
+            "test_endpoint_inventory_defects_survive_outer_rehash_rejection"
+          ],
+          "implementation": "catalogue_scope/replay enforce paired canonical endpoints, requested/response URL, exact chains/body hashes/latest intent state; validate_native verifies exact successful cache coverage and unchanged baseline blobs. qualify requires current tracked finite policy, exact catalogue/unknown cohort/latest observation/body identities and pinned official contract; malformed or pending evidence never qualifies.",
+          "original_requirement": "Validate exact requested IDs, catalogue scope, fresh response identities and reviewed finite dispositions; no stale-cache fallback or invented arrays."
+        },
+        {
+          "controls": [
+            "test_repeated_strain_entity_observations_survive_generation_and_fresh_replay",
+            "test_strain_writer_is_linear_and_preserves_native_observations",
+            "test_actual_writer_retains_all_six_and_missing_children",
+            "test_restamped_endpoint_audit_cannot_relabel_unknown_as_empty",
+            "test_unknown_endpoint_cannot_gain_a_growth_assertion",
+            "test_self_restamped_native_output_cannot_replace_source_evidence",
+            "test_current_contract_replays_in_a_fresh_consumer"
+          ],
+          "implementation": "Native reconstruction uses catalogue order and production extractors; strict canonical comparison preserves types and native strain occurrence order/multiplicity. Unknowns omit only strain/growth assertions, retaining recipes. Endpoint audit and source output replay reject restamped unknown-to-empty or unsupported growth assertions.",
+          "original_requirement": "Preserve recipes/association assertions with controls for unknown versus empty, stale/altered evidence, missing/extra IDs, redirects and fresh-instance admission."
+        },
+        {
+          "controls": [
+            "test_finite_curated_unknown_policy_qualifies_without_complete_associations",
+            "test_public_merge_preserves_unknown_and_empty",
+            "test_unknown_cannot_be_described_as_complete_associations",
+            "test_actual_archive_preserves_exact_admitted_coverage",
+            "test_outer_manifest_restamp_cannot_relabel_admitted_evidence"
+          ],
+          "implementation": "Finite reviewed policy permits qualified raw/source admission while association_coverage_complete remains false. Merge preserves the audit and qualification for graph_input and admitted_dependency participation, and the artifact verifier compares actual archived rows/provenance to production admission.",
+          "original_requirement": "Do not infer complete association coverage/release readiness from classified unknowns; changed complete-response gate requires evidence-backed reviewed contract."
+        }
+      ],
+      "conclusion": "Implemented for the generic production download hook and mandatory v3 consumer/finalization/replay path; historical v2 inputs and receipts are preserved and cannot substitute for current generation evidence."
+    },
+    "1754": {
+      "acceptance_mapping": [
+        {
+          "controls": [
+            "test_interrupted_generation_recovery_preserves_old_active_and_all_responses[after_observation,after_cache,before_json,after_json,before_seal]",
+            "test_generation_writer_lock_and_recovery_plan_identity",
+            "test_imported_cache_blobs_are_preserved_without_reopening_per_row",
+            "test_pending_pointer_recovery_is_exact_and_preserves_old_active"
+          ],
+          "implementation": "recover_generation requires the exact plan SHA and exclusive writer ownership, reconstructs only from durable events, preserves discrepant ledgers/pending/seal bytes under recovery-evidence, performs no HTTP and revalidates before sealing. publish_generation and rollback_generation require exact target manifest and expected current-pointer identity. Baseline key/blob identities are mandatory in validate_native.",
+          "original_requirement": "Provide explicit identity-bound resume/rollback conserving original6056 successes and new raw response evidence."
+        },
+        {
+          "controls": [
+            "test_self_restamped_native_output_cannot_replace_source_evidence",
+            "test_mismatched_pending_pointer_is_retained_and_refused",
+            "test_publisher_lock_refuses_competing_writer",
+            "test_public_hook_refuses_corrupt_generation_without_legacy_fallback"
+          ],
+          "implementation": "Full replay and validate_native precede immutable manifest/seal creation; source inputs are rechecked, pending staging files refuse sealing, current.json changes only after strict admissibility and a publisher lock. Exact pending pointer bytes may be resumed; mismatches are retained/refused. Old generation bytes remain intact.",
+          "original_requirement": "Bind cache/JSON/ledger generation agreement and reject partial or unverified publication without silently overwriting evidence."
+        },
+        {
+          "controls": [
+            "test_interrupted_generation_recovery_preserves_old_active_and_all_responses",
+            "test_pending_pointer_recovery_is_exact_and_preserves_old_active",
+            "test_latest_unmatched_intent_remains_missing",
+            "test_later_completed_request_resolves_older_unmatched_intent",
+            "test_interruption_after_http_persistence_preserves_evidence",
+            "test_final_receipt_failure_cannot_claim_admission"
+          ],
+          "implementation": "Five new staging fault boundaries include durable observation/cache, before/after JSON and before seal; a sixth before-pointer boundary covers publication. Latest unmatched intents remain missing, while a later real response may resolve an older unmatched intent without erasing history. The legacy retry controls also retain post-HTTP and final-receipt failure refusal.",
+          "original_requirement": "Test interruptions after HTTP persistence, before JSON publication and before final receipt; never synthesize success or restamp completion.",
+          "test_limit": "The named rollback_generation alias delegates to the same tested publish_generation boundary; no separate named rollback test is claimed. The staging controls model interruptions using deterministic exceptions, not operating-system power-loss tests."
+        }
+      ],
+      "conclusion": "Explicit identity-bound recovery and publication are implemented and tested for the new production generation path. This is more than retained snapshots or refusing a changed legacy baseline."
+    }
+  },
+  "issue_basis": {
+    "1751": {
+      "bytes": 2507,
+      "path": "data/rebuild-evidence/20261105/mediadive-retry-1734/production-outcome-contract-issue.md",
+      "sha256": "09917e62b9a79e61ead864b92eba15b602bd12a3d769d545e4fd1039ab6051de",
+      "url": "https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1751"
+    },
+    "1754": {
+      "bytes": 1518,
+      "path": "data/rebuild-evidence/20261105/mediadive-retry-1734/retry-interruption-recovery-issue.md",
+      "sha256": "9634681f2bb5d474300e6bb3302daa7d31e45a0f24de51149ea68d44fd6a5267",
+      "url": "https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1754"
+    }
+  },
+  "operations": {
+    "code_edits": false,
+    "credential_access": false,
+    "external_probes": false,
+    "git_writes": false,
+    "github_reads": false,
+    "github_writes": false,
+    "ignored_files_included_in_inventory": true,
+    "read_only_git_commit_comparison": true,
+    "tests_or_producer_or_gate_commands": false
+  },
+  "recorded_at": "2026-11-05T22:52:05.549029+00:00",
+  "remaining_scope_and_limits": [
+    "Historical ad-hoc retry helper and rejected/blocked receipts remain historical. Retrofitting automatic recovery into the old root-file protocol is not required to exercise the new production path and is not claimed.",
+    "Automatic unattended recovery, a new recovery CLI, database-wide transactions and power-loss certification were not original acceptance requirements; this review does not add them.",
+    "Unknown association biology remains unresolved:632 unknown endpoints are neither explicit_empty nor negative observations. Recovering associations or broadening the finite policy would require new evidence.",
+    "Raw-generation admission does not establish completion of downstream transforms, current graph merge, graph artifact admission, the final clean-candidate gate or release readiness. Those remain the root-run rebuild gates.",
+    "No issue was closed, and no GitHub write or external contact was made."
+  ],
+  "retained_actual_run_evidence": {
+    "admitted_generation": "resolution-admitted-r2",
+    "association_coverage_complete": false,
+    "audit": {
+      "bytes": 86687,
+      "path": "data/rebuild-evidence/20261105/mediadive-resolution-1734/admission-r2-independent-audit-1.json",
+      "sha256": "7202e5c85461a4af99e40731e130495d37b4e9e707cfca16d1aa334a0323f9ad"
+    },
+    "endpoint_accounting_complete": true,
+    "evidence_interpretation": "Retained independent real-run audit reports original6056 cache blobs, all four native JSONs and69 protected originals unchanged. This review read that evidence; it did not rerun admission or preservation checks.",
+    "finite_policy_review": {
+      "bytes": 13945,
+      "path": "data/rebuild-evidence/20261105/mediadive-resolution-1734/finite-policy-and-helper-independent-review-3.json",
+      "sha256": "7dcf25477fdcc659aa2096868ae9a85738b7881bff1a4d91d0b4d8269b3baafe"
+    },
+    "qualification_admissible": true,
+    "state_counts": {
+      "explicit_empty": 0,
+      "malformed": 0,
+      "missing_evidence": 0,
+      "nonempty": 6056,
+      "transport_error": 0,
+      "unknown_unavailable": 632
+    }
+  },
+  "review_scope": "Read-only comparison of retained original issue bodies with current production code and existing offline controls in b12bc8d8..9cd059e5. No expanded acceptance requirements were introduced.",
+  "saved_validation_evidence": [
+    {
+      "bytes": 2101,
+      "path": "data/rebuild-evidence/20261105/mediadive-resolution-1734/generation-contract-focused-r1.log",
+      "sha256": "7b1d419d568b5d7c73e9b91285a0ec37c482f6afb1be972a300d4f57338ef421"
+    },
+    {
+      "bytes": 2101,
+      "path": "data/rebuild-evidence/20261105/mediadive-resolution-1734/production-integration-focused-r1.log",
+      "sha256": "66915528d7a50bd88ab0928371b08f5e8040bc983601ef0f575c3b3d57219dee"
+    },
+    {
+      "bytes": 2820,
+      "path": "data/rebuild-evidence/20261105/mediadive-resolution-1734/disposition-and-fixture-focused-r1.log",
+      "sha256": "24a2392302a85b3c986889a9f7e0f5ff71b5085c6c3ac98f64f717b5488ac5dc"
+    },
+    {
+      "bytes": 9740,
+      "path": "data/rebuild-evidence/20261105/mediadive-resolution-1734/documentation-and-remaining-consumer-focused-r2.log",
+      "sha256": "d8ed231158c7f7fadcddb64966ff8036383f1cd62e411f55ea9ea49f27dd0143"
+    },
+    {
+      "bytes": 4188,
+      "path": "data/rebuild-evidence/20261105/mediadive-resolution-1734/remaining-fixture-focused-r1.log",
+      "sha256": "59e9103b334c50056e57d9892a953a330842b6ecf7523ac05249401705fbc796"
+    },
+    {
+      "bytes": 2712,
+      "path": "data/rebuild-evidence/20261105/mediadive-resolution-1734/artifact-focused-r2.log",
+      "sha256": "cedae24ff41927fb202f74a09880ce865b81466cf587eb333ad6044c5a5bd12d"
+    }
+  ],
+  "schema_version": 1,
+  "status": "original_acceptance_controls_implemented_on_current_generation_path",
+  "validation_limits": "Saved root-run results are 61 passed;69 passed;118 passed;312 passed/2 failed followed by affected27 passed;artifact15 passed. These overlap and are not a cumulative total. No new tests or full gate were executed for this review."
+}

@@ -1,0 +1,39 @@
+........................................................................ [ 15%]
+........................................................................ [ 31%]
+........................................................................ [ 47%]
+........................................................................ [ 63%]
+........................................................................ [ 79%]
+........................................................................ [ 94%]
+.......................                                                  [100%]
+=============================== warnings summary ===============================
+.venv/lib/python3.10/site-packages/google/api_core/_python_version_support.py:242
+  /Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/.venv/lib/python3.10/site-packages/google/api_core/_python_version_support.py:242: FutureWarning: You are using a non-supported Python version (3.10.11). Google will not post any further updates to google.api_core supporting this Python version. Please upgrade to the latest Python version, or at least Python 3.11, and then update google.api_core.
+    warnings.warn(message, FutureWarning)
+
+.venv/lib/python3.10/site-packages/oaklib/datamodels/ontology_metadata.py:20
+  /Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/.venv/lib/python3.10/site-packages/oaklib/datamodels/ontology_metadata.py:20: DeprecationWarning: The LinkML dataclass extension patch is deprecated and will be removed in a future release.
+  If you're currently using Python < 3.13, where this patch still applies, you should:
+    • Upgrade your LinkML tooling to version >= 1.9.0 (which no longer needs this patch), OR
+    • Migrate to Pydantic models if you're using LinkML's generated classes at runtime.
+  
+    from linkml_runtime.utils.dataclass_extensions_376 import dataclasses_init_fn_with_kwargs
+
+.venv/lib/python3.10/site-packages/pkg_resources/__init__.py:3148
+  /Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/.venv/lib/python3.10/site-packages/pkg_resources/__init__.py:3148: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('sphinxcontrib')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(pkg)
+
+tests/test_mediadive_catalase_scope.py: 5 warnings
+tests/test_mediadive_p3556_scope.py: 4 warnings
+tests/test_mediadive_peptone_scope.py: 2 warnings
+  /Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/.venv/lib/python3.10/site-packages/sssom/parsers.py:600: FutureWarning: Downcasting behavior in `replace` is deprecated and will be removed in a future version. To retain the old behavior, explicitly call `result.infer_objects(copy=False)`. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
+    df.replace({CONFIDENCE: r"^\s*$"}, np.nan, regex=True, inplace=True)
+
+tests/test_mediadive_catalase_scope.py: 11 warnings
+tests/test_mediadive_p3556_scope.py: 8 warnings
+tests/test_mediadive_peptone_scope.py: 2 warnings
+  /Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/.venv/lib/python3.10/site-packages/sssom/util.py:188: FutureWarning: Downcasting behavior in `replace` is deprecated and will be removed in a future version. To retain the old behavior, explicitly call `result.infer_objects(copy=False)`. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
+    df.replace("", np.nan, inplace=True)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+455 passed, 35 warnings in 378.79s (0:06:18)

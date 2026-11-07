@@ -1,0 +1,16 @@
+{
+  "command": [
+    "scripts/adhoc/kgm_mediadive_retry_20261105.py",
+    "--source-raw",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe/data/raw",
+    "--launcher",
+    "scripts/adhoc/kgm_rebuild_20261105.py",
+    "--attempt",
+    "retry-1",
+    "--execute"
+  ],
+  "environment_sha256": "82b807607f532e93736a6c51d326b30a81350caa0230cb5286e28338df12d0ee",
+  "launcher_sha256": "cef7f21abb810ec3b95bba4221c3cd2d43326b550c7d5295d1cd4e0841196103",
+  "python": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/.venv/bin/python",
+  "root": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105"
+}

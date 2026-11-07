@@ -251,7 +251,14 @@ def test_audit_collects_only_reader_eligible_held_target_claims(tmp_path, monkey
 
 def test_embedded_target_only_claim_and_independent_replacement_are_preserved(tmp_path, monkeypatch):
     """Do not quarantine an unrelated embedded claim or insist on a local target unnecessarily."""
-    embedded = {"compound": NAMES[0], "PubChem": 167312541, "ChEBI": 16110, "note": None, "flag": False}
+    embedded = {
+        "compound_id": 75,
+        "compound": NAMES[0],
+        "PubChem": 167312541,
+        "ChEBI": 16110,
+        "note": None,
+        "flag": False,
+    }
     producer, _ = _producer(
         tmp_path,
         monkeypatch,

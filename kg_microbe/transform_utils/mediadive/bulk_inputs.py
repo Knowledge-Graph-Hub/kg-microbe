@@ -171,21 +171,21 @@ def _raw_locator(input_dir):
     return locator
 
 
-def _check_role_locator(name, locator, raw):
+def _check_role_locator(name, locator, raw, native_paths):
     """Four roles have fixed paths; the explicitly selected media-list path may be overridden."""
     if name not in REQUIRED_BULK_INPUTS:
         raise SourceFinalizationRequired(f"Undeclared MediaDive bulk input: {name!r}")
-    if name in BULK_INPUTS and locator != raw / "mediadive" / BULK_INPUTS[name]:
+    if name not in native_paths or locator != Path(native_paths[name]).absolute():
         raise SourceFinalizationRequired(f"Wrong MediaDive bulk input locator for {name!r}: {locator}")
 
 
-def _validate_contract(contract, snapshots, raw, guard):
+def _validate_contract(contract, snapshots, raw, guard, native_paths):
     """Require complete role membership and agreement with the original immutable reads."""
     if (
         not isinstance(contract, dict)
-        or set(contract) != {"version", "inputs", "recipe_identity"}
+        or set(contract) != {"version", "inputs", "recipe_identity", "endpoint_coverage"}
         or type(contract["version"]) is not int
-        or contract["version"] != 2
+        or contract["version"] != 3
         or not isinstance(contract["inputs"], dict)
         or set(contract["inputs"]) != set(REQUIRED_BULK_INPUTS)
         or not isinstance(snapshots, dict)
@@ -207,7 +207,7 @@ def _validate_contract(contract, snapshots, raw, guard):
         ):
             raise SourceFinalizationRequired(f"Malformed MediaDive bulk input state: {name!r}")
         locator = Path(state["locator"])
-        _check_role_locator(name, locator, raw)
+        _check_role_locator(name, locator, raw, native_paths)
         if str(locator.resolve()) != state["resolved"]:
             raise SourceFinalizationRequired(f"MediaDive bulk input locator changed: {name!r}")
         expected = {"path": state["resolved"], "sha256": state["sha256"]}
@@ -224,7 +224,8 @@ def snapshot_bulk_input(transform, name, path):
             raise SourceFinalizationRequired("A previous MediaDive input read failed; construct a new producer")
         raw = _raw_locator(transform.input_base_dir)
         locator = Path(path).absolute()
-        _check_role_locator(name, locator, raw)
+        native_paths = transform._endpoint_consumer.native_paths
+        _check_role_locator(name, locator, raw, native_paths)
         if getattr(transform, "_bulk_input_admission", None) is None:
             transform._bulk_input_admission = SourceAdmission()
         if not hasattr(transform, "_bulk_input_states"):
@@ -262,6 +263,7 @@ def verify_bulk_inputs(transform, *, byte_verified=False, output_dir=None):
             transform.consumed_input_snapshots,
             _raw_locator(transform.input_base_dir),
             guard,
+            transform._endpoint_consumer.native_paths,
         )
         verify_bulk_payloads(transform)
         # The generic consumed-input checkpoint has already rehashed every
@@ -272,7 +274,7 @@ def verify_bulk_inputs(transform, *, byte_verified=False, output_dir=None):
         raise
 
 
-def verify_recorded_bulk_inputs(report, report_path, *, admission=None):
+def verify_recorded_bulk_inputs(report, report_path, *, admission=None, native_paths):
     """Validate recorded raw roles within the shared recorded-input admission boundary."""
     if report_path is None:
         raise SourceFinalizationRequired("MediaDive bulk verification requires its completion-record path")
@@ -293,5 +295,5 @@ def verify_recorded_bulk_inputs(report, report_path, *, admission=None):
     # completion record (including duplicate keys) through MediaDive's optional
     # raw-input contract. Retain this record in that very same admission set.
     guard.capture(report_path)
-    _validate_contract(report.get("producer_native_inputs"), report.get("consumed_inputs"), raw, guard)
+    _validate_contract(report.get("producer_native_inputs"), report.get("consumed_inputs"), raw, guard, native_paths)
     return guard

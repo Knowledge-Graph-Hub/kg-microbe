@@ -28,7 +28,7 @@ from kg_microbe.utils.atomic_io import atomic_write
 from kg_microbe.utils.graph_canonicalization import compact_identifier
 
 POLICY_FILE = Path(__file__).resolve().parents[2] / "mappings/ontology_parent_dispositions.json"
-POLICY_SHA256 = "3ca87a061038361b48541bc33c33ee72c1ed4baf421b891886274dfbc02c1552"
+POLICY_SHA256 = "b4ee2d368c0d158ae88bcb6aec307ce55445925b556558b11e9da021cad3fbc9"
 POLICY_ROLE = "ontology_parent_disposition_policy"
 AUDIT_FILE = "ontology_parent_dispositions.tsv"
 SUPPLIERS = frozenset({"foodon", "envo"})

@@ -1,0 +1,23 @@
+{
+  "issue": 1762,
+  "checked_at": "2026-11-05T22:04:40.728564+00:00",
+  "previous_run": {
+    "log": "documentation-and-remaining-consumer-focused-r2.log",
+    "passed": 312,
+    "failed": 2
+  },
+  "changes": [
+    {
+      "path": "tests/test_mediadive_recipe_occurrences.py",
+      "before_sha256": "e69c43fb287d2c8019fa541ceeeb52fad2fec1a29fd2136a96e0aa049c1908a1",
+      "after_sha256": "f9228c3be3ab41f4e1729bdf9d7ca906d726e8a4be8b0dd333a00f3bb1582ded"
+    },
+    {
+      "path": "tests/test_mediadive_catalase_scope.py",
+      "before_sha256": "104cb4aaeb43df65ae975b66d6f936865d5971493e7c4fffa09847edaeefb501",
+      "after_sha256": "3f4d0440c610d1e647a6567017160539f610dc317c7f2a888c0f8cecb8ff172a"
+    }
+  ],
+  "meaning": "Test setup supplies explicit synthetic metadata before acquisition and separately accounts for the synthetic catalogue context. Native occurrence records, counts, source IDs and output evidence assertions remain exact; no production code or immutable native fixtures changed.",
+  "rerun": "pending"
+}

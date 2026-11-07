@@ -1,0 +1,7 @@
+{
+  "command": "poetry run tox -e format,codespell-write",
+  "exit_code": 0,
+  "files_checked": 1253,
+  "includes_ignored": true,
+  "changed_bytes": []
+}

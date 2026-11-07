@@ -1,0 +1,403 @@
+{
+  "schema_version": 1,
+  "issue": 1734,
+  "utc": "2026-11-05T18:42:58.105577+00:00",
+  "scope": "Official-source semantics diagnosis only; no source activation, policy/code changes, retry of failed medium-strains IDs, or admission waiver.",
+  "status": "404_is_unavailable_not_valid_empty",
+  "official_fetches": {
+    "api-doc-index": {
+      "url": "https://mediadive.dsmz.de/doc/index.html",
+      "effective_url": "https://mediadive.dsmz.de/doc/index.html",
+      "http_status": 200,
+      "body_sha256": "31311bbcf1d9ab8a6aec978ce8a8b63af86777f6d9f1ac440b9ada78292facc2",
+      "bytes": 42297,
+      "receipt": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/mediadive-retry-1734/official-review/api-doc-index.receipt.json"
+    },
+    "mediumP1-ui": {
+      "url": "https://mediadive.dsmz.de/medium/P1",
+      "effective_url": "https://mediadive.dsmz.de/medium/P1",
+      "http_status": 200,
+      "body_sha256": "5879f0a4faa88eb754c6544f3555cdeae5b89e2276cf2de39fe6c62256a7bd49",
+      "bytes": 85257,
+      "receipt": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/mediadive-retry-1734/official-review/mediumP1-ui.receipt.json"
+    },
+    "inverse-strain-dsm9": {
+      "url": "https://mediadive.dsmz.de/rest/strain/dsm/9",
+      "effective_url": "https://mediadive.dsmz.de/rest/strain/dsm/9",
+      "http_status": 200,
+      "body_sha256": "f66e4013e19e16e861ebbe874e2e41bc31739f1e2003e428bd641b408423866e",
+      "bytes": 595,
+      "receipt": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/mediadive-retry-1734/official-review/inverse-strain-dsm9.receipt.json"
+    },
+    "mediumJ22-ui": {
+      "url": "https://mediadive.dsmz.de/medium/J22",
+      "effective_url": "https://mediadive.dsmz.de/medium/J22",
+      "http_status": 200,
+      "body_sha256": "288fcde7238d8c6de459a177975d2893d6b38df969f7ff0d7a53b45c2c4b6f44",
+      "bytes": 214940,
+      "receipt": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/mediadive-retry-1734/official-review/mediumJ22-ui.receipt.json"
+    },
+    "d3o-ontology": {
+      "url": "https://raw.githubusercontent.com/LeibnizDSMZ/D3O/main/D3O.owl",
+      "effective_url": "https://raw.githubusercontent.com/LeibnizDSMZ/D3O/main/D3O.owl",
+      "http_status": 200,
+      "body_sha256": "a6ebbc1e1f481c66a88a4c160dd08cc7ff4a18f4a3f5bc474785eca14052d392",
+      "bytes": 315395,
+      "receipt": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/mediadive-retry-1734/official-review/d3o-ontology.receipt.json"
+    },
+    "api-doc-bundle": {
+      "url": "https://mediadive.dsmz.de/doc/assets/main.bundle.js",
+      "effective_url": "https://mediadive.dsmz.de/doc/assets/main.bundle.js",
+      "http_status": 200,
+      "body_sha256": "96865da402f36fa0d27a0b80e84fa9b3f0ae05f73b6bafb0a6c690571b6ebc0a",
+      "bytes": 415299,
+      "receipt": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/mediadive-retry-1734/official-review/api-doc-bundle.receipt.json"
+    },
+    "sparql-ui": {
+      "url": "https://sparql.dsmz.de/mediadive",
+      "effective_url": "https://sparql.dsmz.de/mediadive",
+      "http_status": 200,
+      "body_sha256": "39eaf5e9e5608c0996f3f3e53f75be4a4c0cd6ca11a0dfb3496dadd6d9be0e59",
+      "bytes": 39371,
+      "receipt": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/mediadive-retry-1734/official-review/sparql-ui.receipt.json"
+    },
+    "medium-builder-manual": {
+      "url": "https://mediadive.dsmz.de/docs/medium-builder",
+      "effective_url": "https://mediadive.dsmz.de/docs/medium-builder",
+      "http_status": 200,
+      "body_sha256": "38092f9e30b31c8a5046815ae63c2ddaa3d6051a6e77b028f2c7aaf3b2991f50",
+      "bytes": 62072,
+      "receipt": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/mediadive-retry-1734/official-review/medium-builder-manual.receipt.json"
+    },
+    "strains-ui": {
+      "url": "https://mediadive.dsmz.de/strains",
+      "effective_url": "https://mediadive.dsmz.de/strains",
+      "http_status": 200,
+      "body_sha256": "b51c69f227aeca9592af646142b0e93cd44d2a365cf9cfd5c30136f85899d52c",
+      "bytes": 63327,
+      "receipt": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/mediadive-retry-1734/official-review/strains-ui.receipt.json"
+    },
+    "website-manual": {
+      "url": "https://mediadive.dsmz.de/docs/website",
+      "effective_url": "https://mediadive.dsmz.de/docs/website",
+      "http_status": 200,
+      "body_sha256": "fa1d33a7d4db8925f796db9d36a667d1f06b40a12e11cefced6b9e181e1e1041",
+      "bytes": 46475,
+      "receipt": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/mediadive-retry-1734/official-review/website-manual.receipt.json"
+    },
+    "d3-sparql-readme": {
+      "url": "https://raw.githubusercontent.com/LeibnizDSMZ/d3-sparql/main/README.md",
+      "effective_url": "https://raw.githubusercontent.com/LeibnizDSMZ/d3-sparql/main/README.md",
+      "http_status": 200,
+      "body_sha256": "b3f7662bd88d5bc2efd2556519970e7ed451aeec05d656799c71a4943eac45a3",
+      "bytes": 335,
+      "receipt": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/mediadive-retry-1734/official-review/d3-sparql-readme.receipt.json"
+    },
+    "medium32-ui": {
+      "url": "https://mediadive.dsmz.de/medium/32",
+      "effective_url": "https://mediadive.dsmz.de/medium/32",
+      "http_status": 200,
+      "body_sha256": "7ba09910f39c40c4791a08f4ed1b40ee7cb438c38c49b1955a54b5a5bbcbaac3",
+      "bytes": 58257,
+      "receipt": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/mediadive-retry-1734/official-review/medium32-ui.receipt.json"
+    }
+  },
+  "prior_evidence": {
+    "mediadive/attempts/sequence-1/full/selected-media.json": {
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/mediadive/attempts/sequence-1/full/selected-media.json",
+      "bytes": 998810,
+      "sha256": "3c85c7eacef652883ae3cdb2c3a79808ab7bb71bb02bf54a04cb67432b5027eb"
+    },
+    "mediadive/attempts/sequence-1/full/failure-accounting.json": {
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/mediadive/attempts/sequence-1/full/failure-accounting.json",
+      "bytes": 106323,
+      "sha256": "879fced789621230f97daac5d324c39a2dba2fbd1ed6f662f6d430d1dd05a714"
+    },
+    "mediadive/attempts/sequence-1/full/artifacts/media_strains.json": {
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/mediadive/attempts/sequence-1/full/artifacts/media_strains.json",
+      "bytes": 12415383,
+      "sha256": "cc216f49a6a4499b593664b7265ed6c7f4d801dbb4c327bef5bac7adba69cb15"
+    },
+    "mediadive/api-review/strains32.body": {
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/mediadive/api-review/strains32.body",
+      "bytes": 136,
+      "sha256": "f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340"
+    },
+    "mediadive/api-review/strains32.receipt.json": {
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/mediadive/api-review/strains32.receipt.json",
+      "bytes": 704,
+      "sha256": "da6dfe32cd5ba446f5cff2611a245102335a90a7babe163bac81019c101ff39e"
+    },
+    "mediadive/api-review/main.bundle.js": {
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/mediadive/api-review/main.bundle.js",
+      "bytes": 415299,
+      "sha256": "96865da402f36fa0d27a0b80e84fa9b3f0ae05f73b6bafb0a6c690571b6ebc0a"
+    },
+    "mediadive/api-review/docs.body": {
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/mediadive/api-review/docs.body",
+      "bytes": 42297,
+      "sha256": "31311bbcf1d9ab8a6aec978ce8a8b63af86777f6d9f1ac440b9ada78292facc2"
+    }
+  },
+  "current_api_documentation": {
+    "routes": [
+      {
+        "route": "/ingredients",
+        "source_character_offset": 379404,
+        "title": "All ingredients",
+        "has_404_error": false
+      },
+      {
+        "route": "/ingredient/:id",
+        "source_character_offset": 381337,
+        "title": "Ingredient information",
+        "has_404_error": true
+      },
+      {
+        "route": "/media",
+        "source_character_offset": 384324,
+        "title": "All media",
+        "has_404_error": false
+      },
+      {
+        "route": "/medium/:id",
+        "source_character_offset": 386450,
+        "title": "Medium recipe",
+        "has_404_error": true
+      },
+      {
+        "route": "/medium-composition/:id",
+        "source_character_offset": 387500,
+        "title": "Medium composition",
+        "has_404_error": true
+      },
+      {
+        "route": "/medium-strains/:id",
+        "source_character_offset": 389226,
+        "title": "All strains for one medium",
+        "has_404_error": true
+      },
+      {
+        "route": "/solutions",
+        "source_character_offset": 391081,
+        "title": "All solutions",
+        "has_404_error": false
+      },
+      {
+        "route": "/solution/:id",
+        "source_character_offset": 392434,
+        "title": "Solution recipe",
+        "has_404_error": true
+      },
+      {
+        "route": "/stats",
+        "source_character_offset": 396381,
+        "title": "Statistics",
+        "has_404_error": false
+      },
+      {
+        "route": "/strain/:type/:identifier",
+        "source_character_offset": 398923,
+        "title": "Strain information",
+        "has_404_error": true
+      }
+    ],
+    "api_doc_version": "0.1.0",
+    "embedded_generator_date": "2022-10-12",
+    "fresh_document_fetch": true,
+    "current_bundle_same_as_saved": true,
+    "no_bulk_association_route_in_published_ten_route_reference": true,
+    "limitation": "This reviews the published reference and public UI/source. Server api.php implementation was not obtained; it is not a proof that undocumented routes cannot exist."
+  },
+  "response_semantics": {
+    "http_404_DataNotFound": {
+      "meaning": "A documented error for this endpoint, with ambiguous medium-unavailable versus composition-unavailable wording. It is not a successful association array. count=0 in the error envelope counts returned results and does not assert biological absence.",
+      "saved_example": {
+        "status": 404,
+        "count": 0,
+        "error": "DataNotFound",
+        "msg": "Medium does not exist or composition was not calculated"
+      },
+      "current_ui32": "The official UI has the medium32 recipe and composition and displays no strains found. This corroborates catalogue membership and exposes ambiguity in the error wording; it does not transform the prior404 into HTTP200 data=[]."
+    },
+    "http_200_data_empty": {
+      "meaning": "If this endpoint actually returns HTTP200 with body status200, an explicit data array[], no error and count0, preserve it as a successful empty response for the selected endpoint and time. This means no returned association rows, not proof that no organism can grow on the medium.",
+      "observed_in_prior_successful_payloads": 0,
+      "prior_successful_medium_count": 2712,
+      "limitation": "The official reference gives positive examples but no explicit empty-list example. No live search for an empty response was performed."
+    },
+    "other_unknown_states": "Transport failure, missing/malformed payload, wrong route, non-success status or ambiguous error remain unresolved with their own cause; do not fabricate an empty array or carry older association data forward as current."
+  },
+  "catalogue": {
+    "prior_snapshot_count": 3344,
+    "families": [
+      {
+        "id_family": "C",
+        "source": "CCAP",
+        "count": 110
+      },
+      {
+        "id_family": "DSMZ_numeric_or_numeric_suffix",
+        "source": "DSMZ",
+        "count": 1910
+      },
+      {
+        "id_family": "J",
+        "source": "JCM",
+        "count": 1313
+      },
+      {
+        "id_family": "P",
+        "source": "public",
+        "count": 11
+      }
+    ],
+    "examples": {
+      "32": {
+        "complex_medium": 1,
+        "description": null,
+        "id": 32,
+        "link": "https://www.dsmz.de/microorganisms/medium/pdf/DSMZ_Medium32.pdf",
+        "max_pH": 7.5,
+        "min_pH": 7.2,
+        "name": "PHOTOBACTERIUM MEDIUM",
+        "reference": null,
+        "source": "DSMZ"
+      },
+      "J22": {
+        "complex_medium": 1,
+        "description": null,
+        "id": "J22",
+        "link": "https://www.jcm.riken.jp/cgi-bin/jcm/jcm_grmd?GRMD=22",
+        "max_pH": 7.1,
+        "min_pH": 7.1,
+        "name": "NUTRIENT AGAR NO. 2",
+        "reference": null,
+        "source": "JCM"
+      },
+      "C110": {
+        "complex_medium": 0,
+        "description": null,
+        "id": "C110",
+        "link": "https://www.atcc.org/~/media/D3547D63F887423DAFB39841A5B588B9.ashx",
+        "max_pH": null,
+        "min_pH": null,
+        "name": "ASN-III",
+        "reference": null,
+        "source": "CCAP"
+      },
+      "P1": {
+        "complex_medium": 1,
+        "description": null,
+        "id": "P1",
+        "link": null,
+        "max_pH": 7.5,
+        "min_pH": 7.5,
+        "name": "HaHa agar",
+        "reference": "10.1016/j.syapm.2013.06.006",
+        "source": "public"
+      }
+    },
+    "failed_endpoint_family_counts": {
+      "DSMZ_numeric_or_numeric_suffix": 215,
+      "C": 47,
+      "J": 359,
+      "P": 11
+    },
+    "failed_status_counts": {
+      "404": 601,
+      "None": 31
+    },
+    "identifier_handling": "Medium IDs are strings and may contain collection prefixes or alphabetic suffixes. Preserve exact J/P/C prefixes and suffixes; catalogue source identifies provenance, not endpoint validity. A prefix cannot authorize an empty result."
+  },
+  "public_medium_limit": {
+    "official_manual": "Published user-submitted media are listed and have recipes, but the manual explicitly says added strain growth data are not linked to strains and are absent from the taxonomy browser.",
+    "observed_P1": "Official page identifies P1 as public and user-provided; it does not display a populated association panel.",
+    "interpretation": "This supports an explicit unavailable-linkage/unknown-association context for public media, not a blanket claim that public media support zero strains, and not permission to reinterpret every404."
+  },
+  "alternate_access": {
+    "documented_inverse_rest": {
+      "route": "https://mediadive.dsmz.de/rest/strain/{type}/{identifier}",
+      "types": [
+        "id",
+        "dsm",
+        "jcm",
+        "bacdive"
+      ],
+      "fields": [
+        "media.medium_id",
+        "media.growth",
+        "media.growth_rate",
+        "media.growth_quality",
+        "media.modification"
+      ],
+      "bounded_actual_example": {
+        "status": 200,
+        "count": 4,
+        "data": {
+          "id": 8,
+          "species": "Lederbergia lenta",
+          "ccno": "DSM 9",
+          "media": [
+            {
+              "medium_id": 220,
+              "growth": 1,
+              "growth_rate": null,
+              "growth_quality": null,
+              "modification": "Plus  0.1% urea"
+            },
+            {
+              "medium_id": "J22",
+              "growth": 1,
+              "growth_rate": null,
+              "growth_quality": null,
+              "modification": null
+            }
+          ]
+        }
+      },
+      "limitation": "Requires a complete, independently justified strain enumeration to recover full associations. Official REST reference documents no all-strains enumeration route. Inverse response count4 is not the number of its two media rows; do not generalize count across object and array endpoints."
+    },
+    "official_web_ui": {
+      "list": "https://mediadive.dsmz.de/strains",
+      "per_medium": "https://mediadive.dsmz.de/strains/medium/{id}",
+      "per_strain": "https://mediadive.dsmz.de/strains/view/{culture_collection_number}",
+      "limitation": "Public paginated UI and association counts exist, but no complete bulk extraction contract was validated. A UI absence display is not a replacement for a successful API payload."
+    },
+    "official_sparql": {
+      "backend": "https://sparql.dsmz.de/api/mediadive",
+      "ui": "https://sparql.dsmz.de/mediadive",
+      "official_examples": [
+        "medium metadata",
+        "ingredients and composition",
+        "pH ranges",
+        "medium modifications"
+      ],
+      "official_ontology": "https://github.com/LeibnizDSMZ/D3O",
+      "limitation": "Official bulk query infrastructure is present. Association predicates, full coverage, growth polarity and freshness relative to REST remain unverified; no SPARQL query or bulk extraction was executed."
+    }
+  },
+  "unknown_disposition_answer": {
+    "can_record_source_backed_explicit_unknown": true,
+    "can_count_404_as_valid_empty": false,
+    "can_mark_existing_complete_association_admission_satisfied": false,
+    "reason": "The official error contract and exact retained error response support recording that the association lookup was unavailable/unknown for that endpoint and observation time. This is an auditable failure disposition, not a successful biological result.",
+    "required_evidence": [
+      "exact requested ID and URL",
+      "HTTP status and unmodified body with timestamp and hashes",
+      "matching catalogue/recipe identity where available",
+      "separate unknown reason, distinct from empty-success and transport failure",
+      "explicit accounting showing unknown associations remain incomplete",
+      "reviewed downstream contract before any consumer can intentionally accept incomplete association coverage"
+    ],
+    "current_action": "Keep unresolved endpoints outside valid success/empty counts and preserve the current admission hold. Root production-path retry canary must run before any retry of failed IDs."
+  },
+  "network_accounting": {
+    "failed_medium_strains_api_requests": 0,
+    "retained_api_requests": 1,
+    "retained_api_url": "https://mediadive.dsmz.de/rest/strain/dsm/9",
+    "web_tool_inverse_url_open": "Also attempted to render the same inverse URL; web tool reported inaccessible and returned no body. No failed medium-strains URL was opened.",
+    "full_crawl": false
+  },
+  "modifications": "Only exclusive new files beneath this official-review evidence directory; all prior evidence and code/data untouched."
+}

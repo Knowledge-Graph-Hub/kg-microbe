@@ -1,0 +1,98 @@
+{
+  "admission_semantics": {
+    "canonical_plan_preserved": true,
+    "failure_returns_status_fail_with_no_successful_scope_or_verification": true,
+    "fixed_selected_source": "microbedecoder",
+    "full_verify_sources_and_verify_merge_unchanged": true,
+    "no_generic_source_selector_added": true,
+    "receipt_admission_scope": {
+      "admitted_sources": [
+        "microbedecoder"
+      ],
+      "phase4_certified": false
+    },
+    "receipt_command": "verify-microbedecoder",
+    "recursive_dependency_validation_preserved": true,
+    "successful_scope_fields_written_only_after_gate_return": true,
+    "through_phase_refused_for_new_command": true,
+    "unchanged_public_authority": "kg_microbe.merge_utils.source_freshness.verify_source_freshness",
+    "unchanged_verify_sources_extra_guards": [
+      "owned selected raw-directory equality",
+      "required source graph members and consumed taxonomy authority location",
+      "actual graph identities and final admission verification"
+    ]
+  },
+  "author_review": {
+    "bytes": 2103,
+    "path": "data/rebuild-evidence/20261105/mediadive-resolution-1734/microbedecoder-admission-extension/review.json",
+    "sha256": "c03a0af411b0a24fe3d52630d8af2babe24012690ee8c49beacb66ec4ef78b4b"
+  },
+  "checks": {
+    "all_existing_tests_unchanged": true,
+    "author_hashes_scripts/adhoc/kgm_rebuild_admission_20261105.py": true,
+    "author_hashes_tests/test_rebuild_admission_20261105.py": true,
+    "new_command_cannot_satisfy_phase4_receipt_gate": true,
+    "no_unstaged_production_policy_scope_delta": true,
+    "only_main_changed": true,
+    "prior_phase4_environment_helper_unchanged": true,
+    "stable_reviewed_file_scripts/adhoc/kgm_rebuild_admission_20261105.py": true,
+    "stable_reviewed_file_tests/test_rebuild_admission_20261105.py": true
+  },
+  "diff_sha256": "bfe3279a42ed5ddd61310ac3138ebfb3ed6992f993a8966abc03eb8360a7d1cb",
+  "files": [
+    {
+      "added_definitions": [],
+      "after_sha256": "8f952582e4e1d626fd7fddfb738ee5d5df10a0f93275d5601024093ce15a0c0f",
+      "before_sha256": "d4bfb37c20379ccb0db77a53b34524ca79b3bf7d75881bc7062abf5884d6aae0",
+      "bytes": 19537,
+      "changed_definitions": [
+        "main"
+      ],
+      "path": "scripts/adhoc/kgm_rebuild_admission_20261105.py",
+      "removed_definitions": []
+    },
+    {
+      "added_definitions": [
+        "microbedecoder_command",
+        "test_microbedecoder_command_admits_only_fixed_source_with_distinct_receipt",
+        "test_microbedecoder_command_cannot_bypass_public_authority_refusal",
+        "test_microbedecoder_command_refuses_phase_selector_before_admission"
+      ],
+      "after_sha256": "88b7ee0ddae0759881095f69e2a7ff27570d5e8a97ceff2feda4112f2348301e",
+      "before_sha256": "f1a421ba5981147e4d323caa143acfbc5b3a9dcfcca0e76482886376dc70ce5f",
+      "bytes": 17227,
+      "changed_definitions": [],
+      "path": "tests/test_rebuild_admission_20261105.py",
+      "removed_definitions": []
+    }
+  ],
+  "findings": [],
+  "head": "9cd059e5e77b6103bc43f22ad2ea7da1f360132c",
+  "limitations": [
+    "Static independent helper review does not certify the eventual MicrobeDecoder source data or phase4 completion.",
+    "Current root-coordinated focused tests and later actual production source admission supply execution evidence."
+  ],
+  "new_test_review": {
+    "controls": [
+      "fixed source and explicit partial scope receipt while complete canonical plan including LPSN is retained",
+      "missing authority refusal with source files unmodified",
+      "changed authority refusal with source files unmodified",
+      "phase selector refused before public admission"
+    ],
+    "existing_test_ast_unchanged": true,
+    "mocked_boundary": "Only public verify_source_freshness is replaced with an offline byte-bound authority capture; this tests wrapper delegation and refusal, not production scientific admission itself.",
+    "real_canonical_planner_and_verify_sources_wrapper": true,
+    "root_focused_test_result_not_claimed_here": true,
+    "tests_run_by_this_reviewer": false
+  },
+  "phase4_environment_helper": {
+    "compatible_behavior": "Uses unchanged build_plan; requires command verify-sources plus exact all-phase1-through3 source cohort. A MicrobeDecoder-only receipt cannot satisfy either requirement, and the full canonical phase4 remains lpsn_api plus microbedecoder.",
+    "path": "scripts/adhoc/kgm_rebuild_lpsn_phase_20261105.py",
+    "sha256": "b0ef27316dfc6fc52a7ad7251eff513bf8909c64f33840835f7e63719a326b17",
+    "unchanged_from_head": true
+  },
+  "reviewed_at_utc": "2026-11-05T23:39:00.342848+00:00",
+  "schema_version": 1,
+  "scope": "Only the two-file fixed MicrobeDecoder admission helper extension versus HEAD; no execution of tests, producer, admission or HTTP.",
+  "status": "pass_read_only_independent_review"
+}

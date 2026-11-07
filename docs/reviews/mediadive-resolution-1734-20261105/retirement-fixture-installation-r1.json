@@ -1,0 +1,9 @@
+{
+  "target": "tests/test_bacdive_ncbitaxon_stubs.py",
+  "before_sha256": "4eba42d78c2136f976f76190e51a822beca7da43304235ebd6e895e9a6487a6c",
+  "applied_sha256": "440bbd2552d5aab4bf3f98b8d98ce31b3209940d28ce0d369aff56c599e240d9",
+  "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/bacdive-stub-retirement-proposal/proposed-reviewed-r2.py",
+  "independent_review_sha256": "0adb0de77fd4048969eca7291857e462dbb76951539ba424b9a612bcb0adee0a",
+  "prior_focused_result": "455 passed35warnings378.79s exit0; process ended before installation",
+  "production_edits": false
+}

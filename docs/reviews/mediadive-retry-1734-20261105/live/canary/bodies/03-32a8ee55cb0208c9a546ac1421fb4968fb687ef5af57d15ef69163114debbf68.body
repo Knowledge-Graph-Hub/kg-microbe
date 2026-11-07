@@ -1,0 +1,6 @@
+{
+    "status": 404,
+    "count": 0,
+    "error": "DataNotFound",
+    "msg": "Medium does not exist or composition was not calculated"
+}

@@ -1,0 +1,129 @@
+{
+  "description": "Immutable synthetic offline retry fixtures. These are not scientific source assertions or live HTTP evidence.",
+  "detail": {
+    "data": {
+      "medium": {
+        "id": 1,
+        "name": "Synthetic medium"
+      },
+      "solutions": [
+        {
+          "id": 10,
+          "name": "Synthetic solution",
+          "recipe": [
+            {
+              "compound_id": 4,
+              "compound": "Water",
+              "amount": 1,
+              "unit": "ml"
+            }
+          ]
+        }
+      ]
+    },
+    "status": 200,
+    "count": 2
+  },
+  "strains": {
+    "data": [
+      {
+        "id": 7,
+        "species": "Synthetic organism",
+        "growth": 1
+      }
+    ],
+    "status": 200,
+    "count": 1
+  },
+  "empty": {
+    "data": [],
+    "status": 200,
+    "count": 0
+  },
+  "invalid": {
+    "data": {
+      "id": "incorrect strain shape"
+    },
+    "status": 200,
+    "count": 1
+  },
+  "unknown": {
+    "status": 404,
+    "count": 0,
+    "error": "DataNotFound",
+    "msg": "Medium does not exist or composition was not calculated"
+  },
+  "malformed_unknown": {
+    "status": 404,
+    "count": 0,
+    "error": "DataNotFound",
+    "msg": "Different undocumented error"
+  },
+  "contradictory_empty": {
+    "status": 404,
+    "count": 0,
+    "error": "DataNotFound",
+    "data": []
+  },
+  "null_id": {
+    "status": 200,
+    "count": 1,
+    "data": [
+      {
+        "id": null
+      }
+    ]
+  },
+  "wrong_count": {
+    "status": 200,
+    "count": 0,
+    "data": [
+      {
+        "id": 7
+      }
+    ]
+  },
+  "duplicate_keys": "{\"status\":404,\"status\":200,\"count\":0,\"data\":[]}",
+  "order_sensitive_details": {
+    "1": {
+      "medium": {
+        "id": 1,
+        "name": "Synthetic medium"
+      },
+      "solutions": [
+        {
+          "id": 10,
+          "name": "Synthetic solution",
+          "recipe": [
+            {
+              "compound_id": 4,
+              "compound": "Water",
+              "amount": 1,
+              "unit": "ml"
+            }
+          ]
+        }
+      ]
+    },
+    "2": {
+      "medium": {
+        "id": 2,
+        "name": "Synthetic medium"
+      },
+      "solutions": [
+        {
+          "id": 10,
+          "name": "Synthetic solution",
+          "recipe": [
+            {
+              "compound_id": 4,
+              "compound": "Different later synthetic occurrence",
+              "amount": 99,
+              "unit": "ml"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

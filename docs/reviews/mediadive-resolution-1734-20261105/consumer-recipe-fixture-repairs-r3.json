@@ -1,0 +1,35 @@
+{
+  "edited_test": {
+    "bytes": 28676,
+    "path": "tests/test_mediadive_recipe_identity.py",
+    "sha256": "2808af34fd934c17887e02c65c2d1b5ee91814fb5ad99f3c898e1530316cf1f2"
+  },
+  "failed_gate": {
+    "bytes": 12224,
+    "path": "data/rebuild-evidence/20261105/mediadive-resolution-1734/consumer-integration-focused-r3.log",
+    "sha256": "80791e7100c38c0775b1bc271cb8cf953ef59e8aa907dd465a16acd787926bf3"
+  },
+  "findings": [
+    {
+      "case": "medium display cleanup",
+      "cause": "The preserved original catalogue count3338 was compared with the explicitly synthetic sealed scope count20. Data rows are identical.",
+      "repair": "Compare actual selected generation catalogue and explicitly assert count20, historical count3338 and unchanged native data rows."
+    },
+    {
+      "case": "synthetic same-strain observation writer control",
+      "cause": "All five legacy synthetic rows lack native id and the actual classifier records malformed/Invalid native strain ID. Giving each occurrence a different id would invent different strain identities.",
+      "repair": "Retain original rows unchanged in an explicit writer-boundary adapter; the production classifier must reject them, and a sentinel aborts before source completion. Preserve exact positive/negative/duplicate/order output assertions and assert unsealed contract, absent completion and failed consumed-input verification."
+    },
+    {
+      "case": "duplicate JSON key controls",
+      "cause": "Mutation preceded fixture normalization of preserved root files, allowing ordinary JSON loading to erase duplicate fields before sealed generation creation.",
+      "repair": "Mutate actual selected generation members after sealing, assert identity failure before graph files, and separately retain exact rejection by the real production duplicate-key parser."
+    }
+  ],
+  "immutable_fixture_edits": false,
+  "out_of_scope": "Native response-list unique-ID requirement reviewed independently by environment agent; no acquisition contract change here.",
+  "production_edits": false,
+  "recorded_at": "2026-11-05T21:42:39.756626+00:00",
+  "status": "test_repairs_prepared_not_pytest_verified",
+  "validation": "Scoped Ruff format/check clean; no tests run here. Root coordinates affected-module pytest."
+}

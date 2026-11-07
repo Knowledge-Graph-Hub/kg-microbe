@@ -1,0 +1,25 @@
+{
+  "status": "pass",
+  "receipt_sha256": "771a23983efa7821e499bf4e0411a42ee8660dea8d6f0cfb78c1f0f72be06f9f",
+  "stage_result_sha256": "eb763da0cb4bd253404ba6753a43959b66f0d616c429969c13d6c63646177d51",
+  "elapsed_seconds": 750.663,
+  "sources": [
+    "ontologies",
+    "ontologies_stubs",
+    "bacdive",
+    "gtdb",
+    "madin_etal",
+    "metatraits",
+    "rhea_mappings",
+    "prego"
+  ],
+  "admitted_file_count": 351,
+  "owned_current_modules": 146,
+  "next_sources": [
+    "lpsn",
+    "mediadive",
+    "metatraits_gtdb",
+    "bactotraits",
+    "gold"
+  ]
+}

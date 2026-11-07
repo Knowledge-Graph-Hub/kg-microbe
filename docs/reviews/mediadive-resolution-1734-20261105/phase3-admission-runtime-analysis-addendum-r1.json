@@ -1,0 +1,192 @@
+{
+  "acceptance_addendum": [
+    "Add an offline scale/count control with many sealed body/event members plus direct/upstream BacDive selection, proving bounded repeated metadata work without wall-clock assertions.",
+    "Any later guard reuse or partitioning must still reject changes to every bound native body and retained evidence member, current pointer, curated policy, manifest, role identity and package/authority bindings before source or merge admission succeeds.",
+    "Preserve exact membership checks and independent source-body replay; do not replace precise unknown evidence with endpoint counts or omit historical evidence obligations.",
+    "Maintain cross-source lifetime validation: separating query-local checks from shared checkpoints must never let a mutation of a previously admitted MediaDive body pass a later public verification."
+  ],
+  "actual_manifest": {
+    "extra_captured_paths_outside_manifest_member_map": [
+      "generation manifest.json",
+      "generation seal.json",
+      "generation .writer.lock",
+      "mediadive/current.json",
+      "mappings/mediadive_unknown_dispositions.json"
+    ],
+    "generation_id": "resolution-admitted-r2",
+    "groups": {
+      "<top-level>": {
+        "files": 13,
+        "recorded_bytes": 164614649
+      },
+      "bodies": {
+        "files": 5916,
+        "recorded_bytes": 45114418
+      },
+      "events": {
+        "files": 6737,
+        "recorded_bytes": 8955964
+      },
+      "evidence": {
+        "files": 1781,
+        "recorded_bytes": 4993353
+      },
+      "history": {
+        "files": 6,
+        "recorded_bytes": 8327719
+      },
+      "seed-native": {
+        "files": 4,
+        "recorded_bytes": 43927868
+      }
+    },
+    "member_count": 14457,
+    "qualification": "Member sizes are read from the hash-bound manifest, not remeasured. Counts cover preserved historical evidence as well as current native bodies; they are not endpoint counts.",
+    "recorded_member_bytes": 275933971,
+    "suffix_counts": {
+      ".body": 7690,
+      ".json": 6760,
+      ".jsonl": 5,
+      ".sqlite": 2
+    },
+    "top_level_members": [
+      "baseline-cache.sqlite",
+      "catalogue.json",
+      "compounds.json",
+      "endpoint-outcomes.json",
+      "media_detailed.json",
+      "media_strains.json",
+      "mediadive_bulk_cache.sqlite",
+      "observations.jsonl",
+      "official-documentation.body",
+      "plan.json",
+      "request-intents.jsonl",
+      "solutions.json",
+      "unknown-policy.json"
+    ]
+  },
+  "classification": {
+    "actionable_performance_followup": true,
+    "body_guard_obligations_are_necessary": true,
+    "new_scientific_correctness_failure_demonstrated": false,
+    "recommended_active_run_change": "None. Preserve the active gate and all body, event, history, pointer, policy and graph mutation detection.",
+    "same_followup_as_issue1775": true,
+    "unbounded_loop_demonstrated": false
+  },
+  "conclusion": "Yes: all14457 sealed generation members enter the shared parent admission before MediaDive traverses its upstream BacDive dependency. Every later metadata verification therefore traverses this finite enlarged set. This materially amplifies the already identified duplicate native replay cost.",
+  "conditional_work_amplification": {
+    "additional_operations_not_counted": [
+      "resolver callbacks including sealed query snapshot serialization",
+      "all other admitted graph/authority/code paths",
+      "package membership checks",
+      "ancestry-query before/after checks",
+      "label-batch and completion checkpoints",
+      "additional OS operations inside each Path.resolve"
+    ],
+    "before_after_metadata_verifications": 6674,
+    "combined_two_loop_iterations": 192972036,
+    "interpretation": "These are static conditional Python-level loop-iteration counts for an equivalent completed replay, not a measured number of system calls or work completed by the currently running PID.",
+    "manifest_members_per_verification": 14457,
+    "member_binding_loop_iterations_for_equivalent_successful_second_replay": 96486018,
+    "member_stamp_loop_iterations_for_equivalent_successful_second_replay": 96486018,
+    "recorded_fallback_demands": 3337
+  },
+  "guard_cost_mechanism": {
+    "explanation": "capture caches exact body identities. Metadata-only verification still resolves every retained lexical locator and checks every retained file stamp, so cached bytes do not remove the per-query metadata traversal. Batch/full checkpoints may separately rehash all admitted members.",
+    "file": "kg_microbe/merge_utils/source_admission.py",
+    "lines": {
+      "file_stamp_checks": 118,
+      "full_hash_only_when_metadata_only_false": 124,
+      "lexical_binding_resolution": 109,
+      "package_membership": 115,
+      "resolver_callbacks": 105
+    },
+    "per_query_full_body_hashing": false
+  },
+  "identities": {
+    "data/raw/mediadive/generations/resolution-admitted-r2/manifest.json": {
+      "bytes": 2580580,
+      "sha256": "fa3c9e47bad5ff298b35e32382de7bd642e6be6ed95540db128d7d674058924f"
+    },
+    "data/rebuild-evidence/20261105/mediadive-resolution-1734/phase3-admission-runtime-analysis-r1.json": {
+      "bytes": 16850,
+      "sha256": "fd05a0c09854674cd0b892705d4b56b24b7e2692f9adae4c3b988eedca05e916"
+    },
+    "kg_microbe/merge_utils/source_admission.py": {
+      "bytes": 6750,
+      "sha256": "e31844f6f329909a0888f0e8f629052c0eee467ad344b9497180bbd04bea749c"
+    },
+    "kg_microbe/merge_utils/source_freshness.py": {
+      "bytes": 12842,
+      "sha256": "15527444fad4d5adf54c025da4b6789fc61430654c15f52ea757b6de80ca5620"
+    },
+    "kg_microbe/transform_utils/bacdive/ancestry_authority.py": {
+      "bytes": 19420,
+      "sha256": "ac28e5f6f15a5cf964fb342fefc54a06a9f663ec5719cbae62e3dda95cd10ecd"
+    },
+    "kg_microbe/transform_utils/bacdive/fallback_native_authority.py": {
+      "bytes": 14394,
+      "sha256": "9c2cc3973e3a0dcdf02676813496f66067b34548eae44ce2b4f433566737e0ae"
+    },
+    "kg_microbe/transform_utils/mediadive/endpoint_consumer.py": {
+      "bytes": 13120,
+      "sha256": "0b14f6ec992476b73c5cf0cf9e1e92ad38acc59724fd5e20c75a2f35e29cea94"
+    },
+    "kg_microbe/transform_utils/mediadive/endpoint_outcomes.py": {
+      "bytes": 34745,
+      "sha256": "4829dd7719172ecf6ce1b87f78b59b07b488395b2e68921ed8f87de0004938e6"
+    },
+    "kg_microbe/transform_utils/mediadive/mediadive.py": {
+      "bytes": 80386,
+      "sha256": "5dd9090519838615677c118bcdc95db5304e658dde0dc04876330193a5f7e855"
+    },
+    "kg_microbe/utils/source_finalization.py": {
+      "bytes": 65662,
+      "sha256": "4a218471634517d617ef2dade4d511531ef3a42ec442480932654d5a2beffc24"
+    }
+  },
+  "limits": [
+    "The saved process descriptor sample does not identify which frame is executing, so this analysis does not prove how much of the current elapsed time this mechanism consumed.",
+    "No measured throughput, completion estimate, gate success or memory-leak claim is made.",
+    "A finite large guard set is not itself a correctness or boundedness defect; the actionable point is repeated shared traversal multiplied by duplicate source replay."
+  ],
+  "recorded_at_utc": "2026-11-06T00:34:58.228723+00:00",
+  "related_issue": 1775,
+  "schema_version": 1,
+  "scope": "Counted only the existing sealed manifest JSON and inspected source text. No body/event/cache read, directory crawl, guard construction, producer, gate, database query, process sampling, tests, HTTP or credentials.",
+  "static_call_order": [
+    {
+      "location": "kg_microbe/merge_utils/source_freshness.py:216",
+      "operation": "validate_record calls _check_record before _check_marker."
+    },
+    {
+      "location": "kg_microbe/merge_utils/source_freshness.py:117",
+      "operation": "_check_record passes the shared SourceAdmission to _verify_recorded_consumed_inputs."
+    },
+    {
+      "location": "kg_microbe/utils/source_finalization.py:302",
+      "operation": "Registered MediaDive verify_recorded_native_inputs receives the same admission."
+    },
+    {
+      "location": "kg_microbe/transform_utils/mediadive/endpoint_consumer.py:248",
+      "operation": "verify_recorded_endpoints retains the supplied parent guard and passes it through _load."
+    },
+    {
+      "location": "kg_microbe/transform_utils/mediadive/endpoint_outcomes.py:708",
+      "operation": "load_generation resolves the pointer-selected generation and calls validate_generation with the supplied admission."
+    },
+    {
+      "location": "kg_microbe/transform_utils/mediadive/endpoint_outcomes.py:646",
+      "operation": "validate_generation captures every manifest member in that admission, verifies exact membership/bytes, replays source evidence and checks qualification; line677 verifies the shared set."
+    },
+    {
+      "location": "kg_microbe/merge_utils/source_freshness.py:197",
+      "operation": "Only after _check_record returns does _check_marker recursively validate MediaDive TRANSFORM_INPUTS, including BacDive."
+    },
+    {
+      "location": "kg_microbe/merge_utils/source_freshness.py:209",
+      "operation": "First upstream BacDive context differs from the earlier direct-selection key, causing the second native replay described in #1775."
+    }
+  ],
+  "status": "static_addendum_complete"
+}

@@ -1,0 +1,135 @@
+{
+  "schema_version": 1,
+  "status": "release_aligned_legacy_reuse_with_explicit_provenance_limit",
+  "recorded_at": "2026-11-05T22:13:27.291496+00:00",
+  "question": "Does the phase2 NCBITaxon missing-toolchain warning establish stale taxonomy or a mandatory rebuild?",
+  "conclusion": "No observed release mismatch: actual reused database and both staged OWL forms identify2026-07-12. Existing non-GO reuse policy explicitly warns and accepts this state. The database is not certified as rebuilt with current SemSQL/ROBOT tools; matching release metadata and source staging do not reconstruct the missing build provenance. The fresh taxdump is a separate authority for declarations/retirements and does not validate all SemSQL ancestry entailments.",
+  "actual_database": {
+    "path": "data/raw/ncbitaxon.db",
+    "resolved_path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw/ncbitaxon.db",
+    "regular_unlinked_owned_file": true,
+    "stat": {
+      "device": 16777233,
+      "inode": 135776420,
+      "links": 1,
+      "mtime_ns": 1785094500371000692,
+      "size": 14073847808
+    },
+    "stat_exactly_matches_staged_inventory": true,
+    "absent_sidecars": {
+      "-wal": false,
+      "-shm": false,
+      "-journal": false
+    },
+    "native_version_statements": [
+      [
+        "obo:ncbitaxon.owl",
+        "owl:versionIRI",
+        "obo:ncbitaxon/2026-07-12/ncbitaxon.owl",
+        null
+      ],
+      [
+        "obo:ncbitaxon.owl",
+        "owl:versionInfo",
+        null,
+        "2026-07-12"
+      ]
+    ],
+    "toolchain_record_present": false,
+    "full_14GB_hash_recomputed_by_this_review": false
+  },
+  "staged_archive": {
+    "path": "data/raw/ncbitaxon.owl.gz",
+    "bytes": 71846044,
+    "sha256": "65be93c022e45b0fe6d6d311bf0a18ba08cc29f7de5e0207ee06823ec65f5671"
+  },
+  "owl_version_headers": {
+    "ncbitaxon.owl": [
+      "<owl:versionIRI rdf:resource=\"http://purl.obolibrary.org/obo/ncbitaxon/2026-07-12/ncbitaxon.owl\"/>",
+      "<owl:versionInfo>2026-07-12</owl:versionInfo>"
+    ],
+    "ncbitaxon.owl.gz": [
+      "<owl:versionIRI rdf:resource=\"http://purl.obolibrary.org/obo/ncbitaxon/2026-07-12/ncbitaxon.owl\"/>",
+      "<owl:versionInfo>2026-07-12</owl:versionInfo>"
+    ]
+  },
+  "staging_evidence": {
+    "path": "data/rebuild-evidence/20261105/raw-staging/staged-inventory.json",
+    "bytes": 5670167,
+    "sha256": "28ba117efdab6d90fc68b6bf3feedf9aa13d302585c2e75bb0da29f1a53b1680"
+  },
+  "conversion_receipt": {
+    "path": "data/rebuild-evidence/20261105/upgrades/robot-conversions/receipts/ncbitaxon.json",
+    "bytes": 795,
+    "sha256": "1d98963fdd5ed3728eee355fa56137ffc7a6e5fee9da86711a96c0e576fd59db"
+  },
+  "legacy_build_log": {
+    "identity": {
+      "path": "data/raw/ncbitaxon_semsql_build.log",
+      "bytes": 2641,
+      "sha256": "fda4cedbb9bcb5fcc022569706cf9f8927b2f4057fa57dd5f2c9472d1643edb2"
+    },
+    "meaning": "Retained log shows semsql builder under the earlier miniforgePython3.13 environment reading ncbitaxon.owl and importing rdftab/relation-graph outputs; it has no source/tool binary digest record and is not substituted for one."
+  },
+  "independent_taxdump_authority": {
+    "current_archive": {
+      "path": "data/raw/taxdump.tar.gz",
+      "bytes": 80009503,
+      "sha256": "8f784a79de31b8b134e5bd34b0432e33a3b776da88e7209dd5307cd1caf3a9d5"
+    },
+    "download_integrity_receipt": {
+      "path": "data/rebuild-evidence/20261105/refresh/taxdump-receipt.json",
+      "bytes": 575,
+      "sha256": "20085354c0ab90eca189446cca82aa17d08dc702cd9aef30d7cdbcea09384e08"
+    },
+    "stable_official_md5": "86c1a7336a4cfd335a1bd655522f3de0",
+    "full_gzip_and_member_integrity_checked_by_retained_acquisition": true,
+    "current_ontology_finalization_consumes_exact_digest": true,
+    "current_ontology_admission": {
+      "path": "data/rebuild-evidence/20261105/mediadive-resolution-1734/ontology-admission-r1.json",
+      "bytes": 17923,
+      "sha256": "6d258408d22885a952674ee3f30a90e872df57ef365f059b3f0fd1fe3f4e863d"
+    },
+    "ontology_finalization": {
+      "path": "data/transformed/ontologies/source_finalization.json",
+      "bytes": 48779,
+      "sha256": "99f0aa27a0b7653c479f1bd96af3dd248d72ac3e57cb671828ad30e3c73a34f9"
+    }
+  },
+  "code_trace": {
+    "ontology_utils.py": "_ensure_ncbitaxon_db compares DB release to staged OWL, reuses when aligned, then _warn_on_toolchain_drift warns for absent record. Strict build-tool enforcement applies to GO; non-GO reuse is intentional.",
+    "ancestry_authority.py": "BacDive FreshAncestryAuthority binds the actual resolved SQLite path and full bytes, opens an independent query-only immutable-mode connection, records native version statements/actual ancestry results, verifies before and after query batch; fresh describes the connection/replay, not dataset recency.",
+    "taxonomy_evidence.py": "Exact independent taxdump nodes/names/merged/deleted evidence validates finalized retirement/closure decisions; it does not replace the recorded DB query authority."
+  },
+  "bound_code": {
+    "kg_microbe/utils/ontology_utils.py": {
+      "path": "kg_microbe/utils/ontology_utils.py",
+      "bytes": 142047,
+      "sha256": "d23bafd787e3b74cfb51eaf37fd9c75432a519bded4c2cabf12912a2e13f20f6"
+    },
+    "kg_microbe/utils/semsql_toolchain.py": {
+      "path": "kg_microbe/utils/semsql_toolchain.py",
+      "bytes": 11203,
+      "sha256": "2a609d1dde6f4631539f755fe68044a8c0c65dc309d366388c638971799a59cb"
+    },
+    "kg_microbe/transform_utils/bacdive/ancestry_authority.py": {
+      "path": "kg_microbe/transform_utils/bacdive/ancestry_authority.py",
+      "bytes": 19420,
+      "sha256": "ac28e5f6f15a5cf964fb342fefc54a06a9f663ec5719cbae62e3dda95cd10ecd"
+    },
+    "kg_microbe/transform_utils/bacdive/taxonomy_evidence.py": {
+      "path": "kg_microbe/transform_utils/bacdive/taxonomy_evidence.py",
+      "bytes": 78357,
+      "sha256": "938c5af00d3b2a353e3ffb995d719a8e4cb677d52c9a4d4c7a2c67e0c9124d0f"
+    }
+  },
+  "required_followup_with_existing_phase2_gate": "Check successful BacDive completion and recorded ancestry authority bytes/version/query witness during the already planned verify-sources gate. No duplicate expensive DB hash or production run was invoked by this review.",
+  "publication_wording": "Reused release-aligned NCBITaxon2026-07-12 SemSQL authority with byte-bound query replay; historical build-tool provenance unavailable. Separately consumed refreshed taxdump SHA8f784a79\u2026 for current declaration/retirement evidence. Do not claim a newly rebuilt database, current-toolchain certification, or globally fresh taxonomy snapshot.",
+  "review_operations": {
+    "http_requests": 0,
+    "pytest_runs": 0,
+    "source_edits": 0,
+    "database_mutations": 0,
+    "producer_runs": 0
+  }
+}

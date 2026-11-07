@@ -1,0 +1,27 @@
+........................................................................ [ 35%]
+........................................................................ [ 70%]
+...........................................................              [100%]
+=============================== warnings summary ===============================
+.venv/lib/python3.10/site-packages/google/api_core/_python_version_support.py:242
+  /Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/.venv/lib/python3.10/site-packages/google/api_core/_python_version_support.py:242: FutureWarning: You are using a non-supported Python version (3.10.11). Google will not post any further updates to google.api_core supporting this Python version. Please upgrade to the latest Python version, or at least Python 3.11, and then update google.api_core.
+    warnings.warn(message, FutureWarning)
+
+.venv/lib/python3.10/site-packages/oaklib/datamodels/ontology_metadata.py:20
+  /Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/.venv/lib/python3.10/site-packages/oaklib/datamodels/ontology_metadata.py:20: DeprecationWarning: The LinkML dataclass extension patch is deprecated and will be removed in a future release.
+  If you're currently using Python < 3.13, where this patch still applies, you should:
+    • Upgrade your LinkML tooling to version >= 1.9.0 (which no longer needs this patch), OR
+    • Migrate to Pydantic models if you're using LinkML's generated classes at runtime.
+  
+    from linkml_runtime.utils.dataclass_extensions_376 import dataclasses_init_fn_with_kwargs
+
+.venv/lib/python3.10/site-packages/eutils/__init__.py:4
+  /Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/.venv/lib/python3.10/site-packages/eutils/__init__.py:4: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+    import pkg_resources
+
+.venv/lib/python3.10/site-packages/pkg_resources/__init__.py:3148
+  /Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/.venv/lib/python3.10/site-packages/pkg_resources/__init__.py:3148: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('sphinxcontrib')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(pkg)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+203 passed, 4 warnings in 111.16s (0:01:51)

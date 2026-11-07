@@ -1,0 +1,7 @@
+{
+  "fixture": "tests/resources/mediadive_medium_strains_official_endpoint.js",
+  "sha256": "ffe932840eb9c67827664195d3ff783db777be83ee68e173041a48b52cd89ceb",
+  "exact_retained_official_slice": true,
+  "git_diff_check": "all other staged files pass",
+  "native_whitespace": "Two trailing spaces/indentation records are exact source bytes; retained unchanged rather than normalizing native evidence."
+}

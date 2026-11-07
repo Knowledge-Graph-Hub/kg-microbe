@@ -15,6 +15,7 @@ from kg_microbe.transform_utils.mediadive import material_scope_audit as audit
 from kg_microbe.transform_utils.mediadive import mediadive as mod
 from kg_microbe.utils.producer_audits import verify_producer_audits
 from kg_microbe.utils.source_finalization import SourceFinalizationRequired
+from tests.mediadive_consumer_fixtures import CARRIER_SOLUTION, seal_consumer_fixture
 
 RESOURCE = Path(__file__).parent / "resources"
 FIXTURE = RESOURCE / "mediadive/potato_scope.json"
@@ -95,16 +96,20 @@ def _producer(tmp_path, monkeypatch, *, recipes=None, unified=1, legacy=True, em
         get_category=lambda identifier: "",
     )
     monkeypatch.setattr(mod, "ChemicalMappingLoader", lambda: loader)
+    seal_consumer_fixture(raw, monkeypatch, catalogue_claims=embedded)
     producer = mod.MediaDiveTransform(raw, tmp_path / "transformed")
     return producer, mapping_path
 
 
 def _rows(producer):
-    """Read the literal producer-owned audit schema."""
+    """Read target-cohort audit rows, excluding the explicitly separate synthetic catalogue context."""
     with (producer.output_dir / audit.AUDIT_FILENAME).open() as stream:
         reader = csv.DictReader(stream, delimiter="\t", quoting=csv.QUOTE_NONE)
         assert tuple(reader.fieldnames) == audit.AUDIT_HEADER
-        return list(reader)
+        rows = list(reader)
+        return [
+            row for row in rows if not row["source_assertion_id"].startswith(f"mediadive.solution:{CARRIER_SOLUTION}#")
+        ]
 
 
 def test_nine_original_occurrences_and_full_mapping_candidates_survive(tmp_path, monkeypatch):
@@ -156,10 +161,9 @@ def test_empty_or_removed_candidate_is_valid_header_only(tmp_path, monkeypatch, 
 
 @pytest.mark.parametrize("recipe", [None, "", {}, 0])
 def test_metadata_only_solution_recipe_keeps_existing_empty_behavior(tmp_path, monkeypatch, recipe):
-    """The audit does not turn a non-list recipe into a new producer schema requirement."""
-    producer, _ = _producer(tmp_path, monkeypatch, recipes={"1": {"recipe": recipe}})
-    producer.run(show_status=False)
-    assert _rows(producer) == []
+    """A malformed synthetic source response cannot become an admitted empty recipe."""
+    with pytest.raises(SourceFinalizationRequired, match="malformed recipe"):
+        _producer(tmp_path, monkeypatch, recipes={"1": {"recipe": recipe}})
 
 
 @pytest.mark.parametrize("predicate", ["skos:broadMatch", "skos:narrowMatch", "rdfs:seeAlso"])
@@ -178,7 +182,7 @@ def test_weak_or_annotation_rows_are_not_grounding_candidates(tmp_path, monkeypa
 
 def test_actual_embedded_claim_is_preserved_without_inserting_it_in_recipe(tmp_path, monkeypatch):
     """An embedded compound record is its own claim origin, not a recipe field."""
-    embedded = {"compound": "Potato", "CAS-RN": "93348-51-7", "note": None, "flag": False}
+    embedded = {"compound_id": 1606, "compound": "Potato", "CAS-RN": "93348-51-7", "note": None, "flag": False}
     producer, _ = _producer(tmp_path, monkeypatch, unified=0, legacy=False, embedded={"1606": embedded})
     producer.run(show_status=False)
     rows = _rows(producer)

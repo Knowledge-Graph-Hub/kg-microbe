@@ -1,0 +1,7 @@
+{
+  "bytes": 15356,
+  "formatting": "Scoped Ruff import sorting and formatting complete after repair.json was recorded; helper-before.py and prior repair record preserved.",
+  "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/scripts/adhoc/kgm_mediadive_artifact_admission_20261105.py",
+  "sha256": "6cd653f2c0274c249a687975de669d54fcec9c7a1e3c3ef381a7d2aa8162a150",
+  "tests": "Unchanged, root-coordinated rerun pending."
+}

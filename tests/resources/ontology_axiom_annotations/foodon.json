@@ -1,0 +1,106 @@
+{
+  "graphs": [
+    {
+      "id": "http://purl.obolibrary.org/obo/foodon.owl",
+      "nodes": [
+        {
+          "id": "http://purl.obolibrary.org/obo/FOODON_03400324",
+          "lbl": "food additive classification, european community",
+          "type": "CLASS",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000114",
+                "val": "http://purl.obolibrary.org/obo/IAO_0000428"
+              },
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000119",
+                "val": "https://eur-lex.europa.eu/legal-content/EN/ALL/?uri=celex:31995L0002"
+              },
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#hasDbXref",
+                "val": "http://www.langual.org/langual_thesaurus.asp?termid=A0324"
+              }
+            ]
+          }
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/FOODON_03400325",
+          "lbl": "acid (food additive, EC)",
+          "type": "CLASS",
+          "meta": {
+            "definition": {
+              "val": "Substance that increases the acidity of a food stuff and/or imparts a sour taste to it."
+            },
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000114",
+                "val": "http://purl.obolibrary.org/obo/IAO_0000428"
+              },
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000119",
+                "val": "https://eur-lex.europa.eu/legal-content/EN/ALL/?uri=celex:31995L0002"
+              },
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#hasDbXref",
+                "val": "http://www.langual.org/langual_thesaurus.asp?termid=A0325"
+              }
+            ]
+          }
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/FOODON_03400326",
+          "lbl": "acidity regulator (EC)",
+          "type": "CLASS",
+          "meta": {
+            "definition": {
+              "val": "Substance that alters or controls the acidity or alkalinity of a foodstuff."
+            },
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000114",
+                "val": "http://purl.obolibrary.org/obo/IAO_0000428"
+              },
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000119",
+                "val": "https://eur-lex.europa.eu/legal-content/EN/ALL/?uri=celex:31995L0002"
+              },
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#hasDbXref",
+                "val": "http://www.langual.org/langual_thesaurus.asp?termid=A0326"
+              }
+            ]
+          }
+        }
+      ],
+      "edges": [
+        {
+          "sub": "http://purl.obolibrary.org/obo/FOODON_03400324",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002351",
+          "obj": "http://purl.obolibrary.org/obo/FOODON_03400325",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                "val": "acid"
+              }
+            ]
+          }
+        },
+        {
+          "sub": "http://purl.obolibrary.org/obo/FOODON_03400324",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002351",
+          "obj": "http://purl.obolibrary.org/obo/FOODON_03400326",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                "val": "acidity regulator"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

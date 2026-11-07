@@ -1,0 +1,28 @@
+{
+  "helper": {
+    "bytes": 6593,
+    "path": "scripts/adhoc/kgm_rebuild_lpsn_phase_20261105.py",
+    "sha256": "b0ef27316dfc6fc52a7ad7251eff513bf8909c64f33840835f7e63719a326b17"
+  },
+  "issue_bodies": [
+    "phase-receipt-binding-issue.md",
+    "credential-claim-scope-issue.md"
+  ],
+  "preserved_before_sha256": "405e413dacc2794f0ea3e8ca70e16919109e9e819d2fb850a911a88aad489d3e",
+  "recorded_at": "2026-11-05T22:27:23.163865+00:00",
+  "scope": {
+    "credential_files_read": false,
+    "environment_values_inspected": false,
+    "helper_executed": false,
+    "http_or_github_operations": false,
+    "only_helper_source_modified": true,
+    "transforms_run": false,
+    "user_authorization": "pending; not inferred from repair"
+  },
+  "status": "frozen_for_root_review_and_focused_tests",
+  "validation": {
+    "ast_parse": "pass",
+    "execution_tests": "not_run",
+    "ruff_check": "pass"
+  }
+}

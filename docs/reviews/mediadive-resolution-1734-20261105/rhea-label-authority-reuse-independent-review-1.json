@@ -1,0 +1,152 @@
+{
+  "schema_version": 1,
+  "status": "release_compatibility_pass_with_build_provenance_limit",
+  "recorded_at": "2026-11-05T23:03:57.000171+00:00",
+  "scope": "Read-only ChEBI/EC legacy SemSQL reuse warning qualification for the running Rhea phase",
+  "databases": {
+    "chebi": {
+      "path": "data/raw/chebi.db",
+      "size_bytes": 4253011968,
+      "staging_stat_unchanged": true,
+      "staging_stat": {
+        "device": 16777233,
+        "inode": 135776421,
+        "links": 1,
+        "mtime_ns": 1785194577243894416,
+        "size": 4253011968
+      },
+      "regular_owned_file": true,
+      "sidecars_absent": true,
+      "native_version_statements": [
+        [
+          "obo:chebi.owl",
+          "owl:versionIRI",
+          "obo:chebi/253/chebi.owl",
+          null
+        ],
+        [
+          "obo:chebi.owl",
+          "owl:versionInfo",
+          null,
+          "253"
+        ]
+      ],
+      "release": "253",
+      "owl_headers": {
+        "chebi.owl": [
+          "<owl:versionIRI rdf:resource=\"http://purl.obolibrary.org/obo/chebi/253/chebi.owl\"/>",
+          "<owl:versionInfo>253</owl:versionInfo>"
+        ],
+        "chebi.owl.gz": [
+          "<owl:versionIRI rdf:resource=\"http://purl.obolibrary.org/obo/chebi/253/chebi.owl\"/>",
+          "<owl:versionInfo>253</owl:versionInfo>"
+        ]
+      },
+      "archive": {
+        "path": "data/raw/chebi.owl.gz",
+        "bytes": 66401672,
+        "sha256": "6bd83eab561f2cd2b1dd0f60deecc5baa4a9b057984162084123330c1fa95830"
+      },
+      "archive_matches_retained_conversion_input": true,
+      "conversion_receipt": {
+        "path": "data/rebuild-evidence/20261105/upgrades/robot-conversions/receipts/chebi.json",
+        "bytes": 772,
+        "sha256": "decb53832836f281c24d9360df6b8a268fa928be98103e70e9f296e929ad15b5"
+      },
+      "toolchain_record_present": false,
+      "full_database_hash_recomputed_by_reviewer": false
+    },
+    "ec": {
+      "path": "data/raw/ec.db",
+      "size_bytes": 307970048,
+      "staging_stat_unchanged": true,
+      "staging_stat": {
+        "device": 16777233,
+        "inode": 135812683,
+        "links": 1,
+        "mtime_ns": 1784956096401371370,
+        "size": 307970048
+      },
+      "regular_owned_file": true,
+      "sidecars_absent": true,
+      "native_version_statements": [
+        [
+          "obo:eccode.owl",
+          "owl:versionIRI",
+          "obo:eccode/2024-10-02/eccode.owl",
+          null
+        ]
+      ],
+      "release": "2024-10-02",
+      "owl_headers": {
+        "ec.owl": [
+          "<owl:versionIRI rdf:resource=\"http://purl.obolibrary.org/obo/eccode/2024-10-02/eccode.owl\"/>"
+        ],
+        "ec.owl.gz": [
+          "<owl:versionIRI rdf:resource=\"http://purl.obolibrary.org/obo/eccode/2024-10-02/eccode.owl\"/>"
+        ]
+      },
+      "archive": {
+        "path": "data/raw/ec.owl.gz",
+        "bytes": 3462475,
+        "sha256": "e2d434dc3b3b38ca70aad4ab4f88e16ba84e6551716f2aad262e3ffa44e7ee25"
+      },
+      "archive_matches_retained_conversion_input": true,
+      "conversion_receipt": {
+        "path": "data/rebuild-evidence/20261105/upgrades/robot-conversions/receipts/ec.json",
+        "bytes": 763,
+        "sha256": "40e97f068ead4d57f02d49cf820156a819db1797e9b38f46314a3e94c78d18a6"
+      },
+      "toolchain_record_present": false,
+      "full_database_hash_recomputed_by_reviewer": false
+    }
+  },
+  "staging_evidence": {
+    "path": "data/rebuild-evidence/20261105/raw-staging/staged-inventory.json",
+    "bytes": 5670167,
+    "sha256": "28ba117efdab6d90fc68b6bf3feedf9aa13d302585c2e75bb0da29f1a53b1680"
+  },
+  "existing_ontology_admission": {
+    "path": "data/rebuild-evidence/20261105/mediadive-resolution-1734/ontology-admission-r1.json",
+    "bytes": 17923,
+    "sha256": "6d258408d22885a952674ee3f30a90e872df57ef365f059b3f0fd1fe3f4e863d"
+  },
+  "findings": [],
+  "conclusion": "Both actual databases are release-aligned with the preserved OWLs: ChEBI253 and EC2024-10-02. Their inode/size/mtime match the original staged copies. No release mismatch or SQLite sidecar was observed. Their missing historical toolchain records remain unavailable; matching native versions do not certify derivation by the currently pinned ROBOT/SemSQL toolchain.",
+  "current_reader_scope": "Rhea label_inputs.external_label_lookup opens read-only immutable snapshots through consumed-input roles, validates ontology/schema/index and standalone SQLite state, and performs exact subject/rdfs:label reads. It does not use ChEBI/EC entailment closure to infer Rhea reactions. Rhea143 directions/reaction assertions remain sourced from the separately pinned native Rhea pair. Missing external labels remain explicitly blank, never synthesized.",
+  "compatibility_policy": "The unchanged non-GO reader explicitly reports and reuses legacy DBs. GO remains strict. No rebuild, provenance restamp or missing-record waiver was performed by this review.",
+  "publication_qualification": "Describe these as reused release-aligned legacy label authorities with exact consumed-byte binding. Do not call them newly rebuilt, certified by the current toolchain, or globally latest upstream ontology snapshots.",
+  "pending_existing_gate": "Successful Rhea producer completion and phase2 verify-sources must still admit the actual consumed DB hashes, graph/audit outputs and dependency identities. This receipt is not that gate.",
+  "bound_code": {
+    "kg_microbe/utils/ontology_utils.py": {
+      "path": "kg_microbe/utils/ontology_utils.py",
+      "bytes": 142047,
+      "sha256": "d23bafd787e3b74cfb51eaf37fd9c75432a519bded4c2cabf12912a2e13f20f6"
+    },
+    "kg_microbe/utils/semsql_toolchain.py": {
+      "path": "kg_microbe/utils/semsql_toolchain.py",
+      "bytes": 11203,
+      "sha256": "2a609d1dde6f4631539f755fe68044a8c0c65dc309d366388c638971799a59cb"
+    },
+    "kg_microbe/transform_utils/rhea_mappings/label_inputs.py": {
+      "path": "kg_microbe/transform_utils/rhea_mappings/label_inputs.py",
+      "bytes": 5933,
+      "sha256": "1afdca9ec8d0a85b9f3519a8f5b2de55d3ef7cae68468046bf0155752b1e9c39"
+    },
+    "kg_microbe/transform_utils/rhea_mappings/rhea_mappings.py": {
+      "path": "kg_microbe/transform_utils/rhea_mappings/rhea_mappings.py",
+      "bytes": 8420,
+      "sha256": "f575232c17e11aaf53d12235e800923dd2c69347122c980e1df2363f52b2ec13"
+    }
+  },
+  "review_operations": {
+    "network_requests": 0,
+    "producer_runs": 0,
+    "gate_runs": 0,
+    "test_runs": 0,
+    "database_mutations": 0,
+    "database_full_hashes": 0,
+    "source_edits": 0,
+    "database_queries": "two small ontology version-metadata SELECTs using query_only and mode=ro&immutable=1"
+  }
+}

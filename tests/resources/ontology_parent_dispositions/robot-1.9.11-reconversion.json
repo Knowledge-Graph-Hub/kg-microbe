@@ -1,0 +1,1040 @@
+{
+  "conversion": {
+    "changed_context_node_ids": [
+      "http://purl.obolibrary.org/obo/FOODON_03411301",
+      "http://purl.obolibrary.org/obo/NCBITaxon_179359",
+      "http://purl.obolibrary.org/obo/NCBITaxon_224708",
+      "http://purl.obolibrary.org/obo/NCBITaxon_224711",
+      "http://purl.obolibrary.org/obo/NCBITaxon_8030",
+      "http://purl.obolibrary.org/obo/NCBITaxon_8032",
+      "http://purl.obolibrary.org/obo/NCBITaxon_875777"
+    ],
+    "completed_comparison": {
+      "path": "data/rebuild-evidence/20261105/upgrades/robot-bindings/review-5/binding-review.json",
+      "sha256": "011a413ce69ef54ca7d12c0e93f4e56df0555ab4284159f53876a689f241052b"
+    },
+    "date": "2026-11-05",
+    "derived_json": {
+      "bytes": 43822440,
+      "sha256": "55fc1392b6852559295eab62a9ae01948ed3989ab4fc1d98550ca3f35565a9ab"
+    },
+    "explanation": "Only complete source-backed nested annotation metadata changed; full selected edges, logical definitions, ancestry, quarantines and categorical decisions remain unchanged.",
+    "historical_full_primary_json_and_reviewed_model_preserved": true,
+    "new_source_backed_annotation_occurrences": 13,
+    "robot_jar_sha256": "53cd275c8e4c0dad1fc2c1c34174876795cd7d6b6926e1444adcbb0cb3c7ab26",
+    "robot_version": "1.9.11",
+    "robot_wrapper_sha256": "0f2c4bb7dc25be9fb1dad37f2b8c07336d0e2c0ef3d3983e952c23d8b180a5b0",
+    "scientific_decisions_unchanged": true,
+    "source_owl": {
+      "bytes": 40429965,
+      "sha256": "1e11fc50283c6498697a7aca9606c9d914f1cda71cc5510e006d949c32df7db0"
+    }
+  },
+  "current_complete_node_sha256": {
+    "http://purl.obolibrary.org/obo/FOODON_03411301": "0ac58c0469f3e3c6caee2f60ee13fd9e42e8bb1c443bf0ef8b20eb9294e7b885",
+    "http://purl.obolibrary.org/obo/NCBITaxon_179359": "9ea64c73c731cdea6a9288ef02db2fdb7ab004b76d6d8ca93e819459a4af2cdb",
+    "http://purl.obolibrary.org/obo/NCBITaxon_224708": "3ae87a7ce9f7065c12986784f25e06b64e16d6cd73a574730b7abd584bdf5002",
+    "http://purl.obolibrary.org/obo/NCBITaxon_224711": "9bc64c77d2faa203a4fcec897dd88c2db75ccad002a6f5f7c06cd416963b8941",
+    "http://purl.obolibrary.org/obo/NCBITaxon_8030": "a832c485d4cf581dd97273b9e9f9a711fdec1a6f645048cd052377c8bfd372f7",
+    "http://purl.obolibrary.org/obo/NCBITaxon_8032": "40f8336f10345419bb348b3d495b9407c1586bc808a021d06d4208cce0c468dc",
+    "http://purl.obolibrary.org/obo/NCBITaxon_875777": "6cfb334f5318268ec2999a249c7ace0accd1e0f6e1087084a4ac4eee114f6858"
+  },
+  "fixtures": {
+    "tests/resources/ontology_parent_dispositions/foodon.json": {
+      "current_file": {
+        "bytes": 622722,
+        "sha256": "09f28ffbaf711fdf0f344ae855b576fe8b931689ebe53ce2a1e18333057c8260"
+      },
+      "historical_file": {
+        "bytes": 618853,
+        "sha256": "f9bad2efed1abd6c14e95c529e39578c28c092055c9e22b255fa84538bf59751"
+      },
+      "replacement_native_coordinates": [
+        {
+          "graph": 0,
+          "id": "http://purl.obolibrary.org/obo/FOODON_03411301",
+          "node": 22894
+        },
+        {
+          "graph": 0,
+          "id": "http://purl.obolibrary.org/obo/NCBITaxon_179359",
+          "node": 34538
+        },
+        {
+          "graph": 0,
+          "id": "http://purl.obolibrary.org/obo/NCBITaxon_224708",
+          "node": 34947
+        },
+        {
+          "graph": 0,
+          "id": "http://purl.obolibrary.org/obo/NCBITaxon_224711",
+          "node": 34949
+        },
+        {
+          "graph": 0,
+          "id": "http://purl.obolibrary.org/obo/NCBITaxon_8030",
+          "node": 38111
+        },
+        {
+          "graph": 0,
+          "id": "http://purl.obolibrary.org/obo/NCBITaxon_8032",
+          "node": 38112
+        },
+        {
+          "graph": 0,
+          "id": "http://purl.obolibrary.org/obo/NCBITaxon_875777",
+          "node": 38378
+        }
+      ]
+    },
+    "tests/resources/ontology_parent_dispositions/lifecycle/foodon.json": {
+      "current_file": {
+        "bytes": 684302,
+        "sha256": "6072d3452c85183e8a1dfb97e6698dfbc11e9005b114965dbfb0e1fcc9358eda"
+      },
+      "historical_file": {
+        "bytes": 680433,
+        "sha256": "603a0012a859e3dd763e0e0f84f82b8e755a2c0d54d2b256c9dd0b639f7f9d20"
+      },
+      "replacement_native_coordinates": [
+        {
+          "graph": 0,
+          "id": "http://purl.obolibrary.org/obo/FOODON_03411301",
+          "node": 22894
+        },
+        {
+          "graph": 0,
+          "id": "http://purl.obolibrary.org/obo/NCBITaxon_179359",
+          "node": 34538
+        },
+        {
+          "graph": 0,
+          "id": "http://purl.obolibrary.org/obo/NCBITaxon_224708",
+          "node": 34947
+        },
+        {
+          "graph": 0,
+          "id": "http://purl.obolibrary.org/obo/NCBITaxon_224711",
+          "node": 34949
+        },
+        {
+          "graph": 0,
+          "id": "http://purl.obolibrary.org/obo/NCBITaxon_8030",
+          "node": 38111
+        },
+        {
+          "graph": 0,
+          "id": "http://purl.obolibrary.org/obo/NCBITaxon_8032",
+          "node": 38112
+        },
+        {
+          "graph": 0,
+          "id": "http://purl.obolibrary.org/obo/NCBITaxon_875777",
+          "node": 38378
+        }
+      ]
+    }
+  },
+  "historical_complete_nodes": {
+    "http://purl.obolibrary.org/obo/FOODON_03411301": {
+      "id": "http://purl.obolibrary.org/obo/FOODON_03411301",
+      "lbl": "algae",
+      "meta": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://purl.obolibrary.org/obo/IAO_0000114",
+            "val": "http://purl.obolibrary.org/obo/IAO_0000122"
+          },
+          {
+            "pred": "http://purl.obolibrary.org/obo/IAO_0000119",
+            "val": "https://en.wikipedia.org/wiki/Algae"
+          },
+          {
+            "pred": "http://purl.org/dc/terms/contributor",
+            "val": "http://orcid.org/0000-0002-8844-9165"
+          },
+          {
+            "pred": "http://schema.org/image",
+            "val": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/NSW_seabed_1.JPG/640px-NSW_seabed_1.JPG"
+          },
+          {
+            "pred": "http://www.geneontology.org/formats/oboInOwl#hasDbXref",
+            "val": "http://www.langual.org/langual_thesaurus.asp?termid=B1301"
+          }
+        ],
+        "definition": {
+          "val": "An informal term for a large, diverse group of photosynthetic eukaryotic organisms that are not necessarily closely related, and is thus polyphyletic."
+        }
+      },
+      "type": "CLASS"
+    },
+    "http://purl.obolibrary.org/obo/NCBITaxon_179359": {
+      "id": "http://purl.obolibrary.org/obo/NCBITaxon_179359",
+      "lbl": "Alectis ciliaris",
+      "meta": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://purl.obolibrary.org/obo/IAO_0000114",
+            "val": "http://purl.obolibrary.org/obo/IAO_0000428"
+          },
+          {
+            "pred": "http://purl.obolibrary.org/obo/IAO_0000118",
+            "val": "african pompano"
+          },
+          {
+            "pred": "http://purl.obolibrary.org/obo/IAO_0000412",
+            "val": "http://purl.obolibrary.org/obo/ncbitaxon.owl"
+          },
+          {
+            "pred": "http://purl.org/dc/terms/contributor",
+            "val": "https://orcid.org/0000-0001-5275-8866"
+          },
+          {
+            "pred": "http://www.geneontology.org/formats/oboInOwl#hasDbXref",
+            "val": "http://eol.org/pages/213780"
+          },
+          {
+            "pred": "http://www.geneontology.org/formats/oboInOwl#hasDbXref",
+            "val": "http://www.langual.org/langual_thesaurus.asp?termid=B2147"
+          },
+          {
+            "pred": "http://www.geneontology.org/formats/oboInOwl#hasDbXref",
+            "val": "https://www.fao.org/fishery/en/aqspecies/lij"
+          },
+          {
+            "pred": "http://www.geneontology.org/formats/oboInOwl#hasSynonym",
+            "val": "threadfish"
+          },
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#seeAlso",
+            "val": "https://en.wikipedia.org/wiki/African_pompano"
+          }
+        ],
+        "synonyms": [
+          {
+            "pred": "hasBroadSynonym",
+            "val": "pompano"
+          },
+          {
+            "pred": "hasExactSynonym",
+            "val": "African pompano"
+          },
+          {
+            "pred": "hasExactSynonym",
+            "val": "african pompano"
+          }
+        ],
+        "xrefs": [
+          {
+            "val": "itis:168602"
+          }
+        ]
+      },
+      "type": "CLASS"
+    },
+    "http://purl.obolibrary.org/obo/NCBITaxon_224708": {
+      "id": "http://purl.obolibrary.org/obo/NCBITaxon_224708",
+      "lbl": "Brevoortia tyrannus",
+      "meta": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://purl.obolibrary.org/obo/IAO_0000114",
+            "val": "http://purl.obolibrary.org/obo/IAO_0000428"
+          },
+          {
+            "pred": "http://purl.obolibrary.org/obo/IAO_0000118",
+            "val": "atlantic menhaden"
+          },
+          {
+            "pred": "http://purl.obolibrary.org/obo/IAO_0000412",
+            "val": "http://purl.obolibrary.org/obo/ncbitaxon.owl"
+          },
+          {
+            "pred": "http://purl.org/dc/terms/contributor",
+            "val": "https://orcid.org/0000-0001-5275-8866"
+          },
+          {
+            "pred": "http://www.geneontology.org/formats/oboInOwl#hasDbXref",
+            "val": "http://eol.org/pages/213696"
+          },
+          {
+            "pred": "http://www.geneontology.org/formats/oboInOwl#hasDbXref",
+            "val": "http://www.langual.org/langual_thesaurus.asp?termid=B1849"
+          },
+          {
+            "pred": "http://www.geneontology.org/formats/oboInOwl#hasDbXref",
+            "val": "https://www.fao.org/fishery/en/aqspecies/mha"
+          },
+          {
+            "pred": "http://www.geneontology.org/formats/oboInOwl#hasSynonym",
+            "val": "menhaden, atlantic"
+          },
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#seeAlso",
+            "val": "https://en.wikipedia.org/wiki/Atlantic_menhaden"
+          }
+        ],
+        "synonyms": [
+          {
+            "pred": "hasBroadSynonym",
+            "val": "menhaden"
+          },
+          {
+            "pred": "hasExactSynonym",
+            "val": "Atlantic menhaden"
+          },
+          {
+            "pred": "hasExactSynonym",
+            "val": "atlantic menhaden"
+          },
+          {
+            "pred": "hasExactSynonym",
+            "val": "mossbunker"
+          }
+        ],
+        "xrefs": [
+          {
+            "val": "CEC1993:164"
+          },
+          {
+            "val": "itis:161732"
+          }
+        ]
+      },
+      "type": "CLASS"
+    },
+    "http://purl.obolibrary.org/obo/NCBITaxon_224711": {
+      "id": "http://purl.obolibrary.org/obo/NCBITaxon_224711",
+      "lbl": "Opisthonema oglinum",
+      "meta": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://purl.obolibrary.org/obo/IAO_0000114",
+            "val": "http://purl.obolibrary.org/obo/IAO_0000428"
+          },
+          {
+            "pred": "http://purl.obolibrary.org/obo/IAO_0000118",
+            "val": "atlantic thread herring"
+          },
+          {
+            "pred": "http://purl.obolibrary.org/obo/IAO_0000412",
+            "val": "http://purl.obolibrary.org/obo/ncbitaxon.owl"
+          },
+          {
+            "pred": "http://purl.org/dc/terms/contributor",
+            "val": "https://orcid.org/0000-0001-5275-8866"
+          },
+          {
+            "pred": "http://www.geneontology.org/formats/oboInOwl#hasDbXref",
+            "val": "http://eol.org/pages/213022"
+          },
+          {
+            "pred": "http://www.geneontology.org/formats/oboInOwl#hasDbXref",
+            "val": "http://www.langual.org/langual_thesaurus.asp?termid=B1851"
+          },
+          {
+            "pred": "http://www.geneontology.org/formats/oboInOwl#hasDbXref",
+            "val": "https://www.fao.org/fishery/en/aqspecies/tha"
+          },
+          {
+            "pred": "http://www.geneontology.org/formats/oboInOwl#hasSynonym",
+            "val": "thread herring, atlantic"
+          },
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#seeAlso",
+            "val": "https://en.wikipedia.org/wiki/Atlantic_thread_herring"
+          }
+        ],
+        "synonyms": [
+          {
+            "pred": "hasBroadSynonym",
+            "val": "thread herring"
+          },
+          {
+            "pred": "hasExactSynonym",
+            "val": "Atlantic thread herring"
+          },
+          {
+            "pred": "hasExactSynonym",
+            "val": "atlantic thread herring"
+          }
+        ],
+        "xrefs": [
+          {
+            "val": "CEC1993:184"
+          },
+          {
+            "val": "itis:161748"
+          }
+        ]
+      },
+      "type": "CLASS"
+    },
+    "http://purl.obolibrary.org/obo/NCBITaxon_8030": {
+      "id": "http://purl.obolibrary.org/obo/NCBITaxon_8030",
+      "lbl": "Salmo salar",
+      "meta": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://purl.obolibrary.org/obo/IAO_0000119",
+            "val": "https://en.wikipedia.org/wiki/Atlantic_salmon"
+          },
+          {
+            "pred": "http://purl.obolibrary.org/obo/IAO_0000412",
+            "val": "http://purl.obolibrary.org/obo/ncbitaxon.owl"
+          },
+          {
+            "pred": "http://purl.org/dc/terms/contributor",
+            "val": "https://orcid.org/0000-0001-5275-8866"
+          },
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#seeAlso",
+            "val": "https://en.wikipedia.org/wiki/Atlantic_salmon"
+          }
+        ],
+        "synonyms": [
+          {
+            "pred": "hasBroadSynonym",
+            "val": "atlantic salmon"
+          },
+          {
+            "pred": "hasExactSynonym",
+            "val": "Atlantic salmon"
+          },
+          {
+            "pred": "hasExactSynonym",
+            "val": "atlantic salmon"
+          }
+        ],
+        "xrefs": [
+          {
+            "val": "itis:161996"
+          }
+        ]
+      },
+      "type": "CLASS"
+    },
+    "http://purl.obolibrary.org/obo/NCBITaxon_8032": {
+      "id": "http://purl.obolibrary.org/obo/NCBITaxon_8032",
+      "lbl": "Salmo trutta",
+      "meta": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://purl.obolibrary.org/obo/IAO_0000412",
+            "val": "http://purl.obolibrary.org/obo/ncbitaxon.owl"
+          },
+          {
+            "pred": "http://purl.org/dc/terms/contributor",
+            "val": "https://orcid.org/0000-0001-5275-8866"
+          },
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#seeAlso",
+            "val": "https://en.wikipedia.org/wiki/Whiptail_conger"
+          }
+        ],
+        "synonyms": [
+          {
+            "pred": "hasBroadSynonym",
+            "val": "trout"
+          },
+          {
+            "pred": "hasExactSynonym",
+            "val": "brown trout"
+          },
+          {
+            "pred": "hasExactSynonym",
+            "val": "river trout"
+          }
+        ],
+        "xrefs": [
+          {
+            "val": "itis:161997"
+          }
+        ]
+      },
+      "type": "CLASS"
+    },
+    "http://purl.obolibrary.org/obo/NCBITaxon_875777": {
+      "id": "http://purl.obolibrary.org/obo/NCBITaxon_875777",
+      "lbl": "Harengula thrissina",
+      "meta": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://purl.obolibrary.org/obo/IAO_0000114",
+            "val": "http://purl.obolibrary.org/obo/IAO_0000428"
+          },
+          {
+            "pred": "http://purl.obolibrary.org/obo/IAO_0000118",
+            "val": "flatiron herring"
+          },
+          {
+            "pred": "http://purl.obolibrary.org/obo/IAO_0000412",
+            "val": "http://purl.obolibrary.org/obo/ncbitaxon.owl"
+          },
+          {
+            "pred": "http://purl.org/dc/terms/contributor",
+            "val": "https://orcid.org/0000-0001-5275-8866"
+          },
+          {
+            "pred": "http://www.geneontology.org/formats/oboInOwl#hasDbXref",
+            "val": "http://eol.org/pages/206574"
+          },
+          {
+            "pred": "http://www.geneontology.org/formats/oboInOwl#hasDbXref",
+            "val": "http://www.langual.org/langual_thesaurus.asp?termid=B2152"
+          },
+          {
+            "pred": "http://www.geneontology.org/formats/oboInOwl#hasDbXref",
+            "val": "https://www.fao.org/fishery/en/aqspecies/hct"
+          }
+        ],
+        "synonyms": [
+          {
+            "pred": "hasBroadSynonym",
+            "val": "herring"
+          },
+          {
+            "pred": "hasExactSynonym",
+            "val": "Pacific flatiron herring"
+          },
+          {
+            "pred": "hasExactSynonym",
+            "val": "flatiron herring"
+          }
+        ],
+        "xrefs": [
+          {
+            "val": "itis:161757"
+          }
+        ]
+      },
+      "type": "CLASS"
+    }
+  },
+  "scope": "Thirteen source-backed annotation additions to seven existing complete native nodes; previous origin.json files are preserved historical extraction evidence.",
+  "source_annotation_evidence": [
+    {
+      "annotated_property": "http://schema.org/image",
+      "annotated_target": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/NSW_seabed_1.JPG/640px-NSW_seabed_1.JPG",
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://purl.org/dc/terms/license",
+            "val": "https://creativecommons.org/licenses/by-sa/3.0"
+          },
+          {
+            "pred": "http://purl.org/dc/terms/rightsHolder",
+            "val": "Toby Hudson"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "existing_serialized_annotation_facts": [],
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/FOODON_03411301",
+      "node_position": 22593,
+      "property_path": [
+        "meta",
+        "basicPropertyValues",
+        3
+      ],
+      "source_owl_annotation_details": [
+        {
+          "axiom_ordinal_one_based": 297,
+          "predicate": "http://purl.org/dc/terms/license",
+          "value": "https://creativecommons.org/licenses/by-sa/3.0",
+          "xml_attributes": {
+            "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "https://creativecommons.org/licenses/by-sa/3.0"
+          }
+        },
+        {
+          "axiom_ordinal_one_based": 297,
+          "predicate": "http://purl.org/dc/terms/rightsHolder",
+          "value": "Toby Hudson",
+          "xml_attributes": {}
+        }
+      ],
+      "source_owl_annotations": [
+        [
+          "http://purl.org/dc/terms/license",
+          "https://creativecommons.org/licenses/by-sa/3.0"
+        ],
+        [
+          "http://purl.org/dc/terms/rightsHolder",
+          "Toby Hudson"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        297
+      ]
+    },
+    {
+      "annotated_property": "http://www.geneontology.org/formats/oboInOwl#hasBroadSynonym",
+      "annotated_target": "pompano",
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://purl.obolibrary.org/obo/IAO_0000412",
+            "val": "FDA SFL Acceptable Market Name"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "existing_serialized_annotation_facts": [],
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/NCBITaxon_179359",
+      "node_position": 33978,
+      "property_path": [
+        "meta",
+        "synonyms",
+        0
+      ],
+      "source_owl_annotation_details": [
+        {
+          "axiom_ordinal_one_based": 1138,
+          "predicate": "http://purl.obolibrary.org/obo/IAO_0000412",
+          "value": "FDA SFL Acceptable Market Name",
+          "xml_attributes": {}
+        }
+      ],
+      "source_owl_annotations": [
+        [
+          "http://purl.obolibrary.org/obo/IAO_0000412",
+          "FDA SFL Acceptable Market Name"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        1138
+      ]
+    },
+    {
+      "annotated_property": "http://www.geneontology.org/formats/oboInOwl#hasExactSynonym",
+      "annotated_target": "african pompano",
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://purl.obolibrary.org/obo/IAO_0000412",
+            "val": "FDA SFL Common Name"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "existing_serialized_annotation_facts": [],
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/NCBITaxon_179359",
+      "node_position": 33978,
+      "property_path": [
+        "meta",
+        "synonyms",
+        2
+      ],
+      "source_owl_annotation_details": [
+        {
+          "axiom_ordinal_one_based": 1139,
+          "predicate": "http://purl.obolibrary.org/obo/IAO_0000412",
+          "value": "FDA SFL Common Name",
+          "xml_attributes": {}
+        }
+      ],
+      "source_owl_annotations": [
+        [
+          "http://purl.obolibrary.org/obo/IAO_0000412",
+          "FDA SFL Common Name"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        1139
+      ]
+    },
+    {
+      "annotated_property": "http://www.geneontology.org/formats/oboInOwl#hasBroadSynonym",
+      "annotated_target": "menhaden",
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://purl.obolibrary.org/obo/IAO_0000412",
+            "val": "FDA SFL Acceptable Market Name"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "existing_serialized_annotation_facts": [],
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/NCBITaxon_224708",
+      "node_position": 34387,
+      "property_path": [
+        "meta",
+        "synonyms",
+        0
+      ],
+      "source_owl_annotation_details": [
+        {
+          "axiom_ordinal_one_based": 1500,
+          "predicate": "http://purl.obolibrary.org/obo/IAO_0000412",
+          "value": "FDA SFL Acceptable Market Name",
+          "xml_attributes": {}
+        }
+      ],
+      "source_owl_annotations": [
+        [
+          "http://purl.obolibrary.org/obo/IAO_0000412",
+          "FDA SFL Acceptable Market Name"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        1500
+      ]
+    },
+    {
+      "annotated_property": "http://www.geneontology.org/formats/oboInOwl#hasExactSynonym",
+      "annotated_target": "atlantic menhaden",
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://purl.obolibrary.org/obo/IAO_0000412",
+            "val": "FDA SFL Common Name"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "existing_serialized_annotation_facts": [],
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/NCBITaxon_224708",
+      "node_position": 34387,
+      "property_path": [
+        "meta",
+        "synonyms",
+        2
+      ],
+      "source_owl_annotation_details": [
+        {
+          "axiom_ordinal_one_based": 1501,
+          "predicate": "http://purl.obolibrary.org/obo/IAO_0000412",
+          "value": "FDA SFL Common Name",
+          "xml_attributes": {}
+        }
+      ],
+      "source_owl_annotations": [
+        [
+          "http://purl.obolibrary.org/obo/IAO_0000412",
+          "FDA SFL Common Name"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        1501
+      ]
+    },
+    {
+      "annotated_property": "http://www.geneontology.org/formats/oboInOwl#hasBroadSynonym",
+      "annotated_target": "thread herring",
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://purl.obolibrary.org/obo/IAO_0000412",
+            "val": "FDA SFL Acceptable Market Name"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "existing_serialized_annotation_facts": [],
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/NCBITaxon_224711",
+      "node_position": 34389,
+      "property_path": [
+        "meta",
+        "synonyms",
+        0
+      ],
+      "source_owl_annotation_details": [
+        {
+          "axiom_ordinal_one_based": 1502,
+          "predicate": "http://purl.obolibrary.org/obo/IAO_0000412",
+          "value": "FDA SFL Acceptable Market Name",
+          "xml_attributes": {}
+        }
+      ],
+      "source_owl_annotations": [
+        [
+          "http://purl.obolibrary.org/obo/IAO_0000412",
+          "FDA SFL Acceptable Market Name"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        1502
+      ]
+    },
+    {
+      "annotated_property": "http://www.geneontology.org/formats/oboInOwl#hasExactSynonym",
+      "annotated_target": "atlantic thread herring",
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://purl.obolibrary.org/obo/IAO_0000412",
+            "val": "FDA SFL Common Name"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "existing_serialized_annotation_facts": [],
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/NCBITaxon_224711",
+      "node_position": 34389,
+      "property_path": [
+        "meta",
+        "synonyms",
+        2
+      ],
+      "source_owl_annotation_details": [
+        {
+          "axiom_ordinal_one_based": 1503,
+          "predicate": "http://purl.obolibrary.org/obo/IAO_0000412",
+          "value": "FDA SFL Common Name",
+          "xml_attributes": {}
+        }
+      ],
+      "source_owl_annotations": [
+        [
+          "http://purl.obolibrary.org/obo/IAO_0000412",
+          "FDA SFL Common Name"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        1503
+      ]
+    },
+    {
+      "annotated_property": "http://www.geneontology.org/formats/oboInOwl#hasBroadSynonym",
+      "annotated_target": "atlantic salmon",
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://purl.obolibrary.org/obo/IAO_0000412",
+            "val": "FDA SFL Acceptable Market Name"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "existing_serialized_annotation_facts": [],
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/NCBITaxon_8030",
+      "node_position": 37551,
+      "property_path": [
+        "meta",
+        "synonyms",
+        0
+      ],
+      "source_owl_annotation_details": [
+        {
+          "axiom_ordinal_one_based": 3978,
+          "predicate": "http://purl.obolibrary.org/obo/IAO_0000412",
+          "value": "FDA SFL Acceptable Market Name",
+          "xml_attributes": {}
+        }
+      ],
+      "source_owl_annotations": [
+        [
+          "http://purl.obolibrary.org/obo/IAO_0000412",
+          "FDA SFL Acceptable Market Name"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        3978
+      ]
+    },
+    {
+      "annotated_property": "http://www.geneontology.org/formats/oboInOwl#hasExactSynonym",
+      "annotated_target": "atlantic salmon",
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://purl.obolibrary.org/obo/IAO_0000412",
+            "val": "FDA SFL Common Name"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "existing_serialized_annotation_facts": [],
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/NCBITaxon_8030",
+      "node_position": 37551,
+      "property_path": [
+        "meta",
+        "synonyms",
+        2
+      ],
+      "source_owl_annotation_details": [
+        {
+          "axiom_ordinal_one_based": 3979,
+          "predicate": "http://purl.obolibrary.org/obo/IAO_0000412",
+          "value": "FDA SFL Common Name",
+          "xml_attributes": {}
+        }
+      ],
+      "source_owl_annotations": [
+        [
+          "http://purl.obolibrary.org/obo/IAO_0000412",
+          "FDA SFL Common Name"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        3979
+      ]
+    },
+    {
+      "annotated_property": "http://www.geneontology.org/formats/oboInOwl#hasBroadSynonym",
+      "annotated_target": "trout",
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://purl.obolibrary.org/obo/IAO_0000412",
+            "val": "FDA SFL Acceptable Market Name"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "existing_serialized_annotation_facts": [],
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/NCBITaxon_8032",
+      "node_position": 37552,
+      "property_path": [
+        "meta",
+        "synonyms",
+        0
+      ],
+      "source_owl_annotation_details": [
+        {
+          "axiom_ordinal_one_based": 3980,
+          "predicate": "http://purl.obolibrary.org/obo/IAO_0000412",
+          "value": "FDA SFL Acceptable Market Name",
+          "xml_attributes": {}
+        }
+      ],
+      "source_owl_annotations": [
+        [
+          "http://purl.obolibrary.org/obo/IAO_0000412",
+          "FDA SFL Acceptable Market Name"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        3980
+      ]
+    },
+    {
+      "annotated_property": "http://www.geneontology.org/formats/oboInOwl#hasExactSynonym",
+      "annotated_target": "brown trout",
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://purl.obolibrary.org/obo/IAO_0000412",
+            "val": "FDA SFL Common Name"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "existing_serialized_annotation_facts": [],
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/NCBITaxon_8032",
+      "node_position": 37552,
+      "property_path": [
+        "meta",
+        "synonyms",
+        1
+      ],
+      "source_owl_annotation_details": [
+        {
+          "axiom_ordinal_one_based": 3981,
+          "predicate": "http://purl.obolibrary.org/obo/IAO_0000412",
+          "value": "FDA SFL Common Name",
+          "xml_attributes": {}
+        }
+      ],
+      "source_owl_annotations": [
+        [
+          "http://purl.obolibrary.org/obo/IAO_0000412",
+          "FDA SFL Common Name"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        3981
+      ]
+    },
+    {
+      "annotated_property": "http://www.geneontology.org/formats/oboInOwl#hasBroadSynonym",
+      "annotated_target": "herring",
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://purl.obolibrary.org/obo/IAO_0000412",
+            "val": "FDA SFL Acceptable Market Name"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "existing_serialized_annotation_facts": [],
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/NCBITaxon_875777",
+      "node_position": 37818,
+      "property_path": [
+        "meta",
+        "synonyms",
+        0
+      ],
+      "source_owl_annotation_details": [
+        {
+          "axiom_ordinal_one_based": 4179,
+          "predicate": "http://purl.obolibrary.org/obo/IAO_0000412",
+          "value": "FDA SFL Acceptable Market Name",
+          "xml_attributes": {}
+        }
+      ],
+      "source_owl_annotations": [
+        [
+          "http://purl.obolibrary.org/obo/IAO_0000412",
+          "FDA SFL Acceptable Market Name"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        4179
+      ]
+    },
+    {
+      "annotated_property": "http://www.geneontology.org/formats/oboInOwl#hasExactSynonym",
+      "annotated_target": "flatiron herring",
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://purl.obolibrary.org/obo/IAO_0000412",
+            "val": "FDA SFL Common Name"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "existing_serialized_annotation_facts": [],
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/NCBITaxon_875777",
+      "node_position": 37818,
+      "property_path": [
+        "meta",
+        "synonyms",
+        2
+      ],
+      "source_owl_annotation_details": [
+        {
+          "axiom_ordinal_one_based": 4180,
+          "predicate": "http://purl.obolibrary.org/obo/IAO_0000412",
+          "value": "FDA SFL Common Name",
+          "xml_attributes": {}
+        }
+      ],
+      "source_owl_annotations": [
+        [
+          "http://purl.obolibrary.org/obo/IAO_0000412",
+          "FDA SFL Common Name"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        4180
+      ]
+    }
+  ]
+}

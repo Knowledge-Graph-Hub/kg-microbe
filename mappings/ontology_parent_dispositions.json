@@ -810,6 +810,37 @@
         "UBERON:0004120",
         "UBERON:0010000"
       ],
+      "conversion_review_20261105": {
+        "changed_context_node_ids": [
+          "http://purl.obolibrary.org/obo/FOODON_03411301",
+          "http://purl.obolibrary.org/obo/NCBITaxon_179359",
+          "http://purl.obolibrary.org/obo/NCBITaxon_224708",
+          "http://purl.obolibrary.org/obo/NCBITaxon_224711",
+          "http://purl.obolibrary.org/obo/NCBITaxon_8030",
+          "http://purl.obolibrary.org/obo/NCBITaxon_8032",
+          "http://purl.obolibrary.org/obo/NCBITaxon_875777"
+        ],
+        "completed_comparison": {
+          "path": "data/rebuild-evidence/20261105/upgrades/robot-bindings/review-5/binding-review.json",
+          "sha256": "011a413ce69ef54ca7d12c0e93f4e56df0555ab4284159f53876a689f241052b"
+        },
+        "date": "2026-11-05",
+        "derived_json": {
+          "bytes": 43822440,
+          "sha256": "55fc1392b6852559295eab62a9ae01948ed3989ab4fc1d98550ca3f35565a9ab"
+        },
+        "explanation": "Only complete source-backed nested annotation metadata changed; full selected edges, logical definitions, ancestry, quarantines and categorical decisions remain unchanged.",
+        "historical_full_primary_json_and_reviewed_model_preserved": true,
+        "new_source_backed_annotation_occurrences": 13,
+        "robot_jar_sha256": "53cd275c8e4c0dad1fc2c1c34174876795cd7d6b6926e1444adcbb0cb3c7ab26",
+        "robot_version": "1.9.11",
+        "robot_wrapper_sha256": "0f2c4bb7dc25be9fb1dad37f2b8c07336d0e2c0ef3d3983e952c23d8b180a5b0",
+        "scientific_decisions_unchanged": true,
+        "source_owl": {
+          "bytes": 40429965,
+          "sha256": "1e11fc50283c6498697a7aca9606c9d914f1cda71cc5510e006d949c32df7db0"
+        }
+      },
       "descendant_ids": [
         "FOODON:00002763",
         "FOODON:00002764",
@@ -8965,6 +8996,18 @@
                   "val": "http://orcid.org/0000-0002-8844-9165"
                 },
                 {
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://purl.org/dc/terms/license",
+                        "val": "https://creativecommons.org/licenses/by-sa/3.0"
+                      },
+                      {
+                        "pred": "http://purl.org/dc/terms/rightsHolder",
+                        "val": "Toby Hudson"
+                      }
+                    ]
+                  },
                   "pred": "http://schema.org/image",
                   "val": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/NSW_seabed_1.JPG/640px-NSW_seabed_1.JPG"
                 },
@@ -11292,6 +11335,14 @@
               ],
               "synonyms": [
                 {
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://purl.obolibrary.org/obo/IAO_0000412",
+                        "val": "FDA SFL Acceptable Market Name"
+                      }
+                    ]
+                  },
                   "pred": "hasBroadSynonym",
                   "val": "pompano"
                 },
@@ -11300,6 +11351,14 @@
                   "val": "African pompano"
                 },
                 {
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://purl.obolibrary.org/obo/IAO_0000412",
+                        "val": "FDA SFL Common Name"
+                      }
+                    ]
+                  },
                   "pred": "hasExactSynonym",
                   "val": "african pompano"
                 }
@@ -11460,6 +11519,14 @@
               ],
               "synonyms": [
                 {
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://purl.obolibrary.org/obo/IAO_0000412",
+                        "val": "FDA SFL Acceptable Market Name"
+                      }
+                    ]
+                  },
                   "pred": "hasBroadSynonym",
                   "val": "menhaden"
                 },
@@ -11468,6 +11535,14 @@
                   "val": "Atlantic menhaden"
                 },
                 {
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://purl.obolibrary.org/obo/IAO_0000412",
+                        "val": "FDA SFL Common Name"
+                      }
+                    ]
+                  },
                   "pred": "hasExactSynonym",
                   "val": "atlantic menhaden"
                 },
@@ -11544,6 +11619,14 @@
               ],
               "synonyms": [
                 {
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://purl.obolibrary.org/obo/IAO_0000412",
+                        "val": "FDA SFL Acceptable Market Name"
+                      }
+                    ]
+                  },
                   "pred": "hasBroadSynonym",
                   "val": "thread herring"
                 },
@@ -11552,6 +11635,14 @@
                   "val": "Atlantic thread herring"
                 },
                 {
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://purl.obolibrary.org/obo/IAO_0000412",
+                        "val": "FDA SFL Common Name"
+                      }
+                    ]
+                  },
                   "pred": "hasExactSynonym",
                   "val": "atlantic thread herring"
                 }
@@ -12513,6 +12604,14 @@
               ],
               "synonyms": [
                 {
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://purl.obolibrary.org/obo/IAO_0000412",
+                        "val": "FDA SFL Acceptable Market Name"
+                      }
+                    ]
+                  },
                   "pred": "hasBroadSynonym",
                   "val": "atlantic salmon"
                 },
@@ -12521,6 +12620,14 @@
                   "val": "Atlantic salmon"
                 },
                 {
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://purl.obolibrary.org/obo/IAO_0000412",
+                        "val": "FDA SFL Common Name"
+                      }
+                    ]
+                  },
                   "pred": "hasExactSynonym",
                   "val": "atlantic salmon"
                 }
@@ -12553,10 +12660,26 @@
               ],
               "synonyms": [
                 {
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://purl.obolibrary.org/obo/IAO_0000412",
+                        "val": "FDA SFL Acceptable Market Name"
+                      }
+                    ]
+                  },
                   "pred": "hasBroadSynonym",
                   "val": "trout"
                 },
                 {
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://purl.obolibrary.org/obo/IAO_0000412",
+                        "val": "FDA SFL Common Name"
+                      }
+                    ]
+                  },
                   "pred": "hasExactSynonym",
                   "val": "brown trout"
                 },
@@ -12649,6 +12772,14 @@
               ],
               "synonyms": [
                 {
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://purl.obolibrary.org/obo/IAO_0000412",
+                        "val": "FDA SFL Acceptable Market Name"
+                      }
+                    ]
+                  },
                   "pred": "hasBroadSynonym",
                   "val": "herring"
                 },
@@ -12657,6 +12788,14 @@
                   "val": "Pacific flatiron herring"
                 },
                 {
+                  "meta": {
+                    "basicPropertyValues": [
+                      {
+                        "pred": "http://purl.obolibrary.org/obo/IAO_0000412",
+                        "val": "FDA SFL Common Name"
+                      }
+                    ]
+                  },
                   "pred": "hasExactSynonym",
                   "val": "flatiron herring"
                 }
@@ -15649,7 +15788,7 @@
           }
         ]
       },
-      "json_context_sha256": "6f2d5f1e095bacea6f269904128bfdde62263d2ff18199c840ac14a8d25b3482",
+      "json_context_sha256": "f5020502165a657898efc9f4cd924e7755a4f54c87c54eda026657d5eba99f8d",
       "owl_context": {
         "annotated_axioms": [
           {

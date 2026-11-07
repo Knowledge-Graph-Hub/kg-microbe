@@ -1,23 +1,23 @@
 {
   "schema_version": 2,
-  "snapshot_id": "rhea-cache-142-20260907",
-  "release_label": "142",
-  "provenance_note": "Rhea release 142 (2026-09-02). Both pinned files are byte-identical to the members of the archived release tarball named in archive (verified 2026-10-12), which download.yaml fetches and stage_snapshot extracts. Both exact files must pass native quartet and direction validation before use. No latest fallback is permitted.",
+  "snapshot_id": "rhea-release-143-20261105",
+  "release_label": "143",
+  "provenance_note": "Rhea release 143 archive members were independently acquired and verified on 2026-11-05. Both exact files must pass native quartet and direction validation before use. The actual consumed 143 RDF passed the retained six-exclusion and seven-directional-GO legacy audit; historical 141 evidence and separate GO normalization provenance are preserved. No latest fallback is permitted.",
   "archive": {
-    "url": "https://ftp.expasy.org/databases/rhea/old_releases/142.tar.bz2",
+    "url": "https://ftp.expasy.org/databases/rhea/old_releases/143.tar.bz2",
     "members": {
-      "rhea-directions.tsv": "142/tsv/rhea-directions.tsv",
-      "rhea.rdf.gz": "142/rdf/rhea.rdf.gz"
+      "rhea-directions.tsv": "143/tsv/rhea-directions.tsv",
+      "rhea.rdf.gz": "143/rdf/rhea.rdf.gz"
     }
   },
   "files": {
     "rhea-directions.tsv": {
-      "bytes": 446712,
-      "sha256": "deae1911da372c70ee8fc97992809c7923e63b288a8702fc4396edcb2633fb04"
+      "bytes": 456168,
+      "sha256": "daeb374f4327c38808006613ca8bbef56d048f907a09ab9c55038baba2cf94f9"
     },
     "rhea.rdf.gz": {
-      "bytes": 8718726,
-      "sha256": "8ee48d7044cf3eef1001fa730dae2a491902ab25b259b519d6826796bb8acedf"
+      "sha256": "8f858aff8d984d8e882b90fac0d81d6980589fb819b460da388ccb796195fa25",
+      "bytes": 8875804
     }
   }
 }

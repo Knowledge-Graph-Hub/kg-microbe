@@ -22,6 +22,11 @@ from kg_microbe.merge_utils.artifact_manifest import (
 from kg_microbe.merge_utils.invariants import check_merged_invariants, unmerged_declaration_files
 from kg_microbe.merge_utils.merge_contract import validate_merge_semantics
 from kg_microbe.merge_utils.progress import merge_phase
+from kg_microbe.merge_utils.source_qualifications import (
+    QUALIFICATION_SUFFIX,
+    package_qualifications,
+    selected_qualifications,
+)
 from kg_microbe.merge_utils.stats_provenance import STATS_OPERATION, annotate_graph_stats, stats_filename_from_config
 from kg_microbe.utils.atomic_io import atomic_write
 from kg_microbe.utils.graph_schema import validate_canonical_tsv
@@ -144,7 +149,14 @@ def _validate_release_destinations(config: Dict) -> Dict:
         # An output file must never also be another destination's directory.
         # Case-folded comparison makes the contract safe on default macOS and
         # other case-insensitive filesystems, not just on Linux CI.
-        suffixes = ("_nodes.tsv", "_edges.tsv", "_reference_resolution.tsv", "_manifest.json", ".tar.gz")
+        suffixes = (
+            "_nodes.tsv",
+            "_edges.tsv",
+            "_reference_resolution.tsv",
+            "_manifest.json",
+            ".tar.gz",
+            QUALIFICATION_SUFFIX,
+        )
         for suffix in suffixes:
             artifact = Path(f"{base}{suffix}".casefold())
             for previous, owner in claimed.items():
@@ -204,6 +216,17 @@ def load_and_merge(
                 *getattr(admission, "trees", {}),
             ),
         )
+    selected_paths = [
+        _source_filename_at_original_location(value, Path(yaml_file).resolve().parent)
+        for name, source in config["merged_graph"].get("source", {}).items()
+        if not sources or name in sources
+        for value in (
+            [source["input"]["filename"]]
+            if isinstance(source["input"]["filename"], str)
+            else source["input"]["filename"]
+        )
+    ]
+    qualifications = selected_qualifications(admission, selected_paths)
     # KGX writes the destination before post-processing starts. Never give it
     # a published pathname: a later required failure must preserve the old
     # artifact, not merely propagate after KGX has already overwritten it.
@@ -226,6 +249,7 @@ def load_and_merge(
             published_output_dir=final_output,
             expected_graph_members=identities,
             native_declarations=getattr(admission, "gold_native_declarations", None),
+            source_qualifications=qualifications,
         )
         if admission is not None:
             admission.verify()
@@ -308,7 +332,14 @@ def _validate_publication_paths(config: Dict, config_file: Path, *, protected_pa
         protected.extend(Path(_source_filename_at_original_location(value, config_file.parent)) for value in values)
     outputs = []
     for destination in graph["destination"].values():
-        for suffix in ("_nodes.tsv", "_edges.tsv", "_reference_resolution.tsv", "_manifest.json", ".tar.gz"):
+        for suffix in (
+            "_nodes.tsv",
+            "_edges.tsv",
+            "_reference_resolution.tsv",
+            "_manifest.json",
+            ".tar.gz",
+            QUALIFICATION_SUFFIX,
+        ):
             outputs.append((final_output / f"{destination['filename']}{suffix}").resolve())
     stats = [Path(operation["args"]["filename"]).resolve() for operation in graph.get("operations", [])]
 
@@ -427,6 +458,7 @@ def _cleanup_merged_outputs(
     published_output_dir: Optional[Path] = None,
     expected_graph_members: Optional[Dict] = None,
     native_declarations=None,
+    source_qualifications=(),
 ) -> set:
     r"""
     Validate canonical KGX serialization and package the result without rewriting it.
@@ -558,9 +590,26 @@ def _cleanup_merged_outputs(
             )
             diagnostic = config.get("configuration", {}).get("allow_unfinalized_sources", False)
             provenance["source_finalization"] = {"required": not diagnostic, "diagnostic_opt_out": diagnostic}
-            pending_packages.append(
-                (base, compression, nodes_file, edges_file, reference_report, archive, provenance, expected_members)
+            qualification_files, qualification_identities, qualifications = package_qualifications(
+                source_qualifications, output_dir, base
             )
+            if qualifications:
+                provenance["source_qualifications"] = qualifications
+            expected_members.update(qualification_identities)
+            pending_packages.append(
+                (
+                    base,
+                    compression,
+                    nodes_file,
+                    edges_file,
+                    reference_report,
+                    archive,
+                    provenance,
+                    expected_members,
+                    qualification_files,
+                )
+            )
+            written.update(qualification_files)
 
         written |= {nodes_file, edges_file, reference_report, archive}
 
@@ -576,16 +625,17 @@ def _cleanup_merged_outputs(
         archive,
         provenance,
         expected_members,
+        qualification_files,
     ) in pending_packages:
         if compression == "tar.gz":
             with merge_phase("packaging", unit="members") as progress:
                 _rewrite_tarball(
                     archive,
-                    [nodes_file, edges_file, reference_report],
+                    [nodes_file, edges_file, reference_report, *qualification_files],
                     provenance=provenance,
                     expected_members=expected_members,
                 )
-                progress.advance(3)
+                progress.advance(3 + len(qualification_files))
             nodes_file.unlink(missing_ok=True)
             edges_file.unlink(missing_ok=True)
         else:
@@ -593,11 +643,11 @@ def _cleanup_merged_outputs(
             with merge_phase("manifest", unit="members") as progress:
                 write_loose_manifest(
                     manifest_file,
-                    [nodes_file, edges_file, reference_report],
+                    [nodes_file, edges_file, reference_report, *qualification_files],
                     provenance,
                     expected_members=expected_members,
                 )
-                progress.advance(3)
+                progress.advance(3 + len(qualification_files))
             written.add(manifest_file)
 
     _warn_about_stale_siblings(output_dir, written)

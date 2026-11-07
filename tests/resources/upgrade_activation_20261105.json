@@ -1,0 +1,95 @@
+{
+  "files": {
+    "biolink-model.yaml": {
+      "old": "preserved old biolink-model.yaml\n",
+      "candidate": "reviewed candidate biolink-model.yaml\n"
+    },
+    "predicate_mapping.yaml": {
+      "old": "preserved old predicate_mapping.yaml\n",
+      "candidate": "reviewed candidate predicate_mapping.yaml\n"
+    },
+    "attributes.yaml": {
+      "old": "preserved old attributes.yaml\n",
+      "candidate": "reviewed candidate attributes.yaml\n"
+    },
+    "robot.jar": {
+      "old": "preserved old robot.jar\n",
+      "candidate": "reviewed candidate robot.jar\n"
+    },
+    "robot": {
+      "old": "preserved old robot\n",
+      "candidate": "reviewed candidate robot\n"
+    },
+    "ncbitaxon_removed_subset.json": {
+      "old": "preserved old ncbitaxon_removed_subset.json\n",
+      "candidate": "reviewed candidate ncbitaxon_removed_subset.json\n"
+    },
+    "chebi.json": {
+      "old": "preserved old chebi.json\n",
+      "candidate": "reviewed candidate chebi.json\n"
+    },
+    "go.json": {
+      "old": "preserved old go.json\n",
+      "candidate": "reviewed candidate go.json\n"
+    },
+    "ec.json": {
+      "old": "preserved old ec.json\n",
+      "candidate": "reviewed candidate ec.json\n"
+    },
+    "upa.json": {
+      "old": "preserved old upa.json\n",
+      "candidate": "reviewed candidate upa.json\n"
+    },
+    "metpo.json": {
+      "old": "preserved old metpo.json\n",
+      "candidate": "reviewed candidate metpo.json\n"
+    },
+    "uberon.json": {
+      "old": "preserved old uberon.json\n",
+      "candidate": "reviewed candidate uberon.json\n"
+    },
+    "foodon.json": {
+      "old": "preserved old foodon.json\n",
+      "candidate": "reviewed candidate foodon.json\n"
+    },
+    "pato.json": {
+      "old": "preserved old pato.json\n",
+      "candidate": "reviewed candidate pato.json\n"
+    },
+    "ro.json": {
+      "old": "preserved old ro.json\n",
+      "candidate": "reviewed candidate ro.json\n"
+    },
+    "taxrank.json": {
+      "old": "preserved old taxrank.json\n",
+      "candidate": "reviewed candidate taxrank.json\n"
+    }
+  },
+  "old_rhea": {
+    "rhea.rdf.gz": "old142 RDF bytes\n",
+    "rhea-directions.tsv": "old142 directions\n",
+    ".history": "historical receipt remains\n"
+  },
+  "new_rhea": {
+    "rhea.rdf.gz": "candidate143 RDF bytes\n",
+    "rhea-directions.tsv": "candidate143 directions\n"
+  },
+  "unchanged": {
+    "taxdump/names.dmp": "untouched taxonomy\n",
+    "mediadive/mediadive.json": "untouched failed-download evidence\n",
+    "go.db": "untouched database and receipt generation\n"
+  },
+  "conversion_inputs": {
+    "uberon": "uberon.owl",
+    "chebi": "chebi.owl.gz",
+    "metpo": "metpo.owl",
+    "foodon": "foodon.owl",
+    "taxrank": "taxrank.owl",
+    "ec": "ec.owl.gz",
+    "go": "go.owl",
+    "pato": "pato.owl",
+    "ro": "ro.owl",
+    "upa": "upa.owl",
+    "ncbitaxon": "ncbitaxon.owl.gz"
+  }
+}

@@ -1,0 +1,179 @@
+{
+  "applied_files": [
+    {
+      "applied": {
+        "bytes": 8038,
+        "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/tests/test_merge_consumed_input_review.py",
+        "sha256": "9fcf6a2c99727b344857c2d57403c352bf381864bf806312024a9123156572d0"
+      },
+      "applied_equals_reviewed_bytes": true,
+      "before_equals_HEAD": true,
+      "reviewed_proposal": {
+        "bytes": 8038,
+        "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/mediadive-resolution-1734/final-gate-fixture-proposals-r1/test_merge_consumed_input_review.py.proposed",
+        "sha256": "9fcf6a2c99727b344857c2d57403c352bf381864bf806312024a9123156572d0"
+      },
+      "target": "tests/test_merge_consumed_input_review.py"
+    },
+    {
+      "applied": {
+        "bytes": 5771,
+        "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/tests/mediadive_consumer_fixtures.py",
+        "sha256": "ebee9a87f7925311c21942ffb45fed1ab0f39b15cb3709eb985b5ea066b8d450"
+      },
+      "applied_equals_reviewed_bytes": true,
+      "before_equals_HEAD": true,
+      "reviewed_proposal": {
+        "bytes": 5771,
+        "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/mediadive-resolution-1734/final-gate-fixture-proposals-r1/mediadive_consumer_fixtures.py.proposed",
+        "sha256": "ebee9a87f7925311c21942ffb45fed1ab0f39b15cb3709eb985b5ea066b8d450"
+      },
+      "target": "tests/mediadive_consumer_fixtures.py"
+    },
+    {
+      "applied": {
+        "bytes": 9159,
+        "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/tests/test_chemical_xref_annotations.py",
+        "sha256": "10f8ed7a0847efbbea476a4fd14b60f1a1c745cf1860c469492be9df9515db90"
+      },
+      "applied_equals_reviewed_bytes": true,
+      "before_equals_HEAD": true,
+      "reviewed_proposal": {
+        "bytes": 9159,
+        "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/mediadive-resolution-1734/final-gate-fixture-proposals-r1/test_chemical_xref_annotations.py.proposed",
+        "sha256": "10f8ed7a0847efbbea476a4fd14b60f1a1c745cf1860c469492be9df9515db90"
+      },
+      "target": "tests/test_chemical_xref_annotations.py"
+    },
+    {
+      "applied": {
+        "bytes": 23406,
+        "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/tests/test_bacdive_ncbitaxon_stubs.py",
+        "sha256": "440bbd2552d5aab4bf3f98b8d98ce31b3209940d28ce0d369aff56c599e240d9"
+      },
+      "applied_equals_reviewed_bytes": true,
+      "before_equals_HEAD": true,
+      "reviewed_proposal": {
+        "bytes": 23406,
+        "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/mediadive-resolution-1734/bacdive-stub-retirement-proposal/proposed-reviewed-r2.py",
+        "sha256": "440bbd2552d5aab4bf3f98b8d98ce31b3209940d28ce0d369aff56c599e240d9"
+      },
+      "target": "tests/test_bacdive_ncbitaxon_stubs.py"
+    }
+  ],
+  "findings": [],
+  "focused_results": [
+    {
+      "bytes": 3847,
+      "independently_observed": "Completed100% pytest progress and exact final passing summary.",
+      "limitations": "Quiet log contains no invocation argv or per-case node IDs. Root reports the retirement selection includes the actual owned-artifact case and native-chain controls; this review does not independently execute or reselect tests.",
+      "observed_final_summary": "455 passed, 35 warnings in 378.79s (0:06:18)",
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/mediadive-resolution-1734/final-gate-fixture-focused-r1.log",
+      "root_reported_exit_code": 0,
+      "sha256": "8f69de5bb6408d90049b15999e3b04c52941f0792d817ed404d1d22c591f91b0"
+    },
+    {
+      "bytes": 2742,
+      "independently_observed": "Completed100% pytest progress and exact final passing summary.",
+      "limitations": "Quiet log contains no invocation argv or per-case node IDs. Root reports the retirement selection includes the actual owned-artifact case and native-chain controls; this review does not independently execute or reselect tests.",
+      "observed_final_summary": "203 passed, 4 warnings in 111.16s (0:01:51)",
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/mediadive-resolution-1734/retirement-fixture-focused-r1.log",
+      "root_reported_exit_code": 0,
+      "sha256": "fbab0f769345a7d954cdd9000672c83cd6fa012d42efab063f9d1fd2e2749067"
+    }
+  ],
+  "git_scope": {
+    "nonignored_untracked_files": [],
+    "only_four_reviewed_test_files_changed": true,
+    "production_config_pin_tracked_data_changes": false,
+    "qualification": "Git-scope claim concerns tracked candidate content; ignored evidence is intentionally added separately and was not treated as absent.",
+    "staged_changed_files": [],
+    "tracked_changed_files": [
+      "tests/mediadive_consumer_fixtures.py",
+      "tests/test_bacdive_ncbitaxon_stubs.py",
+      "tests/test_chemical_xref_annotations.py",
+      "tests/test_merge_consumed_input_review.py"
+    ]
+  },
+  "head": "8bdf8b1fffbad024f5d0a0ccbd821c242039a677",
+  "issues": [
+    1776,
+    1777,
+    1778,
+    1779
+  ],
+  "kind": "final_applied_fixture_repairs_independent_review",
+  "limits": [
+    "Independent review used file hashes, saved proposal comparisons, source inspection and existing focused logs only; no test/gate/producer/network/database execution or tracked edits by reviewer.",
+    "Passing focused results do not constitute a new clean-candidate full PR gate result.",
+    "Final formatting or later edits must preserve these bytes or be reviewed as subsequent changes."
+  ],
+  "prior_reviews": {
+    "bacdive-stub-retirement-proposal-independent-review-r1.json": {
+      "bytes": 7495,
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/mediadive-resolution-1734/bacdive-stub-retirement-proposal-independent-review-r1.json",
+      "sha256": "e8b7e30baea6b7a0ee94b88e819ba7bca361bfadbf5f9b5f1e7b364d656f8594"
+    },
+    "bacdive-stub-retirement-proposal-independent-review-r2.json": {
+      "bytes": 2990,
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/mediadive-resolution-1734/bacdive-stub-retirement-proposal-independent-review-r2.json",
+      "sha256": "0adb0de77fd4048969eca7291857e462dbb76951539ba424b9a612bcb0adee0a"
+    },
+    "final-gate-fixture-proposals-independent-review-r1.json": {
+      "bytes": 9042,
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/mediadive-resolution-1734/final-gate-fixture-proposals-independent-review-r1.json",
+      "sha256": "2b4efd08b20e18e500223566f9ee923c97aa39bb2020d9a50af4129f71296660"
+    }
+  },
+  "recorded_at_utc": "2026-11-06T01:31:52.657320+00:00",
+  "scientific_and_coverage_assessment": [
+    "Fresh native reader creation uses actual production load_bulk_data without inheriting or manufacturing recipe guards; intact checkpoint control and prior negative/publication checks remain.",
+    "Explicit synthetic carrier copies only its existing catalogue name; target observation fields remain unchanged, and both carrier and original chemical assertions are independently checked.",
+    "BacDive referenced-target closure accepts exact source-backed retirement using the actual finite native resolver, preserves full original edge context and requires OrganismTaxon declarations.",
+    "Current trusted subjects remain in the closure cohort regardless of an untrusted original_subject; combined provenance/missing-node and explicit deleted-original controls preserve the1779repair.",
+    "These changes make test expectations compatible with existing finalized data contracts; no production scientific decision, curated policy or admission gate was changed."
+  ],
+  "status": "pass",
+  "unchanged_bound_implementation_files": {
+    "kg_microbe/merge_utils/external_node_closure.py": {
+      "sha256": "7c3000f2c1d34252ab255152d3106a615b2468e138e88d7ed8299b52f2bf6d06",
+      "unchanged_from_bound_proposal_review": true
+    },
+    "kg_microbe/merge_utils/source_admission.py": {
+      "sha256": "e31844f6f329909a0888f0e8f629052c0eee467ad344b9497180bbd04bea749c",
+      "unchanged_from_bound_proposal_review": true
+    },
+    "kg_microbe/transform_utils/mediadive/bulk_inputs.py": {
+      "sha256": "a7b6d87afbf530ae8a520f10b5edda3b52b8ab267431ffe3810b0b8614254d4b",
+      "unchanged_from_bound_proposal_review": true
+    },
+    "kg_microbe/transform_utils/mediadive/endpoint_consumer.py": {
+      "sha256": "0b14f6ec992476b73c5cf0cf9e1e92ad38acc59724fd5e20c75a2f35e29cea94",
+      "unchanged_from_bound_proposal_review": true
+    },
+    "kg_microbe/transform_utils/mediadive/mediadive.py": {
+      "sha256": "5dd9090519838615677c118bcdc95db5304e658dde0dc04876330193a5f7e855",
+      "unchanged_from_bound_proposal_review": true
+    },
+    "kg_microbe/transform_utils/mediadive/recipe_identity.py": {
+      "sha256": "b124405ce71e02500acb4b37d0404b189649309103585227a48f5fe5db51202f",
+      "unchanged_from_bound_proposal_review": true
+    },
+    "kg_microbe/transform_utils/transform.py": {
+      "sha256": "e25c7edf6aae96efd5aa7b32924f8573e97f96e4b09b58ca307ab6347f55b9d8",
+      "unchanged_from_bound_proposal_review": true
+    },
+    "kg_microbe/utils/external_identifiers.py": {
+      "sha256": "635aaa232d5679f2ddd49d51419f31443298a5694c0467341e08abf7e92452f7",
+      "unchanged_from_bound_proposal_review": true
+    },
+    "kg_microbe/utils/source_finalization.py": {
+      "sha256": "4a218471634517d617ef2dade4d511531ef3a42ec442480932654d5a2beffc24",
+      "unchanged_from_bound_proposal_review": true
+    },
+    "tests/test_declared_taxid_retirement.py": {
+      "sha256": "45461e3920d105d71177c6a6a1935be9ad8248068edcc2c30f64b843d3bed7d7",
+      "unchanged_from_bound_proposal_review": true
+    }
+  }
+}

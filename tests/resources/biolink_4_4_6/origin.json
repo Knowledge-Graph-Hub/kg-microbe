@@ -1,0 +1,60 @@
+{
+  "excerpts": {
+    "mesh_finite_category_dispositions-classes.json": {
+      "class_names": [
+        "chemical entity",
+        "chemical mixture",
+        "environmental feature",
+        "food",
+        "molecular mixture",
+        "organism taxon",
+        "physical entity",
+        "population of individual organisms"
+      ],
+      "sha256": "dcfcbbb1b5a2db15e9ad29f366a6636d3c78c0ca78f3f6cc0f73b592b87a49c9",
+      "source_model_sha256": "5837907e1eb579812856579feea5a099665252f2454bd6f950d63fbb00f4c9f0"
+    },
+    "ncit_eight_categories-classes.json": {
+      "class_names": [
+        "cellular organism",
+        "chemical entity",
+        "chemical mixture",
+        "food",
+        "mammal",
+        "material sample",
+        "phenotypic feature",
+        "physical entity"
+      ],
+      "sha256": "1c1390867c31b3ab72dbc3fb967e718902d28474d5d4cde755320ada48baefdf",
+      "source_model_sha256": "5837907e1eb579812856579feea5a099665252f2454bd6f950d63fbb00f4c9f0"
+    }
+  },
+  "historical_policy_canonical_sha256": {
+    "mesh_finite_category_dispositions": "d87a82595c9b0fa124f98db30e1531be2dce49dd0fd9f77303640c68ec5f8f15",
+    "ncit_eight_categories": "aeee20a68b51a94353eb86fa0a97d422cfe4f39b0fce3a288e9cffeee5fd2b8e"
+  },
+  "members": {
+    "attributes.yaml": {
+      "actual_url": "https://raw.githubusercontent.com/biolink/biolink-model/v4.4.6/attributes.yaml",
+      "bytes": 16400,
+      "http_code": 200,
+      "sha256": "a8be9078ee33492141b1043989dc6ee05d51b9eaeb7e35d3dda1fef7fd42e07d",
+      "source_url": "https://raw.githubusercontent.com/biolink/biolink-model/v4.4.6/attributes.yaml"
+    },
+    "biolink-model.yaml": {
+      "actual_url": "https://raw.githubusercontent.com/biolink/biolink-model/v4.4.6/biolink-model.yaml",
+      "bytes": 544677,
+      "http_code": 200,
+      "sha256": "5837907e1eb579812856579feea5a099665252f2454bd6f950d63fbb00f4c9f0",
+      "source_url": "https://raw.githubusercontent.com/biolink/biolink-model/v4.4.6/biolink-model.yaml"
+    },
+    "predicate_mapping.yaml": {
+      "actual_url": "https://raw.githubusercontent.com/biolink/biolink-model/v4.4.6/predicate_mapping.yaml",
+      "bytes": 17706,
+      "http_code": 200,
+      "sha256": "b532220b1d33f0e51794566fa33a736905b5a41ed1fe38839f9e949cb58c796c",
+      "source_url": "https://raw.githubusercontent.com/biolink/biolink-model/v4.4.6/predicate_mapping.yaml"
+    }
+  },
+  "version": "4.4.6"
+}

@@ -1,0 +1,88 @@
+{
+  "graphs": [
+    {
+      "id": "http://example.test/graph",
+      "nodes": [
+        {
+          "id": "http://example.test/Term",
+          "meta": {
+            "definition": {
+              "val": "Definition text",
+              "xrefs": [
+                "PMID:1"
+              ],
+              "meta": {
+                "basicPropertyValues": [
+                  {
+                    "pred": "http://example.test/source",
+                    "val": "Definition source"
+                  }
+                ]
+              }
+            },
+            "synonyms": [
+              {
+                "pred": "hasExactSynonym",
+                "val": "Alias",
+                "xrefs": [
+                  "PMID:2"
+                ],
+                "synonymType": "http://example.test/type",
+                "meta": {
+                  "basicPropertyValues": [
+                    {
+                      "pred": "http://example.test/contributor",
+                      "val": "Contributor"
+                    }
+                  ]
+                }
+              }
+            ],
+            "xrefs": [
+              {
+                "val": "TEST:1",
+                "meta": {
+                  "basicPropertyValues": [
+                    {
+                      "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                      "val": "Xref label"
+                    }
+                  ]
+                }
+              },
+              {
+                "val": "TEST:1",
+                "meta": {
+                  "basicPropertyValues": [
+                    {
+                      "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+                      "val": "Xref label"
+                    }
+                  ]
+                }
+              }
+            ],
+            "basicPropertyValues": [
+              {
+                "pred": "http://example.test/property",
+                "val": "Original value",
+                "meta": {
+                  "basicPropertyValues": [
+                    {
+                      "pred": "http://example.test/license",
+                      "val": "License"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "http://example.test/Other"
+        }
+      ],
+      "edges": []
+    }
+  ]
+}

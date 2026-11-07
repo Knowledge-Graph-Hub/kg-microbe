@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "recorded_at": "2026-11-05T21:41:50.899792+00:00",
+  "status": "native_list_uniqueness_constraint_not_supported_by_retained_official_evidence",
+  "official_url": "https://mediadive.dsmz.de/doc/assets/main.bundle.js",
+  "official_document": {
+    "path": "data/rebuild-evidence/20261105/mediadive-retry-1734/official-review/api-doc-bundle.body",
+    "bytes": 415299,
+    "sha256": "96865da402f36fa0d27a0b80e84fa9b3f0ae05f73b6bafb0a6c690571b6ebc0a"
+  },
+  "endpoint_block": {
+    "endpoint": "/medium-strains/:id",
+    "name": "GetMediumStrains",
+    "character_start": 389226,
+    "character_end": 391081,
+    "characters": 1855,
+    "sha256": "76980f8b87f857b43e3dfe7259a6220d2a3f6ebd7d1b29ac63456e4074557af2",
+    "source_line": 168
+  },
+  "evidence": {
+    "response_id_definition_quote": "Unique ID of the strain.",
+    "growth_definition_quote": "True if growth is observed",
+    "other_unique_wording": "The complete endpoint block also calls the requested medium ID and the strain culture-collection number unique. Those identify entities, not distinct response-row occurrences.",
+    "list_uniqueness_rule_found": false,
+    "scope_of_absence_search": "The full retained GetMediumStrains endpoint block was inspected. The supporting filesystem search included hidden and ignored evidence files. No assertion is made about unretrieved private implementation code.",
+    "actual_control_identity_evidence": {
+      "path": "data/rebuild-evidence/20261105/mediadive-resolution-1734/control-r2-scientific-comparison-1.json",
+      "bytes": 8899,
+      "sha256": "3b436135eacb90e2e8d016fc37c365de35650871f01b82e38275ca4f431aaff2"
+    },
+    "actual_control_interpretation": "Retained REST controls use the same native strain8/BacDive683/DSM9 entity for medium220 andJ22. Together with the documented definition, this distinguishes strain identity from a growth-observation identifier."
+  },
+  "assessment": "A unique identifier for a strain does not imply that the source list contains at most one occurrence of that identifier. The new duplicate-ID rejection adds an unsupported constraint and can reject repeated native observations, including distinct polarity/context rows. The source list and explicit envelope count should be preserved without deduplication or invented IDs.",
+  "minimal_repair": "Remove only the len(unique strain IDs)==len(data) acceptance condition. Preserve strict native ID shape, exact count/list length, raw body identity, ordered list contents and all occurrences. Keep the same native ID on synthetic repeated observations; do not renumber to satisfy the invalid restriction.",
+  "regression_expectation": "A strict HTTP200 list containing repeated native IDs, including an exact duplicate and positive/negative native observations, remains nonempty and survives generation/native replay unchanged. Invalid IDs, inconsistent counts and malformed envelopes still fail.",
+  "current_generation_effect": "Root reports all6056 baseline successful endpoints already satisfy the removed uniqueness constraint. The independently audited seed/canary/batch source bodies and original execution-code hashes remain immutable. Corrected-code reclassification should bind the exact same retained bodies without new HTTP or restamping historical receipts.",
+  "review_operations": {
+    "http_requests": 0,
+    "tests": 0,
+    "source_edits": 0
+  }
+}

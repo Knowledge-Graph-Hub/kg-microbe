@@ -64,7 +64,7 @@ def _child(root):
     from kgx.cli import cli_utils
 
     require(Path(dispatcher.__file__).resolve().is_relative_to(root), "Wrong isolated package origin")
-    require(kgx_source.version("kgx") == "2.7.0", "This regression requires inspected KGX 2.7.0")
+    require(kgx_source.version("kgx") in {"2.7.0", "2.8.0"}, "This regression requires inspected KGX 2.7.0 or 2.8.0")
     raw = root / "data/raw"
     ec = raw / "ec2go.txt"
     first, second = [(root / "ec-fixture" / name).read_bytes() for name in ("first.txt", "second.txt")]

@@ -536,3 +536,56 @@ def test_original_alternative_id_context_is_preserved_in_exclusion_evidence(tmp_
     assert normalized["subject"] == "GO:0004420"
     assert normalized["original_subject"] == "GO:0042282"
     assert json.loads(normalized["go_reference_context"])[0]["replacement_chain"] == ["GO:0042282", "GO:0004420"]
+
+
+def test_robot1911_complete_records_preserve_the_historical_fixture_epoch():
+    """Source-verified added metadata stays in current complete records; scientific decisions retain old evidence."""
+    directory = Path(__file__).parent / "resources/upa_route_review"
+    review = json.loads((directory / "conversion_review.json").read_text())
+    history = directory / review["historical_fixture_directory"]
+    old_policy = json.loads((history / "upa_reaction_projection_dispositions.json").read_text())
+    policy = upa.load_policy(upa.POLICY_FILE.read_bytes())
+    assert upa.digest(old_policy) == review["prior_policy_semantic_sha256"]
+    assert upa.digest(policy) == review["current_policy_semantic_sha256"]
+    for name, expected in json.loads((history / "origin.json").read_text())["fixtures"].items():
+        assert hashlib.sha256((history / name).read_bytes()).hexdigest() == expected
+    changed = []
+    for before, after in zip(old_policy["rules"], policy["rules"], strict=True):
+        assert {key: value for key, value in before.items() if key != "native_nodes"} == {
+            key: value for key, value in after.items() if key != "native_nodes"
+        }
+        for old_node, new_node in zip(before["native_nodes"], after["native_nodes"], strict=True):
+            assert old_node["ordinal"] == new_node["ordinal"]
+            if old_node != new_node:
+                changed.append(new_node["record"]["id"])
+    assert len(changed) == 14
+    old_document = json.loads((history / "upa.json").read_text())
+    current = json.loads((directory / "upa.json").read_text())
+    projected = copy.deepcopy(current)
+    by_id = {node["id"]: node for node in projected["graphs"][0]["nodes"]}
+    for evidence in review["fixture_added_annotations"]:
+        xref = by_id[evidence["node"]]["meta"]["xrefs"][evidence["xref_position"]]
+        assert xref["meta"] == evidence["candidate_annotation"]
+        assert evidence["exact_source_annotation_match"]
+        assert {(row["pred"], row["val"]) for row in xref["meta"]["basicPropertyValues"]} == {
+            tuple(row) for row in evidence["source_owl_annotations"]
+        }
+        xref.pop("meta")
+    assert projected == old_document
+
+
+def test_added_native_annotation_is_still_checked_after_the_byte_pin(tmp_path, monkeypatch):
+    """Even an explicitly rebound test byte pin cannot waive changed complete annotation evidence."""
+    transform, policy, policy_path = prepare(tmp_path, monkeypatch)
+    path = transform.input_base_dir / "upa.json"
+    document = json.loads(path.read_text())
+    identifier = policy["rules"][0]["native_nodes"][0]["record"]["id"]
+    node = next(row for row in document["graphs"][0]["nodes"] if row["id"] == identifier)
+    annotated = next(row for row in node["meta"]["xrefs"] if "meta" in row)
+    annotated["meta"]["basicPropertyValues"][0]["val"] = "not the reviewed native annotation"
+    path.write_text(json.dumps(document))
+    policy["sources"]["upa.json"]["sha256"] = hashlib.sha256(path.read_bytes()).hexdigest()
+    policy_path.write_text(json.dumps(policy))
+    monkeypatch.setattr(upa, "POLICY_SHA256", upa.digest(policy))
+    with pytest.raises(SourceFinalizationRequired, match="complete finite native declaration"):
+        transform.run(data_file="upa.json", show_status=False)

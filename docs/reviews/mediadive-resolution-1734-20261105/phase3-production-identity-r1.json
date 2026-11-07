@@ -1,0 +1,62 @@
+{
+  "current_bytes_match": true,
+  "elapsed_seconds": 1272.972,
+  "exit_code": 0,
+  "finalized_members": {
+    "bactotraits": {
+      "edges.tsv": {
+        "bytes": 9869633,
+        "sha256": "a27f0cfa13bb40b495a59a6e3cf7264845035533b9551f51d5de91f880009fbc"
+      },
+      "nodes.tsv": {
+        "bytes": 893975,
+        "sha256": "2efaecb958853ddda55a8957e59c9bc1cc3a7c47ea00b84d5ca2dc0df4bb9f04"
+      }
+    },
+    "gold": {
+      "edges.tsv": {
+        "bytes": 100994540,
+        "sha256": "4a35f8cc112f5e4186847688ab12a2611d76c24816752c68d75166ad3cfa2627"
+      },
+      "nodes.tsv": {
+        "bytes": 62580390,
+        "sha256": "dd318614b687fe163d2efa1f95c88508d4835a577240211503b331a877961c00"
+      }
+    },
+    "lpsn": {
+      "edges.tsv": {
+        "bytes": 18284651,
+        "sha256": "ac673de620d9cefb8a3e20e4ab2bcb5efd3de861ad3a8022bb61d5b010ab1ddc"
+      },
+      "nodes.tsv": {
+        "bytes": 9363788,
+        "sha256": "623adc296bd8a9905055c016328d7a650086afbe2b1592027c814c29d21d995f"
+      }
+    },
+    "mediadive": {
+      "edges.tsv": {
+        "bytes": 22413177,
+        "sha256": "14e741d473dbeb300b3e65f067357e034421f2018495e787e33bc1b3af97ba94"
+      },
+      "nodes.tsv": {
+        "bytes": 3089112,
+        "sha256": "a50e289eb2e8d61f487932febfc26c9da088b5d3df4963f2a23b410768a28c20"
+      }
+    },
+    "metatraits_gtdb": {
+      "edges.tsv": {
+        "bytes": 411891970,
+        "sha256": "a365da82dd5b30288f2236b6c7125446b18a3a51fe9ef09f46559901090db457"
+      },
+      "nodes.tsv": {
+        "bytes": 3352569,
+        "sha256": "aedfd81445f19e2be442300ffa10735a24dbef730b90486528b570c33dd2a31b"
+      }
+    }
+  },
+  "interpretation": "Producer stage completed; persisted phase-three admission remains separate.",
+  "next_admission_helper_sha256": "8f952582e4e1d626fd7fddfb738ee5d5df10a0f93275d5601024093ce15a0c0f",
+  "owned_module_count": 97,
+  "result_sha256": "42818ab7769496f3ac9cee8df253f16fe97dc529878e122ef9bed581d6b33d81",
+  "stage": "mediadive-resolution-phase3-r1"
+}

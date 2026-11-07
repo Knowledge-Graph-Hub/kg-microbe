@@ -1,0 +1,71 @@
+{
+  "schema_version": 1,
+  "recorded_at": "2026-11-05T21:28:28.487201+00:00",
+  "review_type": "Independent adversarial static review of frozen generation consumer/download integration",
+  "reviewed_files": {
+    "kg_microbe/transform_utils/mediadive/endpoint_consumer.py": {
+      "sha256": "3aa90be413dcf8fa62f8ced8127cd550f5c77ff1e248a2daf3fe3d0f4e21f5c4",
+      "bytes": 12653
+    },
+    "kg_microbe/transform_utils/mediadive/bulk_inputs.py": {
+      "sha256": "a7b6d87afbf530ae8a520f10b5edda3b52b8ab267431ffe3810b0b8614254d4b",
+      "bytes": 15065
+    },
+    "kg_microbe/transform_utils/mediadive/mediadive.py": {
+      "sha256": "5220bb4893e2a656f3631aaea525616a8d78ba00b97d98d0dbf774a5b1094140",
+      "bytes": 80346
+    },
+    "kg_microbe/download.py": {
+      "sha256": "24da75437177503d266ebb99cb5f92aca7cccc5a0226f73a9ab8599746e2247b",
+      "bytes": 10100
+    },
+    "tests/test_mediadive_endpoint_consumer.py": {
+      "sha256": "b28ea3aa2744484278665bc6ea61409aee5e717bbd4d0905b57d996066395ea0",
+      "bytes": 7015
+    },
+    "tests/test_mediadive_download_generation.py": {
+      "sha256": "93e0f1f1a7f8fe2c79e8e83f298f6bee4bbb2b04816a2a46562169f0f92f7456",
+      "bytes": 2895
+    },
+    "tests/mediadive_consumer_fixtures.py": {
+      "sha256": "c0149aafc48cbfb1896030ffb2d55b226500a55e068c51a35788bd5878a33359",
+      "bytes": 5330
+    }
+  },
+  "status": "one_related_typed_contract_fix_required",
+  "findings": [
+    {
+      "existing_issue": 1765,
+      "locations": [
+        "kg_microbe/transform_utils/mediadive/endpoint_consumer.py:228",
+        "kg_microbe/transform_utils/mediadive/endpoint_consumer.py:250"
+      ],
+      "finding": "Persisted checkpoint/public endpoint contract comparisons use Python dictionary equality. A restamped sealed value1 compares equal to true, and a coverage bool can compare equal to integer0/1, despite the exact typed replay contract.",
+      "impact": "Native evidence and audit are independently reconstructed, so this alone does not invent associations or bypass unknown-policy review; it admits an altered typed completion contract.",
+      "repair": "Use the module existing encoded() helper (or equivalently strict type-preserving canonical comparison) at both boundaries.",
+      "acceptance": "A fresh-instance public replay and restore reject a restamped nested contract int/bool or int/float mutation, while unchanged real producer completion still passes."
+    }
+  ],
+  "checked_controls": [
+    "Constructor loads the active sealed generation through the actual consumed-input reader; all five generation/policy roles become mandatory snapshots. Native JSON locators come from that validated generation and retain shared SourceAdmission.",
+    "Old root bulk files no longer establish authority or shadow the active generation. An explicit data_file must select the sealed catalogue. Native parsed-payload hashes separately preserve JSON value types and per-record identity.",
+    "Strain state lookup is exact catalogue endpoint lookup. unknown_unavailable returnsNone, explicit_empty returns[], and nonempty requires actual native rows. Missing or unresolved evidence is refused.",
+    "Producer contract version advances to3 and includes detached endpoint-generation evidence. Both producer completion and public replay require full generation/policy reconstruction, exact audit bytes and omission guards.",
+    "Endpoint audit projects all exact endpoint heads and source timestamps. Both explicit_empty and unknown_unavailable endpoints are forbidden from gaining either positive or negative strain-growth predicates in the source graph.",
+    "Fresh checkpoint restoration requires current validated native inputs and a matching completed audit; it cannot substitute a stale pre-generation completion record.",
+    "Download wrapper keeps acquisition import local, removes file-size authority, replays a current generation without HTTP, and refuses corrupted generation before fallback; refresh constructs a fresh generation and keeps old artifacts.",
+    "Read-only inspection of new tests confirms explicit-empty versus unknown semantics, fresh producer/public replay, historical-root shadowing refusal, body/policy/outcome/pointer drift refusal, restamped audit semantics refusal and unsupported growth refusal. Download tests cover actual persisted explicit-empty replay and corrupt-generation refusal.",
+    "Synthetic consumer fixture preparation preserves copied original bytes and derivation hashes, names synthetic catalogue context explicitly and reconstructs first-occurrence exports consistently; immutable historical resource files are not rewritten by that helper."
+  ],
+  "limitations": [
+    "This reviewer ran no tests. Root coordinated focused consumer tests separately.",
+    "The acquisition/outcome defects in #1765/#1766 remain governed by production-acquisition-independent-review-1.json until corrected source and offline controls are reviewed.",
+    "The narrow default data-file behavior intentionally requires the sealed catalogue; this review does not claim arbitrary historical catalogue paths remain admissible."
+  ],
+  "review_operations": {
+    "http_requests": 0,
+    "tests": 0,
+    "source_edits": 0,
+    "git_writes": 0
+  }
+}

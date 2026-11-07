@@ -1,0 +1,225 @@
+{
+  "class_interpretation": "NCIT changes are cellular-organism comment scalar to singleton list and deprecated Mammal true to string true; MeSH direct classes unchanged. Inherited reviewed context changes include description prefix spelling bl: to biolink:, comment shapes and orphanet to ORDO mappings, not class hierarchy/mixin changes.",
+  "findings": [],
+  "historical_fixture_selection_recovers_entire_original_ncit_policy": true,
+  "historical_ingredient_model_and_origin_unchanged": true,
+  "identities": {
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/upgrades/biolink/runtime-new-new-03/runtime-probe.json": {
+      "bytes": 1892704,
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/upgrades/biolink/runtime-new-new-03/runtime-probe.json",
+      "sha256": "b8659cfb1fe994756ab6ebe538f24042056c21fe6df2e1eaf48981655d90842f"
+    },
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/upgrades/biolink/runtime-new-old-03/runtime-probe.json": {
+      "bytes": 1889523,
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/upgrades/biolink/runtime-new-old-03/runtime-probe.json",
+      "sha256": "616a2e251fb2ad8c754e9989a3989305840e03cde6d305791b9b0041758cdb5b"
+    },
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/upgrades/biolink/runtime-old-old-03/runtime-probe.json": {
+      "bytes": 1848893,
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/upgrades/biolink/runtime-old-old-03/runtime-probe.json",
+      "sha256": "286189b943c0669ad178e525b470fa6a23b33aa85df4207a7d94b319939b685c"
+    },
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/upgrades/candidates/biolink446/attributes.yaml": {
+      "bytes": 16400,
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/upgrades/candidates/biolink446/attributes.yaml",
+      "sha256": "a8be9078ee33492141b1043989dc6ee05d51b9eaeb7e35d3dda1fef7fd42e07d"
+    },
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/upgrades/candidates/biolink446/biolink-model.yaml": {
+      "bytes": 544677,
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/upgrades/candidates/biolink446/biolink-model.yaml",
+      "sha256": "5837907e1eb579812856579feea5a099665252f2454bd6f950d63fbb00f4c9f0"
+    },
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/upgrades/candidates/biolink446/predicate_mapping.yaml": {
+      "bytes": 17706,
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/upgrades/candidates/biolink446/predicate_mapping.yaml",
+      "sha256": "b532220b1d33f0e51794566fa33a736905b5a41ed1fe38839f9e949cb58c796c"
+    },
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/kg_microbe/utils/mesh_finite_categories.py": {
+      "bytes": 21727,
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/kg_microbe/utils/mesh_finite_categories.py",
+      "sha256": "8c6020382bd14982bbe22b1a2d89157b3af0dad13bb7d6764bfed9b5be599247"
+    },
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/kg_microbe/utils/ncit_eight_categories.py": {
+      "bytes": 27308,
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/kg_microbe/utils/ncit_eight_categories.py",
+      "sha256": "d60c2c0faf732de351cf15449669a1ff6c77372c622dda7357050bdc92c7b57c"
+    },
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/mappings/biolink_4_4_6_category_review.json": {
+      "bytes": 1305147,
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/mappings/biolink_4_4_6_category_review.json",
+      "sha256": "331f4ad46b9f25d627089c511d2b2694d5a8d8d94e6037303592af63e68a3708"
+    },
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/mappings/mesh_finite_category_dispositions.json": {
+      "bytes": 17351,
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/mappings/mesh_finite_category_dispositions.json",
+      "sha256": "177312b0c3f7f5aa471dc5633b991f5d1e9566157684b480280333c269792a7b"
+    },
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/mappings/ncit_eight_categories.json": {
+      "bytes": 910562,
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/mappings/ncit_eight_categories.json",
+      "sha256": "dbd88d40a83d34c74a3c02c02845deab6bc006e916b21dc05df2221c3841f82b"
+    },
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/tests/ncit_eight_fixtures.py": {
+      "bytes": 4528,
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/tests/ncit_eight_fixtures.py",
+      "sha256": "45f484de27d70677b8c4c92b2f1b23974274fd1a587495371556091d0dbd2703"
+    },
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/tests/resources/biolink_4_4_6/attributes.yaml": {
+      "bytes": 16400,
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/tests/resources/biolink_4_4_6/attributes.yaml",
+      "sha256": "a8be9078ee33492141b1043989dc6ee05d51b9eaeb7e35d3dda1fef7fd42e07d"
+    },
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/tests/resources/biolink_4_4_6/biolink-model.yaml": {
+      "bytes": 544677,
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/tests/resources/biolink_4_4_6/biolink-model.yaml",
+      "sha256": "5837907e1eb579812856579feea5a099665252f2454bd6f950d63fbb00f4c9f0"
+    },
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/tests/resources/biolink_4_4_6/mesh_finite_category_dispositions-classes.json": {
+      "bytes": 6805,
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/tests/resources/biolink_4_4_6/mesh_finite_category_dispositions-classes.json",
+      "sha256": "dcfcbbb1b5a2db15e9ad29f366a6636d3c78c0ca78f3f6cc0f73b592b87a49c9"
+    },
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/tests/resources/biolink_4_4_6/ncit_eight_categories-classes.json": {
+      "bytes": 7118,
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/tests/resources/biolink_4_4_6/ncit_eight_categories-classes.json",
+      "sha256": "1c1390867c31b3ab72dbc3fb967e718902d28474d5d4cde755320ada48baefdf"
+    },
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/tests/resources/biolink_4_4_6/predicate_mapping.yaml": {
+      "bytes": 17706,
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/tests/resources/biolink_4_4_6/predicate_mapping.yaml",
+      "sha256": "b532220b1d33f0e51794566fa33a736905b5a41ed1fe38839f9e949cb58c796c"
+    },
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/tests/resources/ingredient_bundle/native/acceptance-native-origin.json": {
+      "bytes": 5331,
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/tests/resources/ingredient_bundle/native/acceptance-native-origin.json",
+      "sha256": "c663ca06d042ccd6b3e5a44da67175ff5adedbc24520d461246424784bedad08"
+    },
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/tests/resources/ingredient_bundle/native/biolink-model.yaml": {
+      "bytes": 512070,
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/tests/resources/ingredient_bundle/native/biolink-model.yaml",
+      "sha256": "b6a1320772a92d69e84b8c700cd6386dffe45ed635c8197d61e22b6a6fa3b35e"
+    },
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/tests/resources/ncit_eight_categories/biolink.json": {
+      "bytes": 7098,
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/tests/resources/ncit_eight_categories/biolink.json",
+      "sha256": "606c294bdae146f71c0a7ce768c0860717823a83a6b01d655868161bd9944370"
+    },
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/tests/resources/ncit_eight_categories/native.json": {
+      "bytes": 883979,
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/tests/resources/ncit_eight_categories/native.json",
+      "sha256": "b2cc2e2558fa6589f0158059ba9722b4140b5d7705e9d14ad06dc3ddddfd8cda"
+    },
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/tests/test_biolink_446_category_bindings.py": {
+      "bytes": 4440,
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/tests/test_biolink_446_category_bindings.py",
+      "sha256": "9af64667d44291f3455835ddbb7b9632b602a06b2fd02f47b6711ceab8534587"
+    },
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/tests/test_mesh_finite_categories.py": {
+      "bytes": 27889,
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/tests/test_mesh_finite_categories.py",
+      "sha256": "05f27451c8c440133e7481763ca5027703d5d018d1ccbbed0b7e9bb1a8aaa6cb"
+    },
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe/kg_microbe/utils/mesh_finite_categories.py": {
+      "bytes": 21727,
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe/kg_microbe/utils/mesh_finite_categories.py",
+      "sha256": "075327cfacbceb09340b2ac9df58c1772b38d9747e50757225d73298a3608e80"
+    },
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe/kg_microbe/utils/ncit_eight_categories.py": {
+      "bytes": 27308,
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe/kg_microbe/utils/ncit_eight_categories.py",
+      "sha256": "2dc932dff408c593124d1320041f165a696c5583db477a9175663169332cfd20"
+    },
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe/mappings/mesh_finite_category_dispositions.json": {
+      "bytes": 17087,
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe/mappings/mesh_finite_category_dispositions.json",
+      "sha256": "3ef69f82ce7dc0a2487ede49428f20435da2eb0134d46af881247f02c2999a1c"
+    },
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe/mappings/ncit_eight_categories.json": {
+      "bytes": 910278,
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe/mappings/ncit_eight_categories.json",
+      "sha256": "eb9e4cfabd9161146a5cafa1da70528568cddbb0094e87e40b9223724af62865"
+    },
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe/tests/resources/ingredient_bundle/native/acceptance-native-origin.json": {
+      "bytes": 5331,
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe/tests/resources/ingredient_bundle/native/acceptance-native-origin.json",
+      "sha256": "c663ca06d042ccd6b3e5a44da67175ff5adedbc24520d461246424784bedad08"
+    },
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe/tests/resources/ingredient_bundle/native/biolink-model.yaml": {
+      "bytes": 512070,
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe/tests/resources/ingredient_bundle/native/biolink-model.yaml",
+      "sha256": "b6a1320772a92d69e84b8c700cd6386dffe45ed635c8197d61e22b6a6fa3b35e"
+    },
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe/tests/resources/ncit_eight_categories/biolink.json": {
+      "bytes": 7098,
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe/tests/resources/ncit_eight_categories/biolink.json",
+      "sha256": "606c294bdae146f71c0a7ce768c0860717823a83a6b01d655868161bd9944370"
+    },
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe/tests/resources/ncit_eight_categories/native.json": {
+      "bytes": 883979,
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe/tests/resources/ncit_eight_categories/native.json",
+      "sha256": "b2cc2e2558fa6589f0158059ba9722b4140b5d7705e9d14ad06dc3ddddfd8cda"
+    }
+  },
+  "official_triplet_bytes_match_acquired_candidates": true,
+  "policies": {
+    "mesh_finite_category_dispositions": {
+      "current_selected_classes_equal_official_full_model": true,
+      "direct_class_changes": [],
+      "entire_original_policy_recovered_by_only_restoring_model_fields": true,
+      "independent_fixture_excerpt_matches_full_model": true,
+      "loader_logic_unchanged_only_seal_changed": true,
+      "native_record_count": 17
+    },
+    "ncit_eight_categories": {
+      "current_selected_classes_equal_official_full_model": true,
+      "direct_class_changes": [
+        "cellular organism",
+        "mammal"
+      ],
+      "entire_original_policy_recovered_by_only_restoring_model_fields": true,
+      "independent_fixture_excerpt_matches_full_model": true,
+      "loader_logic_unchanged_only_seal_changed": true,
+      "native_record_count": 22
+    }
+  },
+  "production_files_mutated": false,
+  "release_ready": false,
+  "reviewed_at_utc": "2026-11-05T07:09:35.119946+00:00",
+  "reviewer": "independent environment/binding worker",
+  "runtime_probe_evidence": {
+    "new-new": {
+      "conversion_fixtures": 8,
+      "identity": {
+        "bytes": 1892704,
+        "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/upgrades/biolink/runtime-new-new-03/runtime-probe.json",
+        "sha256": "b8659cfb1fe994756ab6ebe538f24042056c21fe6df2e1eaf48981655d90842f"
+      },
+      "inputs_unchanged": true,
+      "network_attempts": [],
+      "status": "completed_review_required"
+    },
+    "new-old": {
+      "conversion_fixtures": 8,
+      "identity": {
+        "bytes": 1889523,
+        "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/upgrades/biolink/runtime-new-old-03/runtime-probe.json",
+        "sha256": "616a2e251fb2ad8c754e9989a3989305840e03cde6d305791b9b0041758cdb5b"
+      },
+      "inputs_unchanged": true,
+      "network_attempts": [],
+      "status": "completed_review_required"
+    },
+    "old-old": {
+      "conversion_fixtures": 8,
+      "identity": {
+        "bytes": 1848893,
+        "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/upgrades/biolink/runtime-old-old-03/runtime-probe.json",
+        "sha256": "286189b943c0669ad178e525b470fa6a23b33aa85df4207a7d94b319939b685c"
+      },
+      "inputs_unchanged": true,
+      "network_attempts": [],
+      "status": "completed_review_required"
+    }
+  },
+  "scope": "Independent pre-format binding audit; final active-code receipts are separate."
+}

@@ -1,0 +1,188 @@
+{
+  "canary_proposal": {
+    "child_steps": [
+      "Require owned cwd/interpreter and bind current production/client/runner/launcher source identities before network or secret load.",
+      "Set PYTHON_DOTENV_DISABLED=1 before any native authentication call; only the explicitly authorized parser reads the original checkout credential source and only the two allowlisted keys enter the current process environment.",
+      "Install output/exception containment and request budget before constructing the native client. Use production authentication method under a scoped bounded native-client factory or document direct installed-native construction; do not claim unmodified default retry settings.",
+      "Use native search(id=35300), then retrieve. search only primes the finite result and issues no HTTP request. Require exactly one returned dictionary with exact id35300 and a nonempty full_name; compare reported name/category to the retained control without inferring whole-dataset freshness.",
+      "Do not call run or _ensure_declared: those expand the selected cohort through parent/basonym links. Do not use existing raw cache as evidence of this fresh canary.",
+      "Preserve existing raw/API/web caches and transformed graph outputs. If retaining a public taxon response, validate its shape and secret absence first and save only to a unique evidence candidate file, never the authentication response or headers.",
+      "Save fixed status, publicID, HTTP status, timing, request counts, source/package identities and boolean success; failures remain failures with no empty-result inference."
+    ],
+    "command_note": "Concrete helper implementation/name remains root-owned. Arguments contain only mode, unique label and public record ID, never credential values. Standard launcher starts without either LPSN credential.",
+    "exact_allowed_auth_request": {
+      "body_preserved": false,
+      "headers_preserved": false,
+      "method": "POST",
+      "response_preserved": false,
+      "url": "https://sso.dsmz.de/auth/realms/dsmz/protocol/openid-connect/token"
+    },
+    "exact_allowed_taxon_request": {
+      "automatic_redirects": false,
+      "method": "GET",
+      "request_headers_preserved": false,
+      "url": "https://api.lpsn.dsmz.de/fetch/35300"
+    },
+    "launcher": "Owned .venv/bin/python -B scripts/adhoc/kgm_rebuild_20261105.py launch lpsn-auth-canary-20261106-r1 -- <reviewed checkout-owned continuation helper> canary",
+    "purpose": "Verify authorized authentication and one fresh exact-ID native API response; no source-completion/freshness or graph-admission claim.",
+    "retained_control": {
+      "cache": {
+        "bytes": 1867,
+        "path": "data/raw/lpsn/api_cache/35300.json",
+        "sha256": "66bb5a929a0a3f83f9b09956f1823e7a393ccae08ac69c1c908bda0ecf2da21a"
+      },
+      "category": "genus",
+      "full_name": "Dryocola",
+      "gss_node": {
+        "category": "biolink:OrganismTaxon",
+        "id": "lpsn:35300",
+        "name": "Dryocola"
+      },
+      "interpretation": "Real retained native/API and current GSS record, not the synthetic1002unit-test fixture.",
+      "record_id": 35300
+    },
+    "suggested_bounds": {
+      "authentication_post_attempts": 1,
+      "connect_timeout_seconds": 10,
+      "note": "A connect/read tuple alone is not a hard wall-clock deadline. Enforce the total bound separately and fail safely if it fires.",
+      "read_timeout_seconds": 30,
+      "refresh_requests": 0,
+      "taxon_get_attempts": 1,
+      "total_deadline_seconds": 120,
+      "transport_retries": 0
+    }
+  },
+  "confirmed_safe_or_supported_behavior": [
+    {
+      "fact": "python-dotenv1.2.3 checks PYTHON_DOTENV_DISABLED before find_dotenv and before any DotEnv file parsing. Setting1 in the child prevents the native production load_dotenv call from reading other keys/files.",
+      "location": "installed dotenv/main.py:415-424"
+    },
+    {
+      "fact": "Existing phase helper records credential availability booleans and a fixed command only; no explicit credential values enter its arguments/receipt. Its command nevertheless reruns both lpsn_api and microbedecoder, so it is not the selected single-source continuation path.",
+      "location": "scripts/adhoc/kgm_rebuild_lpsn_phase_20261105.py:94-148"
+    },
+    {
+      "fact": "Normal successful authentication prints only a fixed success message. Username/password enter a form-encoded token POST; access/refresh tokens remain attributes in memory, and the API token enters the Authorization header rather than an exact-ID URL.",
+      "location": "installed lpsn/client.py:32-73,104-123; keycloak/keycloak_openid.py:379-400"
+    },
+    {
+      "fact": "An explicit sources=[lpsn_api] request stays that one source while the normal dispatcher checks upstream completion, runs the native producer and performs its existing finalization/fingerprint path. It does not automatically rerun microbedecoder.",
+      "location": "kg_microbe/transform.py:410-439,484-518"
+    }
+  ],
+  "execution_boundaries_requiring_controls": [
+    {
+      "fact": "The launcher hashes serialized full child environment. Supplying credentials before launch would create credential-derived provenance even though plaintext is not written.",
+      "id": "prelaunch_environment_digest",
+      "location": "scripts/adhoc/kgm_rebuild_20261105.py:328-337",
+      "required_boundary": "Launch with neither LPSN key present. The already-started stage-owned runner performs the user-authorized nonexecuting allowlisted parse and installs only the two values in its process environment. Do not call launcher.environment/launch again or serialize/hash os.environ after this load. No source-file/content hash of the credential file."
+    },
+    {
+      "fact": "The installed client interpolates Keycloak errors and prints raw API error bodies. Keycloak error text may be the response message or full body. Native producer, dispatcher and launcher then print/persist exception text and traceback. These are concrete unfiltered sinks, not evidence that an actual credential was disclosed.",
+      "id": "raw_authentication_and_api_error_logging",
+      "locations": [
+        "installed lpsn/client.py:59-66",
+        "installed lpsn/client.py:85-87",
+        "installed keycloak/exceptions.py:84-94,194-205",
+        "kg_microbe/transform_utils/lpsn_api/lpsn_api.py:411-414",
+        "kg_microbe/transform.py:517-518",
+        "scripts/adhoc/kgm_rebuild_20261105.py:165-170"
+      ],
+      "required_boundary": "Suppress potentially secret-bearing client output for initialization, API retrieval and later token refresh, and replace exceptions before they reach native outer printing or launcher repr. Suppression must cover preconfigured logging handlers/file descriptors where applicable, not only a contextlib stdout redirect. Never serialize request/response headers, auth form/body, token response, client.__dict__, exception repr/str, traceback locals or captured secret-bearing output. Emit only fixed failure classes and nonsecret counters/status codes."
+    },
+    {
+      "fact": "Default client uses10authentication loops with50-second delays, API retry total10 and300-second timeout. Keycloak separately retries POST once. Expired-token handling recursively refreshes/reissues the fetch. Exhausted constructor authentication prints an error and returns without necessarily creating token attributes.",
+      "id": "native_defaults_do_not_bound_canary",
+      "locations": [
+        "installed lpsn/client.py:32-70",
+        "installed lpsn/client.py:89-98",
+        "installed lpsn/client.py:110-123",
+        "installed keycloak/connection.py:111-127"
+      ],
+      "required_boundary": "Canary must enforce one authentication POST plus one exact-ID GET at the actual transport boundary, with no redirects, transport retries or refresh-loop requests; use bounded connect/read timeouts and an explicit total deadline. Verify actual nonempty access/refresh token attributes in memory before retrieval; never record their values."
+    }
+  ],
+  "findings_handling": "Root owns issue filing and guarded-runner implementation. This review does not authorize weakening production semantics, native evidence checks or source admission, and no authenticated request has been made by this reviewer.",
+  "head_sha": "325ead9101d4e6561c8e3827bec2c665ec330645",
+  "kind": "independent_nonsecret_lpsn_authentication_and_launch_boundary_review",
+  "production_continuation_boundary": {
+    "native_call": "kg_microbe.transform.transform(input_dir=owned data/raw, output_dir=owned data/transformed, sources=[lpsn_api], show_status=False)",
+    "prerequisites": "Bind the existing successful canonical phase3receipt and the separately completed MicrobeDecoder admission to the same full canonical plan and current input/source identities before loading credentials. Recheck the guards immediately before native dispatch. Do not claim phase4complete from the MicrobeDecoder-only receipt.",
+    "scientific_limits": "A successful authentication canary does not refresh the full preserved cache or certify every LPSN record. Native _fetch catches per-record failures and increments errors while continuing; ensure the continuation reports/holds any actual failures and does not equate empty/API misses with transport success. Existing native source finalization and later production admission remain mandatory.",
+    "secret_scope": "Run the native dispatcher in-process inside the already-started credential-free launcher child. Keep secret containment active through native API fetches and token refresh; clear the two environment entries before any post-run evidence path that could hash/serialize environment. Never put credential/token values in child argv."
+  },
+  "recorded_at_utc": "2026-11-07T02:53:58.069585+00:00",
+  "review_scope": {
+    "credential_derived_hashes_computed": false,
+    "credential_files_read": false,
+    "credential_or_token_values_recorded": false,
+    "credential_values_read": false,
+    "http_requests": false,
+    "source_reads": "Named production/launcher and installed dependency source files only; bounded public taxonomy cache/GSS records.",
+    "tests_or_producers_executed": false,
+    "tracked_files_edited": false
+  },
+  "source_identities": {
+    ".venv/lib/python3.10/site-packages/dotenv/main.py": {
+      "bytes": 15179,
+      "path": ".venv/lib/python3.10/site-packages/dotenv/main.py",
+      "sha256": "697eb33eee75d78b73db61eaf96bf9a6547548c1811c93501b67e056e5470dea"
+    },
+    ".venv/lib/python3.10/site-packages/keycloak/connection.py": {
+      "bytes": 20337,
+      "path": ".venv/lib/python3.10/site-packages/keycloak/connection.py",
+      "sha256": "a09e9e4357a7bed03ee18d1d361dd8ef27256c14f3cd277eb7656d160514f329"
+    },
+    ".venv/lib/python3.10/site-packages/keycloak/exceptions.py": {
+      "bytes": 6149,
+      "path": ".venv/lib/python3.10/site-packages/keycloak/exceptions.py",
+      "sha256": "ec6c11b8ad18fdd66e77b399cb7d4bef9c3702a99ffa06de02e22a6d270c5532"
+    },
+    ".venv/lib/python3.10/site-packages/keycloak/keycloak_openid.py": {
+      "bytes": 74471,
+      "path": ".venv/lib/python3.10/site-packages/keycloak/keycloak_openid.py",
+      "sha256": "3b7df01ca4ee64d6fc493b27fbdf61b787d65f5f318dd258b51227220361c841"
+    },
+    ".venv/lib/python3.10/site-packages/lpsn/client.py": {
+      "bytes": 9092,
+      "path": ".venv/lib/python3.10/site-packages/lpsn/client.py",
+      "sha256": "5390a933174f0df4166a9d8ea81cfde82c0d404c008ce69953b068d8c4bcc4e2"
+    },
+    "kg_microbe/run.py": {
+      "bytes": 7845,
+      "path": "kg_microbe/run.py",
+      "sha256": "2a704e542092b667ebc968ddcb3643316101fb2e51861b179a172c09ee877b65"
+    },
+    "kg_microbe/transform.py": {
+      "bytes": 29148,
+      "path": "kg_microbe/transform.py",
+      "sha256": "2a78cc3fb75e6681612949ecf56d7c061cd84d5052ee469a834c2e2a614ec94d"
+    },
+    "kg_microbe/transform_utils/lpsn_api/lpsn_api.py": {
+      "bytes": 33582,
+      "path": "kg_microbe/transform_utils/lpsn_api/lpsn_api.py",
+      "sha256": "2df263c8c6e5de2bc2a2075967c759752ceda210cd66260291e2075d4a18981c"
+    },
+    "poetry.lock": {
+      "bytes": 705638,
+      "path": "poetry.lock",
+      "sha256": "485cace2112e25e50312a57296a7b1e56500d09b5f3d5f4f39166f906991663c"
+    },
+    "scripts/adhoc/kgm_rebuild_20261105.py": {
+      "bytes": 15000,
+      "path": "scripts/adhoc/kgm_rebuild_20261105.py",
+      "sha256": "cef7f21abb810ec3b95bba4221c3cd2d43326b550c7d5295d1cd4e0841196103"
+    },
+    "scripts/adhoc/kgm_rebuild_admission_20261105.py": {
+      "bytes": 19537,
+      "path": "scripts/adhoc/kgm_rebuild_admission_20261105.py",
+      "sha256": "8f952582e4e1d626fd7fddfb738ee5d5df10a0f93275d5601024093ce15a0c0f"
+    },
+    "scripts/adhoc/kgm_rebuild_lpsn_phase_20261105.py": {
+      "bytes": 6593,
+      "path": "scripts/adhoc/kgm_rebuild_lpsn_phase_20261105.py",
+      "sha256": "b0ef27316dfc6fc52a7ad7251eff513bf8909c64f33840835f7e63719a326b17"
+    }
+  },
+  "status": "static_review_complete_guarded_runner_required_before_authenticated_execution"
+}

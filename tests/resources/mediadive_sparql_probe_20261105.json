@@ -1,0 +1,6 @@
+{
+  "description": "Synthetic offline protocol fixtures, not assertions about the live dataset.",
+  "stats": {"name-index": "Synthetic MediaDive", "num-triples-normal": 42, "num-permutations": 6},
+  "legacy_stats": {"kbindex": "Synthetic legacy index", "nofActualTriples": 42, "permutations": "6"},
+  "error": {"status": "ERROR", "exception": "Synthetic failure"}
+}

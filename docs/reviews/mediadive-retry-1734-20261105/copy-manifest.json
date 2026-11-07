@@ -1,0 +1,179 @@
+{
+  "copy_rule": "Exact independent copies; original evidence retained. No original receipt, digest or disposition rewritten.",
+  "files": [
+    {
+      "path": "data/rebuild-evidence/20261105/mediadive-retry-1734/baseline-review/baseline-audit-2.json",
+      "destination": "baseline-audit.json",
+      "sha256": "34e463065badfdcde3dc9be898a6eb25ea3f6b653894da68029486cce5ed4993",
+      "bytes": 17181
+    },
+    {
+      "path": "data/rebuild-evidence/20261105/mediadive-retry-1734/baseline-review/retry-cohorts.json",
+      "destination": "retry-cohorts.json",
+      "sha256": "d94db7a10cdf3907f10e2f35aec9c7432a68ecfe7d51626f13ba06cbb32fec9e",
+      "bytes": 9253
+    },
+    {
+      "path": "data/rebuild-evidence/20261105/mediadive-retry-1734/preservation/manifest.json",
+      "destination": "preservation-manifest.json",
+      "sha256": "d63d0a6be750bc6f1f436aeb82e22d04c2d457fb0a3dac670d1f5b44f9990368",
+      "bytes": 13619
+    },
+    {
+      "path": "data/rebuild-evidence/20261105/mediadive-retry-1734/preservation/receipt.json",
+      "destination": "original-failed-receipt.json",
+      "sha256": "d792f4def31b55e3e2aca041e4c1d45ef0f86e2b20427e7be78e84d168ffa840",
+      "bytes": 43375
+    },
+    {
+      "path": "data/rebuild-evidence/20261105/mediadive-retry-1734/official-review/official-semantics.json",
+      "destination": "official-semantics.json",
+      "sha256": "99175d7a3be0c4e25dce64a30b50a18a243d5109595822e107888eaa7d02a4be",
+      "bytes": 19278
+    },
+    {
+      "path": "data/rebuild-evidence/20261105/mediadive-retry-1734/independent-final-retry-review-1.json",
+      "destination": "independent-code-review.json",
+      "sha256": "965061af4bd3a63ddbe08b9c6f812a92b5cd75b6d8f2abb9408e0a3efb6870ea",
+      "bytes": 7883
+    },
+    {
+      "path": "data/rebuild-evidence/20261105/mediadive-retry-1734/focused-tests-r1.log",
+      "destination": "focused-tests-r1.log",
+      "sha256": "487403f1b9e27c7c82e2a222c90dc757df929010155fdf7b7a2ebe3be98c44d8",
+      "bytes": 2650
+    },
+    {
+      "path": "data/rebuild-evidence/20261105/mediadive-retry-1734/focused-tests-r2.log",
+      "destination": "focused-tests-r2.log",
+      "sha256": "c4ec63cd66e0a50df9bb95ff5ba274cc1d2693a17814b138d06e186c3a60972c",
+      "bytes": 2559
+    },
+    {
+      "path": "data/rebuild-evidence/20261105/mediadive-retry-1734/attempts/retry-1/started.json",
+      "destination": "live/started.json",
+      "sha256": "806093927b8ec18487d41fa7bb43ee5464c8ff54842c394a99d0a57ac1d0af33",
+      "bytes": 2345
+    },
+    {
+      "path": "data/rebuild-evidence/20261105/mediadive-retry-1734/attempts/retry-1/canary/receipt.json",
+      "destination": "live/canary/receipt.json",
+      "sha256": "9a0d85ac6141ffa4cd372077336102273e1279263620af8a3b581f4c7b39677d",
+      "bytes": 1757
+    },
+    {
+      "path": "data/rebuild-evidence/20261105/mediadive-retry-1734/attempts/retry-1/canary/http-attempts.jsonl",
+      "destination": "live/canary/http-attempts.jsonl",
+      "sha256": "c4e690f3452a75a0df74a698c8894e758baa809ae8aea74d922c2cd41bd5e96f",
+      "bytes": 2789
+    },
+    {
+      "path": "data/rebuild-evidence/20261105/mediadive-retry-1734/attempts/retry-1/canary/selected-media.json",
+      "destination": "live/canary/selected-media.json",
+      "sha256": "bb24398560261c51229811d6f49bba3bc9801d201625a899364559870a5d89fd",
+      "bytes": 328
+    },
+    {
+      "path": "data/rebuild-evidence/20261105/mediadive-retry-1734/attempts/retry-1/canary/bodies/01-32a8ee55cb0208c9a546ac1421fb4968fb687ef5af57d15ef69163114debbf68.body",
+      "destination": "live/canary/bodies/01-32a8ee55cb0208c9a546ac1421fb4968fb687ef5af57d15ef69163114debbf68.body",
+      "sha256": "f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340",
+      "bytes": 136
+    },
+    {
+      "path": "data/rebuild-evidence/20261105/mediadive-retry-1734/attempts/retry-1/canary/bodies/02-32a8ee55cb0208c9a546ac1421fb4968fb687ef5af57d15ef69163114debbf68.body",
+      "destination": "live/canary/bodies/02-32a8ee55cb0208c9a546ac1421fb4968fb687ef5af57d15ef69163114debbf68.body",
+      "sha256": "f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340",
+      "bytes": 136
+    },
+    {
+      "path": "data/rebuild-evidence/20261105/mediadive-retry-1734/attempts/retry-1/canary/bodies/03-32a8ee55cb0208c9a546ac1421fb4968fb687ef5af57d15ef69163114debbf68.body",
+      "destination": "live/canary/bodies/03-32a8ee55cb0208c9a546ac1421fb4968fb687ef5af57d15ef69163114debbf68.body",
+      "sha256": "f1e7c69b752ed5dce03b09872cf76e76692f4cc787c567f4730ffaad097dd340",
+      "bytes": 136
+    },
+    {
+      "path": "data/rebuild-evidence/20261105/stages/mediadive-retry-1734-live-r1/plan.json",
+      "destination": "live/launcher-plan.json",
+      "sha256": "8a2c6da59ab979905da7a6d2a64016cf810f2099e14218e1edb7c7ce457cd66f",
+      "bytes": 687
+    },
+    {
+      "path": "data/rebuild-evidence/20261105/stages/mediadive-retry-1734-plan-r2/result.json",
+      "destination": "plan/validated-result.json",
+      "sha256": "8e2e18ad7f3ea2456291fc28b13f75b5e110fe5cd7ac05f0ffb484f5d4d667c9",
+      "bytes": 4893
+    },
+    {
+      "path": "data/rebuild-evidence/20261105/mediadive-retry-1734/attempts/retry-1/receipt.json",
+      "destination": "live/receipt.json",
+      "sha256": "5050778364c925cedec323b78c9ef80787a9f01405ed42cf92c828be389da0c9",
+      "bytes": 40214
+    },
+    {
+      "path": "data/rebuild-evidence/20261105/mediadive-retry-1734/attempts/retry-1/batch/receipt.json",
+      "destination": "live/batch-receipt.json",
+      "sha256": "c7010c3547974f9860a3359a8d63bec52fd5241d91a410f19f6853a332bc6651",
+      "bytes": 84516
+    },
+    {
+      "path": "data/rebuild-evidence/20261105/mediadive-retry-1734/preparation.log",
+      "destination": "preparation.log",
+      "sha256": "86dbd08cdfb95e172a7510fb2810e0619617909ae17aea3aab469348145541cf",
+      "bytes": 3976
+    },
+    {
+      "path": "data/rebuild-evidence/20261105/stages/mediadive-retry-1734-live-r1/result.json",
+      "destination": "live/launcher-result.json",
+      "sha256": "3ad3b842cbbd888e694eccc50336a891b99734cefec516ae9ca80dc87e8ab2d2",
+      "bytes": 4942
+    },
+    {
+      "path": "data/rebuild-evidence/20261105/stages/mediadive-retry-1734-plan/result.json",
+      "destination": "plan/original-failed-result.json",
+      "sha256": "d98211ba07532a0f0554e3f242997bde625c0867ad452ebbb9569e0d68f19537",
+      "bytes": 4921
+    },
+    {
+      "path": "data/rebuild-evidence/20261105/mediadive-retry-1734/post-run-independent-review/audit.json",
+      "destination": "post-run/audit.json",
+      "sha256": "237d25a5489646615f3a4e8088c8566a96c532c6e43180115d075cfe11bd9aa9",
+      "bytes": 5720
+    },
+    {
+      "path": "data/rebuild-evidence/20261105/mediadive-retry-1734/post-run-independent-review/preservation-review.json",
+      "destination": "post-run/preservation-review.json",
+      "sha256": "6b1fba20c430017397c0537240402f2d82bb00e868fae7492382eab8a2cd3919",
+      "bytes": 11036
+    },
+    {
+      "path": "data/rebuild-evidence/20261105/mediadive-retry-1734/post-run-independent-review/audit-manifest.json",
+      "destination": "post-run/audit-manifest.json",
+      "sha256": "3594d42e7bfd891c35964af202247b9ce5bdb1410482fac2329dc7f804470e97",
+      "bytes": 1075
+    },
+    {
+      "path": "data/rebuild-evidence/20261105/mediadive-retry-1734/post-run-independent-review/audit-driver.py",
+      "destination": "post-run/audit-driver.py",
+      "sha256": "1f645fa997a74213e0fe487f6a327775bd880ee55153bc116f61613a0da6cb74",
+      "bytes": 23953
+    },
+    {
+      "path": "data/rebuild-evidence/20261105/mediadive-retry-1734/independent-admission-code-review.json",
+      "destination": "independent-admission-code-review.json",
+      "sha256": "5d7a3fab1643263b9e15963d7b048af4e706621bf35761f19065bd3ba5922b42",
+      "bytes": 6042
+    },
+    {
+      "path": "data/validation/pr-gates/kgm-mediadive-retry-1734-20261105-gates.json",
+      "destination": "initial-failed-gate.json",
+      "sha256": "4b77b082341f855c497bf1e5877a39587ab333f42899e4aaea474488524de378",
+      "bytes": 1161
+    },
+    {
+      "path": "data/rebuild-evidence/20261105/mediadive-retry-1734/docstring-repair-ast-check.json",
+      "destination": "docstring-repair-ast-check.json",
+      "bytes": 726,
+      "sha256": "54db9c2ba21e33035f9c246a4e59296a786d4552d5270c2e41de4e0e8185bacd"
+    }
+  ]
+}

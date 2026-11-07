@@ -1,0 +1,158 @@
+{
+  "kind": "exact_nonsecret_implementation_checkpoint",
+  "records": [
+    {
+      "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/lpsn-continuation-20261106/authorization-and-implementation-checkpoint-r1.json",
+      "packet": "authorization-and-implementation-checkpoint-r1.json",
+      "bytes": 692,
+      "sha256": "afb689118adc4e38c849a77a3c94106918a90f1222f884b06dd6268806e10fca"
+    },
+    {
+      "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/lpsn-continuation-20261106/authentication-logging-independent-review-r1.json",
+      "packet": "authentication-logging-independent-review-r1.json",
+      "bytes": 13067,
+      "sha256": "7f02228b1e4a59f1c885ec735b39871e241096a507acb413aa2e8c78d9c65415"
+    },
+    {
+      "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/lpsn-continuation-20261106/authenticated-boundary-independent-review-r2.json",
+      "packet": "authenticated-boundary-independent-review-r2.json",
+      "bytes": 10162,
+      "sha256": "44c79958cbf1fd8bfe16f4769ed1b0ec543bee17ecff11d3be14ff983c6097e5"
+    },
+    {
+      "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/lpsn-continuation-20261106/authenticated-boundary-independent-review-r3.json",
+      "packet": "authenticated-boundary-independent-review-r3.json",
+      "bytes": 8210,
+      "sha256": "36a858b18ed6c7974fdde07958674244f56e95d87f08b780bad836fefbc7758b"
+    },
+    {
+      "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/lpsn-continuation-20261106/authenticated-boundary-independent-review-r4.json",
+      "packet": "authenticated-boundary-independent-review-r4.json",
+      "bytes": 10404,
+      "sha256": "f9de6e985d0a5074545892836e705f2e0f4202e3f35676fb392bd83996ba00f8"
+    },
+    {
+      "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/lpsn-continuation-20261106/focused-combined-result-r2.json",
+      "packet": "focused-combined-result-r2.json",
+      "bytes": 1215,
+      "sha256": "96721a65a2cbd12fe971504b16c531a7611a5788ccb71e5022548915914ce3cd"
+    },
+    {
+      "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/lpsn-continuation-20261106/focused-combined-result-r3.json",
+      "packet": "focused-combined-result-r3.json",
+      "bytes": 1168,
+      "sha256": "7ec12f2d824a5762f9581dbf4f4f454bca172c08e9fc85f432831adcd99f583d"
+    },
+    {
+      "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/lpsn-continuation-20261106/focused-combined-r3.log",
+      "packet": "focused-combined-r3.log",
+      "bytes": 2801,
+      "sha256": "05e5bd064fd7c7ea9d740a91235ded2743458c088b7b627de23e2ba9b791efa4"
+    },
+    {
+      "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/lpsn-continuation-20261106/filed-findings.jsonl",
+      "packet": "filed-findings.jsonl",
+      "bytes": 2026,
+      "sha256": "bf20508c3e1611b1f7a44f82a646cc98ed817dad6094ef15cece5c7bc1c704f6"
+    },
+    {
+      "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/lpsn-continuation-20261106/focused-combined-r1.log",
+      "packet": "focused-combined-r1.log",
+      "bytes": 2721,
+      "sha256": "fa2dbb9a5f121853f0c579b7223bbc13d843b265c3623222d3ea0f57c7d2009e"
+    },
+    {
+      "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/lpsn-continuation-20261106/issue-authenticated-canary-command-binding.md",
+      "packet": "issue-authenticated-canary-command-binding.md",
+      "bytes": 994,
+      "sha256": "db080a067e7ff28e5a5861ed3e438b36bd0381f39d225670063a66ca2eb0b32d"
+    },
+    {
+      "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/lpsn-continuation-20261106/issue-authenticated-diagnostics.md",
+      "packet": "issue-authenticated-diagnostics.md",
+      "bytes": 1069,
+      "sha256": "72b1afe3d5c19685d4f14bcdc7ba9a279a3024c8cfb74253fb553a78750b1ad5"
+    },
+    {
+      "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/lpsn-continuation-20261106/issue-cache-preservation-cohort-r2.md",
+      "packet": "issue-cache-preservation-cohort-r2.md",
+      "bytes": 1292,
+      "sha256": "59f2154e64ec6dda8bc78c74f220ba20dcd856de2c3dc9afdc3fd23c1b8a1722"
+    },
+    {
+      "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/lpsn-continuation-20261106/issue-cache-preservation-cohort.md",
+      "packet": "issue-cache-preservation-cohort.md",
+      "bytes": 873,
+      "sha256": "becc780977aec878ab910d4eb752cd9e0d0c1f81591483466f07f45793fc0f7f"
+    },
+    {
+      "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/lpsn-continuation-20261106/issue-first-authenticated-process-output.md",
+      "packet": "issue-first-authenticated-process-output.md",
+      "bytes": 805,
+      "sha256": "5b1845caaa26b6a8e420fa174495ed1a3825ab5da598c4076f173639e474711c"
+    },
+    {
+      "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/lpsn-continuation-20261106/issue-launcher-environment-fingerprint.md",
+      "packet": "issue-launcher-environment-fingerprint.md",
+      "bytes": 840,
+      "sha256": "0b1b3cb74766eb6a2ba4cd6d47b234a889db092089d151f9ce3612f03529a6e8"
+    },
+    {
+      "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/lpsn-continuation-20261106/issue-lpsn-failed-acquisition-completion.md",
+      "packet": "issue-lpsn-failed-acquisition-completion.md",
+      "bytes": 1214,
+      "sha256": "d1cf3727cdbf7906516b2322faa0b3f364c0f166b66c3421fe1fd07236395fb9"
+    },
+    {
+      "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/lpsn-continuation-20261106/issue-public-response-secrets-r2.md",
+      "packet": "issue-public-response-secrets-r2.md",
+      "bytes": 1390,
+      "sha256": "e427d9079b7fdd23fece0348bcc814a3efd4e4aedd5e9753aeb217e0cd283f15"
+    },
+    {
+      "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/lpsn-continuation-20261106/issue-public-response-secrets.md",
+      "packet": "issue-public-response-secrets.md",
+      "bytes": 936,
+      "sha256": "aacfdd6816969ef3fd522c68df53d34d15c7eb01d0b46a7e6cd0922bd52327bc"
+    },
+    {
+      "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/lpsn-continuation-20261106/issue-supplied-lpsn-environment.md",
+      "packet": "issue-supplied-lpsn-environment.md",
+      "bytes": 824,
+      "sha256": "09d346de5ca72cb4113ad6b00c695570e4ab1d26d1019005fcdb5797919e9d35"
+    },
+    {
+      "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/lpsn-continuation-20261106/implementation-report-initial-r1.md",
+      "packet": "implementation-report-initial-r1.md",
+      "bytes": 5265,
+      "sha256": "c455ef63f5f5b8c765b327781da62e05825772d26a551c2e6a6f1df4c96a4f7b"
+    },
+    {
+      "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/lpsn-continuation-20261106/format-preservation-r1.json",
+      "packet": "format-preservation-r1.json",
+      "bytes": 154,
+      "sha256": "21ec4b2402dfbe270a28fbf2e0def3e8841ca27f1893bdd3e06d3b75847e296b"
+    },
+    {
+      "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/lpsn-continuation-20261106/format-preservation-r2.json",
+      "packet": "format-preservation-r2.json",
+      "bytes": 154,
+      "sha256": "21ec4b2402dfbe270a28fbf2e0def3e8841ca27f1893bdd3e06d3b75847e296b"
+    },
+    {
+      "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/lpsn-continuation-20261106/format-codespell-r2.log",
+      "packet": "format-codespell-r2.log",
+      "bytes": 3976,
+      "sha256": "be2808693758463761cc832ded2b7df260a4282ae2fc3140aad141161da46ac8"
+    },
+    {
+      "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/lpsn-continuation-20261106/runner-test-docstrings-ast-r1.json",
+      "packet": "runner-test-docstrings-ast-r1.json",
+      "bytes": 237,
+      "sha256": "dd929e84a31537c44aad7195a62151dca253a02e9279088dc82ccf94ce8cfedf"
+    }
+  ],
+  "actual_credentials_read": false,
+  "later_runtime_outcomes": "data/rebuild-evidence/20261105/mediadive-resolution-1734/lpsn-continuation-20261106",
+  "test_documentation_note": "Seven nested test-helper docstrings were added after the 188-case focused run; the retained AST control proves executable test syntax unchanged. The final candidate gate remains required."
+}

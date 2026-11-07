@@ -1,0 +1,370 @@
+{
+  "original_records": [
+    {
+      "current_original_matches": true,
+      "expected": {
+        "bytes": 10469524,
+        "sha256": "5b136571fa52fb2a698069d6ce7117717bb6eb4c572fa3b9a6af167e7d054e63"
+      },
+      "mutable_production_output": false,
+      "path": "data/raw/mediadive/solutions.json",
+      "preserved_copy_matches": true
+    },
+    {
+      "current_original_matches": true,
+      "expected": {
+        "bytes": 392851,
+        "sha256": "ce4510e1ebc357ae8629a56fd769d4825320e99fafad1135b6a8207560f9ae35"
+      },
+      "mutable_production_output": false,
+      "path": "data/raw/mediadive/mediadive_download.log",
+      "preserved_copy_matches": true
+    },
+    {
+      "current_original_matches": true,
+      "expected": {
+        "bytes": 20814573,
+        "sha256": "82a7d02a5a85378d6acaa535c5d4e07a2fe3ede5c5cb743bee0892eed738bb81"
+      },
+      "mutable_production_output": false,
+      "path": "data/raw/mediadive/media_detailed.json",
+      "preserved_copy_matches": true
+    },
+    {
+      "expected": {
+        "bytes": 12415383,
+        "sha256": "cc216f49a6a4499b593664b7265ed6c7f4d801dbb4c327bef5bac7adba69cb15"
+      },
+      "mutable_production_output": true,
+      "path": "data/raw/mediadive/media_strains.json",
+      "preserved_copy_matches": true
+    },
+    {
+      "current_original_matches": true,
+      "expected": {
+        "bytes": 228388,
+        "sha256": "5401db0bc697249c9b2b0ad0b950fd3c2b7629f0cdd10c7feaf1e40b0a3a4729"
+      },
+      "mutable_production_output": false,
+      "path": "data/raw/mediadive/compounds.json",
+      "preserved_copy_matches": true
+    },
+    {
+      "expected": {
+        "bytes": 32768,
+        "sha256": "fd4c9fda9cd3f9ae7c962b0ddf37232294d55580e1aa165aa06129b8549389eb"
+      },
+      "mutable_production_output": true,
+      "path": "data/raw/mediadive/mediadive_bulk_cache.sqlite-shm",
+      "preserved_copy_matches": true
+    },
+    {
+      "expected": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "mutable_production_output": true,
+      "path": "data/raw/mediadive/mediadive_bulk_cache.sqlite-wal",
+      "preserved_copy_matches": true
+    },
+    {
+      "expected": {
+        "bytes": 53895168,
+        "sha256": "65a2424cd768be0c34f07409734bfe270ecb9e0eac27026f1fbaee8be7d0383f"
+      },
+      "mutable_production_output": true,
+      "path": "data/raw/mediadive/mediadive_bulk_cache.sqlite",
+      "preserved_copy_matches": true
+    },
+    {
+      "current_original_matches": true,
+      "expected": {
+        "bytes": 998810,
+        "sha256": "3c85c7eacef652883ae3cdb2c3a79808ab7bb71bb02bf54a04cb67432b5027eb"
+      },
+      "path": "data/rebuild-evidence/20261105/mediadive/attempts/sequence-1/full/selected-media.json",
+      "preserved_copy_matches": true
+    },
+    {
+      "current_original_matches": true,
+      "expected": {
+        "bytes": 2936614,
+        "sha256": "5baef7feeb0ba86d1264e9c4fc5a7c3f1700cfd5c5ea5cc2bf5351befd3a9022"
+      },
+      "path": "data/rebuild-evidence/20261105/mediadive/attempts/sequence-1/full/http-attempts.jsonl",
+      "preserved_copy_matches": true
+    },
+    {
+      "current_original_matches": true,
+      "expected": {
+        "bytes": 106323,
+        "sha256": "879fced789621230f97daac5d324c39a2dba2fbd1ed6f662f6d430d1dd05a714"
+      },
+      "path": "data/rebuild-evidence/20261105/mediadive/attempts/sequence-1/full/failure-accounting.json",
+      "preserved_copy_matches": true
+    },
+    {
+      "current_original_matches": true,
+      "expected": {
+        "bytes": 43375,
+        "sha256": "d792f4def31b55e3e2aca041e4c1d45ef0f86e2b20427e7be78e84d168ffa840"
+      },
+      "path": "data/rebuild-evidence/20261105/mediadive/attempts/sequence-1/full/receipt.json",
+      "preserved_copy_matches": true
+    },
+    {
+      "current_original_matches": true,
+      "expected": {
+        "bytes": 10469524,
+        "sha256": "5b136571fa52fb2a698069d6ce7117717bb6eb4c572fa3b9a6af167e7d054e63"
+      },
+      "path": "data/rebuild-evidence/20261105/mediadive/attempts/sequence-1/full/artifacts/solutions.json"
+    },
+    {
+      "current_original_matches": true,
+      "expected": {
+        "bytes": 392851,
+        "sha256": "ce4510e1ebc357ae8629a56fd769d4825320e99fafad1135b6a8207560f9ae35"
+      },
+      "path": "data/rebuild-evidence/20261105/mediadive/attempts/sequence-1/full/artifacts/mediadive_download.log"
+    },
+    {
+      "current_original_matches": true,
+      "expected": {
+        "bytes": 20814573,
+        "sha256": "82a7d02a5a85378d6acaa535c5d4e07a2fe3ede5c5cb743bee0892eed738bb81"
+      },
+      "path": "data/rebuild-evidence/20261105/mediadive/attempts/sequence-1/full/artifacts/media_detailed.json"
+    },
+    {
+      "current_original_matches": true,
+      "expected": {
+        "bytes": 12415383,
+        "sha256": "cc216f49a6a4499b593664b7265ed6c7f4d801dbb4c327bef5bac7adba69cb15"
+      },
+      "path": "data/rebuild-evidence/20261105/mediadive/attempts/sequence-1/full/artifacts/media_strains.json"
+    },
+    {
+      "current_original_matches": true,
+      "expected": {
+        "bytes": 228388,
+        "sha256": "5401db0bc697249c9b2b0ad0b950fd3c2b7629f0cdd10c7feaf1e40b0a3a4729"
+      },
+      "path": "data/rebuild-evidence/20261105/mediadive/attempts/sequence-1/full/artifacts/compounds.json"
+    },
+    {
+      "current_original_matches": true,
+      "expected": {
+        "bytes": 53895168,
+        "sha256": "3e53107cc92dd3c6dd09be1064f7be70e53e254711bc9e3f2dcc30bf3b555f38"
+      },
+      "path": "data/rebuild-evidence/20261105/mediadive/attempts/sequence-1/full/artifacts/mediadive_bulk_cache.sqlite"
+    }
+  ],
+  "protected_records": [
+    {
+      "matches": true,
+      "path": "docs/reviews/m5-upgrades-20261105/activation-independent-review.json"
+    },
+    {
+      "matches": true,
+      "path": "docs/reviews/m5-upgrades-20261105/failed-ontology-source-admission.json"
+    },
+    {
+      "matches": true,
+      "path": "docs/reviews/m5-upgrades-20261105/foodon-cold-conversion-comparison.json"
+    },
+    {
+      "matches": true,
+      "path": "docs/reviews/m5-upgrades-20261105/foodon-source-backed-retirements.json"
+    },
+    {
+      "matches": true,
+      "path": "docs/reviews/m5-upgrades-20261105/independent-biolink-policy-audit.json"
+    },
+    {
+      "matches": true,
+      "path": "docs/reviews/m5-upgrades-20261105/independent-pin-upgrade-audit.md"
+    },
+    {
+      "matches": true,
+      "path": "docs/reviews/m5-upgrades-20261105/independent-uberon-disposition-audit.json"
+    },
+    {
+      "matches": true,
+      "path": "docs/reviews/m5-upgrades-20261105/ontology-admission.json"
+    },
+    {
+      "matches": true,
+      "path": "docs/reviews/m5-upgrades-20261105/rhea143-current-policy-check.json"
+    },
+    {
+      "matches": true,
+      "path": "docs/reviews/m5-upgrades-20261105/rhea143-finite-legacy-assessment.json"
+    },
+    {
+      "matches": true,
+      "path": "docs/reviews/m5-upgrades-20261105/rhea143-label-gap-delta.json"
+    },
+    {
+      "matches": true,
+      "path": "docs/reviews/m5-upgrades-20261105/rhea143-selected-context-comparison.json"
+    },
+    {
+      "matches": true,
+      "path": "docs/reviews/m5-upgrades-20261105/uberon-1737-disposition.json"
+    },
+    {
+      "matches": true,
+      "path": "data/transformed/ontologies/chebi_edges.tsv"
+    },
+    {
+      "matches": true,
+      "path": "data/transformed/ontologies/chebi_nodes.tsv"
+    },
+    {
+      "matches": true,
+      "path": "data/transformed/ontologies/ec_edges.tsv"
+    },
+    {
+      "matches": true,
+      "path": "data/transformed/ontologies/ec_nodes.tsv"
+    },
+    {
+      "matches": true,
+      "path": "data/transformed/ontologies/envo_edges.tsv"
+    },
+    {
+      "matches": true,
+      "path": "data/transformed/ontologies/envo_nodes.tsv"
+    },
+    {
+      "matches": true,
+      "path": "data/transformed/ontologies/foodon_edges.tsv"
+    },
+    {
+      "matches": true,
+      "path": "data/transformed/ontologies/foodon_nodes.tsv"
+    },
+    {
+      "matches": true,
+      "path": "data/transformed/ontologies/go_edges.tsv"
+    },
+    {
+      "matches": true,
+      "path": "data/transformed/ontologies/go_nodes.tsv"
+    },
+    {
+      "matches": true,
+      "path": "data/transformed/ontologies/hp_edges.tsv"
+    },
+    {
+      "matches": true,
+      "path": "data/transformed/ontologies/hp_nodes.tsv"
+    },
+    {
+      "matches": true,
+      "path": "data/transformed/ontologies/metpo_edges.tsv"
+    },
+    {
+      "matches": true,
+      "path": "data/transformed/ontologies/metpo_nodes.tsv"
+    },
+    {
+      "matches": true,
+      "path": "data/transformed/ontologies/mondo_edges.tsv"
+    },
+    {
+      "matches": true,
+      "path": "data/transformed/ontologies/mondo_nodes.tsv"
+    },
+    {
+      "matches": true,
+      "path": "data/transformed/ontologies/ncbitaxon_edges.tsv"
+    },
+    {
+      "matches": true,
+      "path": "data/transformed/ontologies/ncbitaxon_nodes.tsv"
+    },
+    {
+      "matches": true,
+      "path": "data/transformed/ontologies/pato_edges.tsv"
+    },
+    {
+      "matches": true,
+      "path": "data/transformed/ontologies/pato_nodes.tsv"
+    },
+    {
+      "matches": true,
+      "path": "data/transformed/ontologies/ro_edges.tsv"
+    },
+    {
+      "matches": true,
+      "path": "data/transformed/ontologies/ro_nodes.tsv"
+    },
+    {
+      "matches": true,
+      "path": "data/transformed/ontologies/taxrank_edges.tsv"
+    },
+    {
+      "matches": true,
+      "path": "data/transformed/ontologies/taxrank_nodes.tsv"
+    },
+    {
+      "matches": true,
+      "path": "data/transformed/ontologies/uberon_edges.tsv"
+    },
+    {
+      "matches": true,
+      "path": "data/transformed/ontologies/uberon_nodes.tsv"
+    },
+    {
+      "matches": true,
+      "path": "data/transformed/ontologies/upa_edges.tsv"
+    },
+    {
+      "matches": true,
+      "path": "data/transformed/ontologies/upa_nodes.tsv"
+    },
+    {
+      "matches": true,
+      "path": "data/transformed/ontologies/foodon_kernel_quarantine.tsv"
+    },
+    {
+      "matches": true,
+      "path": "data/transformed/ontologies/go_reference_resolution.tsv"
+    },
+    {
+      "matches": true,
+      "path": "data/transformed/ontologies/native_relation_dispositions.tsv"
+    },
+    {
+      "matches": true,
+      "path": "data/transformed/ontologies/ontology_metadata_exclusions.tsv"
+    },
+    {
+      "matches": true,
+      "path": "data/transformed/ontologies/ontology_parent_dispositions.tsv"
+    },
+    {
+      "matches": true,
+      "path": "data/transformed/ontologies/source_canonicalization.tsv"
+    },
+    {
+      "matches": true,
+      "path": "data/transformed/ontologies/source_metadata_exclusions.tsv"
+    },
+    {
+      "matches": true,
+      "path": "data/transformed/ontologies/source_reference_resolution.tsv"
+    },
+    {
+      "matches": true,
+      "path": "data/transformed/ontologies/upa_route_review.tsv"
+    },
+    {
+      "matches": true,
+      "path": "data/transformed/ontologies/source_finalization.json"
+    }
+  ]
+}

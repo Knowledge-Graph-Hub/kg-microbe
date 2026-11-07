@@ -1,0 +1,73 @@
+{
+  "issues": [
+    1776,
+    1777,
+    1778,
+    1779
+  ],
+  "base_commit": "8bdf8b1fffbad024f5d0a0ccbd821c242039a677",
+  "checks": [
+    {
+      "command": [
+        "poetry",
+        "run",
+        "pytest",
+        "tests/test_merge_consumed_input_review.py",
+        "tests/test_merge_source_freshness.py",
+        "tests/test_chemical_xref_annotations.py",
+        "tests/test_ingredient_context_identifier_spellings.py",
+        "tests/test_mediadive_catalase_scope.py",
+        "tests/test_mediadive_material_scope_audit.py",
+        "tests/test_mediadive_p3556_scope.py",
+        "tests/test_mediadive_parsed_payloads.py",
+        "tests/test_mediadive_peptone_scope.py",
+        "tests/test_mediadive_recipe_identity.py",
+        "tests/test_mediadive_recipe_occurrences.py",
+        "tests/test_mediadive_reviewed_material_audit.py",
+        "tests/test_mediadive_sugar_context.py",
+        "-q",
+        "--tb=short"
+      ],
+      "exit_code": 0,
+      "passed": 455,
+      "seconds": 378.79,
+      "log": "data/rebuild-evidence/20261105/mediadive-resolution-1734/final-gate-fixture-focused-r1.log",
+      "sha256": "8f69de5bb6408d90049b15999e3b04c52941f0792d817ed404d1d22c591f91b0",
+      "recording": "Command reconstructed from the actual completed Terminal invocation; native quiet log retained unchanged."
+    },
+    {
+      "command": [
+        "poetry",
+        "run",
+        "pytest",
+        "tests/test_bacdive_ncbitaxon_stubs.py",
+        "tests/test_declared_taxid_retirement.py",
+        "tests/test_bacdive_unresolvable_taxa.py",
+        "-q",
+        "--tb=short"
+      ],
+      "exit_code": 0,
+      "passed": 203,
+      "seconds": 111.16,
+      "log": "data/rebuild-evidence/20261105/mediadive-resolution-1734/retirement-fixture-focused-r1.log",
+      "sha256": "fbab0f769345a7d954cdd9000672c83cd6fa012d42efab063f9d1fd2e2749067",
+      "recording": "Command reconstructed from the actual completed Terminal invocation; native quiet log retained unchanged."
+    }
+  ],
+  "format": {
+    "command": [
+      "poetry",
+      "run",
+      "tox",
+      "-e",
+      "format,codespell-write"
+    ],
+    "exit_code": 0,
+    "seconds": 1.2,
+    "log_sha256": "91b6db73723b4a17e6495dfbfc859639f856ab85dc9669c53ab81a277a5aa066",
+    "preservation_sha256": "c943d2d77f069a0dd5e25ea512a4bfdac80b1ff276a05c30dec787d83e8a6906"
+  },
+  "production_changes": false,
+  "independent_review_sha256": "b684c0fb27a472db45c8c245acaf53a81bc29d1093fdf1e7415533f08e4856fc",
+  "limits": "Focused checks do not replace the new committed candidate final gate or data admission. Synthetic mutated proof bindings occur only in negative tests; actual production receipts are unchanged."
+}

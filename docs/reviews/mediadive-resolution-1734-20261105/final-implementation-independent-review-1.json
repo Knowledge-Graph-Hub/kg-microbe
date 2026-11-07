@@ -1,0 +1,158 @@
+{
+  "schema_version": 1,
+  "status": "no_new_concrete_findings",
+  "recorded_at": "2026-11-05T22:51:34.109737+00:00",
+  "base_commit": "b12bc8d8a1c3b436f967dc19efc2e1b22c6e84f1",
+  "reviewed_commit": "9cd059e5e77b6103bc43f22ad2ea7da1f360132c",
+  "scope": "New bounded review of final implementation diff, emphasizing actual full MediaDive producer and inherited source finalization compatibility. Earlier resolved findings are not reopened or restated.",
+  "method": "Read implementation diff and complete changed producer/consumer/qualification paths; trace unchanged recursive source freshness and finalization callers; inspect actual sealed native payload shapes locally. No producer, admission gate, test suite, database query, HTTP request or Git write.",
+  "bound_code_and_policy": {
+    "kg_microbe/transform_utils/mediadive/mediadive.py": {
+      "path": "kg_microbe/transform_utils/mediadive/mediadive.py",
+      "bytes": 80386,
+      "sha256": "5dd9090519838615677c118bcdc95db5304e658dde0dc04876330193a5f7e855"
+    },
+    "kg_microbe/transform_utils/mediadive/bulk_inputs.py": {
+      "path": "kg_microbe/transform_utils/mediadive/bulk_inputs.py",
+      "bytes": 15065,
+      "sha256": "a7b6d87afbf530ae8a520f10b5edda3b52b8ab267431ffe3810b0b8614254d4b"
+    },
+    "kg_microbe/transform_utils/mediadive/endpoint_consumer.py": {
+      "path": "kg_microbe/transform_utils/mediadive/endpoint_consumer.py",
+      "bytes": 13120,
+      "sha256": "0b14f6ec992476b73c5cf0cf9e1e92ad38acc59724fd5e20c75a2f35e29cea94"
+    },
+    "kg_microbe/transform_utils/mediadive/endpoint_outcomes.py": {
+      "path": "kg_microbe/transform_utils/mediadive/endpoint_outcomes.py",
+      "bytes": 34745,
+      "sha256": "4829dd7719172ecf6ce1b87f78b59b07b488395b2e68921ed8f87de0004938e6"
+    },
+    "kg_microbe/transform_utils/mediadive/acquisition.py": {
+      "path": "kg_microbe/transform_utils/mediadive/acquisition.py",
+      "bytes": 30012,
+      "sha256": "4052142e440bcda181d2c106de8c405cacb545be18792740f869b36a1509ac9e"
+    },
+    "kg_microbe/merge_utils/source_qualifications.py": {
+      "path": "kg_microbe/merge_utils/source_qualifications.py",
+      "bytes": 3787,
+      "sha256": "e7e6246389d889dd56c5e0c02499919eb771f491a7dc24ac95d94124713f139f"
+    },
+    "kg_microbe/merge_utils/merge_kg.py": {
+      "path": "kg_microbe/merge_utils/merge_kg.py",
+      "bytes": 34948,
+      "sha256": "bbf2ca9d3b57762ccf2a279d4e8785775d526b09151e82d0a7ac4fe2abdf41ca"
+    },
+    "kg_microbe/merge_utils/source_freshness.py": {
+      "path": "kg_microbe/merge_utils/source_freshness.py",
+      "bytes": 12842,
+      "sha256": "15527444fad4d5adf54c025da4b6789fc61430654c15f52ea757b6de80ca5620"
+    },
+    "kg_microbe/utils/source_finalization.py": {
+      "path": "kg_microbe/utils/source_finalization.py",
+      "bytes": 65662,
+      "sha256": "4a218471634517d617ef2dade4d511531ef3a42ec442480932654d5a2beffc24"
+    },
+    "scripts/adhoc/kgm_mediadive_artifact_admission_20261105.py": {
+      "path": "scripts/adhoc/kgm_mediadive_artifact_admission_20261105.py",
+      "bytes": 15356,
+      "sha256": "6cd653f2c0274c249a687975de669d54fcec9c7a1e3c3ef381a7d2aa8162a150"
+    },
+    "mappings/mediadive_unknown_dispositions.json": {
+      "path": "mappings/mediadive_unknown_dispositions.json",
+      "bytes": 176020,
+      "sha256": "2e1915efda265be4cbaea8921f126a7a1ea04e7c8110194ead915cfc1cecbd08"
+    }
+  },
+  "actual_generation_manifest": {
+    "path": "data/raw/mediadive/generations/resolution-admitted-r2/manifest.json",
+    "bytes": 2580580,
+    "sha256": "fa3c9e47bad5ff298b35e32382de7bd642e6be6ed95540db128d7d674058924f"
+  },
+  "actual_native_members_checked_against_manifest": {
+    "catalogue.json": {
+      "path": "data/raw/mediadive/generations/resolution-admitted-r2/catalogue.json",
+      "bytes": 1206179,
+      "sha256": "454a3d3b5061bd2347f9520dafe2746a50e830611cb8753eb7e8ea4f9bde12f0"
+    },
+    "media_detailed.json": {
+      "path": "data/raw/mediadive/generations/resolution-admitted-r2/media_detailed.json",
+      "bytes": 20814573,
+      "sha256": "82a7d02a5a85378d6acaa535c5d4e07a2fe3ede5c5cb743bee0892eed738bb81"
+    },
+    "media_strains.json": {
+      "path": "data/raw/mediadive/generations/resolution-admitted-r2/media_strains.json",
+      "bytes": 12415383,
+      "sha256": "cc216f49a6a4499b593664b7265ed6c7f4d801dbb4c327bef5bac7adba69cb15"
+    },
+    "solutions.json": {
+      "path": "data/raw/mediadive/generations/resolution-admitted-r2/solutions.json",
+      "bytes": 10469524,
+      "sha256": "5b136571fa52fb2a698069d6ce7117717bb6eb4c572fa3b9a6af167e7d054e63"
+    },
+    "compounds.json": {
+      "path": "data/raw/mediadive/generations/resolution-admitted-r2/compounds.json",
+      "bytes": 228388,
+      "sha256": "5401db0bc697249c9b2b0ad0b950fd3c2b7629f0cdd10c7feaf1e40b0a3a4729"
+    },
+    "endpoint-outcomes.json": {
+      "path": "data/raw/mediadive/generations/resolution-admitted-r2/endpoint-outcomes.json",
+      "bytes": 2132415,
+      "sha256": "562e09a148f7c9a155708b15dc579e181a1383cfbcd664ba0f28f25e72aebcfd"
+    }
+  },
+  "prior_completed_generation_admission": {
+    "path": "data/rebuild-evidence/20261105/mediadive-resolution-1734/admission-r2-independent-audit-1.json",
+    "bytes": 86687,
+    "sha256": "7202e5c85461a4af99e40731e130495d37b4e9e707cfca16d1aa334a0323f9ad"
+  },
+  "new_integration_checks": [
+    {
+      "boundary": "Complete producer native payload compatibility",
+      "result": "All3344 selected catalogue entries have the exact fields read by the full producer and string names; all expanded solution references have generation exports and string labels. All applicable growth rows have species labels; no known-strain medium takes the no-solutions short circuit."
+    },
+    {
+      "boundary": "Actual known versus unknown split",
+      "result": "2712 known association endpoints retain73890 native observations (73887 growth1,3 growth0). None of632 unknown endpoint IDs occurs in the native strain dictionary; the changed lookup returnsNone and does not convert it to empty. Recipe emission remains available for every catalogue entry."
+    },
+    {
+      "boundary": "Producer/finalizer lifecycle",
+      "result": "Constructor-bound generation paths feed all four bulk dictionaries; the catalogue also comes from that generation. End-of-run audit publication precedes source finalization. Finalization checks the current guard and exact endpoint audit; fresh-instance repeat restores only the identical sealed endpoint contract. Current explicit native consumer proof remains bound to the reviewed module bytes."
+    },
+    {
+      "boundary": "Recorded graph admission",
+      "result": "Recorded endpoint replay validates the active generation/current policy, compares all exact typed contract fields, reconstructs the audit from native evidence and captures graph bytes before checking unknown/empty growth omissions. Bulk/recipe verification shares that same admission guard before registering the qualification."
+    },
+    {
+      "boundary": "Inherited qualifications and release packaging",
+      "result": "Recursive source freshness keeps one shared admission object through TRANSFORM_INPUTS. The registered MediaDive qualification survives direct selection or admitted-dependency use; its exact audit and incomplete coverage travel into loose/tar manifests. The final publication still verifies admitted bytes. No new global ban was added against independently supported growth claims from other sources."
+    }
+  ],
+  "actual_payload_projection": {
+    "catalogue_count": 3344,
+    "detail_count": 3344,
+    "known_strain_endpoints": 2712,
+    "native_strain_observations": 73890,
+    "growth_counts": {
+      "1": 73887,
+      "0": 3
+    },
+    "unknown_endpoint_count": 632,
+    "unknown_with_native_rows": 0,
+    "missing_required_producer_fields": [],
+    "bad_names": [],
+    "missing_solution_exports": [],
+    "missing_species_for_applicable_growth": [],
+    "known_strain_media_without_solutions": []
+  },
+  "findings": [],
+  "limits": "This is a static integration review plus read-only payload-shape comparison. It does not certify completion of the still-running phase2 batch, a full MediaDive graph producer, dependent phases, canonical merge, archive qualification or final CI. Those existing production gates remain required.",
+  "review_operations": {
+    "producer_runs": 0,
+    "gate_runs": 0,
+    "tests": 0,
+    "http_requests": 0,
+    "source_writes": 0,
+    "database_queries": 0,
+    "git_writes": 0
+  }
+}

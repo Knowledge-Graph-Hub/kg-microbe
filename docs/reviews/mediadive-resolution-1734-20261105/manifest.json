@@ -1,0 +1,476 @@
+[
+  {
+    "bytes": 40739,
+    "file": "resolution-seed-r1-receipt.json",
+    "sha256": "0af71098c42a2ea4ea51a675e537140ca694729c6143e9d2a6399f0523d3f216",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/resolution-seed-r1-receipt.json"
+  },
+  {
+    "bytes": 40802,
+    "file": "resolution-canary-r1-receipt.json",
+    "sha256": "083c59cbd5cc548a0356c59b3eb80e50239e2265e8432dfe659fba87609a348d",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/resolution-canary-r1-receipt.json"
+  },
+  {
+    "bytes": 43527,
+    "file": "resolution-batch-r1-receipt.json",
+    "sha256": "f1570d0b78f85d760bee496cc546815d2a1fbbeb85b5bc28231f50a92e2df823",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/resolution-batch-r1-receipt.json"
+  },
+  {
+    "bytes": 30877,
+    "file": "seed-canary-batch-independent-audit-1.json",
+    "sha256": "6476c469189bdc29b9193ce1bfbb461b952d0810b59490a767c54f035eac01dc",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/seed-canary-batch-independent-audit-1.json"
+  },
+  {
+    "bytes": 41584,
+    "file": "current-reader-batch-replay-1.json",
+    "sha256": "309f1932d4b12e024dd0da0509a23d71ff06ec495e63169c7794900451c60ef7",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/current-reader-batch-replay-1.json"
+  },
+  {
+    "bytes": 80519,
+    "file": "admission-r2.json",
+    "sha256": "c0d7f181cc6a0f0999c1bd8618a0f26317a2fa16eb290d992f43da86cff67db2",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/admission-r2.json"
+  },
+  {
+    "bytes": 86687,
+    "file": "admission-r2-independent-audit-1.json",
+    "sha256": "7202e5c85461a4af99e40731e130495d37b4e9e707cfca16d1aa334a0323f9ad",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/admission-r2-independent-audit-1.json"
+  },
+  {
+    "bytes": 4245,
+    "file": "finite-policy-and-helper-independent-review-1.json",
+    "sha256": "4d2ac1cbfeab6bd3d18dbe5cebacf2da4d46363c78399efc8cfaf684ed902931",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/finite-policy-and-helper-independent-review-1.json"
+  },
+  {
+    "bytes": 7362,
+    "file": "finite-policy-and-helper-independent-review-2.json",
+    "sha256": "be91c7e219230c538fe9007e99de0c6295d8e744b31de1f140c763a36f6d81a4",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/finite-policy-and-helper-independent-review-2.json"
+  },
+  {
+    "bytes": 13945,
+    "file": "finite-policy-and-helper-independent-review-3.json",
+    "sha256": "7dcf25477fdcc659aa2096868ae9a85738b7881bff1a4d91d0b4d8269b3baafe",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/finite-policy-and-helper-independent-review-3.json"
+  },
+  {
+    "bytes": 44789,
+    "file": "current-documentation-policy-proof-1.json",
+    "sha256": "2eaa5f694ce4d32ad806dd312e2d4e702a33dc07acc2adf5609632d072ed72f2",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/current-documentation-policy-proof-1.json"
+  },
+  {
+    "bytes": 4793,
+    "file": "official-doc-contract-activation-failure-assessment-1.json",
+    "sha256": "410d49937258c09e6dcd0435bdc0653f9a6a1bafc1e6fff673f7e48887ccd6c8",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/official-doc-contract-activation-failure-assessment-1.json"
+  },
+  {
+    "bytes": 7292,
+    "file": "current-ontology-revalidation-r1.json",
+    "sha256": "472a7c94aaac89317552fa2b8eae908db6764dfa85e2803f49bb86cef7dc4920",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/current-ontology-revalidation-r1.json"
+  },
+  {
+    "bytes": 17923,
+    "file": "ontology-admission-r1.json",
+    "sha256": "6d258408d22885a952674ee3f30a90e872df57ef365f059b3f0fd1fe3f4e863d",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/ontology-admission-r1.json"
+  },
+  {
+    "bytes": 9808,
+    "file": "finite-unknown-policy-review-criteria-1.json",
+    "sha256": "7ac2d4af1065f6a764a612e045832be30a70052b29ffb020192224e564fbb990",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/finite-unknown-policy-review-criteria-1.json"
+  },
+  {
+    "bytes": 8970,
+    "file": "identity-comparison-1.json",
+    "sha256": "ad51dd3ea92e506899a0c6fc57f7a44e83eda9a61eab581141dabd5ceeca97d3",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/identity-comparison-1.json"
+  },
+  {
+    "bytes": 8899,
+    "file": "control-r2-scientific-comparison-1.json",
+    "sha256": "3b436135eacb90e2e8d016fc37c365de35650871f01b82e38275ca4f431aaff2",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/control-r2-scientific-comparison-1.json"
+  },
+  {
+    "bytes": 2531,
+    "file": "unknown-r2-scientific-assessment-1.json",
+    "sha256": "f4c4dd9dbccf1400662e60113f3096d1a273e992899b0d27a48661e8b5c34479",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/unknown-r2-scientific-assessment-1.json"
+  },
+  {
+    "bytes": 6604,
+    "file": "production-acquisition-independent-review-1.json",
+    "sha256": "ca0386897a7762c77ea6a1e8363fa48cc4ef780c14c4afd9a7d272f22b00040a",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/production-acquisition-independent-review-1.json"
+  },
+  {
+    "bytes": 6567,
+    "file": "production-acquisition-independent-review-2.json",
+    "sha256": "517cfe47977e09035886cf50953f30c2ffbeb6729e07452d39e9ad0b66eacb81",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/production-acquisition-independent-review-2.json"
+  },
+  {
+    "bytes": 5242,
+    "file": "production-consumer-independent-review-1.json",
+    "sha256": "32ea4b00e2b81c23921d10c0863a14277954cf9275a40dcbd84a69f45cd50fff",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/production-consumer-independent-review-1.json"
+  },
+  {
+    "bytes": 4160,
+    "file": "production-consumer-independent-review-2.json",
+    "sha256": "9dcc21f733f751106507227182e2c72af72ba082a432d174645e88c2831c618d",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/production-consumer-independent-review-2.json"
+  },
+  {
+    "bytes": 2730,
+    "file": "merge-qualification-review-1.json",
+    "sha256": "dd6c999becfc70010932dba582dcedf0b98dfc4d69413c5e3411fe80f98fb165",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/merge-qualification-review-1.json"
+  },
+  {
+    "bytes": 926,
+    "file": "artifact-verifier-root-review-1.json",
+    "sha256": "df0a4a8c48c5e562f59723f267e97d72af57dc10045e548d8ed48c044e40d1ab",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/artifact-verifier-root-review-1.json"
+  },
+  {
+    "bytes": 3398,
+    "file": "native-strain-id-multiplicity-official-assessment-1.json",
+    "sha256": "5fd50601d1bd2e69ef87ca1eb10a6b770a5e0c2daf462b38e826b309c59ab296",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/native-strain-id-multiplicity-official-assessment-1.json"
+  },
+  {
+    "bytes": 3325,
+    "file": "consumer-fixture-consistency.json",
+    "sha256": "b7710e872abbc88ad70a3b0a872c3f840af06b43e59bee7957e865e15ced9c64",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/consumer-fixture-consistency.json"
+  },
+  {
+    "bytes": 2283,
+    "file": "consumer-recipe-fixture-repairs-r3.json",
+    "sha256": "eedf275021da196209604d96d63477be31b2d208fbcd57f4f92b6d69e0bf0324",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/consumer-recipe-fixture-repairs-r3.json"
+  },
+  {
+    "bytes": 3267,
+    "file": "consumer-review-findings-1767-1768.json",
+    "sha256": "4a9757900313d189e85d25bb84cb248a5d6011f4f0082f29bbd9db63fc7cf567",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/consumer-review-findings-1767-1768.json"
+  },
+  {
+    "bytes": 1033,
+    "file": "remaining-fixture-repairs-r1.json",
+    "sha256": "466f0eb32796f3e54d5241a2b1ed5b454716b3405c49b4e25afed608cd91558c",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/remaining-fixture-repairs-r1.json"
+  },
+  {
+    "bytes": 3692,
+    "file": "remaining-fixture-repairs-independent-review-1.json",
+    "sha256": "ca9546debc68c9a26930586b4e3b710356ed1ff9e72556fc490c5bd1425a359e",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/remaining-fixture-repairs-independent-review-1.json"
+  },
+  {
+    "bytes": 248,
+    "file": "format-preservation-r1.json",
+    "sha256": "3069a02bfe93b021c6f0607520728a36c2a9b77314ae31e18b3958f594182a10",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/format-preservation-r1.json"
+  },
+  {
+    "bytes": 2591,
+    "file": "october-preservation-r1.json",
+    "sha256": "66b99af0016c61bab0e0cef9c544e5f64d8b3bcfc8615762e6d88d727b4417d6",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/october-preservation-r1.json"
+  },
+  {
+    "bytes": 637,
+    "file": "october-comparison-helper-root-review-1.json",
+    "sha256": "1fdedd209d82aa4a7fe5279eaa231f8740e0246507d0af50d43466d8cda489ca",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/october-comparison-helper-root-review-1.json"
+  },
+  {
+    "bytes": 996,
+    "file": "documentation-contract-fix/frozen-source-proof.json",
+    "sha256": "5866a82bdaa2d87a18ef0b8ea5d1dd7d96bfff5de2f3db11d92a7b7b2a2d633d",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/documentation-contract-fix/frozen-source-proof.json"
+  },
+  {
+    "bytes": 1160,
+    "file": "documentation-contract-fix/fixture-boundary-correction.json",
+    "sha256": "7918f32e99737e7e7ed1ae24bd716a896a402b075f3b775b76dc9f60b9d4705a",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/documentation-contract-fix/fixture-boundary-correction.json"
+  },
+  {
+    "bytes": 703,
+    "file": "artifact-stream-review/repair.json",
+    "sha256": "def15922024a9b4902e28a28c1285feda25193db9b4df09c25fc80d65c5eaaf6",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/artifact-stream-review/repair.json"
+  },
+  {
+    "bytes": 469,
+    "file": "artifact-stream-review/final-identity.json",
+    "sha256": "a374b4be60236dd6b0f8cc9aa1d1da8d1713f56a6663b1c3a8ce374109aa3342",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/artifact-stream-review/final-identity.json"
+  },
+  {
+    "bytes": 6094,
+    "file": "filed-findings.jsonl",
+    "sha256": "9e756c4afd2bf85ce6bfee8d8476d8c2ba2aecb31a3718562d2d30c52ee9afba",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/filed-findings.jsonl"
+  },
+  {
+    "bytes": 6800,
+    "file": "ncbitaxon-reuse-independent-review-1.json",
+    "sha256": "31605de02e84bd35b7890003df34b6ca80d4ece5b7638acbad37f64088f667ec",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/ncbitaxon-reuse-independent-review-1.json"
+  },
+  {
+    "bytes": 4772,
+    "file": "lpsn-phase-helper-independent-review-1.json",
+    "sha256": "b2105f2eb78696295e752f4267c0262281350ee72b27a8ca8e9c8f0c861742ba",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/lpsn-phase-helper-independent-review-1.json"
+  },
+  {
+    "bytes": 3391,
+    "file": "lpsn-phase-helper-review/final-readonly-review.json",
+    "sha256": "cf3c95e3ebf3531f6839e186ab89900d189acc51241f471e4b4694db7ec40e5b",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/lpsn-phase-helper-review/final-readonly-review.json"
+  },
+  {
+    "bytes": 899,
+    "file": "lpsn-phase-helper-review/final-identity.json",
+    "sha256": "867bbcbb1ac0099613436fb4556ba27a58fa4cda014f65b9a0db38f8b8172395",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/lpsn-phase-helper-review/final-identity.json"
+  },
+  {
+    "bytes": 2783,
+    "file": "lpsn-phase-helper-focused-r1.log",
+    "sha256": "23547fc9de005b137dd74bc34a04d84a71efa06522a00bdfb3c44ec70e056e3f",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/lpsn-phase-helper-focused-r1.log"
+  },
+  {
+    "bytes": 403,
+    "file": "native-fixture-whitespace-check-r1.json",
+    "sha256": "cdc840fa1e3f5e8d53b1ae1ca05fcd92337c2bf0ad5d1422ab1def4adc685064",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/native-fixture-whitespace-check-r1.json"
+  },
+  {
+    "bytes": 8504,
+    "file": "final-implementation-independent-review-1.json",
+    "sha256": "5d7fd29f48ddff7b907c08959b7c6da9ff1f1e0596834781ae63bc78b6826d7a",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/final-implementation-independent-review-1.json"
+  },
+  {
+    "bytes": 18633,
+    "file": "acceptance-scope-review-1.json",
+    "sha256": "4a7274c10df05cf9167aecf57a39361e804a5ce2bb4460029138ad90696609a7",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/acceptance-scope-review-1.json"
+  },
+  {
+    "bytes": 6650,
+    "file": "rhea-label-authority-reuse-independent-review-1.json",
+    "sha256": "bdb3409ded47ae4ec45cd77d9d9e06d215cce4855a46ce905c041873de73e954",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/rhea-label-authority-reuse-independent-review-1.json"
+  },
+  {
+    "bytes": 369,
+    "file": "phase2-production-identity-r1.json",
+    "sha256": "066fcbb644bab33419e7f1f3bb4d705ea3cca9cd48a124622f2cf90235a661ee",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/phase2-production-identity-r1.json"
+  },
+  {
+    "bytes": 32209,
+    "file": "phase2-admission-r1.json",
+    "sha256": "771a23983efa7821e499bf4e0411a42ee8660dea8d6f0cfb78c1f0f72be06f9f",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/phase2-admission-r1.json"
+  },
+  {
+    "bytes": 561,
+    "file": "phase2-admission-identity-r1.json",
+    "sha256": "c254547f518722cf142fcb10044e9dc4b5e1d237e46d075a71d416a4353ffd3f",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/phase2-admission-identity-r1.json"
+  },
+  {
+    "bytes": 23004,
+    "file": "production-Rhea-review-r1.json",
+    "sha256": "32675552596827168c4241d32bed43b86a6238261d075bd5d8d15aedf4ddf4fb",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/production-Rhea-review-r1.json"
+  },
+  {
+    "bytes": 27659,
+    "file": "full-producer-MediaDive-review-r1.json",
+    "sha256": "fa9eb08b551d1c45020972f5bcb332a80a151724bcbcdd97201c459032ad07fd",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/full-producer-MediaDive-review-r1.json"
+  },
+  {
+    "bytes": 2881,
+    "file": "ingredient-precheck-r1.json",
+    "sha256": "155380ea2639d1ae93e3d7473751a6eee78e4fc5c1da20d8a9d09f196a49e031",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/ingredient-precheck-r1.json"
+  },
+  {
+    "bytes": 1709,
+    "file": "ingredient-precheck-inputs-r1.json",
+    "sha256": "21904247d5ddab219bfb9345ef2db9db30ae7a8b43cda5d5f9ca1558c54320ae",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/ingredient-precheck-inputs-r1.json"
+  },
+  {
+    "bytes": 2103,
+    "file": "microbedecoder-admission-extension/review.json",
+    "sha256": "c03a0af411b0a24fe3d52630d8af2babe24012690ee8c49beacb66ec4ef78b4b",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/microbedecoder-admission-extension/review.json"
+  },
+  {
+    "bytes": 4816,
+    "file": "microbedecoder-admission-extension/independent-review-r1.json",
+    "sha256": "629e0dd0b2b9dd8e7ca35b735dc714e0b961b2d673b8d8ffb90d5afbf2e964ee",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/microbedecoder-admission-extension/independent-review-r1.json"
+  },
+  {
+    "bytes": 2634,
+    "file": "microbedecoder-admission-focused-r1.log",
+    "sha256": "d901a39e6e2dec8fec8d29d26df2048136b26644cbeee2eddb43e1803be76714",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/microbedecoder-admission-focused-r1.log"
+  },
+  {
+    "bytes": 16850,
+    "file": "phase3-admission-runtime-analysis-r1.json",
+    "sha256": "fd05a0c09854674cd0b892705d4b56b24b7e2692f9adae4c3b988eedca05e916",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/phase3-admission-runtime-analysis-r1.json"
+  },
+  {
+    "bytes": 436,
+    "file": "source-admission-cost-issue-r1.json",
+    "sha256": "75949be2ee37a7cca1879ac88af8517bf98e6409b8e116c8eb3cfb00f2268bf2",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/source-admission-cost-issue-r1.json"
+  },
+  {
+    "bytes": 2012,
+    "file": "phase3-production-identity-r1.json",
+    "sha256": "1de685c875aea79ce01b4157b198863f246202013ee58375e7cd76ea1a3813ef",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/phase3-production-identity-r1.json"
+  },
+  {
+    "bytes": 9252,
+    "file": "phase3-admission-runtime-analysis-addendum-r1.json",
+    "sha256": "bfce9d230f17224a854ba4da7b73dd10e1be13788aa27a5b556db8690e5c0420",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/phase3-admission-runtime-analysis-addendum-r1.json"
+  },
+  {
+    "bytes": 261,
+    "file": "format-preservation-r2.json",
+    "sha256": "9a847633957e5281c80aeee78237702189d82d3db721a80c73003affef9b3e7c",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/format-preservation-r2.json"
+  },
+  {
+    "bytes": 6402,
+    "file": "final-checkpoint-review-r1.json",
+    "sha256": "b939320b1f41679d610df3f70ea29310b0f2a1e206faba08e3da2dc2f93de08c",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/final-checkpoint-review-r1.json"
+  },
+  {
+    "bytes": 1476,
+    "file": "native-log-whitespace-check-r1.json",
+    "sha256": "87ae19f3be40f592a4ea967999ec77da5fe644895e62e8346716d3a86f3545c4",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/native-log-whitespace-check-r1.json"
+  },
+  {
+    "bytes": 3112,
+    "file": "failed-final-code-gate-r1.json",
+    "sha256": "868338eff74f8cbccdbbb8335a5701cb86757642b2cd3136ef69cd345bedd3b4",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/failed-final-code-gate-r1.json"
+  },
+  {
+    "bytes": 5304,
+    "file": "merge-consumed-clone-diagnosis-1.json",
+    "sha256": "bd97d09e2d085c321db8bcc399b646c93849b7a59c6b30165fcfabad4f4cb9de",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/merge-consumed-clone-diagnosis-1.json"
+  },
+  {
+    "bytes": 17547,
+    "file": "artifact-sensitive-independent-diagnosis-r1.json",
+    "sha256": "4e9d5f16559fd42d7b89cc412b63b4290955e0387a2d4e5eb57bf35d94f435f2",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/artifact-sensitive-independent-diagnosis-r1.json"
+  },
+  {
+    "bytes": 8415,
+    "file": "bacdive-stub-retirement-scope-review-r1.json",
+    "sha256": "ccfbdc8fd7769d493736452fd2d5f30217d2c5f91ccf189b0c23955818839ccd",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/bacdive-stub-retirement-scope-review-r1.json"
+  },
+  {
+    "bytes": 9042,
+    "file": "final-gate-fixture-proposals-independent-review-r1.json",
+    "sha256": "2b4efd08b20e18e500223566f9ee923c97aa39bb2020d9a50af4129f71296660",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/final-gate-fixture-proposals-independent-review-r1.json"
+  },
+  {
+    "bytes": 7495,
+    "file": "bacdive-stub-retirement-proposal-independent-review-r1.json",
+    "sha256": "e8b7e30baea6b7a0ee94b88e819ba7bca361bfadbf5f9b5f1e7b364d656f8594",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/bacdive-stub-retirement-proposal-independent-review-r1.json"
+  },
+  {
+    "bytes": 2990,
+    "file": "bacdive-stub-retirement-proposal-independent-review-r2.json",
+    "sha256": "0adb0de77fd4048969eca7291857e462dbb76951539ba424b9a612bcb0adee0a",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/bacdive-stub-retirement-proposal-independent-review-r2.json"
+  },
+  {
+    "bytes": 586,
+    "file": "retirement-fixture-installation-r1.json",
+    "sha256": "1793765877dc2932bb2bf973a59717b00c2dca30bcd694367511a010f7fd5a93",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/retirement-fixture-installation-r1.json"
+  },
+  {
+    "bytes": 10355,
+    "file": "final-applied-fixture-repairs-independent-review-r1.json",
+    "sha256": "b684c0fb27a472db45c8c245acaf53a81bc29d1093fdf1e7415533f08e4856fc",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/final-applied-fixture-repairs-independent-review-r1.json"
+  },
+  {
+    "bytes": 2686,
+    "file": "final-fixture-repair-validation-r1.json",
+    "sha256": "7fa04edcd5a86c8f1af01ea67a2a61ec39f1eae6b896bb85747aa8a43a54e927",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/final-fixture-repair-validation-r1.json"
+  },
+  {
+    "bytes": 243,
+    "file": "format-preservation-r3.json",
+    "sha256": "c943d2d77f069a0dd5e25ea512a4bfdac80b1ff276a05c30dec787d83e8a6906",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/format-preservation-r3.json"
+  },
+  {
+    "bytes": 3847,
+    "file": "final-gate-fixture-focused-r1.log",
+    "sha256": "8f69de5bb6408d90049b15999e3b04c52941f0792d817ed404d1d22c591f91b0",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/final-gate-fixture-focused-r1.log"
+  },
+  {
+    "bytes": 2742,
+    "file": "retirement-fixture-focused-r1.log",
+    "sha256": "fbab0f769345a7d954cdd9000672c83cd6fa012d42efab063f9d1fd2e2749067",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/retirement-fixture-focused-r1.log"
+  },
+  {
+    "bytes": 900,
+    "file": "phase3-admission-stack-observation-r1.json",
+    "sha256": "167a92541bbec1504bfdbcc294f8e5ae06f93c294a131ed1c02f570634d33f64",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/phase3-admission-stack-observation-r1.json"
+  },
+  {
+    "file": "final-checkpoint-review-r2.json",
+    "source": "data/rebuild-evidence/20261105/mediadive-resolution-1734/final-checkpoint-review-r2.json",
+    "bytes": 6191,
+    "sha256": "cd6009f65dc6b2d7ce2a1c5d915234de97bb8d344e1e2b53dcec4c1c11847230"
+  }
+]

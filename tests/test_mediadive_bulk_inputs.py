@@ -15,26 +15,34 @@ import yaml
 from kg_microbe.merge_utils import merge_kg
 from kg_microbe.transform_utils.mediadive import mediadive as mod
 from kg_microbe.utils.source_finalization import SourceFinalizationRequired, verify_finalized_source_files
+from tests.mediadive_generation_fixtures import seal_fixture_raw
 from tests.test_merge_source_freshness import FIXTURES, merge_config, prepare_source, record_source
 
 RESOURCES = Path(__file__).parent / "resources"
-JSON_INPUTS = {
+ROOT_JSON_INPUTS = {
     "mediadive_media_list": "mediadive.json",
     "mediadive_media_detailed": "mediadive/media_detailed.json",
     "mediadive_media_strains": "mediadive/media_strains.json",
     "mediadive_solutions": "mediadive/solutions.json",
     "mediadive_compounds": "mediadive/compounds.json",
 }
+JSON_INPUTS = {
+    role: "mediadive/generations/fixture/"
+    + ("catalogue.json" if role == "mediadive_media_list" else relative.rsplit("/", 1)[-1])
+    for role, relative in ROOT_JSON_INPUTS.items()
+}
 BULK_INPUTS = {name: path for name, path in JSON_INPUTS.items() if name != "mediadive_media_list"}
 
 
-def write_bulk_inputs(raw):
+def write_bulk_inputs(raw, *, seal=True):
     """Copy immutable five-role payloads to only an explicitly selected fixture raw tree."""
     payloads = json.loads((RESOURCES / "mediadive_bulk_inputs.json").read_text())
-    for role, relative in JSON_INPUTS.items():
+    for role, relative in ROOT_JSON_INPUTS.items():
         path = raw / relative
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(json.dumps(payloads[role], sort_keys=True) + "\n")
+    if seal:
+        seal_fixture_raw(raw, missing_strains="explicit_empty")
 
 
 @pytest.fixture
@@ -66,6 +74,7 @@ def test_declares_all_five_actual_json_reads_and_existing_lookup():
     """Missing old completion evidence must fail under registered current producer requirements."""
     assert set(mod.MediaDiveTransform.REQUIRED_CONSUMED_INPUTS) == {
         *JSON_INPUTS,
+        *mod.GENERATION_INPUTS,
         "bacdive_taxon_lookup",
         mod.REVIEWED_ROLE,
         mod.POLICY_ROLE,
@@ -94,8 +103,8 @@ def test_real_constructor_and_run_preserve_actual_read_bytes(tmp_path, monkeypat
     assert value.using_bulk_data
     assert value.input_base_dir == raw
     assert value.bulk_data_dir == raw / "mediadive"
-    assert set(value.consumed_input_snapshots) == set(BULK_INPUTS)
-    original = copy.deepcopy(value.consumed_input_snapshots)
+    assert set(BULK_INPUTS) | set(mod.GENERATION_INPUTS) <= set(value.consumed_input_snapshots)
+    original = {role: copy.deepcopy(value.consumed_input_snapshots[role]) for role in BULK_INPUTS}
     value.run(show_status=False)
     for role, relative in JSON_INPUTS.items():
         assert value.consumed_input_snapshots[role] == {
@@ -111,13 +120,12 @@ def test_real_constructor_and_run_preserve_actual_read_bytes(tmp_path, monkeypat
 
 @pytest.mark.parametrize("absolute", [False, True])
 def test_data_file_override_is_the_consumed_list(tmp_path, bulk_build, absolute):
-    """An explicit relative/absolute list is not ignored or rebound to unconsumed mediadive.json."""
+    """Explicit selection must name the sealed catalogue, retaining its actual immutable role."""
     raw = tmp_path / "raw"
     write_bulk_inputs(raw)
-    selected = (tmp_path if absolute else raw) / "chosen.json"
-    (raw / "mediadive.json").rename(selected)
+    selected = raw / JSON_INPUTS["mediadive_media_list"]
     value = bulk_build(raw)
-    value.run(data_file=selected if absolute else selected.name, show_status=False)
+    value.run(data_file=selected if absolute else selected.relative_to(raw), show_status=False)
     assert value.consumed_input_snapshots["mediadive_media_list"] == {
         "path": str(selected.resolve()),
         "sha256": hashlib.sha256(selected.read_bytes()).hexdigest(),
@@ -137,7 +145,7 @@ def test_bulk_json_failure_cannot_become_cache_fallback(tmp_path, monkeypatch, b
     else:
         path.write_text("{not valid JSON\n")
     monkeypatch.setenv("KG_MEDIADIVE_ALLOW_STALE_CACHE", "true")
-    with pytest.raises((FileNotFoundError, ValueError)):
+    with pytest.raises(SourceFinalizationRequired):
         bulk_build(raw)
     output = tmp_path / "transformed/mediadive"
     assert not (output / "nodes.tsv").exists()
@@ -158,7 +166,7 @@ def test_changed_constructor_bytes_fail_before_graph_writes_and_stay_failed(tmp_
         value.run(show_status=False)
     assert not value.output_node_file.exists()
     assert not value.output_edge_file.exists()
-    assert {key: value.consumed_input_snapshots[key] for key in BULK_INPUTS} == original
+    assert value.consumed_input_snapshots == original
     path.write_bytes(old)
     with pytest.raises(SourceFinalizationRequired, match="read failed"):
         value.run(show_status=False)
@@ -217,14 +225,10 @@ def bulk_admitted(tmp_path, bulk_build, local_source_schema, request):
     raw = tmp_path / "raw"
     write_bulk_inputs(raw)
     symlink_role = getattr(request, "param", None)
-    if symlink_role is not None:
-        path = raw / JSON_INPUTS[symlink_role]
-        original = path.with_suffix(".original")
-        path.rename(original)
-        path.symlink_to(original)
     for source in ("ontologies", "bacdive"):
         prepare_source(tmp_path, source)
     value = bulk_build(raw)
+    value._fixture_selected_role = symlink_role
     value.run(show_status=False)
     for kind in ("nodes", "edges"):
         shutil.copyfile(FIXTURES / f"{kind}.tsv", value.output_dir / f"{kind}.tsv")
@@ -292,38 +296,34 @@ def test_each_actual_json_remains_guarded_after_admission(bulk_admitted, role, d
 @pytest.mark.parametrize("same_bytes", [False, True])
 @pytest.mark.parametrize("role", BULK_INPUTS)
 def test_constructor_file_symlink_cannot_retarget_before_run(tmp_path, bulk_build, role, same_bytes):
-    """Resolved bytes alone cannot silently replace a constructor's original lexical input."""
+    """Sealed generation ownership rejects even equal-byte member links at the initial read."""
     raw = tmp_path / "raw"
     write_bulk_inputs(raw)
     path = raw / JSON_INPUTS[role]
-    original = path.with_suffix(".original")
+    original = tmp_path / "original.json"
     path.rename(original)
-    path.symlink_to(original)
-    value = bulk_build(raw)
-    replacement = path.with_suffix(".replacement")
+    replacement = tmp_path / "replacement.json"
     replacement.write_bytes(original.read_bytes() + (b"" if same_bytes else b" "))
-    path.unlink()
     path.symlink_to(replacement)
-    with pytest.raises(SourceFinalizationRequired):
-        value.run(show_status=False)
-    assert not value.output_node_file.exists()
+    with pytest.raises(SourceFinalizationRequired, match="Linked generation member"):
+        bulk_build(raw)
+    assert not (tmp_path / "transformed/mediadive/nodes.tsv").exists()
+    assert not (tmp_path / "transformed/mediadive/edges.tsv").exists()
 
 
 @pytest.mark.parametrize("same_bytes", [False, True])
 def test_later_parser_detects_earlier_file_symlink_retarget(tmp_path, monkeypatch, bulk_build, same_bytes):
-    """A later JSON callback cannot move an earlier locator while its old target stays unchanged."""
+    """Replacing an earlier regular member with a link during parsing cannot hide behind equal bytes."""
     raw = tmp_path / "raw"
     write_bulk_inputs(raw)
     path = raw / JSON_INPUTS["mediadive_media_detailed"]
-    original, replacement = path.with_suffix(".original"), path.with_suffix(".replacement")
-    path.rename(original)
-    replacement.write_bytes(original.read_bytes() + (b"" if same_bytes else b" "))
-    path.symlink_to(original)
+    replacement = tmp_path / "replacement.json"
+    replacement.write_bytes(path.read_bytes() + (b"" if same_bytes else b" "))
     real = mod.json.load
     calls = []
 
     def parse(reader, *args, **kwargs):
-        """Retarget a lexical path only; the previously resolved file deliberately remains valid."""
+        """Change only the lexical member while its already consumed snapshot remains unchanged."""
         calls.append(reader)
         if len(calls) == 2:
             path.unlink()
@@ -334,22 +334,19 @@ def test_later_parser_detects_earlier_file_symlink_retarget(tmp_path, monkeypatc
     with pytest.raises(SourceFinalizationRequired):
         value = bulk_build(raw)
         value.run(show_status=False)
+    assert len(calls) >= 2
     assert not (tmp_path / "transformed/mediadive/nodes.tsv").exists()
 
 
 @pytest.mark.parametrize("same_bytes", [False, True])
 @pytest.mark.parametrize("bulk_admitted", JSON_INPUTS, indirect=True)
 def test_each_bulk_locator_is_retained_after_public_admission(bulk_admitted, same_bytes):
-    """Each current read keeps its lexical binding through public checks and the retained guard."""
+    """A previously regular admitted member cannot be replaced by an equal-byte or changed link."""
     value, config, _, admission = bulk_admitted
     before = {path.name: path.read_bytes() for path in value.output_dir.iterdir()}
-    paths = [value.input_base_dir / relative for relative in JSON_INPUTS.values()]
-    path = next(path for path in paths if path.is_symlink())
-    # Preserve the original resolved input so a digest-only verifier could
-    # still succeed there; the selected lexical path now means a different file.
-    original = path.resolve()
-    replacement = path.with_suffix(".replacement")
-    replacement.write_bytes(original.read_bytes() + (b"" if same_bytes else b" "))
+    path = value.input_base_dir / JSON_INPUTS[value._fixture_selected_role]
+    replacement = value.input_base_dir / ("replacement-" + path.name)
+    replacement.write_bytes(path.read_bytes() + (b"" if same_bytes else b" "))
     path.unlink()
     path.symlink_to(replacement)
     for operation in (
@@ -405,11 +402,15 @@ def test_public_admission_requires_exact_persisted_bulk_contract(bulk_admitted, 
 @pytest.mark.parametrize("missing", ["medium", "solution"])
 @pytest.mark.parametrize("cached", [False, True])
 def test_requested_bulk_records_fail_before_any_graph_write(tmp_path, monkeypatch, bulk_build, missing, cached):
-    """Neither absent details nor missing first-level solution records may be rescued by stale YAML."""
+    """An altered sealed catalogue or native detail cannot be rescued by stale YAML before graph writes."""
     raw = tmp_path / "raw"
     write_bulk_inputs(raw)
-    shutil.copyfile(RESOURCES / "provenance_serialization/mediadive.json", raw / "mediadive.json")
-    if missing == "solution":
+    if missing == "medium":
+        shutil.copyfile(
+            RESOURCES / "provenance_serialization/mediadive.json",
+            raw / JSON_INPUTS["mediadive_media_list"],
+        )
+    else:
         (raw / JSON_INPUTS["mediadive_media_detailed"]).write_text(
             json.dumps({"1": {"medium": {"id": 1}, "solutions": [{"id": 77}]}})
         )
@@ -421,33 +422,33 @@ def test_requested_bulk_records_fail_before_any_graph_write(tmp_path, monkeypatc
         stale.write_bytes(stale_bytes)
     monkeypatch.setattr(mod, "MEDIADIVE_MEDIUM_YAML_DIR", cache)
     monkeypatch.setattr(mod, "MEDIADIVE_MEDIUM_STRAIN_YAML_DIR", cache)
-    value = bulk_build(raw)
 
     def no_fallback(*args, **kwargs):
-        """Reject any alternative parser or request for a missing required record."""
+        """Reject any alternative parser or request for an invalid required generation."""
         pytest.fail("requested bulk record attempted YAML/HTTP fallback")
 
-    monkeypatch.setattr(value, "_get_mediadive_json", no_fallback)
-    monkeypatch.setattr(value, "download_yaml_and_get_json", no_fallback)
+    monkeypatch.setattr(mod.MediaDiveTransform, "_get_mediadive_json", no_fallback)
+    monkeypatch.setattr(mod.MediaDiveTransform, "download_yaml_and_get_json", no_fallback)
     monkeypatch.setattr(yaml, "safe_load", no_fallback)
-    previous = {value.output_node_file: b"previous nodes\n", value.output_edge_file: b"previous edges\n"}
+    output = tmp_path / "transformed/mediadive"
+    output.mkdir(parents=True)
+    previous = {output / "nodes.tsv": b"previous nodes\n", output / "edges.tsv": b"previous edges\n"}
     for path, payload in previous.items():
         path.write_bytes(payload)
-    with pytest.raises(FileNotFoundError, match="medium" if missing == "medium" else "solution"):
-        value.run(show_status=False)
+    with pytest.raises(SourceFinalizationRequired, match="Generation member changed"):
+        bulk_build(raw)
     assert {path: path.read_bytes() for path in previous} == previous
-    assert not (mod.MEDIADIVE_TMP_DIR / "mediadive.tsv").exists()
-    assert value.api_calls_made == 0
     assert stale.read_bytes() == stale_bytes if cached else not stale.exists()
 
 
 def test_present_metadata_only_medium_is_not_a_missing_record(tmp_path, monkeypatch, bulk_build):
     """A real present public medium without a solutions key remains an accepted typed declaration."""
     raw = tmp_path / "raw"
-    write_bulk_inputs(raw)
+    write_bulk_inputs(raw, seal=False)
     shutil.copyfile(RESOURCES / "provenance_serialization/mediadive.json", raw / "mediadive.json")
     detail = {"1": {"medium": {"id": 1, "name": "Fixture medium"}}}
-    (raw / JSON_INPUTS["mediadive_media_detailed"]).write_text(json.dumps(detail))
+    (raw / ROOT_JSON_INPUTS["mediadive_media_detailed"]).write_text(json.dumps(detail))
+    seal_fixture_raw(raw, missing_strains="explicit_empty")
     cache = tmp_path / "unused-yaml"
     monkeypatch.setattr(mod, "MEDIADIVE_MEDIUM_YAML_DIR", cache)
     monkeypatch.setattr(mod, "MEDIADIVE_MEDIUM_STRAIN_YAML_DIR", cache)

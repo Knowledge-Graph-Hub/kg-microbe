@@ -60,16 +60,31 @@ def test_original_legacy_broad_mapping_survives_mediadive_and_merge(tmp_path, mo
     (raw / "mediadive.json").write_text(json.dumps(medium))
     bulk = raw / "mediadive"
     bulk.mkdir()
-    recipes = {
-        "1": {"recipe": [{"compound": "2-oxobutyric acid sodium salt", "compound_id": 1, "amount": 1, "unit": "g/l"}]}
+    from kg_microbe.utils.mediadive_bulk_download import extract_compounds_from_media, extract_solutions_from_media
+    from tests.mediadive_generation_fixtures import seal_fixture_raw
+
+    details = {
+        "1": {
+            "medium": {"id": 1},
+            "solutions": [
+                {
+                    "id": 1,
+                    "name": "Test solution",
+                    "recipe": [
+                        {"compound": "2-oxobutyric acid sodium salt", "compound_id": 1, "amount": 1, "unit": "g/l"}
+                    ],
+                }
+            ],
+        }
     }
     for filename, payload in (
-        ("media_detailed.json", {"1": {"solutions": [{"id": 1, "name": "Test solution"}]}}),
-        ("media_strains.json", {"1": {}}),
-        ("solutions.json", recipes),
-        ("compounds.json", {}),
+        ("media_detailed.json", details),
+        ("media_strains.json", {}),
+        ("solutions.json", extract_solutions_from_media(details)),
+        ("compounds.json", extract_compounds_from_media(details)),
     ):
         (bulk / filename).write_text(json.dumps(payload))
+    seal_fixture_raw(raw)
     monkeypatch.setattr(mod, "BACDIVE_TMP_DIR", raw)
     monkeypatch.setattr(mod, "MEDIADIVE_TMP_DIR", tmp_path)
     with (

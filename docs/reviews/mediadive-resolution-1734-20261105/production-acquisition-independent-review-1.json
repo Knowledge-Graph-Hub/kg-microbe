@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "recorded_at": "2026-11-05T21:26:49.704799+00:00",
+  "review_type": "Independent adversarial static review of frozen acquisition/outcome/helper bytes",
+  "reviewed_files": {
+    "kg_microbe/transform_utils/mediadive/endpoint_outcomes.py": {
+      "sha256": "e30d50eee3adc611d874d0c6822745e1159a189cb0ee962a1b1fd34ba0a92481",
+      "bytes": 28985
+    },
+    "kg_microbe/transform_utils/mediadive/acquisition.py": {
+      "sha256": "9a42898c2bfebb5bc6e7ea2593419a1a3c600f54f35e6eeb40b7aa500dcc8e12",
+      "bytes": 29299
+    },
+    "tests/mediadive_generation_fixtures.py": {
+      "sha256": "ffd2f44ec3a5923434805305eb55a8c59987ac124a63b2d90e5761a7011a2071",
+      "bytes": 7742
+    },
+    "mappings/mediadive_unknown_dispositions.json": {
+      "sha256": "5137d3110c861fa37103f913bcaafeeb494792d928aacf2d3605c9d21abc8744",
+      "bytes": 82
+    },
+    "scripts/adhoc/kgm_mediadive_resolution_20261105.py": {
+      "sha256": "dd0195953676e5bdab90b1b09866bae2eabff22042990ec3abb109719a629caa",
+      "bytes": 14297
+    },
+    "kg_microbe/merge_utils/source_qualifications.py": {
+      "sha256": "e7e6246389d889dd56c5e0c02499919eb771f491a7dc24ac95d94124713f139f",
+      "bytes": 3787
+    }
+  },
+  "status": "changes_required_before_live_use",
+  "findings": [
+    {
+      "issue": 1765,
+      "severity": "medium",
+      "locations": [
+        "endpoint_outcomes.py:350",
+        "acquisition.py:486"
+      ],
+      "finding": "Python equality erases native JSON type differences while validating replay or accepting a preserved native seed. Source growth=1 and native growth=true compare equal, as do integer and float values. This violates the promised exact typed native-data reconstruction.",
+      "reproduction": "A native seed whose non-ID field changes source integer 1 to true or 1.0 is accepted by the seed equality branch, and the same typed difference passes validate_native actual == payload. This is a static language-semantics proof; no production or test execution was performed.",
+      "repair": "Compare deterministic strict JSON representations for native payload/seed semantic identity, preserving the separate catalogue/detail dictionary-order guard.",
+      "acceptance": "Offline controls reject int/bool and int/float mutations in persisted replay and seed acceptance while preserving exact accepted seed bytes.",
+      "related_strict_type_boundary": "classify_observation checks body status/count types but its HTTP404 branch compares response status only with ==404; 404.0 currently passes this branch. Apply an exact integer HTTP-status guard before both response-status branches as part of strict type preservation."
+    },
+    {
+      "issue": 1766,
+      "severity": "medium",
+      "locations": [
+        "endpoint_outcomes.py:266",
+        "endpoint_outcomes.py:286"
+      ],
+      "finding": "Replay parses a timezone-aware timestamp but compares original ISO strings to order observations, allowing chronologically older evidence to supersede newer transport failures.",
+      "reproduction": "Transport observed_at=2026-11-05T19:00:00+00:00 followed by source404 observed_at=2026-11-05T20:00:00+02:00 passes lexical ordering despite the404 occurring at18:00UTC.",
+      "repair": "Compare parsed aware datetime instants, retaining original source timestamp strings and refusing chronological regression.",
+      "acceptance": "Offline offset/timezone controls reject older404 after newer transport; equivalent instants/UTC spelling behavior is explicit. Current bounded seed/live helper uses one imported head per URL followed by UTC live observations, so no assertion that this defect occurred in retained native history."
+    }
+  ],
+  "satisfied_static_controls": [
+    "Current curated policy is the exact empty policy, so unknowns cannot presently be admitted. Applied policy requires exact current curated bytes, catalogue digest, exact unknown endpoint set and observation/body identities, plus retained official-contract document identity.",
+    "Each live request has a durable intent; complete observation event and body precede cache persistence; replay validates event/ledger chain, source ledger witness, response body identity, exact endpoint scope, and one completion per request intent.",
+    "Only the latest uncompleted request intent forces missing_evidence; a later completed request can resolve an earlier interrupted intent. Later recorded transport does not fall back to an earlier404 in ordinary same-timezone order.",
+    "Baseline successful cache key/blob identities are preserved; native cache requires exact successful URL union and response-body/header/request identity; failures are excluded from successful native strain outputs.",
+    "Recovery is explicit and uses durable event files, retains damaged/replaced ledger/pending/seal bytes, and sends no HTTP. Unresolved checkpoints can seal for forensic retention but cannot publish.",
+    "Pointer publication uses a root publication lock, exact expected prior pointer hash, exact validated manifest, recoverable identity-checked pending pointer, final input verification, atomic replace, and post-publication reload.",
+    "Synthetic fixture builder retains original catalogue evidence, names explicit synthetic empty outcomes, rejects non-list strain data, constructs real production generations, and requires explicit fixture-only curated-policy locator for unknown fixtures. It does not modify production policy.",
+    "Bounded resolution helper revalidates pinned original and retry receipts/ledgers/cache, selects exactly6056success/583404/49transport latest heads, preserves original observation times, runs one transport canary before48 siblings, binds runtime between stages, and never publishes an active pointer.",
+    "Merge qualification empty-audit adjustment is consistent with an admitted zero-catalogue generation; admission proves exact zero expected scope and packaging still checks audit hash and association coverage."
+  ],
+  "limitations": [
+    "Static review only; author offline acquisition/recovery suite was pending at this freeze. Root reported69 integration tests passed; this reviewer did not execute tests.",
+    "No claim of endpoint freshness, complete association coverage, or valid-empty meaning for404/zero SPARQL rows.",
+    "This record reviews the named frozen production modules and bounded helper; broader consumer diff requires its own final review."
+  ],
+  "review_operations": {
+    "http_requests": 0,
+    "tests": 0,
+    "source_edits": 0,
+    "git_writes": 0
+  },
+  "reviewed_files_unchanged_at_completion": true
+}

@@ -1,0 +1,2889 @@
+{
+  "original_full_json_sha256": "cff92938a092dcc2e4e2e1a17266417edeacba8e7b9f51b3f183066a80fdb8bd",
+  "candidate_full_json_sha256": "28fcde5326b8856bd51a2b6df2b9bcb7e550347dda6a43fa53350947522ccfa8",
+  "source_owl_sha256": "1ea0465c2222592bdeea3197a687ba26c74818263e1e6c5e8838baafcb6838ce",
+  "prior_policy_semantic_sha256": "6cffa6d569ae82f4c5f4ea3aaf4bca5b495e2915ebf89ddff8fa98343a6bedf2",
+  "current_policy_semantic_sha256": "ab580f64000589dc00a54910019fdc4ac6e0a452cd967f1b1744a91f460ed3d9",
+  "robot_version": "1.9.11",
+  "full_added_xref_metadata_occurrences": 6874,
+  "full_changed_nodes": 2720,
+  "finite_changed_nodes": [
+    {
+      "rule": "upa-reaction-context-1",
+      "ordinal": 1353,
+      "node": "http://purl.obolibrary.org/obo/UPa_UER00367"
+    },
+    {
+      "rule": "upa-reaction-context-1",
+      "ordinal": 2760,
+      "node": "http://purl.obolibrary.org/obo/UPa_UPA00257"
+    },
+    {
+      "rule": "upa-reaction-context-2",
+      "ordinal": 1862,
+      "node": "http://purl.obolibrary.org/obo/UPa_UER00879"
+    },
+    {
+      "rule": "upa-reaction-context-2",
+      "ordinal": 3405,
+      "node": "http://purl.obolibrary.org/obo/UPa_UPA00904"
+    },
+    {
+      "rule": "upa-reaction-context-3",
+      "ordinal": 1829,
+      "node": "http://purl.obolibrary.org/obo/UPa_UER00846"
+    },
+    {
+      "rule": "upa-reaction-context-3",
+      "ordinal": 3370,
+      "node": "http://purl.obolibrary.org/obo/UPa_UPA00869"
+    },
+    {
+      "rule": "upa-reaction-context-4",
+      "ordinal": 1695,
+      "node": "http://purl.obolibrary.org/obo/UPa_UER00712"
+    },
+    {
+      "rule": "upa-reaction-context-4",
+      "ordinal": 3335,
+      "node": "http://purl.obolibrary.org/obo/UPa_UPA00834"
+    },
+    {
+      "rule": "upa-reaction-context-5",
+      "ordinal": 1433,
+      "node": "http://purl.obolibrary.org/obo/UPa_UER00448"
+    },
+    {
+      "rule": "upa-reaction-context-5",
+      "ordinal": 2556,
+      "node": "http://purl.obolibrary.org/obo/UPa_UPA00051"
+    },
+    {
+      "rule": "upa-reaction-context-6",
+      "ordinal": 1570,
+      "node": "http://purl.obolibrary.org/obo/UPa_UER00587"
+    },
+    {
+      "rule": "upa-reaction-context-6",
+      "ordinal": 3032,
+      "node": "http://purl.obolibrary.org/obo/UPa_UPA00529"
+    },
+    {
+      "rule": "upa-reaction-context-7",
+      "ordinal": 1123,
+      "node": "http://purl.obolibrary.org/obo/UPa_UER00134"
+    },
+    {
+      "rule": "upa-reaction-context-7",
+      "ordinal": 2579,
+      "node": "http://purl.obolibrary.org/obo/UPa_UPA00074"
+    }
+  ],
+  "proof_helper_sha256": "0ad82fc738a698fa62c173231bc543ab6803a31c921744c1ddc47b0833595f79",
+  "full_proof_sha256": "b3ffcced62174090bd8ef3bf87675e8fdbcbb95af3499c44df510ac5563a10bf",
+  "fixture_added_annotations": [
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "molecular_function:hydroxymethylglutaryl-CoA reductase (NADPH) activity"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UER00103",
+      "node_position": 1092,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "molecular_function:hydroxymethylglutaryl-CoA reductase (NADPH) activity"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        4617
+      ],
+      "xref_position": 1,
+      "xref_value": "GO:0004420"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "molecular_function:lipoate-protein ligase activity"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UER00134",
+      "node_position": 1123,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "molecular_function:lipoate-protein ligase activity"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        4825
+      ],
+      "xref_position": 1,
+      "xref_value": "GO:0016979"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "molecular_function:biotin-protein ligase activity"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UER00134",
+      "node_position": 1123,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "molecular_function:biotin-protein ligase activity"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        4826
+      ],
+      "xref_position": 2,
+      "xref_value": "GO:0018271"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "molecular_function:tRNA(Ile)-lysidine synthase activity"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UER00134",
+      "node_position": 1123,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "molecular_function:tRNA(Ile)-lysidine synthase activity"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        4827
+      ],
+      "xref_position": 3,
+      "xref_value": "GO:0032267"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "molecular_function:biotin-[pyruvate-carboxylase] ligase activity"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UER00134",
+      "node_position": 1123,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "molecular_function:biotin-[pyruvate-carboxylase] ligase activity"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        4828
+      ],
+      "xref_position": 4,
+      "xref_value": "GO:0071734"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "molecular_function:hydroxymethylglutaryl-CoA reductase activity"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UER00367",
+      "node_position": 1353,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "molecular_function:hydroxymethylglutaryl-CoA reductase activity"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        6501
+      ],
+      "xref_position": 1,
+      "xref_value": "GO:0042282"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "molecular_function:prenyltransferase activity"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UER00448",
+      "node_position": 1433,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "molecular_function:prenyltransferase activity"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        7073
+      ],
+      "xref_position": 1,
+      "xref_value": "GO:0004659"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "molecular_function:protein geranylgeranyltransferase activity"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UER00448",
+      "node_position": 1433,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "molecular_function:protein geranylgeranyltransferase activity"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        7074
+      ],
+      "xref_position": 2,
+      "xref_value": "GO:0004661"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "molecular_function:protein prenyltransferase activity"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UER00448",
+      "node_position": 1433,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "molecular_function:protein prenyltransferase activity"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        7075
+      ],
+      "xref_position": 3,
+      "xref_value": "GO:0008318"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "molecular_function:4-hydroxybenzoate octaprenyltransferase activity"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UER00448",
+      "node_position": 1433,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "molecular_function:4-hydroxybenzoate octaprenyltransferase activity"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        7076
+      ],
+      "xref_position": 4,
+      "xref_value": "GO:0008412"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "molecular_function:protoheme IX farnesyltransferase activity"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UER00448",
+      "node_position": 1433,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "molecular_function:protoheme IX farnesyltransferase activity"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        7077
+      ],
+      "xref_position": 5,
+      "xref_value": "GO:0008495"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "molecular_function:transferase activity, transferring alkyl or aryl (other than methyl) groups"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UER00448",
+      "node_position": 1433,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "molecular_function:transferase activity, transferring alkyl or aryl (other than methyl) groups"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        7078
+      ],
+      "xref_position": 6,
+      "xref_value": "GO:0016765"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "molecular_function:(S)-2,3-di-O-geranylgeranylglyceryl phosphate synthase activity"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UER00448",
+      "node_position": 1433,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "molecular_function:(S)-2,3-di-O-geranylgeranylglyceryl phosphate synthase activity"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        7079
+      ],
+      "xref_position": 7,
+      "xref_value": "GO:0043888"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "molecular_function:cadaverine aminopropyltransferase activity"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UER00448",
+      "node_position": 1433,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "molecular_function:cadaverine aminopropyltransferase activity"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        7080
+      ],
+      "xref_position": 8,
+      "xref_value": "GO:0043918"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "molecular_function:agmatine aminopropyltransferase activity"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UER00448",
+      "node_position": 1433,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "molecular_function:agmatine aminopropyltransferase activity"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        7081
+      ],
+      "xref_position": 9,
+      "xref_value": "GO:0043919"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "molecular_function:1,4-dihydroxy-2-naphthoate octaprenyltransferase activity"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UER00448",
+      "node_position": 1433,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "molecular_function:1,4-dihydroxy-2-naphthoate octaprenyltransferase activity"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        7082
+      ],
+      "xref_position": 10,
+      "xref_value": "GO:0046428"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "molecular_function:trans-pentaprenyltranstransferase activity"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UER00448",
+      "node_position": 1433,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "molecular_function:trans-pentaprenyltranstransferase activity"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        7083
+      ],
+      "xref_position": 11,
+      "xref_value": "GO:0048045"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "molecular_function:ATP dimethylallyltransferase activity"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UER00448",
+      "node_position": 1433,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "molecular_function:ATP dimethylallyltransferase activity"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        7084
+      ],
+      "xref_position": 12,
+      "xref_value": "GO:0052622"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "molecular_function:ADP dimethylallyltransferase activity"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UER00448",
+      "node_position": 1433,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "molecular_function:ADP dimethylallyltransferase activity"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        7085
+      ],
+      "xref_position": 13,
+      "xref_value": "GO:0052623"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "molecular_function:C-3 sterol dehydrogenase (C-4 sterol decarboxylase) activity"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UER00587",
+      "node_position": 1570,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "molecular_function:C-3 sterol dehydrogenase (C-4 sterol decarboxylase) activity"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        8166
+      ],
+      "xref_position": 1,
+      "xref_value": "GO:0000252"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "molecular_function:aldo-keto reductase (NADP) activity"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UER00587",
+      "node_position": 1570,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "molecular_function:aldo-keto reductase (NADP) activity"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        8167
+      ],
+      "xref_position": 2,
+      "xref_value": "GO:0004033"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "molecular_function:isocitrate dehydrogenase activity"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UER00587",
+      "node_position": 1570,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "molecular_function:isocitrate dehydrogenase activity"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        8168
+      ],
+      "xref_position": 3,
+      "xref_value": "GO:0004448"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "molecular_function:mevaldate reductase activity"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UER00587",
+      "node_position": 1570,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "molecular_function:mevaldate reductase activity"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        8169
+      ],
+      "xref_position": 4,
+      "xref_value": "GO:0004495"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "molecular_function:gluconate dehydrogenase activity"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UER00587",
+      "node_position": 1570,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "molecular_function:gluconate dehydrogenase activity"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        8170
+      ],
+      "xref_position": 5,
+      "xref_value": "GO:0008875"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "molecular_function:steroid dehydrogenase activity"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UER00587",
+      "node_position": 1570,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "molecular_function:steroid dehydrogenase activity"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        8171
+      ],
+      "xref_position": 6,
+      "xref_value": "GO:0016229"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "molecular_function:oxidoreductase activity, acting on the CH-OH group of donors, NAD or NADP as acceptor"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UER00587",
+      "node_position": 1570,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "molecular_function:oxidoreductase activity, acting on the CH-OH group of donors, NAD or NADP as acceptor"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        8172
+      ],
+      "xref_position": 7,
+      "xref_value": "GO:0016616"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "molecular_function:epoxide dehydrogenase activity"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UER00587",
+      "node_position": 1570,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "molecular_function:epoxide dehydrogenase activity"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        8173
+      ],
+      "xref_position": 8,
+      "xref_value": "GO:0018451"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "molecular_function:5-exo-hydroxycamphor dehydrogenase activity"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UER00587",
+      "node_position": 1570,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "molecular_function:5-exo-hydroxycamphor dehydrogenase activity"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        8174
+      ],
+      "xref_position": 9,
+      "xref_value": "GO:0018452"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "molecular_function:2-hydroxytetrahydrofuran dehydrogenase activity"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UER00587",
+      "node_position": 1570,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "molecular_function:2-hydroxytetrahydrofuran dehydrogenase activity"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        8175
+      ],
+      "xref_position": 10,
+      "xref_value": "GO:0018453"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "molecular_function:acetoin dehydrogenase activity"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UER00587",
+      "node_position": 1570,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "molecular_function:acetoin dehydrogenase activity"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        8176
+      ],
+      "xref_position": 11,
+      "xref_value": "GO:0019152"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "molecular_function:phenylcoumaran benzylic ether reductase activity"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UER00587",
+      "node_position": 1570,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "molecular_function:phenylcoumaran benzylic ether reductase activity"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        8177
+      ],
+      "xref_position": 12,
+      "xref_value": "GO:0032442"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "molecular_function:D-xylose:NADP reductase activity"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UER00587",
+      "node_position": 1570,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "molecular_function:D-xylose:NADP reductase activity"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        8178
+      ],
+      "xref_position": 13,
+      "xref_value": "GO:0032866"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "molecular_function:L-arabinose:NADP reductase activity"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UER00587",
+      "node_position": 1570,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "molecular_function:L-arabinose:NADP reductase activity"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        8179
+      ],
+      "xref_position": 14,
+      "xref_value": "GO:0032867"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "molecular_function:D-arabinitol dehydrogenase, D-ribulose forming (NADP+) activity"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UER00587",
+      "node_position": 1570,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "molecular_function:D-arabinitol dehydrogenase, D-ribulose forming (NADP+) activity"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        8180
+      ],
+      "xref_position": 15,
+      "xref_value": "GO:0033709"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "molecular_function:steroid dehydrogenase activity, acting on the CH-OH group of donors, NAD or NADP as acceptor"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UER00587",
+      "node_position": 1570,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "molecular_function:steroid dehydrogenase activity, acting on the CH-OH group of donors, NAD or NADP as acceptor"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        8181
+      ],
+      "xref_position": 16,
+      "xref_value": "GO:0033764"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "molecular_function:steroid dehydrogenase activity, acting on the CH-CH group of donors"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UER00587",
+      "node_position": 1570,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "molecular_function:steroid dehydrogenase activity, acting on the CH-CH group of donors"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        8182
+      ],
+      "xref_position": 17,
+      "xref_value": "GO:0033765"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "molecular_function:(R)-(-)-1,2,3,4-tetrahydronaphthol dehydrogenase activity"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UER00587",
+      "node_position": 1570,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "molecular_function:(R)-(-)-1,2,3,4-tetrahydronaphthol dehydrogenase activity"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        8183
+      ],
+      "xref_position": 18,
+      "xref_value": "GO:0034831"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "molecular_function:3-hydroxymenthone dehydrogenase activity"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UER00587",
+      "node_position": 1570,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "molecular_function:3-hydroxymenthone dehydrogenase activity"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        8184
+      ],
+      "xref_position": 19,
+      "xref_value": "GO:0034840"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "molecular_function:very long-chain-3-hydroxyacyl-CoA dehydrogenase activity"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UER00587",
+      "node_position": 1570,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "molecular_function:very long-chain-3-hydroxyacyl-CoA dehydrogenase activity"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        8185
+      ],
+      "xref_position": 20,
+      "xref_value": "GO:0035380"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "molecular_function:dihydrotestosterone 17-beta-dehydrogenase activity"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UER00587",
+      "node_position": 1570,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "molecular_function:dihydrotestosterone 17-beta-dehydrogenase activity"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        8186
+      ],
+      "xref_position": 21,
+      "xref_value": "GO:0035410"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "molecular_function:(R)-2-hydroxyisocaproate dehydrogenase activity"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UER00587",
+      "node_position": 1570,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "molecular_function:(R)-2-hydroxyisocaproate dehydrogenase activity"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        8187
+      ],
+      "xref_position": 22,
+      "xref_value": "GO:0043713"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "molecular_function:L-arabinose 1-dehydrogenase (NADP+) activity"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UER00587",
+      "node_position": 1570,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "molecular_function:L-arabinose 1-dehydrogenase (NADP+) activity"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        8188
+      ],
+      "xref_position": 23,
+      "xref_value": "GO:0044103"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "molecular_function:L-xylulose reductase (NAD+) activity"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UER00587",
+      "node_position": 1570,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "molecular_function:L-xylulose reductase (NAD+) activity"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        8189
+      ],
+      "xref_position": 24,
+      "xref_value": "GO:0044105"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "molecular_function:3-ketoglucose-reductase activity"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UER00587",
+      "node_position": 1570,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "molecular_function:3-ketoglucose-reductase activity"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        8190
+      ],
+      "xref_position": 25,
+      "xref_value": "GO:0048258"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "molecular_function:(R)-2-hydroxyglutarate dehydrogenase activity"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UER00587",
+      "node_position": 1570,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "molecular_function:(R)-2-hydroxyglutarate dehydrogenase activity"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        8191
+      ],
+      "xref_position": 26,
+      "xref_value": "GO:0051990"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "molecular_function:D-arabinitol dehydrogenase, D-xylulose forming (NADP+) activity"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UER00587",
+      "node_position": 1570,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "molecular_function:D-arabinitol dehydrogenase, D-xylulose forming (NADP+) activity"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        8192
+      ],
+      "xref_position": 27,
+      "xref_value": "GO:0052677"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "molecular_function:prenyltransferase activity"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UER00712",
+      "node_position": 1695,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "molecular_function:prenyltransferase activity"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        8996
+      ],
+      "xref_position": 1,
+      "xref_value": "GO:0004659"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "molecular_function:protein geranylgeranyltransferase activity"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UER00712",
+      "node_position": 1695,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "molecular_function:protein geranylgeranyltransferase activity"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        8997
+      ],
+      "xref_position": 2,
+      "xref_value": "GO:0004661"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "molecular_function:protein prenyltransferase activity"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UER00712",
+      "node_position": 1695,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "molecular_function:protein prenyltransferase activity"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        8998
+      ],
+      "xref_position": 3,
+      "xref_value": "GO:0008318"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "molecular_function:4-hydroxybenzoate octaprenyltransferase activity"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UER00712",
+      "node_position": 1695,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "molecular_function:4-hydroxybenzoate octaprenyltransferase activity"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        8999
+      ],
+      "xref_position": 4,
+      "xref_value": "GO:0008412"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "molecular_function:protoheme IX farnesyltransferase activity"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UER00712",
+      "node_position": 1695,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "molecular_function:protoheme IX farnesyltransferase activity"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        9000
+      ],
+      "xref_position": 5,
+      "xref_value": "GO:0008495"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "molecular_function:transferase activity, transferring alkyl or aryl (other than methyl) groups"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UER00712",
+      "node_position": 1695,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "molecular_function:transferase activity, transferring alkyl or aryl (other than methyl) groups"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        9001
+      ],
+      "xref_position": 6,
+      "xref_value": "GO:0016765"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "molecular_function:(S)-2,3-di-O-geranylgeranylglyceryl phosphate synthase activity"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UER00712",
+      "node_position": 1695,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "molecular_function:(S)-2,3-di-O-geranylgeranylglyceryl phosphate synthase activity"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        9002
+      ],
+      "xref_position": 7,
+      "xref_value": "GO:0043888"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "molecular_function:cadaverine aminopropyltransferase activity"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UER00712",
+      "node_position": 1695,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "molecular_function:cadaverine aminopropyltransferase activity"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        9003
+      ],
+      "xref_position": 8,
+      "xref_value": "GO:0043918"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "molecular_function:agmatine aminopropyltransferase activity"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UER00712",
+      "node_position": 1695,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "molecular_function:agmatine aminopropyltransferase activity"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        9004
+      ],
+      "xref_position": 9,
+      "xref_value": "GO:0043919"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "molecular_function:1,4-dihydroxy-2-naphthoate octaprenyltransferase activity"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UER00712",
+      "node_position": 1695,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "molecular_function:1,4-dihydroxy-2-naphthoate octaprenyltransferase activity"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        9005
+      ],
+      "xref_position": 10,
+      "xref_value": "GO:0046428"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "molecular_function:trans-pentaprenyltranstransferase activity"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UER00712",
+      "node_position": 1695,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "molecular_function:trans-pentaprenyltranstransferase activity"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        9006
+      ],
+      "xref_position": 11,
+      "xref_value": "GO:0048045"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "molecular_function:ATP dimethylallyltransferase activity"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UER00712",
+      "node_position": 1695,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "molecular_function:ATP dimethylallyltransferase activity"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        9007
+      ],
+      "xref_position": 12,
+      "xref_value": "GO:0052622"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "molecular_function:ADP dimethylallyltransferase activity"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UER00712",
+      "node_position": 1695,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "molecular_function:ADP dimethylallyltransferase activity"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        9008
+      ],
+      "xref_position": 13,
+      "xref_value": "GO:0052623"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "molecular_function:glutarate-semialdehyde dehydrogenase activity"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UER00846",
+      "node_position": 1829,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "molecular_function:glutarate-semialdehyde dehydrogenase activity"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        10177
+      ],
+      "xref_position": 1,
+      "xref_value": "GO:0047949"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "molecular_function:transaminase activity"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UER00879",
+      "node_position": 1862,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "molecular_function:transaminase activity"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        10439
+      ],
+      "xref_position": 1,
+      "xref_value": "GO:0008483"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "molecular_function:methionine-oxo-acid transaminase activity"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UER00879",
+      "node_position": 1862,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "molecular_function:methionine-oxo-acid transaminase activity"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        10440
+      ],
+      "xref_position": 2,
+      "xref_value": "GO:0010326"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "molecular_function:6-aminohexanoate transaminase activity"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UER00879",
+      "node_position": 1862,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "molecular_function:6-aminohexanoate transaminase activity"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        10441
+      ],
+      "xref_position": 3,
+      "xref_value": "GO:0018719"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "molecular_function:N2-acetyl-L-lysine aminotransferase activity"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UER00879",
+      "node_position": 1862,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "molecular_function:N2-acetyl-L-lysine aminotransferase activity"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        10442
+      ],
+      "xref_position": 4,
+      "xref_value": "GO:0043746"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "molecular_function:acetyldiaminopimelate aminotransferase activity"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UER00879",
+      "node_position": 1862,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "molecular_function:acetyldiaminopimelate aminotransferase activity"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        10443
+      ],
+      "xref_position": 5,
+      "xref_value": "GO:0043760"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "molecular_function:branched-chain amino acid:2-keto-4-methylthiobutyrate aminotransferase activity"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UER00879",
+      "node_position": 1862,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "molecular_function:branched-chain amino acid:2-keto-4-methylthiobutyrate aminotransferase activity"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        10444
+      ],
+      "xref_position": 6,
+      "xref_value": "GO:0043840"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "molecular_function:D-lysine transaminase activity"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UER00879",
+      "node_position": 1862,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "molecular_function:D-lysine transaminase activity"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        10445
+      ],
+      "xref_position": 7,
+      "xref_value": "GO:0043911"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "molecular_function:aspartate-2-keto-4-methylthiobutyrate transaminase activity"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UER00879",
+      "node_position": 1862,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "molecular_function:aspartate-2-keto-4-methylthiobutyrate transaminase activity"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        10446
+      ],
+      "xref_position": 8,
+      "xref_value": "GO:0046571"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "Glycine, serine and threonine metabolism"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UPA00051",
+      "node_position": 2556,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "Glycine, serine and threonine metabolism"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        11877
+      ],
+      "xref_position": 0,
+      "xref_value": "KEGG:map00260"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "Cysteine and methionine metabolism"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UPA00051",
+      "node_position": 2556,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "Cysteine and methionine metabolism"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        11878
+      ],
+      "xref_position": 1,
+      "xref_value": "KEGG:map00270"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "Lysine biosynthesis"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UPA00051",
+      "node_position": 2556,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "Lysine biosynthesis"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        11879
+      ],
+      "xref_position": 2,
+      "xref_value": "KEGG:map00300"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "One carbon pool by folate"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UPA00051",
+      "node_position": 2556,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "One carbon pool by folate"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        11880
+      ],
+      "xref_position": 3,
+      "xref_value": "KEGG:map00670"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "Sulfur metabolism"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UPA00051",
+      "node_position": 2556,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "Sulfur metabolism"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        11881
+      ],
+      "xref_position": 4,
+      "xref_value": "KEGG:map00920"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "Metabolic pathways"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UPA00051",
+      "node_position": 2556,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "Metabolic pathways"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        11882
+      ],
+      "xref_position": 5,
+      "xref_value": "KEGG:map01100"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "Biosynthesis of secondary metabolites"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UPA00051",
+      "node_position": 2556,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "Biosynthesis of secondary metabolites"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        11883
+      ],
+      "xref_position": 6,
+      "xref_value": "KEGG:map01110"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "Microbial metabolism in diverse environments"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UPA00051",
+      "node_position": 2556,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "Microbial metabolism in diverse environments"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        11884
+      ],
+      "xref_position": 7,
+      "xref_value": "KEGG:map01120"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "Fatty acid metabolism"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UPA00058",
+      "node_position": 2563,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "Fatty acid metabolism"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        11917
+      ],
+      "xref_position": 0,
+      "xref_value": "KEGG:map00071"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "Synthesis and degradation of ketone bodies"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UPA00058",
+      "node_position": 2563,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "Synthesis and degradation of ketone bodies"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        11918
+      ],
+      "xref_position": 1,
+      "xref_value": "KEGG:map00072"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "Valine, leucine and isoleucine degradation"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UPA00058",
+      "node_position": 2563,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "Valine, leucine and isoleucine degradation"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        11919
+      ],
+      "xref_position": 2,
+      "xref_value": "KEGG:map00280"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "Lysine degradation"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UPA00058",
+      "node_position": 2563,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "Lysine degradation"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        11920
+      ],
+      "xref_position": 3,
+      "xref_value": "KEGG:map00310"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "Benzoate degradation"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UPA00058",
+      "node_position": 2563,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "Benzoate degradation"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        11921
+      ],
+      "xref_position": 4,
+      "xref_value": "KEGG:map00362"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "Tryptophan metabolism"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UPA00058",
+      "node_position": 2563,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "Tryptophan metabolism"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        11922
+      ],
+      "xref_position": 5,
+      "xref_value": "KEGG:map00380"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "Pyruvate metabolism"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UPA00058",
+      "node_position": 2563,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "Pyruvate metabolism"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        11923
+      ],
+      "xref_position": 6,
+      "xref_value": "KEGG:map00620"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "Glyoxylate and dicarboxylate metabolism"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UPA00058",
+      "node_position": 2563,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "Glyoxylate and dicarboxylate metabolism"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        11924
+      ],
+      "xref_position": 7,
+      "xref_value": "KEGG:map00630"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "Propanoate metabolism"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UPA00058",
+      "node_position": 2563,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "Propanoate metabolism"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        11925
+      ],
+      "xref_position": 8,
+      "xref_value": "KEGG:map00640"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "Butanoate metabolism"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UPA00058",
+      "node_position": 2563,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "Butanoate metabolism"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        11926
+      ],
+      "xref_position": 9,
+      "xref_value": "KEGG:map00650"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "Carbon fixation pathways in prokaryotes"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UPA00058",
+      "node_position": 2563,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "Carbon fixation pathways in prokaryotes"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        11927
+      ],
+      "xref_position": 10,
+      "xref_value": "KEGG:map00720"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "Terpenoid backbone biosynthesis"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UPA00058",
+      "node_position": 2563,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "Terpenoid backbone biosynthesis"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        11928
+      ],
+      "xref_position": 11,
+      "xref_value": "KEGG:map00900"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "Metabolic pathways"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UPA00058",
+      "node_position": 2563,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "Metabolic pathways"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        11929
+      ],
+      "xref_position": 12,
+      "xref_value": "KEGG:map01100"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "Biosynthesis of secondary metabolites"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UPA00058",
+      "node_position": 2563,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "Biosynthesis of secondary metabolites"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        11930
+      ],
+      "xref_position": 13,
+      "xref_value": "KEGG:map01110"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "Microbial metabolism in diverse environments"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UPA00058",
+      "node_position": 2563,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "Microbial metabolism in diverse environments"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        11931
+      ],
+      "xref_position": 14,
+      "xref_value": "KEGG:map01120"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "biological_process:'de novo' IMP biosynthetic process"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UPA00074",
+      "node_position": 2579,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "biological_process:'de novo' IMP biosynthetic process"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        11980
+      ],
+      "xref_position": 0,
+      "xref_value": "GO:0006189"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "Purine metabolism"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UPA00074",
+      "node_position": 2579,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "Purine metabolism"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        11981
+      ],
+      "xref_position": 1,
+      "xref_value": "KEGG:map00230"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "Alanine, aspartate and glutamate metabolism"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UPA00074",
+      "node_position": 2579,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "Alanine, aspartate and glutamate metabolism"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        11982
+      ],
+      "xref_position": 2,
+      "xref_value": "KEGG:map00250"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "Histidine metabolism"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UPA00074",
+      "node_position": 2579,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "Histidine metabolism"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        11983
+      ],
+      "xref_position": 3,
+      "xref_value": "KEGG:map00340"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "Glyoxylate and dicarboxylate metabolism"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UPA00074",
+      "node_position": 2579,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "Glyoxylate and dicarboxylate metabolism"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        11984
+      ],
+      "xref_position": 4,
+      "xref_value": "KEGG:map00630"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "One carbon pool by folate"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UPA00074",
+      "node_position": 2579,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "One carbon pool by folate"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        11985
+      ],
+      "xref_position": 5,
+      "xref_value": "KEGG:map00670"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "Metabolic pathways"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UPA00074",
+      "node_position": 2579,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "Metabolic pathways"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        11986
+      ],
+      "xref_position": 6,
+      "xref_value": "KEGG:map01100"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "Biosynthesis of secondary metabolites"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UPA00074",
+      "node_position": 2579,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "Biosynthesis of secondary metabolites"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        11987
+      ],
+      "xref_position": 7,
+      "xref_value": "KEGG:map01110"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "Terpenoid backbone biosynthesis"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UPA00257",
+      "node_position": 2760,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "Terpenoid backbone biosynthesis"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        12524
+      ],
+      "xref_position": 0,
+      "xref_value": "KEGG:map00900"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "Biosynthesis of secondary metabolites"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UPA00257",
+      "node_position": 2760,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "Biosynthesis of secondary metabolites"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        12525
+      ],
+      "xref_position": 1,
+      "xref_value": "KEGG:map01110"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.geneontology.org/formats/oboInOwl#source",
+            "val": "rdfmatch"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UPA00450",
+      "node_position": 2953,
+      "source_owl_annotations": [
+        [
+          "http://www.geneontology.org/formats/oboInOwl#source",
+          "rdfmatch"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        12997
+      ],
+      "xref_position": 0,
+      "xref_value": "GO:0033353"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "biological_process:glycine betaine biosynthetic process from choline"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UPA00529",
+      "node_position": 3032,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "biological_process:glycine betaine biosynthetic process from choline"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        13146
+      ],
+      "xref_position": 0,
+      "xref_value": "GO:0019285"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "Glycine, serine and threonine metabolism"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UPA00529",
+      "node_position": 3032,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "Glycine, serine and threonine metabolism"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        13147
+      ],
+      "xref_position": 1,
+      "xref_value": "KEGG:map00260"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "biological_process:heme O biosynthetic process"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UPA00834",
+      "node_position": 3335,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "biological_process:heme O biosynthetic process"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        13870
+      ],
+      "xref_position": 0,
+      "xref_value": "GO:0048034"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "Porphyrin and chlorophyll metabolism"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UPA00834",
+      "node_position": 3335,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "Porphyrin and chlorophyll metabolism"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        13871
+      ],
+      "xref_position": 1,
+      "xref_value": "KEGG:map00860"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "Biosynthesis of secondary metabolites"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UPA00834",
+      "node_position": 3335,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "Biosynthesis of secondary metabolites"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        13872
+      ],
+      "xref_position": 2,
+      "xref_value": "KEGG:map01110"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "biological_process:L-lysine catabolic process to glutarate, by acetylation"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UPA00869",
+      "node_position": 3370,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "biological_process:L-lysine catabolic process to glutarate, by acetylation"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        13961
+      ],
+      "xref_position": 0,
+      "xref_value": "GO:0019473"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "Lysine degradation"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UPA00869",
+      "node_position": 3370,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "Lysine degradation"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        13962
+      ],
+      "xref_position": 1,
+      "xref_value": "KEGG:map00310"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "biological_process:L-methionine biosynthetic process from methylthioadenosine"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UPA00904",
+      "node_position": 3405,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "biological_process:L-methionine biosynthetic process from methylthioadenosine"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        14030
+      ],
+      "xref_position": 0,
+      "xref_value": "GO:0019509"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "Cysteine and methionine metabolism"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UPA00904",
+      "node_position": 3405,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "Cysteine and methionine metabolism"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        14031
+      ],
+      "xref_position": 1,
+      "xref_value": "KEGG:map00270"
+    },
+    {
+      "candidate_annotation": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#label",
+            "val": "Metabolic pathways"
+          }
+        ]
+      },
+      "exact_source_annotation_match": true,
+      "graph_position": 0,
+      "node": "http://purl.obolibrary.org/obo/UPa_UPA00904",
+      "node_position": 3405,
+      "source_owl_annotations": [
+        [
+          "http://www.w3.org/2000/01/rdf-schema#label",
+          "Metabolic pathways"
+        ]
+      ],
+      "source_owl_axiom_ordinals_one_based": [
+        14032
+      ],
+      "xref_position": 2,
+      "xref_value": "KEGG:map01100"
+    }
+  ],
+  "scientific_dispositions_changed": false,
+  "historical_fixture_directory": "history/robot-1.9.8",
+  "interpretation": "Only newly serialized xref annotations already exactly present in the pinned OWL changed. Complete current native records retain them. The old fixture/policy epoch remains unchanged and is not relabeled as 1.9.11 evidence."
+}

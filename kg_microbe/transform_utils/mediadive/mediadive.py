@@ -138,6 +138,16 @@ from kg_microbe.transform_utils.mediadive.bulk_inputs import (
     verify_bulk_record,
     verify_recorded_bulk_inputs,
 )
+from kg_microbe.transform_utils.mediadive.endpoint_consumer import (
+    AUDIT_FILENAME as ENDPOINT_AUDIT_FILENAME,
+)
+from kg_microbe.transform_utils.mediadive.endpoint_consumer import (
+    GENERATION_INPUTS,
+    EndpointConsumer,
+    contracts_equal,
+    register_qualification,
+    verify_recorded_endpoints,
+)
 from kg_microbe.transform_utils.mediadive.material_scope_audit import (
     AUDIT_FILENAME,
     POLICY_ROLE,
@@ -199,10 +209,11 @@ class MediaDiveTransform(Transform):
     #: via constants.py (#1035), plus BacDive's intermediate strain-taxid TSV (#1091).
     TRANSFORM_INPUTS = ("ontologies", BACDIVE)
     DEFAULT_INPUT_DIR = RAW_DATA_DIR
-    REQUIRED_AUDIT_FILES = (AUDIT_FILENAME, *RECIPE_IDENTITY_AUDITS.values())
+    REQUIRED_AUDIT_FILES = (AUDIT_FILENAME, *RECIPE_IDENTITY_AUDITS.values(), ENDPOINT_AUDIT_FILENAME)
     REQUIRED_CONSUMED_INPUTS = (
         "bacdive_taxon_lookup",
         *REQUIRED_BULK_INPUTS,
+        *GENERATION_INPUTS,
         REVIEWED_ROLE,
         POLICY_ROLE,
         INGREDIENT_CONTEXT_ROLE,
@@ -220,6 +231,7 @@ class MediaDiveTransform(Transform):
         "mappings/catalase_historical_groundings.json",
         "mappings/mediadive_recipe_identity_policy.json",
         "mappings/mediadive_recipe_identity_evidence.json",
+        "mappings/mediadive_unknown_dispositions.json",
     )
     OPTIONAL_RAW_CONSUMED_INPUTS = (
         ("micromediaparam_strict", MICROMEDIAPARAM_COMPOUND_MAPPINGS_FILE),
@@ -311,6 +323,7 @@ class MediaDiveTransform(Transform):
         if not fresh_run and report_path.is_file() and getattr(self, "_recipe_identity_guard", None) is None:
             if getattr(self, "_recipe_identity_prepared", False):
                 raise SourceFinalizationRequired("MediaDive prepared recipe identity guard was removed")
+            self._endpoint_consumer.restore(report_path)
             restore_recipe_checkpoint(self, report_path)
         return super().finalize(file_prefix=file_prefix, fresh_run=fresh_run)
 
@@ -319,19 +332,24 @@ class MediaDiveTransform(Transform):
         """Serialize original reads, never substitute current files at finalization."""
         guard = getattr(self, "_recipe_identity_guard", None)
         return {
-            "version": 2,
+            "version": 3,
             "inputs": {name: dict(state) for name, state in self._bulk_input_states.items()},
             "recipe_identity": guard.contract() if guard is not None else None,
+            "endpoint_coverage": self._endpoint_consumer.contract(),
         }
 
     @producer_native_inputs.setter
     def producer_native_inputs(self, recorded):
         """Permit exact repeated finalization without replacing the retained read epoch."""
-        if recorded != self.producer_native_inputs:
+        if not contracts_equal(recorded, self.producer_native_inputs):
             raise SourceFinalizationRequired("MediaDive bulk reads differ from finalized run; rerun the producer")
 
     def verify_native_inputs(self, *, byte_verified=False, output_dir=None):
         """Keep the constructor and selected list bound through finalization."""
+        endpoint = getattr(self, "_endpoint_consumer", None)
+        if endpoint is None:
+            raise SourceFinalizationRequired("MediaDive endpoint evidence guard is missing; run the producer")
+        endpoint.verify(output_dir=output_dir, byte_verified=byte_verified)
         verify_bulk_inputs(self, byte_verified=byte_verified, output_dir=output_dir)
         material_audit = getattr(self, "_material_scope_audit", None)
         if material_audit is not None:
@@ -346,9 +364,13 @@ class MediaDiveTransform(Transform):
     @classmethod
     def verify_recorded_native_inputs(cls, report, report_path, *, admission=None):
         """Admit the original raw JSON identities with the public source validator."""
-        guard = verify_recorded_bulk_inputs(report, report_path, admission=admission)
+        endpoint = verify_recorded_endpoints(report, report_path, admission=admission)
+        guard = verify_recorded_bulk_inputs(
+            report, report_path, admission=endpoint.admission, native_paths=endpoint.native_paths
+        )
         verify_recorded_material_inputs(report, report_path)
         verify_recorded_recipe_identity(report, report_path, admission=guard)
+        register_qualification(report_path, endpoint)
         return guard
 
     def _create_node_row(
@@ -392,9 +414,14 @@ class MediaDiveTransform(Transform):
         """Read all four required bulk dictionaries; never fill gaps from an undated cache."""
         try:
             print(f"Loading bulk MediaDive data from {self.bulk_data_dir}/")
+            if getattr(self, "_endpoint_consumer", None) is None:
+                self._endpoint_consumer = EndpointConsumer(self)
+                self._bulk_input_admission = self._endpoint_consumer.admission
+            else:
+                self._endpoint_consumer.verify()
             loaded = {}
-            for name, filename in BULK_INPUTS.items():
-                loaded[name] = load_bulk_payload(self, name, self.bulk_data_dir / filename)
+            for name in BULK_INPUTS:
+                loaded[name] = load_bulk_payload(self, name, self._endpoint_consumer.native_paths[name])
             # Publish only one complete set of dictionaries, all read in this
             # instance's original epoch. A partial/retried read cannot mix epochs.
             self.media_detailed = loaded["mediadive_media_detailed"]
@@ -1077,7 +1104,9 @@ class MediaDiveTransform(Transform):
         """
         return self._get_mediadive_json(url)
 
-    def get_json_object(self, fn: Union[Path, str], url_extension: str, target_dir: Path) -> Dict[str, str]:
+    def get_json_object(
+        self, fn: Union[Path, str], url_extension: str, target_dir: Path
+    ) -> Optional[Union[Dict, List]]:
         """
         Read admitted bulk data, or fetch live data for an explicit nonbulk lookup.
 
@@ -1095,14 +1124,20 @@ class MediaDiveTransform(Transform):
         # Check bulk downloaded data first
         if self.using_bulk_data:
             if url_extension.startswith(MEDIUM_STRAINS):
-                if medium_id in self.media_strains:
-                    self.api_calls_avoided += 1
-                    return self.media_strains[medium_id]
-                else:
-                    # Medium has no strain associations in bulk data (empty response during download)
-                    # Return empty list instead of falling back to API
-                    self.api_calls_avoided += 1
+                endpoint = getattr(self, "_endpoint_consumer", None)
+                if endpoint is None:
+                    raise SourceFinalizationRequired("MediaDive strain lookup requires endpoint outcome evidence")
+                state = endpoint.state(medium_id)
+                verify_bulk_record(self, "mediadive_media_strains", medium_id)
+                self.api_calls_avoided += 1
+                if state == "unknown_unavailable":
+                    # None retains source-declared unavailability; it is never an empty association list.
+                    return None
+                if state == "explicit_empty":
                     return []
+                if medium_id not in self.media_strains:
+                    raise SourceFinalizationRequired("MediaDive nonempty endpoint lacks its native association rows")
+                return self.media_strains[medium_id]
             elif url_extension.startswith(MEDIUM):
                 if medium_id in self.media_detailed:
                     self.api_calls_avoided += 1
@@ -1199,7 +1234,9 @@ class MediaDiveTransform(Transform):
         # epoch. Repeated runs may reuse it only unchanged; a new epoch requires
         # a new instance, never resetting evidence underneath cached mappings.
         self._assert_bulk_data_available()
-        input_file = Path(data_file) if data_file is not None else Path("mediadive.json")
+        input_file = (
+            Path(data_file) if data_file is not None else self._endpoint_consumer.native_paths[MEDIA_LIST_INPUT]
+        )
         if not input_file.is_absolute():
             input_file = self.input_base_dir / input_file
         input_json = load_bulk_payload(self, MEDIA_LIST_INPUT, input_file)
@@ -1332,7 +1369,7 @@ class MediaDiveTransform(Transform):
 
                     # Medium-Strains KG
                     medium_strain_nodes = []
-                    if json_obj_medium_strain:
+                    if json_obj_medium_strain is not None and json_obj_medium_strain:
                         medium_strain_edge = []
                         for strain in json_obj_medium_strain:
                             if strain.get(BACDIVE_ID_COLUMN):
@@ -1601,6 +1638,7 @@ class MediaDiveTransform(Transform):
         self.verify_consumed_inputs()
         self._recipe_identity_guard.write()
         self._material_scope_audit.write()
+        self._endpoint_consumer.write()
 
         # Print data source and API call statistics
         print("\n" + "=" * 80)

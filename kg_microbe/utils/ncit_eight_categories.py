@@ -27,7 +27,7 @@ from kg_microbe.utils.release_binding import semsql_release
 from kg_microbe.utils.sqlite_read import read_only_sqlite
 
 POLICY_FILE = Path(__file__).resolve().parents[2] / "mappings/ncit_eight_categories.json"
-POLICY_SHA256 = "aeee20a68b51a94353eb86fa0a97d422cfe4f39b0fce3a288e9cffeee5fd2b8e"
+POLICY_SHA256 = "dedb2e8fd34e80e86c1e7c4b2677660da67af69a5b23a682c1d5a7b6ac06958d"
 CONTRACT_KEY = "ncit_eight_category_authority"
 NATIVE_ROLE = "category_authority_ncit"
 POLICY_ROLE = "category_authority_ncit_eight_categories"

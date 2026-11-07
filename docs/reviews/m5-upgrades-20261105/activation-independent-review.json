@@ -1,0 +1,60 @@
+{
+  "findings": [
+    {
+      "description": "CHEBI/EC conversion receipts bind compressed .owl.gz inputs; original activation selector selected .owl.",
+      "evidence": "Explicit INPUTS map now selects .owl.gz for ncbitaxon,chebi,ec and .owl for the remaining eight.",
+      "issue": 1741,
+      "status": "resolved_in_reviewed_draft"
+    },
+    {
+      "description": "Current-policy review passed pristine FOODON as both baseline and candidate despite deprecated incidence guard.",
+      "evidence": "Pristine candidate contains 607 deprecated nodes and 28 incident edges. New comparison view uses production _is_deprecated_node to remove only that incidence; original review_foodon guard and pristine current-policy input remain intact.",
+      "issue": 1742,
+      "status": "resolved_in_reviewed_draft"
+    },
+    {
+      "description": "Activation did not bind current-policy admission canonical ENVO/MONDO suppliers.",
+      "evidence": "Current code requires exact canonical supplier cohort and binds each raw path/byte identity, plus review5 inputs.",
+      "status": "resolved_in_reviewed_draft"
+    },
+    {
+      "description": "Biolink activation readiness checks policy version/model SHA but not production policy seals/full model validation.",
+      "evidence": "Activation now calls actual NCIT/MeSH load_policy then validate_model before mutation; both loader files and policy bytes are guarded. It also verifies exact model version/SHA. Focused mutation controls preserve those two metadata fields while changing policy content and require production-seal rejection.",
+      "issue": 1743,
+      "status": "resolved_in_reviewed_draft"
+    }
+  ],
+  "implementation_identities": {
+    "scripts/adhoc/kgm_activate_upgrades_20261105.py": {
+      "bytes": 29968,
+      "sha256": "9e12403efa1d017155f7f9ecc8c36d332abdf40266d905bf11805a0ab136132f"
+    },
+    "scripts/adhoc/kgm_robot_binding_acceptance_20261105.py": {
+      "bytes": 15993,
+      "sha256": "5c83ec8c81067cff5c0f6e18cc75c917dbdc79669dec10ea3ee40131b29180b1"
+    },
+    "scripts/adhoc/kgm_robot_binding_review_20261105.py": {
+      "bytes": 37201,
+      "sha256": "3ceec2c977e7dc2ee70eb1f3146be0cdd4ed299867c3abbff14ed42be18904b2"
+    }
+  },
+  "limitations": [
+    "Independent read-only static/source review plus measured actual receipts and FOODON obsolete incidence. No raw activation or production transform performed by this reviewer.",
+    "Parent owns final affected tests and activation; source formatting changes require comparing the reviewed identities before relying on this audit."
+  ],
+  "positive_controls_reviewed": [
+    "Fixed owned worktree, ancestor symlink rejection and hardlink rejection.",
+    "Complete selected official HTTP receipt/header/metadata and candidate byte checks.",
+    "Explicit finite 16-file replacement selection and 11 conversion source/ROBOT identities.",
+    "Preserve originals and complete prior Rhea tree; exclusive candidate publication and failure receipts; no automatic receipt restamping.",
+    "Current finite-policy evidence remains separate from acknowledged exact pre-existing UBERON source annotation omission.",
+    "Rhea production staging and native/legacy readers run before activation completion; output explicitly remains pending production admission."
+  ],
+  "prior_review_sha256": "9ff3a732dd5a32191e6a59d2426594722c43a8104ad6f996f1af3a05e71c2443",
+  "production_admission": false,
+  "raw_activation": false,
+  "reviewed_at_utc": "2026-11-05T07:11:19.113798+00:00",
+  "scope": "Independent read-only review of activation and current-policy admission helpers; no activation/producer/test run by this reviewer.",
+  "status": "no_remaining_findings_in_reviewed_scope",
+  "test_status": "Parent confirmed required formatting/spelling preparation changed zero files, followed by affected two-file rerun 30/30 passed; earlier 385 passing cases retained. Independent reviewer did not repeat tests."
+}

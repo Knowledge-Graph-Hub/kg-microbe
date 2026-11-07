@@ -1,0 +1,543 @@
+{
+  "checks": {
+    "3344_catalogue_pairs": true,
+    "6688_unique_audit_endpoints": true,
+    "actual_completed_graph_counts": true,
+    "actual_completion_and_zero_api_calls": true,
+    "actual_consumed_mediadive_compounds": true,
+    "actual_consumed_mediadive_endpoint_outcomes": true,
+    "actual_consumed_mediadive_generation_manifest": true,
+    "actual_consumed_mediadive_generation_pointer": true,
+    "actual_consumed_mediadive_media_detailed": true,
+    "actual_consumed_mediadive_media_list": true,
+    "actual_consumed_mediadive_media_strains": true,
+    "actual_consumed_mediadive_solutions": true,
+    "actual_consumed_mediadive_unknown_disposition_policy": true,
+    "actual_consumed_mediadive_unknown_policy": true,
+    "actual_final_audit_hash_go_reference_resolution.tsv": true,
+    "actual_final_audit_hash_mediadive_endpoint_outcomes.tsv": true,
+    "actual_final_audit_hash_mediadive_material_scope_quarantine.tsv": true,
+    "actual_final_audit_hash_mediadive_missing_solution_references.tsv": true,
+    "actual_final_audit_hash_mediadive_nested_solution_identity.tsv": true,
+    "actual_final_audit_hash_mediadive_oatmeal_identity.tsv": true,
+    "actual_final_audit_hash_mediadive_substrate_identity.tsv": true,
+    "actual_final_audit_hash_source_canonicalization.tsv": true,
+    "actual_final_audit_hash_source_metadata_exclusions.tsv": true,
+    "actual_final_audit_hash_source_reference_resolution.tsv": true,
+    "actual_final_graph_hash_edges.tsv": true,
+    "actual_final_graph_hash_nodes.tsv": true,
+    "actual_positive_negative_counts": true,
+    "admitted_generation_exact": true,
+    "all6688_endpoint_latest_heads": true,
+    "all_applicable_native_growth_graph_projections_preserved": true,
+    "all_catalogue_medium_nodes_retained": true,
+    "completed_report_and_marker": true,
+    "consistent_retirement_NCBITaxon:1037355": true,
+    "consistent_retirement_NCBITaxon:104098": true,
+    "consistent_retirement_NCBITaxon:1073081": true,
+    "consistent_retirement_NCBITaxon:1076620": true,
+    "consistent_retirement_NCBITaxon:108150": true,
+    "consistent_retirement_NCBITaxon:110539": true,
+    "consistent_retirement_NCBITaxon:1143711": true,
+    "consistent_retirement_NCBITaxon:114692": true,
+    "consistent_retirement_NCBITaxon:114695": true,
+    "consistent_retirement_NCBITaxon:114696": true,
+    "consistent_retirement_NCBITaxon:114700": true,
+    "consistent_retirement_NCBITaxon:115335": true,
+    "consistent_retirement_NCBITaxon:115561": true,
+    "consistent_retirement_NCBITaxon:1173107": true,
+    "consistent_retirement_NCBITaxon:1332080": true,
+    "consistent_retirement_NCBITaxon:1462526": true,
+    "consistent_retirement_NCBITaxon:1465757": true,
+    "consistent_retirement_NCBITaxon:1490225": true,
+    "consistent_retirement_NCBITaxon:1530046": true,
+    "consistent_retirement_NCBITaxon:1530170": true,
+    "consistent_retirement_NCBITaxon:1532": true,
+    "consistent_retirement_NCBITaxon:1549639": true,
+    "consistent_retirement_NCBITaxon:1549850": true,
+    "consistent_retirement_NCBITaxon:157733": true,
+    "consistent_retirement_NCBITaxon:162157": true,
+    "consistent_retirement_NCBITaxon:162160": true,
+    "consistent_retirement_NCBITaxon:1631871": true,
+    "consistent_retirement_NCBITaxon:163605": true,
+    "consistent_retirement_NCBITaxon:182080": true,
+    "consistent_retirement_NCBITaxon:182220": true,
+    "consistent_retirement_NCBITaxon:1914757": true,
+    "consistent_retirement_NCBITaxon:1929": true,
+    "consistent_retirement_NCBITaxon:2026255": true,
+    "consistent_retirement_NCBITaxon:205326": true,
+    "consistent_retirement_NCBITaxon:2055844": true,
+    "consistent_retirement_NCBITaxon:2055845": true,
+    "consistent_retirement_NCBITaxon:223919": true,
+    "consistent_retirement_NCBITaxon:225845": true,
+    "consistent_retirement_NCBITaxon:225894": true,
+    "consistent_retirement_NCBITaxon:232346": true,
+    "consistent_retirement_NCBITaxon:235987": true,
+    "consistent_retirement_NCBITaxon:2376": true,
+    "consistent_retirement_NCBITaxon:237656": true,
+    "consistent_retirement_NCBITaxon:253547": true,
+    "consistent_retirement_NCBITaxon:2598861": true,
+    "consistent_retirement_NCBITaxon:267368": true,
+    "consistent_retirement_NCBITaxon:2796464": true,
+    "consistent_retirement_NCBITaxon:280237": true,
+    "consistent_retirement_NCBITaxon:280240": true,
+    "consistent_retirement_NCBITaxon:281456": true,
+    "consistent_retirement_NCBITaxon:2817710": true,
+    "consistent_retirement_NCBITaxon:285569": true,
+    "consistent_retirement_NCBITaxon:2981623": true,
+    "consistent_retirement_NCBITaxon:2981791": true,
+    "consistent_retirement_NCBITaxon:3040095": true,
+    "consistent_retirement_NCBITaxon:3119943": true,
+    "consistent_retirement_NCBITaxon:317018": true,
+    "consistent_retirement_NCBITaxon:321318": true,
+    "consistent_retirement_NCBITaxon:33909": true,
+    "consistent_retirement_NCBITaxon:368454": true,
+    "consistent_retirement_NCBITaxon:368812": true,
+    "consistent_retirement_NCBITaxon:369930": true,
+    "consistent_retirement_NCBITaxon:37480": true,
+    "consistent_retirement_NCBITaxon:386490": true,
+    "consistent_retirement_NCBITaxon:395930": true,
+    "consistent_retirement_NCBITaxon:409316": true,
+    "consistent_retirement_NCBITaxon:42565": true,
+    "consistent_retirement_NCBITaxon:442694": true,
+    "consistent_retirement_NCBITaxon:444060": true,
+    "consistent_retirement_NCBITaxon:449974": true,
+    "consistent_retirement_NCBITaxon:451644": true,
+    "consistent_retirement_NCBITaxon:47304": true,
+    "consistent_retirement_NCBITaxon:502832": true,
+    "consistent_retirement_NCBITaxon:50340": true,
+    "consistent_retirement_NCBITaxon:531966": true,
+    "consistent_retirement_NCBITaxon:566027": true,
+    "consistent_retirement_NCBITaxon:57": true,
+    "consistent_retirement_NCBITaxon:582442": true,
+    "consistent_retirement_NCBITaxon:58354": true,
+    "consistent_retirement_NCBITaxon:59917": true,
+    "consistent_retirement_NCBITaxon:629680": true,
+    "consistent_retirement_NCBITaxon:67308": true,
+    "consistent_retirement_NCBITaxon:68043": true,
+    "consistent_retirement_NCBITaxon:68044": true,
+    "consistent_retirement_NCBITaxon:68172": true,
+    "consistent_retirement_NCBITaxon:68204": true,
+    "consistent_retirement_NCBITaxon:68243": true,
+    "consistent_retirement_NCBITaxon:692722": true,
+    "consistent_retirement_NCBITaxon:694059": true,
+    "consistent_retirement_NCBITaxon:76756": true,
+    "consistent_retirement_NCBITaxon:81030": true,
+    "consistent_retirement_NCBITaxon:83340": true,
+    "consistent_retirement_NCBITaxon:84292": true,
+    "consistent_retirement_NCBITaxon:860246": true,
+    "consistent_retirement_NCBITaxon:86959": true,
+    "consistent_retirement_NCBITaxon:95160": true,
+    "endpoint_contract_sealed_v1": true,
+    "every_growth_subject_has_a_live_organism_node": true,
+    "every_unknown_case_exact_latest_head": true,
+    "exact_approved_manifest": true,
+    "exact_finite632_policy_cases": true,
+    "exact_native_endpoint_audit_serialization": true,
+    "expected_six_state_counts": true,
+    "growth_edge_semantics": true,
+    "lookup_exact_consumed": true,
+    "manifest_and_consumed_qualifications_exact": true,
+    "native_contract_v3": true,
+    "native_v3_role_mediadive_compounds": true,
+    "native_v3_role_mediadive_media_detailed": true,
+    "native_v3_role_mediadive_media_list": true,
+    "native_v3_role_mediadive_media_strains": true,
+    "native_v3_role_mediadive_solutions": true,
+    "producer_audit_identity": true,
+    "review_inputs_stable_catalogue.json": true,
+    "review_inputs_stable_compounds.json": true,
+    "review_inputs_stable_current.json": true,
+    "review_inputs_stable_endpoint-outcomes.json": true,
+    "review_inputs_stable_manifest.json": true,
+    "review_inputs_stable_media_detailed.json": true,
+    "review_inputs_stable_media_strains.json": true,
+    "review_inputs_stable_mediadive_unknown_dispositions.json": true,
+    "review_inputs_stable_solutions.json": true,
+    "review_inputs_stable_source_finalization.json": true,
+    "review_inputs_stable_source_fingerprint.json": true,
+    "review_inputs_stable_unknown-policy.json": true,
+    "same_approved_policy": true,
+    "sealed_manifest_catalogue.json": true,
+    "sealed_manifest_compounds.json": true,
+    "sealed_manifest_endpoint-outcomes.json": true,
+    "sealed_manifest_media_detailed.json": true,
+    "sealed_manifest_media_strains.json": true,
+    "sealed_manifest_solutions.json": true,
+    "sealed_manifest_unknown-policy.json": true,
+    "source_accounting_qualified_not_complete_associations": true,
+    "unknown_endpoints_no_positive_or_negative_growth_edges": true,
+    "unknown_is_absent_native_not_empty": true,
+    "unknown_medium_incidence_recipe_only": true
+  },
+  "completion": {
+    "api_calls_recorded": 0,
+    "graph_counts": {
+      "edges": 114164,
+      "nodes": 32065
+    },
+    "line": "[transform] mediadive: done \u2014 nodes.tsv: 32,065 rows; edges.tsv: 114,164 rows",
+    "marker": {
+      "bytes": 4138,
+      "path": "data/transformed/mediadive/source_fingerprint.json",
+      "sha256": "84fdf383d32fbefbbc5a474cbb5096eedb2fd2df9dc6c98773645b2bc683efff"
+    },
+    "native_contract_version": 3,
+    "phase3_stage_complete_claimed": false,
+    "producer_code": {
+      "directory": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/kg_microbe/transform_utils/mediadive",
+      "fingerprint": "7c0205ff75797b01d121cb523f1eacc747efe84be2b2e0a408bc725e4df56cb6"
+    },
+    "report": {
+      "bytes": 172931,
+      "path": "data/transformed/mediadive/source_finalization.json",
+      "sha256": "555db90c43c72c0155e9dbf146768e4a7144840f7e8845c94cb1930a48dba2c3"
+    }
+  },
+  "consumed_generation_roles": {
+    "mediadive_compounds": {
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw/mediadive/generations/resolution-admitted-r2/compounds.json",
+      "sha256": "5401db0bc697249c9b2b0ad0b950fd3c2b7629f0cdd10c7feaf1e40b0a3a4729"
+    },
+    "mediadive_endpoint_outcomes": {
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw/mediadive/generations/resolution-admitted-r2/endpoint-outcomes.json",
+      "sha256": "562e09a148f7c9a155708b15dc579e181a1383cfbcd664ba0f28f25e72aebcfd"
+    },
+    "mediadive_generation_manifest": {
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw/mediadive/generations/resolution-admitted-r2/manifest.json",
+      "sha256": "fa3c9e47bad5ff298b35e32382de7bd642e6be6ed95540db128d7d674058924f"
+    },
+    "mediadive_generation_pointer": {
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw/mediadive/current.json",
+      "sha256": "8f92fa326a469e98e958724570c99c6c63419dbdbac9475dc6a73cacca456f51"
+    },
+    "mediadive_media_detailed": {
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw/mediadive/generations/resolution-admitted-r2/media_detailed.json",
+      "sha256": "82a7d02a5a85378d6acaa535c5d4e07a2fe3ede5c5cb743bee0892eed738bb81"
+    },
+    "mediadive_media_list": {
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw/mediadive/generations/resolution-admitted-r2/catalogue.json",
+      "sha256": "454a3d3b5061bd2347f9520dafe2746a50e830611cb8753eb7e8ea4f9bde12f0"
+    },
+    "mediadive_media_strains": {
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw/mediadive/generations/resolution-admitted-r2/media_strains.json",
+      "sha256": "cc216f49a6a4499b593664b7265ed6c7f4d801dbb4c327bef5bac7adba69cb15"
+    },
+    "mediadive_solutions": {
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw/mediadive/generations/resolution-admitted-r2/solutions.json",
+      "sha256": "5b136571fa52fb2a698069d6ce7117717bb6eb4c572fa3b9a6af167e7d054e63"
+    },
+    "mediadive_unknown_disposition_policy": {
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/mappings/mediadive_unknown_dispositions.json",
+      "sha256": "2e1915efda265be4cbaea8921f126a7a1ea04e7c8110194ead915cfc1cecbd08"
+    },
+    "mediadive_unknown_policy": {
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/raw/mediadive/generations/resolution-admitted-r2/unknown-policy.json",
+      "sha256": "2e1915efda265be4cbaea8921f126a7a1ea04e7c8110194ead915cfc1cecbd08"
+    }
+  },
+  "current_generation_pointer": {
+    "generation_id": "resolution-admitted-r2",
+    "manifest_sha256": "fa3c9e47bad5ff298b35e32382de7bd642e6be6ed95540db128d7d674058924f",
+    "schema_version": 1
+  },
+  "endpoint_audit": {
+    "exact_sorted_projection_of_latest_heads": true,
+    "identity": {
+      "bytes": 1501891,
+      "path": "data/transformed/mediadive/mediadive_endpoint_outcomes.tsv",
+      "sha256": "085e45e73313b22f8505feb27541873c0584a1ef4293d4c756f28e8cb1796782"
+    },
+    "state_counts": {
+      "explicit_empty": 0,
+      "malformed": 0,
+      "missing_evidence": 0,
+      "nonempty": 6056,
+      "transport_error": 0,
+      "unknown_unavailable": 632
+    },
+    "unique_endpoints": 6688,
+    "unknown_case_set_exact_curated_policy": true,
+    "unknown_endpoints_sha256": "d57405e11552e9e4c1b198ed8653af808d0c83781f7346d48e49a52875822d9d"
+  },
+  "findings": [],
+  "graph_predicate_counts": {
+    "METPO:2000517": 55383,
+    "METPO:2000518": 3,
+    "biolink:has_chemical_role": 1378,
+    "biolink:has_part": 48614,
+    "biolink:subclass_of": 8786
+  },
+  "identities": {
+    "data/raw/mediadive/current.json": {
+      "bytes": 147,
+      "path": "data/raw/mediadive/current.json",
+      "sha256": "8f92fa326a469e98e958724570c99c6c63419dbdbac9475dc6a73cacca456f51"
+    },
+    "data/raw/mediadive/generations/resolution-admitted-r2/catalogue.json": {
+      "bytes": 1206179,
+      "path": "data/raw/mediadive/generations/resolution-admitted-r2/catalogue.json",
+      "sha256": "454a3d3b5061bd2347f9520dafe2746a50e830611cb8753eb7e8ea4f9bde12f0"
+    },
+    "data/raw/mediadive/generations/resolution-admitted-r2/compounds.json": {
+      "bytes": 228388,
+      "path": "data/raw/mediadive/generations/resolution-admitted-r2/compounds.json",
+      "sha256": "5401db0bc697249c9b2b0ad0b950fd3c2b7629f0cdd10c7feaf1e40b0a3a4729"
+    },
+    "data/raw/mediadive/generations/resolution-admitted-r2/endpoint-outcomes.json": {
+      "bytes": 2132415,
+      "path": "data/raw/mediadive/generations/resolution-admitted-r2/endpoint-outcomes.json",
+      "sha256": "562e09a148f7c9a155708b15dc579e181a1383cfbcd664ba0f28f25e72aebcfd"
+    },
+    "data/raw/mediadive/generations/resolution-admitted-r2/manifest.json": {
+      "bytes": 2580580,
+      "path": "data/raw/mediadive/generations/resolution-admitted-r2/manifest.json",
+      "sha256": "fa3c9e47bad5ff298b35e32382de7bd642e6be6ed95540db128d7d674058924f"
+    },
+    "data/raw/mediadive/generations/resolution-admitted-r2/media_detailed.json": {
+      "bytes": 20814573,
+      "path": "data/raw/mediadive/generations/resolution-admitted-r2/media_detailed.json",
+      "sha256": "82a7d02a5a85378d6acaa535c5d4e07a2fe3ede5c5cb743bee0892eed738bb81"
+    },
+    "data/raw/mediadive/generations/resolution-admitted-r2/media_strains.json": {
+      "bytes": 12415383,
+      "path": "data/raw/mediadive/generations/resolution-admitted-r2/media_strains.json",
+      "sha256": "cc216f49a6a4499b593664b7265ed6c7f4d801dbb4c327bef5bac7adba69cb15"
+    },
+    "data/raw/mediadive/generations/resolution-admitted-r2/solutions.json": {
+      "bytes": 10469524,
+      "path": "data/raw/mediadive/generations/resolution-admitted-r2/solutions.json",
+      "sha256": "5b136571fa52fb2a698069d6ce7117717bb6eb4c572fa3b9a6af167e7d054e63"
+    },
+    "data/raw/mediadive/generations/resolution-admitted-r2/unknown-policy.json": {
+      "bytes": 176020,
+      "path": "data/raw/mediadive/generations/resolution-admitted-r2/unknown-policy.json",
+      "sha256": "2e1915efda265be4cbaea8921f126a7a1ea04e7c8110194ead915cfc1cecbd08"
+    },
+    "data/rebuild-evidence/20261105/mediadive-resolution-1734/admission-r2-independent-audit-1.json": {
+      "bytes": 86687,
+      "path": "data/rebuild-evidence/20261105/mediadive-resolution-1734/admission-r2-independent-audit-1.json",
+      "sha256": "7202e5c85461a4af99e40731e130495d37b4e9e707cfca16d1aa334a0323f9ad"
+    },
+    "data/transformed/mediadive/edges.tsv": {
+      "bytes": 22413177,
+      "path": "data/transformed/mediadive/edges.tsv",
+      "sha256": "14e741d473dbeb300b3e65f067357e034421f2018495e787e33bc1b3af97ba94"
+    },
+    "data/transformed/mediadive/go_reference_resolution.tsv": {
+      "bytes": 204,
+      "path": "data/transformed/mediadive/go_reference_resolution.tsv",
+      "sha256": "082792210b81208e4bfab7db9686e1d64a7bc98366f9bc0b7a4a302d1e8cfacc"
+    },
+    "data/transformed/mediadive/mediadive_endpoint_outcomes.tsv": {
+      "bytes": 1501891,
+      "path": "data/transformed/mediadive/mediadive_endpoint_outcomes.tsv",
+      "sha256": "085e45e73313b22f8505feb27541873c0584a1ef4293d4c756f28e8cb1796782"
+    },
+    "data/transformed/mediadive/mediadive_material_scope_quarantine.tsv": {
+      "bytes": 1159983,
+      "path": "data/transformed/mediadive/mediadive_material_scope_quarantine.tsv",
+      "sha256": "66527638f488b2283aaf085d6488eff4e867b38bf727e4d2b4ef8180c4e80d7b"
+    },
+    "data/transformed/mediadive/mediadive_missing_solution_references.tsv": {
+      "bytes": 2215,
+      "path": "data/transformed/mediadive/mediadive_missing_solution_references.tsv",
+      "sha256": "c4a6e9c9acb0766a196933c238f7897a1500461c1a38f7fb4734acac2fe5cc18"
+    },
+    "data/transformed/mediadive/mediadive_nested_solution_identity.tsv": {
+      "bytes": 3137102,
+      "path": "data/transformed/mediadive/mediadive_nested_solution_identity.tsv",
+      "sha256": "0d0b9cde4bdc9599da069d1ddba322e3535b86f8100425abcf53b72814943f01"
+    },
+    "data/transformed/mediadive/mediadive_oatmeal_identity.tsv": {
+      "bytes": 3782,
+      "path": "data/transformed/mediadive/mediadive_oatmeal_identity.tsv",
+      "sha256": "0b19948b870123ddacb3763506f00075a0bf8cc735b6c91444d2f078ccf78f21"
+    },
+    "data/transformed/mediadive/mediadive_substrate_identity.tsv": {
+      "bytes": 916,
+      "path": "data/transformed/mediadive/mediadive_substrate_identity.tsv",
+      "sha256": "c8653f5a50ab76ce121d1e4e6346f9e9819c1ca9dcb6d4ea593b464754954df2"
+    },
+    "data/transformed/mediadive/nodes.tsv": {
+      "bytes": 3089112,
+      "path": "data/transformed/mediadive/nodes.tsv",
+      "sha256": "a50e289eb2e8d61f487932febfc26c9da088b5d3df4963f2a23b410768a28c20"
+    },
+    "data/transformed/mediadive/source_canonicalization.tsv": {
+      "bytes": 33273,
+      "path": "data/transformed/mediadive/source_canonicalization.tsv",
+      "sha256": "a80d294eab0a0472cb7e337027a6eecf6a0db2f0bee981b1857ccec4fe99de6c"
+    },
+    "data/transformed/mediadive/source_finalization.json": {
+      "bytes": 172931,
+      "path": "data/transformed/mediadive/source_finalization.json",
+      "sha256": "555db90c43c72c0155e9dbf146768e4a7144840f7e8845c94cb1930a48dba2c3"
+    },
+    "data/transformed/mediadive/source_fingerprint.json": {
+      "bytes": 4138,
+      "path": "data/transformed/mediadive/source_fingerprint.json",
+      "sha256": "84fdf383d32fbefbbc5a474cbb5096eedb2fd2df9dc6c98773645b2bc683efff"
+    },
+    "data/transformed/mediadive/source_metadata_exclusions.tsv": {
+      "bytes": 62,
+      "path": "data/transformed/mediadive/source_metadata_exclusions.tsv",
+      "sha256": "f0bfb347a870f737dd13e48920e6eda693bc99db3f081a4326bc76efdd538564"
+    },
+    "data/transformed/mediadive/source_reference_resolution.tsv": {
+      "bytes": 216705,
+      "path": "data/transformed/mediadive/source_reference_resolution.tsv",
+      "sha256": "786ceead6fa3d1a63213ece98d59f3ec951deea9b3a6be6f765216f2a63e30bd"
+    },
+    "kg_microbe/transform_utils/bacdive/tmp/bacdive.tsv": {
+      "bytes": 39069347,
+      "path": "kg_microbe/transform_utils/bacdive/tmp/bacdive.tsv",
+      "sha256": "b01032d4bc41b3342ab12e9aa68901551e83cb05bfa2a9b1b1aa4d2ab1479904"
+    },
+    "kg_microbe/transform_utils/mediadive/bulk_inputs.py": {
+      "bytes": 15065,
+      "path": "kg_microbe/transform_utils/mediadive/bulk_inputs.py",
+      "sha256": "a7b6d87afbf530ae8a520f10b5edda3b52b8ab267431ffe3810b0b8614254d4b"
+    },
+    "kg_microbe/transform_utils/mediadive/endpoint_consumer.py": {
+      "bytes": 13120,
+      "path": "kg_microbe/transform_utils/mediadive/endpoint_consumer.py",
+      "sha256": "0b14f6ec992476b73c5cf0cf9e1e92ad38acc59724fd5e20c75a2f35e29cea94"
+    },
+    "kg_microbe/transform_utils/mediadive/endpoint_outcomes.py": {
+      "bytes": 34745,
+      "path": "kg_microbe/transform_utils/mediadive/endpoint_outcomes.py",
+      "sha256": "4829dd7719172ecf6ce1b87f78b59b07b488395b2e68921ed8f87de0004938e6"
+    },
+    "kg_microbe/transform_utils/mediadive/mediadive.py": {
+      "bytes": 80386,
+      "path": "kg_microbe/transform_utils/mediadive/mediadive.py",
+      "sha256": "5dd9090519838615677c118bcdc95db5304e658dde0dc04876330193a5f7e855"
+    },
+    "mappings/mediadive_unknown_dispositions.json": {
+      "bytes": 176020,
+      "path": "mappings/mediadive_unknown_dispositions.json",
+      "sha256": "2e1915efda265be4cbaea8921f126a7a1ea04e7c8110194ead915cfc1cecbd08"
+    }
+  },
+  "limitations": [
+    "The persisted admission review already verified raw response bodies, cache preservation, official error contract and current sealed generation; this review binds its exact manifest and does not rerun that expensive production gate.",
+    "The 18,374 known native observations without BacDive IDs and 73 with existing taxon-less lookup records remain in the native generation but have no graph assertion under the unchanged producer rules; graph representation does not claim all native observations.",
+    "Recorded taxonomy replacements were checked for exact consumed-authority identity and applied in the comparison, without independently rebuilding taxdump authority.",
+    "Recipe audit bytes were checked against finalization, but this bounded endpoint/association review does not reperform all recipe/material scientific validation.",
+    "Source freshness and association coverage completeness are not inferred from completed production; association_coverage_complete remains false.",
+    "Phase3 dependent sources, source admission, merged qualifications and final artifact validation remain separate required stages."
+  ],
+  "native_observation_projection": {
+    "aggregation_explanation": "The existing producer requires a BacDive ID and a nonempty lookup result (or a fallback strain ID when no lookup row exists), then emits explicit binary growth with BacDive publication evidence. Identical graph rows are deduplicated; native observations remain unchanged in the sealed generation. This review compares subject, polarity, exact medium and BacDive publication after only the recorded taxonomy replacements.",
+    "all_negative_graph_witnesses": [
+      {
+        "object": "mediadive.medium:1764",
+        "predicate": "METPO:2000518",
+        "publications": "https://bacdive.dsmz.de/strain/24645",
+        "subject": "NCBITaxon:1236220"
+      },
+      {
+        "object": "mediadive.medium:372",
+        "predicate": "METPO:2000518",
+        "publications": "https://bacdive.dsmz.de/strain/5940",
+        "subject": "NCBITaxon:416348"
+      },
+      {
+        "object": "mediadive.medium:1850",
+        "predicate": "METPO:2000518",
+        "publications": "https://bacdive.dsmz.de/strain/176908",
+        "subject": "kgmicrobe.strain:bacdive_176908"
+      }
+    ],
+    "applicable_native_observations": 55443,
+    "distinct_recorded_retired_taxa": 96,
+    "existing_producer_exclusions": {
+      "existing_lookup_without_taxon": 73,
+      "no_bacdive_id": 18374
+    },
+    "extra_projected_tuples": 0,
+    "identical_projection_duplicates_collapsed": 57,
+    "known_medium_strain_endpoints": 2712,
+    "missing_projected_tuples": 0,
+    "native_growth_polarities": {
+      "0": 3,
+      "1": 73887
+    },
+    "native_observations": 73890,
+    "native_projection_multiplicity_histogram": {
+      "1": 55330,
+      "2": 55,
+      "3": 1
+    },
+    "negative_graph_edges": 3,
+    "observations_using_existing_fallback_strain_ids": 9814,
+    "observations_using_recorded_taxon_replacements": 260,
+    "positive_graph_edges": 55383,
+    "taxonomy_authority_sha256_recorded": "8f784a79de31b8b134e5bd34b0432e33a3b776da88e7209dd5307cd1caf3a9d5",
+    "unique_final_graph_projections": 55386
+  },
+  "prior_full_generation_admission_review": {
+    "bytes": 86687,
+    "path": "data/rebuild-evidence/20261105/mediadive-resolution-1734/admission-r2-independent-audit-1.json",
+    "sha256": "7202e5c85461a4af99e40731e130495d37b4e9e707cfca16d1aa334a0323f9ad"
+  },
+  "production_mediadive_completed": true,
+  "qualification": {
+    "admissible": true,
+    "association_coverage_complete": false,
+    "association_endpoint_count": 3344,
+    "catalogue_count": 3344,
+    "endpoint_accounting_complete": true,
+    "expected_endpoint_count": 6688,
+    "omitted_assertions": "Unknown endpoints produce no inferred strain, growth, or absence assertions.",
+    "policy_applied": true,
+    "recipe_coverage_complete": true,
+    "schema_version": 1,
+    "state_counts": {
+      "explicit_empty": 0,
+      "malformed": 0,
+      "missing_evidence": 0,
+      "nonempty": 6056,
+      "transport_error": 0,
+      "unknown_unavailable": 632
+    },
+    "unresolved_endpoints": []
+  },
+  "reviewed_at_utc": "2026-11-05T23:29:57.295163+00:00",
+  "schema_version": 1,
+  "scope": "Independent read-only current endpoint-audit/consumed-contract inspection and streamed graph comparison, with exact admitted native files; no production gate, producer, tests, requests or credential access.",
+  "source_code_identities": {
+    "kg_microbe/transform_utils/mediadive/bulk_inputs.py": {
+      "bytes": 15065,
+      "path": "kg_microbe/transform_utils/mediadive/bulk_inputs.py",
+      "sha256": "a7b6d87afbf530ae8a520f10b5edda3b52b8ab267431ffe3810b0b8614254d4b"
+    },
+    "kg_microbe/transform_utils/mediadive/endpoint_consumer.py": {
+      "bytes": 13120,
+      "path": "kg_microbe/transform_utils/mediadive/endpoint_consumer.py",
+      "sha256": "0b14f6ec992476b73c5cf0cf9e1e92ad38acc59724fd5e20c75a2f35e29cea94"
+    },
+    "kg_microbe/transform_utils/mediadive/endpoint_outcomes.py": {
+      "bytes": 34745,
+      "path": "kg_microbe/transform_utils/mediadive/endpoint_outcomes.py",
+      "sha256": "4829dd7719172ecf6ce1b87f78b59b07b488395b2e68921ed8f87de0004938e6"
+    },
+    "kg_microbe/transform_utils/mediadive/mediadive.py": {
+      "bytes": 80386,
+      "path": "kg_microbe/transform_utils/mediadive/mediadive.py",
+      "sha256": "5dd9090519838615677c118bcdc95db5304e658dde0dc04876330193a5f7e855"
+    }
+  },
+  "status": "pass_completed_full_mediadive_producer_review",
+  "unknown_graph_omissions": {
+    "incident_edge_predicates": {
+      "biolink:has_part": 1645,
+      "biolink:subclass_of": 632
+    },
+    "meaning": "Unknown association endpoints retain independently sourced medium/recipe declarations; none gain strain-growth, negative growth or inferred absence assertions. No explicit-empty endpoint exists in this generation.",
+    "positive_or_negative_growth_assertions": 0,
+    "unknown_medium_count": 632,
+    "unknown_medium_nodes_retained": 632
+  }
+}

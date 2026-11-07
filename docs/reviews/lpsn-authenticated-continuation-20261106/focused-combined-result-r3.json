@@ -1,0 +1,24 @@
+{
+  "recorded_at": "2026-11-07T03:18:20.752548+00:00",
+  "status": "pass",
+  "exit_code": 0,
+  "passed": 188,
+  "warnings": 4,
+  "seconds": 2.69,
+  "selection": [
+    "tests/test_rebuild_launcher_20261105.py",
+    "tests/test_lpsn_api_transform.py",
+    "tests/test_lpsn_authenticated_20261106.py"
+  ],
+  "files": {
+    "kg_microbe/transform_utils/lpsn_api/lpsn_api.py": "5db702a7c427b2a6fddc6f0a7f68b2cc8d181f18c325bca74cca5843eb0c0d7b",
+    "scripts/adhoc/kgm_rebuild_20261105.py": "af834e3ddca4fa085af433a75257c563c8c31d7b6261b7f4080375f15e75d1d1",
+    "scripts/adhoc/kgm_lpsn_authenticated_20261106.py": "8d5d2f43c1a92a3b7958cbaae5fd4daf959512f1aa495a3e9b670b0396edd65a",
+    "tests/test_lpsn_api_transform.py": "8b79ec0e9534dfeea36d713a297e507b274b5aedce2fb57391c78bbb4fe134eb",
+    "tests/test_rebuild_launcher_20261105.py": "4a7ddb47bad42c5b9037f89cd56aea92078e4196166e3e1ec6bfc7ccb43fa4c2",
+    "tests/test_lpsn_authenticated_20261106.py": "d0fda4221f095700bcdf922ffe248375478204333227dc204bab3580d2768efb"
+  },
+  "log_sha256": "05e5bd064fd7c7ea9d740a91235ded2743458c088b7b627de23e2ba9b791efa4",
+  "real_credentials_read": false,
+  "network_requests": false
+}

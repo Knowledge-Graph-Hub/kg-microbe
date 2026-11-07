@@ -1,0 +1,314 @@
+{
+  "bound_inputs": {
+    "data/transformed/bacdive/source_finalization.json": {
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/bacdive/source_finalization.json",
+      "sha256": "fa2202cffd6c29a179509483a2d627479682820be1ff855b545b183538b3cac7",
+      "size_bytes": 84768577
+    },
+    "data/transformed/bacdive/source_fingerprint.json": {
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/bacdive/source_fingerprint.json",
+      "sha256": "09c60f846cd16ba5872380a06ee4a36b2907d72ecc15064179657d61120c9e03",
+      "size_bytes": 3461
+    },
+    "data/transformed/bacdive/source_reference_resolution.tsv": {
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/transformed/bacdive/source_reference_resolution.tsv",
+      "sha256": "32861964847e8a0b20c2d1ce375a460480ce51951828d88c0a2c6edd409b90a4",
+      "size_bytes": 1281030
+    },
+    "kg_microbe/merge_utils/external_node_closure.py": {
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/kg_microbe/merge_utils/external_node_closure.py",
+      "sha256": "7c3000f2c1d34252ab255152d3106a615b2468e138e88d7ed8299b52f2bf6d06",
+      "size_bytes": 32822
+    },
+    "kg_microbe/transform_utils/bacdive/bacdive.py": {
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/kg_microbe/transform_utils/bacdive/bacdive.py",
+      "sha256": "c2446a6a5daf2ed87bf1d0aefa625ed51324898b854d8f9f0fdf9a5e00d5af72",
+      "size_bytes": 193036
+    },
+    "kg_microbe/transform_utils/mediadive/mediadive.py": {
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/kg_microbe/transform_utils/mediadive/mediadive.py",
+      "sha256": "5dd9090519838615677c118bcdc95db5304e658dde0dc04876330193a5f7e855",
+      "size_bytes": 80386
+    },
+    "kg_microbe/utils/external_identifiers.py": {
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/kg_microbe/utils/external_identifiers.py",
+      "sha256": "635aaa232d5679f2ddd49d51419f31443298a5694c0467341e08abf7e92452f7",
+      "size_bytes": 5105
+    },
+    "mappings/isolation_source_to_ontology.tsv": {
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/mappings/isolation_source_to_ontology.tsv",
+      "sha256": "6be9917171b58f19cd1859fac80e43c7d9240844de48d2ab4b9099559ceaed3a",
+      "size_bytes": 80694
+    },
+    "tests/mediadive_consumer_fixtures.py": {
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/tests/mediadive_consumer_fixtures.py",
+      "sha256": "c0149aafc48cbfb1896030ffb2d55b226500a55e068c51a35788bd5878a33359",
+      "size_bytes": 5330
+    },
+    "tests/test_bacdive_ncbitaxon_stubs.py": {
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/tests/test_bacdive_ncbitaxon_stubs.py",
+      "sha256": "4eba42d78c2136f976f76190e51a822beca7da43304235ebd6e895e9a6487a6c",
+      "size_bytes": 6085
+    },
+    "tests/test_bacdive_unresolvable_taxa.py": {
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/tests/test_bacdive_unresolvable_taxa.py",
+      "sha256": "fbad111a4cd8e23e57cc583089c0629b836a8093f98b5db3d65426a5fab2803d",
+      "size_bytes": 6275
+    },
+    "tests/test_chemical_xref_annotations.py": {
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/tests/test_chemical_xref_annotations.py",
+      "sha256": "e09939effd09d3211d321423d0e96a994698f9c785806cc2b038424cdd3f9c6e",
+      "size_bytes": 8460
+    },
+    "tests/test_mediadive_catalase_scope.py": {
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/tests/test_mediadive_catalase_scope.py",
+      "sha256": "3f4d0440c610d1e647a6567017160539f610dc317c7f2a888c0f8cecb8ff172a",
+      "size_bytes": 17180
+    },
+    "tests/test_mediadive_material_scope_audit.py": {
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/tests/test_mediadive_material_scope_audit.py",
+      "sha256": "d21339de26f8f7e941bbe661e58ec2cea2f0667cf6b65c6a0709043be9369fad",
+      "size_bytes": 17137
+    }
+  },
+  "findings": [
+    {
+      "actual_failure": "NCBITaxon:6657 only",
+      "classification": "actionable_test_only",
+      "evidence": {
+        "audit_first_two": [
+          {
+            "authority": "taxdump.tar.gz",
+            "authority_sha256": "8f784a79de31b8b134e5bd34b0432e33a3b776da88e7209dd5307cd1caf3a9d5",
+            "canonical_id": "NCBITaxon:197562",
+            "disposition": "retired_id_replaced",
+            "original_edge_json": "{\"agent_type\": \"manual_agent\", \"knowledge_level\": \"observation\", \"object\": \"kgmicrobe.strain:bacdive_17298\", \"original_object\": \"\", \"predicate\": \"biolink:location_of\", \"primary_knowledge_source\": \"infores:bacdive\", \"publications\": \"https://bacdive.dsmz.de/strain/17298\", \"relation\": \"RO:0001015\", \"subject\": \"NCBITaxon:6657\", \"unit\": \"\", \"value\": \"\"}",
+            "original_id": "NCBITaxon:6657",
+            "original_node_json": "{\"category\": \"biolink:OrganismTaxon\", \"deprecated\": \"\", \"description\": \"\", \"has_attribute_type\": \"\", \"id\": \"NCBITaxon:6657\", \"name\": \"Crustacea\", \"provided_by\": \"infores:bacdive\", \"same_as\": \"\", \"synonym\": \"\", \"xref\": \"\"}"
+          },
+          {
+            "authority": "taxdump.tar.gz",
+            "authority_sha256": "8f784a79de31b8b134e5bd34b0432e33a3b776da88e7209dd5307cd1caf3a9d5",
+            "canonical_id": "NCBITaxon:197562",
+            "disposition": "retired_id_replaced",
+            "original_edge_json": "{\"agent_type\": \"manual_agent\", \"knowledge_level\": \"observation\", \"object\": \"kgmicrobe.strain:bacdive_150836\", \"original_object\": \"\", \"predicate\": \"biolink:location_of\", \"primary_knowledge_source\": \"infores:bacdive\", \"publications\": \"https://bacdive.dsmz.de/strain/150836\", \"relation\": \"RO:0001015\", \"subject\": \"NCBITaxon:6657\", \"unit\": \"\", \"value\": \"\"}",
+            "original_id": "NCBITaxon:6657",
+            "original_node_json": "{\"category\": \"biolink:OrganismTaxon\", \"deprecated\": \"\", \"description\": \"\", \"has_attribute_type\": \"\", \"id\": \"NCBITaxon:6657\", \"name\": \"Crustacea\", \"provided_by\": \"infores:bacdive\", \"same_as\": \"\", \"synonym\": \"\", \"xref\": \"\"}"
+          }
+        ],
+        "audit_rows": 128,
+        "current_bacdive_node": {
+          "category": "biolink:OrganismTaxon",
+          "description": "Referenced external node declared from taxdump.tar.gz; retired_id_replaced.",
+          "id": "NCBITaxon:197562",
+          "name": "Pancrustacea",
+          "provided_by": "infores:bacdive|infores:ncbitaxon"
+        },
+        "current_graph_scan": {
+          "NCBITaxon:197562_endpoint_count": 128,
+          "NCBITaxon:6657_endpoint_count": 0,
+          "comparison": "Every original audit edge field matched the corresponding final edge after subject canonicalization; final edges additionally contain original_subject and empty go_reference_context.",
+          "original_subject_preserved": "NCBITaxon:6657",
+          "two_first_audit_records_found_as_exact_canonicalized_edges": true
+        },
+        "mapping": "Crustacea -> NCBITaxon:6657",
+        "mapping_line": 81,
+        "target_nodes_in_trim": []
+      },
+      "id": "bacdive_literal_retired_taxon_test_contract",
+      "implementation_locations": [
+        "kg_microbe/transform_utils/bacdive/bacdive.py:3567",
+        "kg_microbe/merge_utils/external_node_closure.py:376-429",
+        "kg_microbe/merge_utils/external_node_closure.py:474-548",
+        "kg_microbe/utils/external_identifiers.py:14-67"
+      ],
+      "limits": "128 current canonical edges and128 audit rows were counted; two complete canonicalized edge witnesses were compared. This diagnostic does not claim an independently recomputed complete128-record bijection or replace production admission.",
+      "location": "tests/test_bacdive_ncbitaxon_stubs.py:135-142",
+      "minimal_repair": "Make the test assert typed node closure for actually referenced current targets, accepting a retired original only with its exact recorded replacement authority and typed canonical declaration. Retain direct referenced-target coverage; do not invent unreferenced nodes or hard-code a6657 exception. Existing hermetic tests/test_bacdive_unresolvable_taxa.py exercises the actual stub pass.",
+      "problem": "The test subtracts literal curated mapping targets from final node IDs, although finalization is required to replace retired NCBI IDs with source-backed live canonical declarations. It also checks all curated targets rather than the actually referenced cohort.",
+      "required_controls": [
+        "Referenced live target without any typed node fails.",
+        "Source-backed retired target with typed live canonical node and correct edge rewrite passes.",
+        "Missing, conflicting, or wrong retirement evidence fails where retirement acceptance is used.",
+        "Canonical NamedThing/untyped node does not satisfy taxon closure.",
+        "Unused mapping alone does not force a production node."
+      ],
+      "scientific_disposition": "Preserve authorized retirement normalization; do not recreate or exempt retired ID6657."
+    },
+    {
+      "actual_failing_fixtures": [
+        {
+          "compounds": {
+            "path": "/private/var/folders/8w/lrmvnnnj0n57zm8b9rnhw76m0000gn/T/pytest-of-marcin/pytest-10559/test_actual_mediadive_producer0/raw/mediadive/compounds.json",
+            "sha256": "974c98bf13aa1f2314fdaefe80fca1f43a4f31fb44f19bccca314cf79f9025d4",
+            "size_bytes": 68
+          },
+          "exact_compounds": {
+            "99": {
+              "compound_id": 99,
+              "name": "Fixture salt"
+            }
+          },
+          "exact_solutions": {
+            "1": {
+              "id": 1,
+              "name": "Fixture",
+              "recipe": [
+                {
+                  "amount": 1,
+                  "compound": "Fixture salt",
+                  "compound_id": 99,
+                  "unit": "g"
+                }
+              ]
+            },
+            "900000000": {
+              "id": 900000000,
+              "name": "Synthetic catalogue context",
+              "recipe": [
+                {
+                  "compound_id": 99,
+                  "name": "Fixture salt"
+                }
+              ]
+            }
+          },
+          "route": "unified",
+          "solutions": {
+            "path": "/private/var/folders/8w/lrmvnnnj0n57zm8b9rnhw76m0000gn/T/pytest-of-marcin/pytest-10559/test_actual_mediadive_producer0/raw/mediadive/solutions.json",
+            "sha256": "fb1094229d2e60372eb5ccd14b59b4526331f28f5584c62b21bee77344ac53f8",
+            "size_bytes": 377
+          }
+        },
+        {
+          "compounds": {
+            "path": "/private/var/folders/8w/lrmvnnnj0n57zm8b9rnhw76m0000gn/T/pytest-of-marcin/pytest-10559/test_actual_mediadive_producer1/raw/mediadive/compounds.json",
+            "sha256": "d6248eda3b3b45e2485e6c3dfcc50834ca62aa9ab5774037b152081c1d992496",
+            "size_bytes": 75
+          },
+          "exact_compounds": {
+            "99": {
+              "compound_id": 99,
+              "name": "Fixture source name"
+            }
+          },
+          "exact_solutions": {
+            "1": {
+              "id": 1,
+              "name": "Fixture",
+              "recipe": [
+                {
+                  "amount": 1,
+                  "compound": "Fixture source name",
+                  "compound_id": 99,
+                  "unit": "g"
+                }
+              ]
+            },
+            "900000000": {
+              "id": 900000000,
+              "name": "Synthetic catalogue context",
+              "recipe": [
+                {
+                  "compound_id": 99,
+                  "name": "Fixture source name"
+                }
+              ]
+            }
+          },
+          "route": "legacy",
+          "solutions": {
+            "path": "/private/var/folders/8w/lrmvnnnj0n57zm8b9rnhw76m0000gn/T/pytest-of-marcin/pytest-10559/test_actual_mediadive_producer1/raw/mediadive/solutions.json",
+            "sha256": "e3bbe31a309097d206042459dc29db47534830e5daa2db7a6f8c581c8c54da50",
+            "size_bytes": 391
+          }
+        },
+        {
+          "compounds": {
+            "path": "/private/var/folders/8w/lrmvnnnj0n57zm8b9rnhw76m0000gn/T/pytest-of-marcin/pytest-10559/test_actual_mediadive_producer2/raw/mediadive/compounds.json",
+            "sha256": "55c44174f2d29920233bbc8c4b3728bee12539b93a11992698471b7cb1ad9e87",
+            "size_bytes": 96
+          },
+          "exact_compounds": {
+            "99": {
+              "ChEBI": "7070",
+              "compound_id": 99,
+              "name": "Fixture source name"
+            }
+          },
+          "exact_solutions": {
+            "1": {
+              "id": 1,
+              "name": "Fixture",
+              "recipe": [
+                {
+                  "amount": 1,
+                  "compound": "Fixture source name",
+                  "compound_id": 99,
+                  "unit": "g"
+                }
+              ]
+            },
+            "900000000": {
+              "id": 900000000,
+              "name": "Synthetic catalogue context",
+              "recipe": [
+                {
+                  "ChEBI": "7070",
+                  "compound_id": 99,
+                  "name": "Fixture source name"
+                }
+              ]
+            }
+          },
+          "route": "embedded",
+          "solutions": {
+            "path": "/private/var/folders/8w/lrmvnnnj0n57zm8b9rnhw76m0000gn/T/pytest-of-marcin/pytest-10559/test_actual_mediadive_producer2/raw/mediadive/solutions.json",
+            "sha256": "7a01b613d4ee403474a6f683cab03bdc76d88a4a3199876c07ae2bc1abb744ad",
+            "size_bytes": 416
+          }
+        }
+      ],
+      "actual_failure": "KeyError compound at mediadive.py876",
+      "analogue": "tests/test_mediadive_catalase_scope.py:76-87 already explicitly checks the separate catalogue carrier before retaining every original observation assertion.",
+      "carrier_solution": "900000000",
+      "classification": "actionable_test_only",
+      "id": "chemical_xref_synthetic_catalogue_carrier_contract",
+      "implementation_locations": [
+        "tests/mediadive_consumer_fixtures.py:50-73",
+        "tests/test_mediadive_material_scope_audit.py:91-102",
+        "kg_microbe/transform_utils/mediadive/mediadive.py:872-887"
+      ],
+      "limits": "The anticipated additional carrier edge after repairing its invalid record is a static call-chain consequence; no producer/test rerun was performed here.",
+      "location": "tests/test_chemical_xref_annotations.py:159-176",
+      "minimal_repair": "Give the separate synthetic catalogue carrier an explicit valid compound name, retaining the original target raw recipe unchanged. Assert the single carrier source_assertion_id/source_record explicitly, then select the original target context and retain its exact one-edge, CHEBI7070, quantity/unit, canonical annotation, raw-record and lookup-alias assertions.",
+      "problem": "The explicit embedded fixture has name but no compound. Shared fixture preparation now carries this record as an independent native recipe first occurrence in solution900000000; production correctly expects compound for compound_id-bearing recipe records. All three routes fail before xref assertions.",
+      "required_controls": [
+        "All three unified/legacy/embedded routes remain exercised.",
+        "Original raw target record receives no invented fields.",
+        "Carrier is exactly one explicitly asserted separate occurrence, not silently filtered.",
+        "Target source_assertion_id is mediadive.solution:1#recipe/1.",
+        "Target objectCHEBI7070, value1.0, unitg, original raw record, canonical xref and identity-lookup boundary remain asserted."
+      ]
+    }
+  ],
+  "focused_run": {
+    "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/mediadive-resolution-1734/artifact-sensitive-diagnostic-r1.log",
+    "result": "4 failed, 34 passed, 4 warnings in 3.15s; executed by root",
+    "sha256": "3803e6019b30032e3aad3ea920391f45b8d0b449406d455533d8cf34b05698fb",
+    "size_bytes": 9269
+  },
+  "kind": "independent_read_only_artifact_sensitive_test_failure_diagnosis",
+  "production_decision": "No production or curated-policy change is recommended from these failures. Keep active admission and all scientific gates unchanged.",
+  "recorded_at_utc": "2026-11-06T01:10:09.484317+00:00",
+  "scope": {
+    "database_queries": false,
+    "graph_read": "One streaming pass of BacDive edges; targeted node scans; no complete graph loaded into memory.",
+    "http_requests": false,
+    "production_gates_or_producers_executed": false,
+    "source_hashing": "Only small code/audit/marker files; no raw taxdump/DB/whole graph rehash.",
+    "source_or_data_changes": false,
+    "tests_executed_by_reviewer": false
+  },
+  "status": "diagnosed_test_contract_failures_no_demonstrated_production_graph_defect"
+}

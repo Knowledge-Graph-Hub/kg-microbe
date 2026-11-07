@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "kind": "Exact minimal complete official endpoint record; no synthetic wording or live request.",
+  "url": "https://mediadive.dsmz.de/doc/assets/main.bundle.js",
+  "source": {
+    "path": "data/rebuild-evidence/20261105/mediadive-retry-1734/official-review/api-doc-bundle.body",
+    "bytes": 415299,
+    "sha256": "96865da402f36fa0d27a0b80e84fa9b3f0ae05f73b6bafb0a6c690571b6ebc0a"
+  },
+  "character_start": 389226,
+  "character_end": 391080,
+  "sha256": "ffe932840eb9c67827664195d3ff783db777be83ee68e173041a48b52cd89ceb",
+  "bytes": 1854,
+  "wire_message_is_distinct": true
+}

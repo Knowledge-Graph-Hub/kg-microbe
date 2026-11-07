@@ -139,6 +139,34 @@ _STATUS_RE = re.compile(r"<b>\s*(Nomenclatural|Taxonomic) status:\s*</b>\s*(?:<[
 GSS_NODES_RELPATH = "transformed/lpsn/nodes.tsv"
 
 
+def _authentication_values(client: Any) -> tuple[str, ...]:
+    """Capture known credential values in memory solely for rejecting response echoes."""
+    values = (
+        os.environ.get("LPSN_USERNAME"),
+        os.environ.get("LPSN_PASSWORD"),
+        getattr(client, "access_token", None),
+        getattr(client, "refresh_token", None),
+    )
+    return tuple(value for value in values if isinstance(value, str) and value)
+
+
+def _assert_public_api_record(value: Any, sensitive: tuple[str, ...]) -> None:
+    """Refuse authentication material before a native record reaches cache or graph output."""
+    forbidden = {"token", "accesstoken", "refreshtoken", "password", "authorization", "lpsnusername", "lpsnpassword"}
+    message = "LPSN API record contains sensitive authentication material."
+    if isinstance(value, dict):
+        for key, item in value.items():
+            if re.sub(r"[^a-z0-9]", "", str(key).casefold()) in forbidden:
+                raise RuntimeError(message)
+            _assert_public_api_record(key, sensitive)
+            _assert_public_api_record(item, sensitive)
+    elif isinstance(value, list):
+        for item in value:
+            _assert_public_api_record(item, sensitive)
+    elif isinstance(value, str) and any(secret in value for secret in sensitive):
+        raise RuntimeError(message)
+
+
 def fetch_taxon_page(record_no: str) -> Optional[str]:
     """
     Return the HTML of LPSN's web page for ``record_no``, or ``None``.
@@ -312,6 +340,12 @@ class LPSNAPITransform(Transform):
                 for ref in self._linked_record_nos(record_no, record):
                     self._ensure_declared(client, ref, cache_dir, node_writer, edge_writer)
 
+            if self._stats["errors"]:
+                raise RuntimeError(
+                    f"LPSN API transform failed with {self._stats['errors']} record fetch error(s); "
+                    "graph outputs were not published."
+                )
+
         print(
             f"[lpsn_api] fetched={self._stats['fetched']:,} "
             f"cached={self._stats['from_cache']:,} "
@@ -336,6 +370,9 @@ class LPSNAPITransform(Transform):
         """
         Build a real ``lpsn.LpsnClient`` from env vars, or raise.
 
+        Complete environment credentials avoid dotenv discovery and file reads.
+        Missing credentials retain the existing dotenv fallback before validation.
+
         Lazy imports the ``lpsn`` PyPI package so a fresh checkout that
         never runs this transform never needs the package installed.
 
@@ -345,10 +382,12 @@ class LPSNAPITransform(Transform):
         bypass that patch and let a real repo-root ``.env`` satisfy the
         credential check under test.
         """
-        load_dotenv()
-
         user = os.environ.get("LPSN_USERNAME")
         pw = os.environ.get("LPSN_PASSWORD")
+        if not user or not pw:
+            load_dotenv()
+            user = os.environ.get("LPSN_USERNAME")
+            pw = os.environ.get("LPSN_PASSWORD")
         if not user or not pw:
             raise RuntimeError(
                 "LPSN_USERNAME and LPSN_PASSWORD environment variables must be "
@@ -367,7 +406,11 @@ class LPSNAPITransform(Transform):
                 "transform. Install with `poetry add lpsn` (or `pip install lpsn`) "
                 "and re-run."
             ) from e
-        return lpsn_pkg.LpsnClient(user, pw)
+        client = lpsn_pkg.LpsnClient(user, pw)
+        tokens = (getattr(client, "access_token", None), getattr(client, "refresh_token", None))
+        if not all(isinstance(token, str) and token.strip() for token in tokens):
+            raise RuntimeError("LPSN API authentication did not return both required tokens.")
+        return client
 
     def _iter_record_nos(self, gss_nodes: Path) -> Iterator[str]:
         """Yield the record_no ('1002' etc.) for every LPSN node in the GSS output."""
@@ -384,15 +427,19 @@ class LPSNAPITransform(Transform):
 
         On cache miss, calls ``client.search(id=record_no)`` then
         ``client.retrieve()`` (the lpsn 1.0.0 search-then-retrieve flow).
-        Errors are printed and counted; a failure on one record never aborts
-        the run so a partial re-fetch resumes on the next call.
+        Errors are printed and counted while successful responses remain cached.
+        The run refuses to publish graph outputs if any record fetch failed, so
+        a subsequent run can resume acquisition without admitting a partial graph.
         """
+        sensitive = _authentication_values(client)
         cache_path = cache_dir / f"{record_no}.json"
         if cache_path.exists():
             try:
                 with open(cache_path) as fh:
-                    self._stats["from_cache"] += 1
-                    return json.load(fh)
+                    record = json.load(fh)
+                _assert_public_api_record(record, sensitive)
+                self._stats["from_cache"] += 1
+                return record
             except (json.JSONDecodeError, OSError) as e:
                 print(f"[lpsn_api] cache read failed for {record_no}: {e}")
                 # fall through to re-fetch
@@ -421,6 +468,8 @@ class LPSNAPITransform(Transform):
             print(f"[lpsn_api] no record returned for {record_no}")
             return None
         record = records[0] if isinstance(records[0], dict) else records[0].__dict__
+        # Retrieval may refresh tokens; refuse echoes of either the old or new pair.
+        _assert_public_api_record(record, sensitive + _authentication_values(client))
 
         try:
             with open(cache_path, "w") as fh:

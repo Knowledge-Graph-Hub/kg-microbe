@@ -1,0 +1,150 @@
+{
+  "constraints": {
+    "credential_files_or_values_read": false,
+    "environment_dumped": false,
+    "network_requests": false,
+    "prior_evidence_modified": false,
+    "tests_producers_or_gates_run": false,
+    "tracked_files_modified": false
+  },
+  "created_utc": "2026-11-07T03:19:33.832014+00:00",
+  "findings": [],
+  "focused_tests": {
+    "all_six_actual_file_identities_match": true,
+    "executed_by_coordinator": true,
+    "log": {
+      "bytes": 2801,
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/mediadive-resolution-1734/lpsn-continuation-20261106/focused-combined-r3.log",
+      "sha256": "05e5bd064fd7c7ea9d740a91235ded2743458c088b7b627de23e2ba9b791efa4"
+    },
+    "log_identity_matches": true,
+    "receipt": {
+      "bytes": 1168,
+      "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/mediadive-resolution-1734/lpsn-continuation-20261106/focused-combined-result-r3.json",
+      "sha256": "7ec12f2d824a5762f9581dbf4f4f454bca172c08e9fc85f432831adcd99f583d"
+    },
+    "summary": {
+      "exit_code": 0,
+      "passed": 188,
+      "seconds": 2.69,
+      "warnings": 4
+    },
+    "tests_run_by_reviewer": false
+  },
+  "head": "325ead9101d4e6561c8e3827bec2c665ec330645",
+  "limits": [
+    "No real credential file or credential value was read by this reviewer; no network, authentication, producer, test or gate was executed by this reviewer.",
+    "This is code-boundary review, not evidence of successful real authentication, API freshness, full source completeness, phase-four certification or release/merge admission.",
+    "The coordinator must still follow the planned code preparation/validation and inspect the actual completed bounded canary before any native phase; later production output requires the ordinary source admission gates.",
+    "The request ledger represents logical Session.request calls, not a complete trace of lower-level adapter retries or internally followed redirects.",
+    "Credential screening rejects known in-memory values and reserved authentication fields; this review does not claim universal detection of arbitrary transformations of unknown secrets in scientific text.",
+    "Existing scientific mappings, graph conversion semantics, explicit native misses and public web fallback rules are not expanded or globally recertified by this review."
+  ],
+  "method": "Read-only source/test inspection and exact-file comparison to retained focused evidence, including the actual launcher-runner command contract and native cache acquisition/atomic publication call chain.",
+  "previous_checkpoint": {
+    "bytes": 8210,
+    "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/rebuild-evidence/20261105/mediadive-resolution-1734/lpsn-continuation-20261106/authenticated-boundary-independent-review-r3.json",
+    "sha256": "36a858b18ed6c7974fdde07958674244f56e95d87f08b780bad836fefbc7758b"
+  },
+  "resolved_findings": [
+    {
+      "controls": [
+        "real authenticated parent and worker bind the same digest",
+        "unsafe arguments refused before hashing or evidence",
+        "missing/wrong plan and result digests refused",
+        "wrong mode, failed result, wrong public record and absent origins refused"
+      ],
+      "evidence": "A validated nonsecret command digest uses canonical UTF-8 JSON consistently in plan, started and actual completed result. Runner admission requires expected plan/result digests, current launcher/helper/native bindings, successful actual exit, owned module identities and public record identity. Plaintext commands remain withheld in authenticated evidence.",
+      "issue": 1784,
+      "verdict": "resolved"
+    },
+    {
+      "controls": [
+        "duplicate/shadowed and encoded canary values",
+        "credential-valued keys and echoed access tokens",
+        "fresh key/value/nested-list credential and token echoes",
+        "normalized sensitive field names with unknown values",
+        "cached echoes preserve prior cache and graphs",
+        "before-and-after token refresh echoes",
+        "benign scientific authority and free text retain exact native content"
+      ],
+      "evidence": "The canary rejects duplicate JSON keys, scans raw bytes and decoded object keys/values against in-memory environment credentials and both client tokens, and validates the exact public taxon before writing or hashing the scientific body. The native _fetch path now checks fresh and cached record dictionaries recursively; known nonempty credential/token strings and normalized authentication-field names are rejected by a fixed RuntimeError. Fresh checks cover token values captured before and after retrieve, occur outside the broad fetch exception handler and before json.dump/emit, and abort both atomic graph writers. Cached refusal occurs before return and does not rewrite existing bytes. Fixed exception categories replace arbitrary failure class names.",
+      "issue": 1785,
+      "locations": [
+        "scripts/adhoc/kgm_lpsn_authenticated_20261106.py:145",
+        "kg_microbe/transform_utils/lpsn_api/lpsn_api.py:142",
+        "kg_microbe/transform_utils/lpsn_api/lpsn_api.py:153",
+        "kg_microbe/transform_utils/lpsn_api/lpsn_api.py:434",
+        "kg_microbe/transform_utils/lpsn_api/lpsn_api.py:472"
+      ],
+      "verdict": "resolved_for_reviewed_credential_and_known_client_token_boundary"
+    },
+    {
+      "controls": [
+        "ordinary cache-byte mutation refused",
+        "changed cache plus removed manifest entry refused",
+        "manifest mutation during member verification refused",
+        "inventory traversal failure prevents a successful manifest",
+        "new native cache success allowed without modifying originals"
+      ],
+      "evidence": "Preservation uses the existing error-propagating full inventory and before/after membership/metadata comparisons, with independent copied inode/hash checks. Verification captures manifest bytes once, hashes and parses that buffer, binds the expected pre-phase digest, verifies every original and copied member, and requires unchanged manifest identity after those checks. The returned digest is the captured digest. Legitimate newly acquired cache members do not weaken the original cohort.",
+      "issue": 1786,
+      "locations": [
+        "scripts/adhoc/kgm_lpsn_authenticated_20261106.py:379",
+        "scripts/adhoc/kgm_lpsn_authenticated_20261106.py:418",
+        "scripts/adhoc/kgm_lpsn_authenticated_20261106.py:528"
+      ],
+      "verdict": "resolved"
+    },
+    {
+      "controls": [
+        "startup print before launcher protections remains silent",
+        "inner worker split/native/Python/logging/atexit diagnostics suppressed",
+        "arbitrary exception names and alias metadata refused",
+        "credential-free ordinary stages retain diagnostic behavior"
+      ],
+      "evidence": "The outer runner starts the first credential-bearing interpreter with both streams directed to DEVNULL. The main launcher also directs the worker streams to DEVNULL before startup, suppresses Python/native-FD/logging output throughout authenticated execution and shutdown, and stores only fixed error categories.",
+      "issue": 1787,
+      "verdict": "resolved"
+    }
+  ],
+  "reviewed_files": {
+    "kg_microbe/transform_utils/lpsn_api/lpsn_api.py": {
+      "bytes": 35879,
+      "sha256": "5db702a7c427b2a6fddc6f0a7f68b2cc8d181f18c325bca74cca5843eb0c0d7b"
+    },
+    "scripts/adhoc/kgm_lpsn_authenticated_20261106.py": {
+      "bytes": 26677,
+      "sha256": "8d5d2f43c1a92a3b7958cbaae5fd4daf959512f1aa495a3e9b670b0396edd65a"
+    },
+    "scripts/adhoc/kgm_rebuild_20261105.py": {
+      "bytes": 23264,
+      "sha256": "af834e3ddca4fa085af433a75257c563c8c31d7b6261b7f4080375f15e75d1d1"
+    },
+    "tests/test_lpsn_api_transform.py": {
+      "bytes": 37325,
+      "sha256": "8b79ec0e9534dfeea36d713a297e507b274b5aedce2fb57391c78bbb4fe134eb"
+    },
+    "tests/test_lpsn_authenticated_20261106.py": {
+      "bytes": 20229,
+      "sha256": "d0fda4221f095700bcdf922ffe248375478204333227dc204bab3580d2768efb"
+    },
+    "tests/test_rebuild_launcher_20261105.py": {
+      "bytes": 32187,
+      "sha256": "4a7ddb47bad42c5b9037f89cd56aea92078e4196166e3e1ec6bfc7ccb43fa4c2"
+    }
+  },
+  "root": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105",
+  "schema": "lpsn-authenticated-boundary-independent-review/v1",
+  "scope": "Independent static approval of the reviewed authenticated canary and guarded native-phase execution mechanics; actual live success and final source admission remain separate gates.",
+  "status": "pass",
+  "unchanged_positive_contracts": [
+    "The nonexecuting parser returns only the two authorized single-line assignments and refuses duplicate, incomplete, multiline or symlink credential sources. Values are delivered via process environment, never command arguments or receipt fields.",
+    "PYTHON_DOTENV_DISABLED is set before native imports; complete environment credentials bypass native dotenv discovery. Installed dotenv implementation checks the disabling flag before file discovery.",
+    "Only the explicit reviewed nonsecret launcher environment allowlist is fingerprinted; no full-environment or credential-value hash is created. Credential-shaped arguments and JVM metadata are refused before evidence.",
+    "The canary is limited to one official authentication POST and one exact-ID GET for record 35300, Dryocola, genus; retries and redirects are disabled in that section, with a finite deadline. No production cache is altered by the canary.",
+    "Factory authentication must return both nonblank string tokens before any warm-cache reuse. Counted direct/linked fetch exceptions prevent graph publication; explicit successful API misses retain their previous meaning.",
+    "The native-phase request ledger persists only fixed categories, numeric record IDs, valid status codes, elapsed seconds and fixed error classes; it stores no headers, bodies, query strings, full URLs or arbitrary errors.",
+    "The phase selects only lpsn_api through the native dispatcher, binds the full canonical prerequisite plan and immutable preceding admission receipts, and reports producer success with full_source_admission_pending=true."
+  ]
+}

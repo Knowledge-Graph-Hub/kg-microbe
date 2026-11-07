@@ -2,12 +2,22 @@
 
 import csv
 import json
+import sys
 from pathlib import Path
+from types import SimpleNamespace
+from unittest.mock import Mock
 
 import pytest
 
 from kg_microbe.transform_utils.lpsn.lpsn import LPSN_KNOWLEDGE_SOURCE, LPSN_PREFIX
 from kg_microbe.transform_utils.lpsn_api.lpsn_api import LPSNAPITransform
+
+
+@pytest.fixture(autouse=True)
+def _synthetic_authentication_environment(monkeypatch):
+    """Keep native record guards independent of any credentials in the test host environment."""
+    monkeypatch.setenv("LPSN_USERNAME", "synthetic-env-user")
+    monkeypatch.setenv("LPSN_PASSWORD", "synthetic-env-password")
 
 
 class _FakeLpsnClient:
@@ -23,6 +33,8 @@ class _FakeLpsnClient:
         """Keep the ``{record_no: record_dict}`` map for lookups."""
         self._records = records
         self._current = None
+        self.access_token = "synthetic-access-token"  # noqa: S105 — offline fake, never a credential
+        self.refresh_token = "synthetic-refresh-token"  # noqa: S105 — offline fake, never a credential
 
     def search(self, id=None, **kwargs):  # noqa: A002 — mirrors lpsn's ``search(id=...)`` kwarg
         """Note which record_no to yield on the next ``retrieve()``."""
@@ -259,6 +271,84 @@ def test_response_is_cached_after_first_fetch(api_transform, tmp_path):
     assert api_transform._stats["fetched"] == 0
 
 
+def test_authenticated_client_uses_complete_environment_without_dotenv(monkeypatch):
+    """Supplied credentials must reach the client without any dotenv discovery or read."""
+    import kg_microbe.transform_utils.lpsn_api.lpsn_api as api_mod
+
+    monkeypatch.setenv("LPSN_USERNAME", "synthetic-env-user")
+    monkeypatch.setenv("LPSN_PASSWORD", "synthetic-env-password")
+    dotenv = Mock(side_effect=AssertionError("Complete environment must not load dotenv"))
+    client = _FakeLpsnClient({})
+    constructor = Mock(return_value=client)
+    monkeypatch.setattr(api_mod, "load_dotenv", dotenv)
+    monkeypatch.setitem(sys.modules, "lpsn", SimpleNamespace(LpsnClient=constructor))
+
+    transform = LPSNAPITransform.__new__(LPSNAPITransform)
+    assert transform._make_authenticated_client() is client
+    dotenv.assert_not_called()
+    constructor.assert_called_once_with("synthetic-env-user", "synthetic-env-password")
+
+
+@pytest.mark.parametrize(
+    "username,password", [(None, None), ("synthetic-env-user", None), (None, "synthetic-env-password")]
+)
+def test_authenticated_client_preserves_missing_key_dotenv_fallback(monkeypatch, username, password):
+    """The legacy fallback can supply absent keys while retaining supplied environment values."""
+    import kg_microbe.transform_utils.lpsn_api.lpsn_api as api_mod
+
+    for key, value in (("LPSN_USERNAME", username), ("LPSN_PASSWORD", password)):
+        monkeypatch.delenv(key, raising=False)
+        if value is not None:
+            monkeypatch.setenv(key, value)
+
+    def supply_missing_credentials():
+        """Model default dotenv behavior without reading any credential file."""
+        for key, value in (("LPSN_USERNAME", "synthetic-file-user"), ("LPSN_PASSWORD", "synthetic-file-password")):
+            if key not in api_mod.os.environ:
+                monkeypatch.setenv(key, value)
+
+    dotenv = Mock(side_effect=supply_missing_credentials)
+    client = _FakeLpsnClient({})
+    constructor = Mock(return_value=client)
+    monkeypatch.setattr(api_mod, "load_dotenv", dotenv)
+    monkeypatch.setitem(sys.modules, "lpsn", SimpleNamespace(LpsnClient=constructor))
+
+    transform = LPSNAPITransform.__new__(LPSNAPITransform)
+    assert transform._make_authenticated_client() is client
+    dotenv.assert_called_once_with()
+    constructor.assert_called_once_with(username or "synthetic-file-user", password or "synthetic-file-password")
+
+
+@pytest.mark.parametrize(
+    "username,password",
+    [
+        (None, None),
+        ("synthetic-env-user", None),
+        (None, "synthetic-env-password"),
+        ("", "synthetic-env-password"),
+        ("synthetic-env-user", ""),
+    ],
+)
+def test_authenticated_client_rejects_incomplete_fallback(monkeypatch, username, password):
+    """Missing or empty credentials after fallback must never construct an authenticated client."""
+    import kg_microbe.transform_utils.lpsn_api.lpsn_api as api_mod
+
+    for key, value in (("LPSN_USERNAME", username), ("LPSN_PASSWORD", password)):
+        monkeypatch.delenv(key, raising=False)
+        if value is not None:
+            monkeypatch.setenv(key, value)
+    dotenv = Mock(return_value=False)
+    constructor = Mock(side_effect=AssertionError("Incomplete credentials must not construct a client"))
+    monkeypatch.setattr(api_mod, "load_dotenv", dotenv)
+    monkeypatch.setitem(sys.modules, "lpsn", SimpleNamespace(LpsnClient=constructor))
+
+    transform = LPSNAPITransform.__new__(LPSNAPITransform)
+    with pytest.raises(RuntimeError, match="LPSN_USERNAME and LPSN_PASSWORD"):
+        transform._make_authenticated_client()
+    dotenv.assert_called_once_with()
+    constructor.assert_not_called()
+
+
 def test_missing_creds_raises_runtime_error(tmp_path, monkeypatch):
     """No client injected + no LPSN_USERNAME env var → helpful RuntimeError."""
     input_dir = tmp_path / "raw"
@@ -491,3 +581,280 @@ def test_a_run_that_dies_midway_leaves_no_output_file(api_transform, monkeypatch
     assert not api_transform.output_node_file.exists()
     assert not api_transform.output_edge_file.exists()
     assert not list(Path(api_transform.output_dir).glob("*.partial"))
+
+
+@pytest.fixture()
+def factory_transform(tmp_path, monkeypatch):
+    """Exercise the production client factory using only supplied synthetic environment keys."""
+    import kg_microbe.transform_utils.lpsn_api.lpsn_api as api_mod
+
+    input_dir = tmp_path / "raw"
+    output_dir = tmp_path / "transformed"
+    input_dir.mkdir()
+    _write_gss_nodes(output_dir / "lpsn" / "nodes.tsv", ["1"])
+    monkeypatch.setenv("LPSN_USERNAME", "synthetic-env-user")
+    monkeypatch.setenv("LPSN_PASSWORD", "synthetic-env-password")
+    monkeypatch.setattr(api_mod, "load_dotenv", Mock(side_effect=AssertionError("No credential file read")))
+    return LPSNAPITransform(input_dir=input_dir, output_dir=output_dir, page_fetch=_FakePageFetch({}))
+
+
+@pytest.mark.parametrize(
+    "token_fields",
+    [
+        {},  # Official constructor can exhaust authentication retries without setting tokens.
+        {"access_token": "synthetic-access-token"},
+        {"refresh_token": "synthetic-refresh-token"},
+        {"access_token": "", "refresh_token": "synthetic-refresh-token"},
+        {"access_token": "synthetic-access-token", "refresh_token": ""},
+        {"access_token": True, "refresh_token": "synthetic-refresh-token"},
+        {"access_token": "synthetic-access-token", "refresh_token": 123},
+        {"access_token": " ", "refresh_token": "synthetic-refresh-token"},
+        {"access_token": "synthetic-access-token", "refresh_token": "\t"},
+    ],
+)
+def test_incomplete_authentication_refuses_warm_cache(factory_transform, monkeypatch, token_fields):
+    """Cached records cannot turn an exhausted or invalid authentication attempt into success."""
+    cache = factory_transform.input_base_dir / "lpsn" / "api_cache"
+    cache.mkdir(parents=True)
+    cached = cache / "1.json"
+    native = b'{"id": 1, "full_name": "Synthetic cached species"}\n'
+    cached.write_bytes(native)
+    client = SimpleNamespace(**token_fields)
+    constructor = Mock(return_value=client)
+    monkeypatch.setitem(sys.modules, "lpsn", SimpleNamespace(LpsnClient=constructor))
+
+    with pytest.raises(RuntimeError) as error:
+        factory_transform.run()
+
+    assert str(error.value) == "LPSN API authentication did not return both required tokens."
+    constructor.assert_called_once_with("synthetic-env-user", "synthetic-env-password")
+    assert factory_transform._stats["from_cache"] == 0
+    assert cached.read_bytes() == native
+    assert not factory_transform.output_node_file.exists()
+    assert not factory_transform.output_edge_file.exists()
+    assert not list(factory_transform.output_dir.glob("*.partial"))
+
+
+def test_authenticated_warm_cache_preserves_success(factory_transform, monkeypatch):
+    """Valid authenticated clients may reuse exact native cached records without an API request."""
+    cache = factory_transform.input_base_dir / "lpsn" / "api_cache"
+    cache.mkdir(parents=True)
+    cached = cache / "1.json"
+    native = b'{"id": 1, "full_name": "Synthetic cached species"}\n'
+    cached.write_bytes(native)
+    client = _FakeLpsnClient({})
+    client.search = Mock(side_effect=AssertionError("Warm cache must not fetch"))
+    monkeypatch.setitem(sys.modules, "lpsn", SimpleNamespace(LpsnClient=Mock(return_value=client)))
+
+    factory_transform.run()
+
+    client.search.assert_not_called()
+    assert factory_transform._stats["from_cache"] == 1
+    assert factory_transform._stats["errors"] == 0
+    assert cached.read_bytes() == native
+    assert [row["id"] for row in _read_tsv(factory_transform.output_node_file)] == ["lpsn:1"]
+    assert _read_tsv(factory_transform.output_edge_file) == []
+
+
+def test_valid_empty_api_result_can_complete(factory_transform, monkeypatch):
+    """An authenticated successful empty result is an API miss, not a failed fetch."""
+    client = _FakeLpsnClient({})
+    monkeypatch.setitem(sys.modules, "lpsn", SimpleNamespace(LpsnClient=Mock(return_value=client)))
+
+    factory_transform.run()
+
+    assert client._current == "1"
+    assert factory_transform._stats["api_misses"] == 1
+    assert factory_transform._stats["errors"] == 0
+    assert _read_tsv(factory_transform.output_node_file) == []
+    assert _read_tsv(factory_transform.output_edge_file) == []
+    assert factory_transform._page_fetch.calls == []
+
+
+@pytest.mark.parametrize("linked", [False, True])
+@pytest.mark.parametrize("existing_outputs", [False, True])
+def test_api_transport_errors_refuse_atomic_publication(tmp_path, monkeypatch, linked, existing_outputs):
+    """Failed direct or linked API fetches cannot publish partial graphs or replace a prior pair."""
+    import requests
+
+    input_dir = tmp_path / "raw"
+    output_dir = tmp_path / "transformed"
+    input_dir.mkdir()
+    _write_gss_nodes(output_dir / "lpsn" / "nodes.tsv", ["1"] if linked else ["1", "2", "3"])
+    record = {"id": 1, "full_name": "Synthetic fetched species"}
+    if linked:
+        record.update(lpsn_parent_id=2, basonym_id=3)
+    client = _FakeLpsnClient({"1": record})
+    calls = []
+    original_search = client.search
+
+    def fail_selected_fetch(id=None):  # noqa: A002 — follows the native client signature
+        """Let one record reach both temporary writers before two native transport failures."""
+        calls.append(id)
+        if id in {"2", "3"}:
+            raise requests.ConnectionError("synthetic transport failure")
+        original_search(id=id)
+
+    monkeypatch.setattr(client, "search", fail_selected_fetch)
+    transform = LPSNAPITransform(
+        input_dir=input_dir, output_dir=output_dir, client=client, page_fetch=_FakePageFetch({})
+    )
+    prior = {
+        transform.output_node_file: b"id\tcategory\nprior:1\tbiolink:OrganismTaxon\n",
+        transform.output_edge_file: b"subject\tpredicate\tobject\nprior:1\tbiolink:related_to\tprior:1\n",
+    }
+    if existing_outputs:
+        transform.output_dir.mkdir(parents=True, exist_ok=True)
+        for path, content in prior.items():
+            path.write_bytes(content)
+
+    with pytest.raises(RuntimeError) as error:
+        transform.run()
+
+    assert (
+        str(error.value) == "LPSN API transform failed with 2 record fetch error(s); graph outputs were not published."
+    )
+    assert calls == ["1", "2", "3"]
+    assert transform._stats["fetched"] == 1
+    assert transform._stats["errors"] == 2
+    assert transform._stats["api_misses"] == 0
+    assert transform._stats["linked_stubbed"] == (2 if linked else 0)
+    assert json.loads((input_dir / "lpsn" / "api_cache" / "1.json").read_text()) == record
+    for path, content in prior.items():
+        if existing_outputs:
+            assert path.read_bytes() == content
+        else:
+            assert not path.exists()
+    assert not list(transform.output_dir.glob("*.partial"))
+
+
+def _record_with_echo(secret, location):
+    """Embed a synthetic sensitive string in a native-looking nested response."""
+    record = {"id": 1, "full_name": "Synthetic public species"}
+    echo = f"prefix-{secret}-suffix"
+    if location == "key":
+        record["details"] = [{echo: "scientific text"}]
+    elif location == "value":
+        record["details"] = [{"source_note": echo}]
+    else:
+        record["details"] = ["scientific text", [echo]]
+    return record
+
+
+@pytest.mark.parametrize("location", ["key", "value", "list"])
+@pytest.mark.parametrize(
+    "secret",
+    ["synthetic-env-user", "synthetic-env-password", "synthetic-access-token", "synthetic-refresh-token"],
+)
+def test_fresh_record_echo_refused_before_cache_or_graph(factory_transform, monkeypatch, capsys, secret, location):
+    """No known credential or token echo in a native record may be persisted or emitted."""
+    record = _record_with_echo(secret, location)
+    client = _FakeLpsnClient({"1": record})
+    monkeypatch.setitem(sys.modules, "lpsn", SimpleNamespace(LpsnClient=Mock(return_value=client)))
+
+    with pytest.raises(RuntimeError) as error:
+        factory_transform.run()
+
+    assert str(error.value) == "LPSN API record contains sensitive authentication material."
+    captured = capsys.readouterr()
+    assert secret not in captured.out + captured.err + str(error.value)
+    assert not (factory_transform.input_base_dir / "lpsn" / "api_cache" / "1.json").exists()
+    assert not factory_transform.output_node_file.exists()
+    assert not factory_transform.output_edge_file.exists()
+    assert not list(factory_transform.output_dir.glob("*.partial"))
+
+
+@pytest.mark.parametrize(
+    "field", ["Token", "access-token", "REFRESH_TOKEN", "password", "Authorization", "LPSN_USERNAME", "LPSN_PASSWORD"]
+)
+def test_sensitive_record_fields_refused_without_known_value(factory_transform, monkeypatch, field):
+    """Named authentication fields are refused even when their values differ from known credentials."""
+    record = {"id": 1, "full_name": "Synthetic public species", "details": [{field: "unrelated-value"}]}
+    client = _FakeLpsnClient({"1": record})
+    monkeypatch.setitem(sys.modules, "lpsn", SimpleNamespace(LpsnClient=Mock(return_value=client)))
+
+    with pytest.raises(RuntimeError, match=r"^LPSN API record contains sensitive authentication material\.$"):
+        factory_transform.run()
+
+    assert not (factory_transform.input_base_dir / "lpsn" / "api_cache" / "1.json").exists()
+    assert not factory_transform.output_node_file.exists()
+    assert not factory_transform.output_edge_file.exists()
+
+
+@pytest.mark.parametrize("location", ["key", "value", "list"])
+@pytest.mark.parametrize("secret", ["synthetic-env-password", "synthetic-refresh-token"])
+def test_cached_record_echo_refused_without_rewrite(factory_transform, monkeypatch, secret, location):
+    """Existing native cache and prior graphs remain byte-identical on a cached-record refusal."""
+    record = _record_with_echo(secret, location)
+    cache = factory_transform.input_base_dir / "lpsn" / "api_cache"
+    cache.mkdir(parents=True)
+    cached = cache / "1.json"
+    native = json.dumps(record, indent=3).encode() + b"\n"
+    cached.write_bytes(native)
+    client = _FakeLpsnClient({})
+    client.search = Mock(side_effect=AssertionError("Refused cache must not be silently replaced"))
+    monkeypatch.setitem(sys.modules, "lpsn", SimpleNamespace(LpsnClient=Mock(return_value=client)))
+    prior = {
+        factory_transform.output_node_file: b"id\tcategory\nprior:1\tbiolink:OrganismTaxon\n",
+        factory_transform.output_edge_file: b"subject\tpredicate\tobject\n",
+    }
+    factory_transform.output_dir.mkdir(parents=True, exist_ok=True)
+    for path, content in prior.items():
+        path.write_bytes(content)
+
+    with pytest.raises(RuntimeError, match=r"^LPSN API record contains sensitive authentication material\.$"):
+        factory_transform.run()
+
+    client.search.assert_not_called()
+    assert cached.read_bytes() == native
+    assert factory_transform._stats["from_cache"] == 0
+    for path, content in prior.items():
+        assert path.read_bytes() == content
+    assert not list(factory_transform.output_dir.glob("*.partial"))
+
+
+@pytest.mark.parametrize(
+    "secret",
+    ["synthetic-access-token", "synthetic-refresh-token", "synthetic-new-access", "synthetic-new-refresh"],
+)
+def test_retrieval_refresh_checks_both_token_pairs(factory_transform, monkeypatch, secret):
+    """Refreshing a client during retrieve cannot make either old or new token echoes safe to cache."""
+    client = _FakeLpsnClient({})
+    record = _record_with_echo(secret, "value")
+
+    def refreshed_retrieve():
+        """Replace both synthetic tokens while producing the native record."""
+        client.access_token = "synthetic-new-access"  # noqa: S105 — offline fake
+        client.refresh_token = "synthetic-new-refresh"  # noqa: S105 — offline fake
+        yield record
+
+    monkeypatch.setattr(client, "retrieve", refreshed_retrieve)
+    monkeypatch.setitem(sys.modules, "lpsn", SimpleNamespace(LpsnClient=Mock(return_value=client)))
+
+    with pytest.raises(RuntimeError, match=r"^LPSN API record contains sensitive authentication material\.$"):
+        factory_transform.run()
+
+    assert not (factory_transform.input_base_dir / "lpsn" / "api_cache" / "1.json").exists()
+    assert not factory_transform.output_node_file.exists()
+    assert not factory_transform.output_edge_file.exists()
+
+
+def test_benign_scientific_record_retains_exact_content(factory_transform, monkeypatch):
+    """Scientific authority and free text are preserved rather than redacted or broadly rejected."""
+    record = {
+        "id": 1,
+        "full_name": "Synthetic public species",
+        "authority": "Example et al. 2026",
+        "details": ["authorization discussed in publication", {"note": "token for culture tracking"}],
+        "is_legitimate": True,
+    }
+    client = _FakeLpsnClient({"1": record})
+    monkeypatch.setitem(sys.modules, "lpsn", SimpleNamespace(LpsnClient=Mock(return_value=client)))
+
+    factory_transform.run()
+
+    cached = factory_transform.input_base_dir / "lpsn" / "api_cache" / "1.json"
+    assert json.loads(cached.read_text()) == record
+    assert [row["id"] for row in _read_tsv(factory_transform.output_node_file)] == ["lpsn:1"]
+    assert factory_transform._stats["fetched"] == 1
+    assert factory_transform._stats["errors"] == 0

@@ -1,0 +1,11 @@
+{
+  "recorded_at": "2026-11-07T03:12:54.596076+00:00",
+  "user_authorization": "Explicit approval to load only LPSN_USERNAME and LPSN_PASSWORD from original checkout .env into owned process environment; nonexecuting allowlisted parser; no printing/saving/arguments; no further approval needed for this scope",
+  "real_credential_values_loaded": false,
+  "authorization_scope_changed": true,
+  "prior_rejection_receipt_preserved": true,
+  "continuation_report_sha256": "c455ef63f5f5b8c765b327781da62e05825772d26a551c2e6a6f1df4c96a4f7b",
+  "prior_candidate": "325ead9101d4e6561c8e3827bec2c665ec330645",
+  "new_candidate_gate_status": "not_run_yet",
+  "git_merge_or_release_authorized": false
+}

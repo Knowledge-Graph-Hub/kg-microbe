@@ -6,6 +6,8 @@ import json
 import os
 import shutil
 import subprocess
+import sys
+import time
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -17,6 +19,8 @@ SCRIPT = Path(__file__).resolve().parents[1] / "scripts/adhoc/kgm_rebuild_202611
 @pytest.fixture
 def launcher(tmp_path, monkeypatch):
     """Load an independent helper and bind every writable location to a temporary checkout."""
+    monkeypatch.delenv("LPSN_USERNAME", raising=False)
+    monkeypatch.delenv("LPSN_PASSWORD", raising=False)
     spec = importlib.util.spec_from_file_location("rebuild_launcher_test", SCRIPT)
     helper = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(helper)
@@ -312,8 +316,11 @@ def test_persistent_launch_records_actual_command_and_environment(launcher, monk
     process = json.loads((folder / "process.json").read_text())
     assert plan["command"] == command and plan["python"] == str(launcher.PYTHON)
     assert plan["launcher_sha256"] == hashlib.sha256(launcher.LAUNCHER.read_bytes()).hexdigest()
-    expected_env_digest = hashlib.sha256(json.dumps(settings["env"], sort_keys=True).encode()).hexdigest()
-    assert plan["environment_sha256"] == expected_env_digest
+    selected = launcher.environment_fingerprint(settings["env"])
+    assert plan["environment_sha256"] == selected["environment_sha256"]
+    assert plan["fingerprint_scope"] == selected["fingerprint_scope"]
+    assert plan["environment_bindings"] == selected["environment_bindings"]
+    assert "BACDIVE_PASSWORD" not in plan["environment_bindings"]
     assert process["pid"] == process["process_group"] == 424242
     assert Path(process["log"]).read_bytes() == b"synthetic child output\n"
     assert "synthetic-private-value" not in (folder / "plan.json").read_text()
@@ -407,3 +414,283 @@ def test_checkout_seed_preservation_requires_exact_head_and_source(launcher, raw
         assert json.loads((saved / "hashes.json").read_text()) == {
             "data/raw/predicate_mapping.yaml": hashlib.sha256(committed).hexdigest()
         }
+
+
+def test_environment_fingerprint_ignores_all_unselected_secrets(launcher):
+    """Credential rotation and arbitrary inherited values never enter the fingerprint input."""
+    env = launcher.environment()
+    expected = launcher.environment_fingerprint(env)
+    env.update(
+        LPSN_USERNAME="synthetic-user-a",
+        LPSN_PASSWORD="synthetic-pass-a",  # noqa: S106 - synthetic secret-rotation control
+        OTHER_SECRET="synthetic-key-a",  # noqa: S106 - synthetic secret-rotation control
+        UNREVIEWED_VARIABLE="unreviewed-a",
+    )
+    assert launcher.environment_fingerprint(env) == expected
+    env.update(
+        LPSN_USERNAME="synthetic-user-b",
+        LPSN_PASSWORD="synthetic-pass-b",  # noqa: S106 - synthetic secret-rotation control
+        OTHER_SECRET="synthetic-key-b",  # noqa: S106 - synthetic secret-rotation control
+        UNREVIEWED_VARIABLE="unreviewed-b",
+    )
+    assert launcher.environment_fingerprint(env) == expected
+    encoded = json.dumps(expected)
+    assert all(value not in encoded for value in ("synthetic-user", "synthetic-pass", "synthetic-key", "unreviewed"))
+    assert expected["fingerprint_scope"]["version"] == 1
+    assert set(expected["environment_bindings"]) == set(launcher.FINGERPRINT_KEYS)
+
+
+@pytest.mark.parametrize(
+    "key,value",
+    [
+        ("KG_NCBITAXON_VERSION_CHECK", "strict"),
+        ("KG_CHEBI_VERSION_CHECK", "strict"),
+        ("ROBOT_JAVA_ARGS", "-Xmx16g"),
+        ("JAVA_TOOL_OPTIONS", "-DentityExpansionLimit=0"),
+        ("JDK_JAVA_OPTIONS", "-Xmx8g"),
+        ("PREGO_HABITAT_MIN_SCORE", "2.0"),
+    ],
+)
+def test_reviewed_nonsecret_settings_remain_fingerprint_sensitive(launcher, key, value):
+    """Explicit version guards, JVM arguments and scientific thresholds remain identity inputs."""
+    env = launcher.environment()
+    env.pop(key, None)
+    before = launcher.environment_fingerprint(env)
+    env[key] = value
+    after = launcher.environment_fingerprint(env)
+    assert after["environment_sha256"] != before["environment_sha256"]
+    assert after["environment_bindings"][key] == value
+
+
+@pytest.mark.parametrize(
+    "command",
+    [
+        ["-m", "kg_microbe.run", "--password", "unbound-secret"],
+        ["scripts/stage.py", "--token=unbound-token"],
+        ["scripts/stage.py", "synthetic-password"],
+        ["scripts/stage.py", "https://synthetic:auth@example.invalid/"],
+    ],
+)
+def test_sensitive_commands_refused_before_any_evidence_or_spawn(launcher, monkeypatch, command):
+    """Unsafe arguments never reach the filesystem, a child, or an exception message."""
+    monkeypatch.setenv("LPSN_PASSWORD", "synthetic-password")
+    monkeypatch.chdir(launcher.ROOT)
+    monkeypatch.setattr(launcher.sys, "argv", ["launcher", "launch", "refused", "--", *command])
+    monkeypatch.setattr(launcher.subprocess, "Popen", lambda *args, **kwargs: pytest.fail("Unsafe command spawned"))
+    monkeypatch.setattr(
+        launcher, "hashlib", SimpleNamespace(sha256=lambda *args: pytest.fail("Unsafe argument hashed"))
+    )
+    with pytest.raises(RuntimeError):
+        launcher.command_sha256(command)
+    assert launcher.main() == 1
+    assert not launcher.EVIDENCE.exists()
+
+
+def test_authenticated_parent_uses_devnull_and_safe_plan(launcher, monkeypatch):
+    """Child startup cannot leak diagnostics before the worker installs its own suppression."""
+    monkeypatch.setenv("LPSN_USERNAME", "synthetic-user")
+    monkeypatch.setenv("LPSN_PASSWORD", "synthetic-password")
+    monkeypatch.chdir(launcher.ROOT)
+    command = ["-m", "kg_microbe.run", "transform", "-s", "lpsn_api"]
+    monkeypatch.setattr(launcher.sys, "argv", ["launcher", "launch", "authenticated", "--", *command])
+    calls = []
+
+    def popen(arguments, **kwargs):
+        """Capture only launch configuration without creating a process."""
+        calls.append((arguments, kwargs))
+        assert kwargs["stdout"] == kwargs["stderr"] == subprocess.DEVNULL
+        assert kwargs["env"]["LPSN_PASSWORD"] == os.environ["LPSN_PASSWORD"]
+        return SimpleNamespace(pid=12345)
+
+    monkeypatch.setattr(launcher.subprocess, "Popen", popen)
+    assert launcher.main() == 0
+    folder = launcher.EVIDENCE / "stages/authenticated"
+    plan = json.loads((folder / "plan.json").read_text())
+    assert plan["command_withheld"] and "command" not in plan
+    assert plan["diagnostics"] == "suppressed_authenticated_stage"
+    assert (folder / "process.log").read_bytes() == b""
+    assert len(calls) == 1
+    assert b"synthetic-password" not in b"".join(path.read_bytes() for path in folder.iterdir())
+
+
+@pytest.fixture
+def diagnostic_subprocess(tmp_path):
+    """Copy the real launcher into a tiny checkout served by the current isolated interpreter."""
+    root = tmp_path / "owned"
+    script = root / "scripts/adhoc/launcher.py"
+    script.parent.mkdir(parents=True)
+    shutil.copyfile(SCRIPT, script)
+    (root / ".venv").symlink_to(Path(sys.prefix), target_is_directory=True)
+    package = root / "kg_microbe"
+    package.mkdir()
+    (package / "__init__.py").write_text(
+        "import logging, os\n"
+        'logging.warning("import-token:" + os.environ.get("LPSN_PASSWORD", "public"))\n'
+        'os.write(2, b"import-native-diagnostic")\n'
+    )
+    probe = root / "scripts/probe.py"
+    probe.write_text("""import atexit, base64, logging, os, pathlib, sys, types
+value = os.environ.get("LPSN_PASSWORD") or os.environ.get("LPSN_USERNAME") or "PUBLIC-DIAGNOSTIC"
+token = "server-token-" + base64.b64encode(value.encode()).decode()
+for stream in (sys.stdout, sys.stderr, sys.__stdout__, sys.__stderr__):
+    stream.write(value[:5])
+    stream.write(value[5:] + token)
+    stream.flush()
+for fd in (1, 2):
+    os.write(fd, value[:5].encode())
+    os.write(fd, (value[5:] + token).encode())
+logging.error(token)
+logging.getLogger("synthetic-third-party").addHandler(logging.FileHandler("logging-probe.log"))
+logging.getLogger("synthetic-third-party").critical(token)
+atexit.register(lambda: print(token))
+outcome = sys.argv[1]
+if outcome == "exception":
+    raise type(value, (Exception,), {})(token)
+if outcome == "exit":
+    raise SystemExit(7)
+if outcome == "exit_text":
+    raise SystemExit(token)
+if outcome == "foreign":
+    foreign = pathlib.Path.cwd().parent / "foreign.py"
+    foreign.write_text("# synthetic foreign module")
+    sys.modules["kg_microbe.foreign"] = types.SimpleNamespace(__file__=str(foreign))
+if outcome == "alias":
+    sys.modules["kg_microbe." + token] = sys.modules["kg_microbe"]
+if outcome == "receipt_failure":
+    (pathlib.Path("data/rebuild-evidence/20261105/stages/worker") / "result.json").mkdir()
+""")
+    return root, script
+
+
+@pytest.mark.parametrize("credential", ["LPSN_USERNAME", "LPSN_PASSWORD"])
+@pytest.mark.parametrize(
+    "outcome,expected",
+    [
+        ("success", 0),
+        ("exception", 1),
+        ("exit", 7),
+        ("exit_text", 1),
+        ("foreign", 1),
+        ("alias", 1),
+        ("receipt_failure", 1),
+    ],
+)
+def test_authenticated_real_worker_suppresses_every_diagnostic_channel(
+    diagnostic_subprocess, credential, outcome, expected
+):
+    """Native/split/Python/logging/shutdown output and arbitrary exception text never reach evidence."""
+    root, script = diagnostic_subprocess
+    env = os.environ.copy()
+    env.pop("LPSN_USERNAME", None)
+    env.pop("LPSN_PASSWORD", None)
+    env[credential] = "synthetic-private-value"
+    env["PYTHONDONTWRITEBYTECODE"] = "1"
+    completed = subprocess.run(  # noqa: S603 - fixed offline synthetic script
+        [sys.executable, "-B", str(script), "_run", "worker", "--", "scripts/probe.py", outcome],
+        cwd=root,
+        env=env,
+        capture_output=True,
+        check=False,
+    )
+    assert completed.returncode == expected
+    assert completed.stdout == completed.stderr == b""
+    folder = root / "data/rebuild-evidence/20261105/stages/worker"
+    persisted = b"".join(path.read_bytes() for path in folder.rglob("*") if path.is_file())
+    assert b"synthetic-private-value" not in persisted and b"server-token-" not in persisted
+    assert (root / "logging-probe.log").read_bytes() == b""
+    if outcome == "receipt_failure":
+        assert (folder / "result.json").is_dir()
+    else:
+        result = json.loads((folder / "result.json").read_text())
+        assert result["exit_code"] == expected
+        assert "origins_before" in result
+        assert result["command_withheld"] and "command" not in result and "versions" not in result
+        assert "error" not in result and "origin_error" not in result
+        if outcome in {"foreign", "alias"}:
+            assert result["origin_error_type"] == "RuntimeError"
+        else:
+            assert "origins_after" in result
+        if outcome == "exception":
+            assert result["error_type"] == "Exception"
+
+
+def test_credential_free_worker_retains_diagnostics(diagnostic_subprocess):
+    """Ordinary stages retain readable diagnostics and full failure evidence."""
+    root, script = diagnostic_subprocess
+    env = os.environ.copy()
+    env.pop("LPSN_USERNAME", None)
+    env.pop("LPSN_PASSWORD", None)
+    completed = subprocess.run(  # noqa: S603 - fixed offline synthetic script
+        [sys.executable, "-B", str(script), "_run", "worker", "--", "scripts/probe.py", "exception"],
+        cwd=root,
+        env=env,
+        capture_output=True,
+        check=False,
+    )
+    assert completed.returncode == 1
+    assert b"PUBLIC-DIAGNOSTIC" in completed.stdout + completed.stderr
+    result = json.loads((root / "data/rebuild-evidence/20261105/stages/worker/result.json").read_text())
+    assert "server-token-" in result["error"]
+    assert "command" in result and "versions" in result
+
+
+def test_authenticated_origin_names_match_actual_owned_modules(launcher, monkeypatch):
+    """The actual KG package and ordinary lazy imports retain canonical authenticated origins."""
+    import importlib
+
+    monkeypatch.setattr(launcher, "ROOT", SCRIPT.parents[2])
+    importlib.import_module("kg_microbe.transform_utils.lpsn_api.lpsn_api")
+    actual = launcher.stage_origins(authenticated=True)
+    assert "kg_microbe" in actual
+    assert "kg_microbe.transform_utils.lpsn_api.lpsn_api" in actual
+
+
+@pytest.mark.parametrize("key", ["ROBOT_JAVA_ARGS", "JAVA_TOOL_OPTIONS", "JDK_JAVA_OPTIONS", "_JAVA_OPTIONS"])
+def test_credential_shaped_jvm_binding_cannot_be_persisted_or_hashed(launcher, key):
+    """An allowlisted JVM setting does not authorize embedding a password option."""
+    env = launcher.environment()
+    env[key] = "-Dhttp.proxyPassword=synthetic-unbound-value"
+    with pytest.raises(RuntimeError, match="Credential-bearing JVM bindings"):
+        launcher.environment_fingerprint(env)
+
+
+def test_authenticated_real_parent_and_worker_bind_the_same_nonsecret_command(diagnostic_subprocess):
+    """#1784 binds the actual child command to its approved plan without recording argument text."""
+    root, script = diagnostic_subprocess
+    env = os.environ.copy()
+    env["LPSN_USERNAME"] = "synthetic-private-user"
+    env["LPSN_PASSWORD"] = "synthetic-private-password"  # noqa: S105 - synthetic subprocess control
+    command = ["scripts/probe.py", "success"]
+    expected = hashlib.sha256(
+        json.dumps(command, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
+    ).hexdigest()
+    completed = subprocess.run(  # noqa: S603 - actual launcher with fixed offline synthetic command
+        [sys.executable, "-B", str(script), "launch", "worker", "--", *command],
+        cwd=root,
+        env=env,
+        capture_output=True,
+        check=False,
+    )
+    assert completed.returncode == 0
+    assert completed.stdout == completed.stderr == b""
+    folder = root / "data/rebuild-evidence/20261105/stages/worker"
+    deadline = time.monotonic() + 10
+    result = None
+    while time.monotonic() < deadline:
+        try:
+            result = json.loads((folder / "result.json").read_text())
+        except (FileNotFoundError, json.JSONDecodeError):
+            time.sleep(0.02)
+        else:
+            break
+    assert result is not None, "The actual worker did not finish its safe receipt"
+    plan = json.loads((folder / "plan.json").read_text())
+    started = json.loads((folder / "started.json").read_text())
+    assert plan["command_sha256"] == started["command_sha256"] == result["command_sha256"] == expected
+    assert result["exit_code"] == 0
+    assert result["origins_before"] and result["origins_after"]
+    assert all(record["command_withheld"] and "command" not in record for record in (plan, started, result))
+    persisted = b"".join(path.read_bytes() for path in folder.iterdir() if path.is_file())
+    assert b"scripts/probe.py" not in persisted
+    assert b"synthetic-private-" not in persisted and b"server-token-" not in persisted
+    assert (folder / "process.log").read_bytes() == b""

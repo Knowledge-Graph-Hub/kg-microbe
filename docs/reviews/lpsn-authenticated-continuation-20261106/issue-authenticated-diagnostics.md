@@ -1,0 +1,5 @@
+The read-only audit for PR #1750 found multiple sinks before the approved LPSN execution: the official client prints authentication/API error text, native LPSN fetch prints exceptions, the dispatcher emits exceptions/tracebacks, and the main launcher persists repr(exception). Server error text can contain submitted values or sensitive authentication details. No actual credential exposure is claimed; authentication has not yet run.
+
+Acceptance: protect the entire authenticated execution boundary before client initialization, including Python output, native stdout/stderr, logging and persisted exception records. Save only nonsecret failure stage/type/status and actual public scientific results. Never put credentials in command arguments, shell evaluation, hashes, logs or receipts. Add adversarial offline controls for exceptions and split/native output containing synthetic credentials; retain useful exit status and origin checks. Authenticate one bounded exact-ID canary before the remaining phase.
+
+Disposition: in scope for PR #1750 before authentication.

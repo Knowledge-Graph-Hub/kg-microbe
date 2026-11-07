@@ -164,6 +164,7 @@ def test_canary_keeps_only_exact_public_success(helper, monkeypatch, damage):
         """Synthetic in-memory client; no credentials or endpoints are real."""
 
         def __init__(self, user, password, **kwargs):
+            """Initialize synthetic in-memory authentication state for the canary control."""
             assert user == "synthetic-user" and password == "synthetic-password"  # noqa: S105 - offline synthetic control
             assert kwargs == {"max_retries": 1, "retry_delay": 0, "request_timeout": 25}
             if damage != "no_tokens":

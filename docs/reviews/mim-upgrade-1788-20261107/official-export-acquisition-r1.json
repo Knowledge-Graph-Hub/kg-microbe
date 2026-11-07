@@ -1,0 +1,30 @@
+{
+  "archive": {
+    "bytes": 551679,
+    "path": "data/rebuild-evidence/mim-1788-20261107/official-reviewed-sssom-41900248437.zip",
+    "sha256": "a9bb2a3c9106658f191b8f027b760d1959d04a39276bd5bff4731aa96742b593"
+  },
+  "artifact_id": 13355994910,
+  "files": {
+    "ingredient_mappings.sssom.tsv": {
+      "bytes": 831693,
+      "sha256": "7e68fea7fd788928f29c7671156198af101baaa3b3051f19bab78a5479d2a940"
+    },
+    "manifest.json": {
+      "bytes": 993,
+      "sha256": "b02a92446e8a613fd0d96b0dd8147d439733fcf73e731b363a6388e95d616703"
+    },
+    "mapping-dispositions.tsv": {
+      "bytes": 1814722,
+      "sha256": "2a075c9c4a699c9d22a5e8b736bc6d7c00c344f19363f28178c0b50b6b590a19"
+    },
+    "withheld_mappings.sssom.tsv": {
+      "bytes": 845370,
+      "sha256": "5817fb845c65f995fb0c78095168af1cbf0c837a991004fcd0a9d73cd0874c88"
+    }
+  },
+  "head": "0dac278466699129a083343a921c2e0ca18a9ab4",
+  "recorded_at": "2026-11-07T09:44:33.698164+00:00",
+  "run": 41900248437,
+  "status": "downloaded exact native workflow artifact; consumer/scientific review pending"
+}

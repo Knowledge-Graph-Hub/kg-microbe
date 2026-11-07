@@ -1,0 +1,2187 @@
+{
+  "schema_version": 1,
+  "status": "read_only_phase1_complete_with_consumer_compatibility_blockers",
+  "created_at": "2026-11-07T09:43:25.507365+00:00",
+  "scope": "Upstream MIM source/review-chain/export recipe audit before execution, pin, exports or fixes. No upstream code was imported/executed; no tests, network, credentials, Git mutations or old-worktree changes. Only standard CSV/JSON/hash logic and installed PyYAML safe_load parsed saved source copies.",
+  "baseline_commit": "1848b0fe521bc2462f165912fcf92d09ad9a8cec",
+  "candidate_commit": "0dac278466699129a083343a921c2e0ca18a9ab4",
+  "release_summaries": {
+    "baseline": {
+      "source": {
+        "path": "source/1848b0fe521bc2462f165912fcf92d09ad9a8cec/mappings/ingredient_mappings.sssom.tsv",
+        "sha256": "7567e33fe5e5f4239afbe42065e3d119ea3b4023ba28cb5559781ddc0f41f260",
+        "bytes": 1672164
+      },
+      "review": {
+        "path": "source/1848b0fe521bc2462f165912fcf92d09ad9a8cec/reports/sssom_completion_20260921/review.json",
+        "sha256": "85b222601f2d588a36443123a256e871b7d64b12a1651af8dd5ea0ede014f32e",
+        "bytes": 2337184
+      },
+      "counts": {
+        "SUPPORTED": 1747,
+        "WITHHOLD": 1252
+      },
+      "source_rows": 2999,
+      "input_hashes_verified": 83,
+      "owner_hashes_verified": 2611,
+      "all_row_hashes_verified": true,
+      "maximum_dates": {
+        "SUPPORTED": "2026-09-24",
+        "WITHHOLD": "2026-09-24"
+      },
+      "predicates": {
+        "SUPPORTED": {
+          "skos:exactMatch": 1747
+        },
+        "WITHHOLD": {
+          "skos:exactMatch": 1003,
+          "skos:broadMatch": 152,
+          "skos:closeMatch": 97
+        }
+      }
+    },
+    "candidate": {
+      "source": {
+        "path": "source/0dac278466699129a083343a921c2e0ca18a9ab4/mappings/ingredient_mappings.sssom.tsv",
+        "sha256": "d5f76fc404967477903fafc79eaba86ecfef9e2c391926ec08c3c1af4a5220b6",
+        "bytes": 1675751
+      },
+      "review": {
+        "path": "source/0dac278466699129a083343a921c2e0ca18a9ab4/reports/sssom_completion_20260921/review.json",
+        "sha256": "ab301d1f66276cdfeefea79080ce49f26ebb02c1920a53c71512c14b283b16cf",
+        "bytes": 2683817
+      },
+      "counts": {
+        "SUPPORTED": 1739,
+        "WITHHOLD": 1275
+      },
+      "source_rows": 3014,
+      "input_hashes_verified": 2839,
+      "owner_hashes_verified": 2611,
+      "all_row_hashes_verified": true,
+      "maximum_dates": {
+        "SUPPORTED": "2026-11-01",
+        "WITHHOLD": "2026-11-03"
+      },
+      "predicates": {
+        "SUPPORTED": {
+          "skos:exactMatch": 1737,
+          "skos:broadMatch": 2
+        },
+        "WITHHOLD": {
+          "skos:exactMatch": 1032,
+          "skos:broadMatch": 187,
+          "skos:closeMatch": 56
+        }
+      }
+    }
+  },
+  "receipt_replay": {
+    "independent_complete_row_replay": true,
+    "from_sequence": 10,
+    "through_sequence": 26,
+    "final_rows_exactly_equal_candidate": true,
+    "source_sha_endpoints_connected": true,
+    "steps": [
+      {
+        "sequence": 10,
+        "receipt": {
+          "path": "source/0dac278466699129a083343a921c2e0ca18a9ab4/reports/sssom_completion_20260921/mapping_changes/data-license-20261001.json",
+          "sha256": "6d89e96b3560bb2b237fc9a358b1ef68986f1361dc536a4e5872661aaf459403",
+          "bytes": 29686
+        },
+        "batch": "data-license-20261001",
+        "approval": "NONE: every touched row is withheld pending mapping-specific review; no prior approval carries across this link.",
+        "rows_after": 2999
+      },
+      {
+        "sequence": 11,
+        "receipt": {
+          "path": "source/0dac278466699129a083343a921c2e0ca18a9ab4/reports/sssom_completion_20260921/mapping_changes/review-record-issues-20261003.json",
+          "sha256": "9b578f6c25c1ebabb8e58c5a59d6188b7c1f2dd3c8c70ed021b35144c6da1226",
+          "bytes": 52839
+        },
+        "batch": "review-record-issues-20261003",
+        "approval": "NONE: every touched row is withheld pending mapping-specific review; no prior approval carries across this link.",
+        "rows_after": 2985
+      },
+      {
+        "sequence": 12,
+        "receipt": {
+          "path": "source/0dac278466699129a083343a921c2e0ca18a9ab4/reports/sssom_completion_20260921/mapping_changes/claw571-hydrate-parent-identities.json",
+          "sha256": "2eeb7e2b9da164403cc715e6cc1b3a8c36f6f35d173bc1d740f8b90f7ce3d762",
+          "bytes": 35436
+        },
+        "batch": "claw571-hydrate-parent-identities",
+        "approval": "NONE: every touched row is withheld pending mapping-specific review; no prior approval carries across this link.",
+        "rows_after": 2985
+      },
+      {
+        "sequence": 13,
+        "receipt": {
+          "path": "source/0dac278466699129a083343a921c2e0ca18a9ab4/reports/sssom_completion_20260921/mapping_changes/issue878-hydrate-contradictions.json",
+          "sha256": "cdd362a5f2d34ebf6676a098869995ce41a8059285cbffc2f92bbc3e49c86ec3",
+          "bytes": 83443
+        },
+        "batch": "issue878-hydrate-contradictions",
+        "approval": "NONE: every touched row is withheld pending mapping-specific review; no prior approval carries across this link.",
+        "rows_after": 2987
+      },
+      {
+        "sequence": 14,
+        "receipt": {
+          "path": "source/0dac278466699129a083343a921c2e0ca18a9ab4/reports/sssom_completion_20260921/mapping_changes/issue669-1003-scoped-alias-corrections.json",
+          "sha256": "00049aa1d2b19565020d4ecbec999fc723d2cf5954968ec6bf5cebdc0da73f34",
+          "bytes": 60554
+        },
+        "batch": "issue669-1003-scoped-alias-corrections",
+        "approval": "NONE: every touched row is withheld pending mapping-specific review; no prior approval carries across this link.",
+        "rows_after": 2987
+      },
+      {
+        "sequence": 15,
+        "receipt": {
+          "path": "source/0dac278466699129a083343a921c2e0ca18a9ab4/reports/sssom_completion_20260921/mapping_changes/issue1014-provenance-restoration.json",
+          "sha256": "fbeec3fbfee71be85541353683df135f96dc1d0021c6bfb3877bcc5eca8813d0",
+          "bytes": 34929
+        },
+        "batch": "issue1014-provenance-restoration",
+        "approval": "NONE: every touched row is withheld pending mapping-specific review; no prior approval carries across this link.",
+        "rows_after": 2987
+      },
+      {
+        "sequence": 16,
+        "receipt": {
+          "path": "source/0dac278466699129a083343a921c2e0ca18a9ab4/reports/sssom_completion_20260921/mapping_changes/issue875-ncit-exact-heptahydrate.json",
+          "sha256": "28bd529e14104cfbf9160e9532b3d859dbe6259dbac00a9d877bac1daec8a2b8",
+          "bytes": 36462
+        },
+        "batch": "issue875-ncit-exact-heptahydrate",
+        "approval": "NONE: every touched row is withheld pending mapping-specific review; no prior approval carries across this link.",
+        "rows_after": 2986
+      },
+      {
+        "sequence": 17,
+        "receipt": {
+          "path": "source/0dac278466699129a083343a921c2e0ca18a9ab4/reports/sssom_completion_20260921/mapping_changes/issue1004-carnitine-hydrochloride-merge.json",
+          "sha256": "e14ab50d5b981f2e003d755644ffcb98c901519fc0e8324658900ada1ae12e1c",
+          "bytes": 49483
+        },
+        "batch": "issue1004-carnitine-hydrochloride-merge",
+        "approval": "NONE: every touched row is withheld pending mapping-specific review; no prior approval carries across this link.",
+        "rows_after": 2982
+      },
+      {
+        "sequence": 18,
+        "receipt": {
+          "path": "source/0dac278466699129a083343a921c2e0ca18a9ab4/reports/sssom_completion_20260921/mapping_changes/issue1005-lithium-glycerophosphate-identity.json",
+          "sha256": "2c791f6f00f23352ce3e459a6a5d4d21319e41cc6bb1146b59797d9f06b518bd",
+          "bytes": 40306
+        },
+        "batch": "issue1005-lithium-glycerophosphate-identity",
+        "approval": "NONE: every touched row is withheld pending mapping-specific review; no prior approval carries across this link.",
+        "rows_after": 2981
+      },
+      {
+        "sequence": 19,
+        "receipt": {
+          "path": "source/0dac278466699129a083343a921c2e0ca18a9ab4/reports/sssom_completion_20260921/mapping_changes/issue669-owned-name-policy.json",
+          "sha256": "0ece81a8c97723fef6aeaff73693fa013aac1589727ed896400198ff8d4b98f7",
+          "bytes": 81754
+        },
+        "batch": "issue669-owned-name-policy",
+        "approval": "NONE: every touched row is withheld pending mapping-specific review; no prior approval carries across this link.",
+        "rows_after": 2981
+      },
+      {
+        "sequence": 20,
+        "receipt": {
+          "path": "source/0dac278466699129a083343a921c2e0ca18a9ab4/reports/sssom_completion_20260921/mapping_changes/issue901-melezitose-form.json",
+          "sha256": "019e5a9bf82778d7d6749a47b8f2ef131ea80426f6cd166d31d8fd31e6829b87",
+          "bytes": 36334
+        },
+        "batch": "issue901-melezitose-form",
+        "approval": "NONE: every touched row is withheld pending mapping-specific review; no prior approval carries across this link.",
+        "rows_after": 2982
+      },
+      {
+        "sequence": 21,
+        "receipt": {
+          "path": "source/0dac278466699129a083343a921c2e0ca18a9ab4/reports/sssom_completion_20260921/mapping_changes/issue901-sodium-perchlorate-form.json",
+          "sha256": "0ee67f6deeda9bfa685889f50eaf5e6e411ddc43803247837b7e843e613bf2dd",
+          "bytes": 36810
+        },
+        "batch": "issue901-sodium-perchlorate-form",
+        "approval": "NONE: every touched row is withheld pending mapping-specific review; no prior approval carries across this link.",
+        "rows_after": 2983
+      },
+      {
+        "sequence": 22,
+        "receipt": {
+          "path": "source/0dac278466699129a083343a921c2e0ca18a9ab4/reports/sssom_completion_20260921/mapping_changes/issue753-870-registry-and-node-corrections.json",
+          "sha256": "8139abdd7e82930b8a4fdee5872d049072e997f033860e81cc0bab02b320eb37",
+          "bytes": 41198
+        },
+        "batch": "issue753-870-registry-and-node-corrections",
+        "approval": "NONE: every touched row is withheld pending mapping-specific review; no prior approval carries across this link.",
+        "rows_after": 2983
+      },
+      {
+        "sequence": 23,
+        "receipt": {
+          "path": "source/0dac278466699129a083343a921c2e0ca18a9ab4/reports/sssom_completion_20260921/mapping_changes/issue871-268-hydrate-stock-chemistry.json",
+          "sha256": "f12080ebd7c63ea223ec8f7a2ab874078fc506c8f0d3df053bc4ab616bac6a2c",
+          "bytes": 62870
+        },
+        "batch": "issue871-268-hydrate-stock-chemistry",
+        "approval": "NONE: every touched row is withheld pending mapping-specific review; no prior approval carries across this link.",
+        "rows_after": 2983
+      },
+      {
+        "sequence": 24,
+        "receipt": {
+          "path": "source/0dac278466699129a083343a921c2e0ca18a9ab4/reports/sssom_completion_20260921/mapping_changes/issue751-313-235-stock-and-source-labels.json",
+          "sha256": "3d8d3d1189d0393d5ccd23ce3b83a5196e1664f045269254160df33a20e6ea07",
+          "bytes": 61448
+        },
+        "batch": "issue751-313-235-stock-and-source-labels",
+        "approval": "NONE: every touched row is withheld pending mapping-specific review; no prior approval carries across this link.",
+        "rows_after": 2985
+      },
+      {
+        "sequence": 25,
+        "receipt": {
+          "path": "source/0dac278466699129a083343a921c2e0ca18a9ab4/reports/sssom_completion_20260921/mapping_changes/issue901-step7d-reviewed-owner-forms.json",
+          "sha256": "45af9515590918e3420327668d4b89f564457cf97eea9404a34c4da7d17f0e4b",
+          "bytes": 307047
+        },
+        "batch": "issue901-step7d-reviewed-owner-forms",
+        "approval": "NONE: every touched row is withheld pending mapping-specific review; no prior approval carries across this link.",
+        "rows_after": 3014
+      },
+      {
+        "sequence": 26,
+        "receipt": {
+          "path": "source/0dac278466699129a083343a921c2e0ca18a9ab4/reports/sssom_completion_20260921/mapping_changes/issue669-deferred-owned-aliases.json",
+          "sha256": "121b8d6026d6af9a6692966b024398706eb518dbd30506d10a44364c8f8a24b6",
+          "bytes": 104477
+        },
+        "batch": "issue669-deferred-owned-aliases",
+        "approval": "NONE: every touched row is withheld pending mapping-specific review; no prior approval carries across this link.",
+        "rows_after": 3014
+      }
+    ]
+  },
+  "supported_continuity": {
+    "unchanged_complete_row_and_owner_hash_count": 1733,
+    "old_supported_payloads_no_longer_current_supported": 14,
+    "new_supported_payloads": 6,
+    "withdrawn_payload_continuations": [
+      {
+        "old_position": 922,
+        "old_owner": "data/ingredients/mapped/D-_-melezitose_Monohydrate.yaml",
+        "old_row": {
+          "subject_id": "MIM:D-_-melezitose_Monohydrate",
+          "subject_label": "D-(+)-melezitose monohydrate",
+          "predicate_id": "skos:exactMatch",
+          "object_id": "cas:10030-67-8",
+          "object_label": "D-(+)-melezitose monohydrate",
+          "object_source": "registry:cas",
+          "mapping_justification": "semapv:ManualMappingCuration",
+          "source": "MIM:CultureBotHT|MIM:anchor_cas_hydrate_records|MIM:MIM curation (#342)|MIM:curator=regrade_hydrate_to_close_match|kgm:chebi_xrefs|kgm:culturebotai_reviewed|kgm:mediaingredientmech_reviewed|kgm:mediaingredientmech_reviewed[curator=anchor_cas_hydrate_records]|kgm:mediaingredientmech_reviewed[curator=classify_ingredient_type]|kgm:mediaingredientmech_reviewed[curator=review-ingredients]|kgm:primary_mappings[bacdive_api]|kgm:primary_mappings[kegg_compound]",
+          "mapping_date": "2026-08-13",
+          "confidence": "0.99",
+          "comment": "Registry/identity row preserving cas:10030-67-8 alongside parent CHEBI:6731.",
+          "other": "CAS:10030-67-8",
+          "validation_method": "none|UNKNOWN_TERM|2026-07-07"
+        },
+        "old_decision": {
+          "source_position": 922,
+          "row_sha256": "1e5aaffe48b98b5733dc82a8eebaeb64243446731d40be430f2b55f0f169307f",
+          "owner_record": "data/ingredients/mapped/D-_-melezitose_Monohydrate.yaml",
+          "disposition": "SUPPORTED",
+          "review_reason": "Mapping-only review supports the exact source identity using the archived target/registry identity evidence quoted here. The complete current other payload was read against the identity, registry and synonym evidence; the quoted sections cover the exported same-subject tokens. Unresolved role, recipe, component, occurrence or curation-metadata findings remain outside this row-scoped decision.",
+          "review_evidence": "reports/sssom_completion_20260921/mapping-evidence.json",
+          "evidence_key": "922"
+        },
+        "continuation": [
+          {
+            "sequence": 10,
+            "before": 922,
+            "after": 922
+          },
+          {
+            "sequence": 11,
+            "before": 922,
+            "after": 919
+          },
+          {
+            "sequence": 12,
+            "before": 919,
+            "after": 919
+          },
+          {
+            "sequence": 13,
+            "before": 919,
+            "after": 919
+          },
+          {
+            "sequence": 14,
+            "before": 919,
+            "after": 919
+          },
+          {
+            "sequence": 15,
+            "before": 919,
+            "after": 919
+          },
+          {
+            "sequence": 16,
+            "before": 919,
+            "after": 919
+          },
+          {
+            "sequence": 17,
+            "before": 919,
+            "after": 915
+          },
+          {
+            "sequence": 18,
+            "before": 915,
+            "after": 915
+          },
+          {
+            "sequence": 19,
+            "before": 915,
+            "after": 915
+          },
+          {
+            "sequence": 20,
+            "before": 915,
+            "after": 915
+          },
+          {
+            "sequence": 21,
+            "before": 915,
+            "after": 915
+          },
+          {
+            "sequence": 22,
+            "before": 915,
+            "after": 915
+          },
+          {
+            "sequence": 23,
+            "before": 915,
+            "after": 915
+          },
+          {
+            "sequence": 24,
+            "before": 915,
+            "after": 916
+          },
+          {
+            "sequence": 25,
+            "before": 916,
+            "after": 927
+          },
+          {
+            "sequence": 26,
+            "before": 927,
+            "after": 927
+          }
+        ],
+        "current": {
+          "position": 927,
+          "row": {
+            "subject_id": "MIM:D-_-melezitose_Monohydrate",
+            "subject_label": "D-(+)-melezitose monohydrate",
+            "predicate_id": "skos:exactMatch",
+            "object_id": "cas:10030-67-8",
+            "object_label": "D-(+)-melezitose monohydrate",
+            "object_source": "registry:cas",
+            "mapping_justification": "semapv:ManualMappingCuration",
+            "source": "MIM:CultureBotHT|MIM:anchor_cas_hydrate_records|MIM:MIM curation (#342)|MIM:MIM curation (#901); PubChem CID 16217716; ChEBI:6731|MIM:curator=claude|kgm:mediaingredientmech_reviewed[manifest=9bb29d5605d93dea351be9624d99c5d8ada57d4b9831b22764957b784bd685af]|kgm:native_ontology:chebi",
+            "mapping_date": "2026-11-01",
+            "confidence": "0.99",
+            "comment": "Registry/identity row preserving cas:10030-67-8 alongside parent CHEBI:6731.",
+            "other": "CAS:10030-67-8",
+            "validation_method": "none|UNKNOWN_TERM|2026-07-07"
+          },
+          "decision": {
+            "source_position": 927,
+            "row_sha256": "a644bad003f578f4a63e861ec0ba09cffc2f16459b5b476a275a845c685ed8e5",
+            "owner_record": "data/ingredients/mapped/D-_-melezitose_Monohydrate.yaml",
+            "disposition": "SUPPORTED",
+            "review_reason": "Fresh assessment of corrected owner bytes supports exact cas:10030-67-8 identity for D-(+)-melezitose monohydrate. PubChem CID 16217716 names this CAS through its ChemIDplus, FDA GSRS and NZ EPA annotations and has the matching monohydrate formula and stereochemical InChI; CultureBotHT row 1142 separately records the same supplied form and CAS. The actual CAS:10030-67-8 other token is a same-subject display label. This conclusion replaces, rather than inherits, the withdrawn old-owner approval.",
+            "review_evidence": "reports/sssom_completion_20260921/mapping-evidence.json",
+            "evidence_key": "927"
+          }
+        }
+      },
+      {
+        "old_position": 2610,
+        "old_owner": "data/ingredients/mapped/Sodium_Phosphite_Dibasic_Pentahydrate.yaml",
+        "old_row": {
+          "subject_id": "MIM:Sodium_Phosphite_Dibasic_Pentahydrate",
+          "subject_label": "Sodium phosphite dibasic pentahydrate",
+          "predicate_id": "skos:exactMatch",
+          "object_id": "cas:13517-23-2",
+          "object_label": "Sodium phosphite dibasic pentahydrate",
+          "object_source": "registry:cas",
+          "mapping_justification": "semapv:ManualMappingCuration",
+          "source": "MIM:CultureBotHT|MIM:anchor_cas_hydrate_records|MIM:MIM curation (#342)|MIM:curator=regrade_hydrate_to_close_match|kgm:chebi_xrefs|kgm:mediaingredientmech_reviewed|kgm:mediaingredientmech_reviewed[curator=anchor_cas_hydrate_records]|kgm:mediaingredientmech_reviewed[curator=audit_integrate_culturebotht]|kgm:mediaingredientmech_reviewed[curator=auto_classify_ingredient_type]",
+          "mapping_date": "2026-08-13",
+          "confidence": "0.99",
+          "comment": "Registry/identity row preserving cas:13517-23-2 alongside parent CHEBI:36361.",
+          "other": "CAS:13517-23-2",
+          "validation_method": "none|UNKNOWN_TERM|2026-07-07"
+        },
+        "old_decision": {
+          "source_position": 2610,
+          "row_sha256": "22044744d0557ab1e5c10b5d310947331151fbfee7a9511000ff39466f1d4477",
+          "owner_record": "data/ingredients/mapped/Sodium_Phosphite_Dibasic_Pentahydrate.yaml",
+          "disposition": "SUPPORTED",
+          "review_reason": "Retain the existing explicit scientific approval for the identical owner and complete mapping payload, subject to this review's independent negative findings and relation/alias-scope safeguards. Existing positive review applies to byte-identical source record and assertion payload; not a fresh literature review.",
+          "review_evidence": "reports/sssom_completion_20260921/mapping-evidence.json",
+          "evidence_key": "2610"
+        },
+        "continuation": [
+          {
+            "sequence": 10,
+            "before": 2610,
+            "after": 2610
+          },
+          {
+            "sequence": 11,
+            "before": 2610,
+            "after": 2596
+          },
+          {
+            "sequence": 12,
+            "before": 2596,
+            "after": 2596
+          },
+          {
+            "sequence": 13,
+            "before": 2596,
+            "after": 2598
+          },
+          {
+            "sequence": 14,
+            "before": 2598,
+            "after": 2598
+          },
+          {
+            "sequence": 15,
+            "before": 2598,
+            "after": 2598
+          },
+          {
+            "sequence": 16,
+            "before": 2598,
+            "after": 2597
+          },
+          {
+            "sequence": 17,
+            "before": 2597,
+            "after": 2593
+          },
+          {
+            "sequence": 18,
+            "before": 2593,
+            "after": 2592
+          },
+          {
+            "sequence": 19,
+            "before": 2592,
+            "after": 2592
+          },
+          {
+            "sequence": 20,
+            "before": 2592,
+            "after": 2592
+          },
+          {
+            "sequence": 21,
+            "before": 2592,
+            "after": 2592
+          },
+          {
+            "sequence": 22,
+            "before": 2592,
+            "after": 2592
+          },
+          {
+            "sequence": 23,
+            "before": 2592,
+            "after": 2592
+          },
+          {
+            "sequence": 24,
+            "before": 2592,
+            "after": 2593
+          },
+          {
+            "sequence": 25,
+            "before": 2593,
+            "after": 2619
+          },
+          {
+            "sequence": 26,
+            "before": 2619,
+            "after": 2619
+          }
+        ],
+        "current": {
+          "position": 2619,
+          "row": {
+            "subject_id": "MIM:Sodium_Phosphite_Dibasic_Pentahydrate",
+            "subject_label": "Sodium phosphite dibasic pentahydrate",
+            "predicate_id": "skos:exactMatch",
+            "object_id": "cas:13517-23-2",
+            "object_label": "Sodium phosphite dibasic pentahydrate",
+            "object_source": "registry:cas",
+            "mapping_justification": "semapv:ManualMappingCuration",
+            "source": "MIM:CultureBotHT|MIM:anchor_cas_hydrate_records|MIM:MIM curation (#342)|MIM:curator=regrade_hydrate_to_close_match|kgm:chebi_xrefs|kgm:mediaingredientmech_reviewed|kgm:mediaingredientmech_reviewed[curator=anchor_cas_hydrate_records]|kgm:mediaingredientmech_reviewed[curator=audit_integrate_culturebotht]|kgm:mediaingredientmech_reviewed[curator=auto_classify_ingredient_type]|MIM:MIM Step7d scientific review (#901)|MIM:curator=claude",
+            "mapping_date": "2026-11-03",
+            "confidence": "0.99",
+            "comment": "Registry/identity row preserving cas:13517-23-2 alongside parent CHEBI:36361.",
+            "other": "CAS:13517-23-2",
+            "validation_method": "none|UNKNOWN_TERM|2026-07-07"
+          },
+          "decision": {
+            "source_position": 2619,
+            "row_sha256": "02b4ae4287b3510610246aa87ad77edd2381bd598305017a5eccbf118967eead",
+            "owner_record": "data/ingredients/mapped/Sodium_Phosphite_Dibasic_Pentahydrate.yaml",
+            "disposition": "WITHHOLD",
+            "review_reason": "Mapping corrected by receipt issue901-step7d-reviewed-owner-forms: the row payload or its owner record changed after the prior review, which therefore does not carry. The correction's verification is recorded in the receipt; preserve the corrected claim pending a mapping-specific decision.",
+            "review_evidence": "reports/sssom_completion_20260921/mapping-evidence.json",
+            "evidence_key": "2619"
+          }
+        }
+      },
+      {
+        "old_position": 1425,
+        "old_owner": "data/ingredients/mapped/Heparin_Sodium_Salt_From_Porcine_Intestinal_Mucosa.yaml",
+        "old_row": {
+          "subject_id": "MIM:Heparin_Sodium_Salt_From_Porcine_Intestinal_Mucosa",
+          "subject_label": "Heparin sodium salt from porcine intestinal mucosa",
+          "predicate_id": "skos:exactMatch",
+          "object_id": "kgmicrobe.compound:heparin_sodium_salt_from_porcine_intestinal_mucosa",
+          "object_label": "Heparin sodium salt from porcine intestinal mucosa",
+          "object_source": "kgm:compound",
+          "mapping_justification": "semapv:ManualMappingCuration",
+          "source": "MIM:CultureBotHT|MIM:MIM curation (#322)|MIM:curator=mint_registry_for_narrow_records|kgm:chebi_xrefs|kgm:mediaingredientmech_reviewed|kgm:mediaingredientmech_reviewed[curator=audit_cas_chebi_followup]|kgm:mediaingredientmech_reviewed[curator=auto_classify_ingredient_type]",
+          "mapping_date": "2026-08-13",
+          "confidence": "0.99",
+          "comment": "Registry/identity row (Rule B1) for broadMatch subject; kg-microbe primary id kgmicrobe.compound:heparin_sodium_salt_from_porcine_intestinal_mucosa alongside parent CHEBI:230519.",
+          "other": "CAS:9041-08-1",
+          "validation_method": "none|UNKNOWN_TERM|2026-09-02"
+        },
+        "old_decision": {
+          "source_position": 1425,
+          "row_sha256": "23d145bb05f0ecc9cbd7ad03e7ebffb530a4dfa04be7b5bf9382973bc8e58ec2",
+          "owner_record": "data/ingredients/mapped/Heparin_Sodium_Salt_From_Porcine_Intestinal_Mucosa.yaml",
+          "disposition": "SUPPORTED",
+          "review_reason": "Retain the existing explicit scientific approval for the identical owner and complete mapping payload, subject to this review's independent negative findings and relation/alias-scope safeguards. Existing positive review applies to byte-identical source record and assertion payload; not a fresh literature review.",
+          "review_evidence": "reports/sssom_completion_20260921/mapping-evidence.json",
+          "evidence_key": "1425"
+        },
+        "continuation": [
+          {
+            "sequence": 10,
+            "before": 1425,
+            "after": 1425
+          },
+          {
+            "sequence": 11,
+            "before": 1425,
+            "after": null
+          }
+        ],
+        "current": null
+      },
+      {
+        "old_position": 897,
+        "old_owner": "data/ingredients/mapped/D-Glucuronic_Acid_Sodium_Salt_Monohydrate.yaml",
+        "old_row": {
+          "subject_id": "MIM:D-Glucuronic_Acid_Sodium_Salt_Monohydrate",
+          "subject_label": "D-Glucuronic acid sodium salt monohydrate",
+          "predicate_id": "skos:exactMatch",
+          "object_id": "cas:207300-70-7",
+          "object_label": "D-Glucuronic acid sodium salt monohydrate",
+          "object_source": "registry:cas",
+          "mapping_justification": "semapv:ManualMappingCuration",
+          "source": "MIM:CultureBotHT|MIM:CHEBI via OLS (stem-substring)|MIM:MIM curation (#342)|MIM:curator=claude_sssom_surface_form_backfill|kgm:chebi_xrefs|kgm:culturebotai_reviewed|kgm:mediaingredientmech_reviewed|kgm:mediaingredientmech_reviewed[curator=auto_classify_ingredient_type]|kgm:mediaingredientmech_reviewed[curator=backfill_parent_terms]|kgm:mediaingredientmech_reviewed[curator=infer_roles_from_chebi_ancestry]|kgm:mediaingredientmech_reviewed[curator=migrate_media_roles_to_facets]|kgm:primary_mappings[kegg_compound]",
+          "mapping_date": "2026-09-02",
+          "confidence": "0.99",
+          "comment": "Registry/identity row preserving cas:207300-70-7 alongside parent CHEBI:4178.",
+          "other": "CAS:207300-70-7",
+          "validation_method": "none|UNKNOWN_TERM|2026-07-07"
+        },
+        "old_decision": {
+          "source_position": 897,
+          "row_sha256": "315b59ec1caa827f484784b5725b036b471e6f57389ee4727a1e393a166e1deb",
+          "owner_record": "data/ingredients/mapped/D-Glucuronic_Acid_Sodium_Salt_Monohydrate.yaml",
+          "disposition": "SUPPORTED",
+          "review_reason": "Retain the existing explicit scientific approval for the identical owner and complete mapping payload, subject to this review's independent negative findings and relation/alias-scope safeguards. Existing positive review applies to byte-identical source record and assertion payload; not a fresh literature review.",
+          "review_evidence": "reports/sssom_completion_20260921/mapping-evidence.json",
+          "evidence_key": "897"
+        },
+        "continuation": [
+          {
+            "sequence": 10,
+            "before": 897,
+            "after": 897
+          },
+          {
+            "sequence": 11,
+            "before": 897,
+            "after": 894
+          },
+          {
+            "sequence": 12,
+            "before": 894,
+            "after": 894
+          },
+          {
+            "sequence": 13,
+            "before": 894,
+            "after": 894
+          },
+          {
+            "sequence": 14,
+            "before": 894,
+            "after": 894
+          },
+          {
+            "sequence": 15,
+            "before": 894,
+            "after": 894
+          },
+          {
+            "sequence": 16,
+            "before": 894,
+            "after": 894
+          },
+          {
+            "sequence": 17,
+            "before": 894,
+            "after": 890
+          },
+          {
+            "sequence": 18,
+            "before": 890,
+            "after": 890
+          },
+          {
+            "sequence": 19,
+            "before": 890,
+            "after": 890
+          },
+          {
+            "sequence": 20,
+            "before": 890,
+            "after": 890
+          },
+          {
+            "sequence": 21,
+            "before": 890,
+            "after": 890
+          },
+          {
+            "sequence": 22,
+            "before": 890,
+            "after": 890
+          },
+          {
+            "sequence": 23,
+            "before": 890,
+            "after": 890
+          },
+          {
+            "sequence": 24,
+            "before": 890,
+            "after": 891
+          },
+          {
+            "sequence": 25,
+            "before": 891,
+            "after": 901
+          },
+          {
+            "sequence": 26,
+            "before": 901,
+            "after": 901
+          }
+        ],
+        "current": {
+          "position": 901,
+          "row": {
+            "subject_id": "MIM:D-Glucuronic_Acid_Sodium_Salt_Monohydrate",
+            "subject_label": "D-Glucuronic acid sodium salt monohydrate",
+            "predicate_id": "skos:exactMatch",
+            "object_id": "cas:207300-70-7",
+            "object_label": "D-Glucuronic acid sodium salt monohydrate",
+            "object_source": "registry:cas",
+            "mapping_justification": "semapv:ManualMappingCuration",
+            "source": "MIM:CultureBotHT|MIM:CHEBI via OLS (stem-substring)|MIM:MIM curation (#342)|MIM:curator=claude_sssom_surface_form_backfill|kgm:chebi_xrefs|kgm:culturebotai_reviewed|kgm:mediaingredientmech_reviewed|kgm:mediaingredientmech_reviewed[curator=auto_classify_ingredient_type]|kgm:mediaingredientmech_reviewed[curator=backfill_parent_terms]|kgm:mediaingredientmech_reviewed[curator=infer_roles_from_chebi_ancestry]|kgm:mediaingredientmech_reviewed[curator=migrate_media_roles_to_facets]|kgm:primary_mappings[kegg_compound]|MIM:MIM Step7d scientific review (#901)|MIM:curator=claude",
+            "mapping_date": "2026-11-03",
+            "confidence": "0.99",
+            "comment": "Registry/identity row preserving cas:207300-70-7 alongside parent CHEBI:32144. Historical/superseded parent context: Registry/identity row preserving cas:207300-70-7 alongside parent CHEBI:4178.",
+            "other": "CAS:207300-70-7",
+            "validation_method": "none|UNKNOWN_TERM|2026-07-07"
+          },
+          "decision": {
+            "source_position": 901,
+            "row_sha256": "ea4bcb24ad2165b194e982e8b905ce6ea18c2fce7992e923e1a6f99fb911a53d",
+            "owner_record": "data/ingredients/mapped/D-Glucuronic_Acid_Sodium_Salt_Monohydrate.yaml",
+            "disposition": "WITHHOLD",
+            "review_reason": "Mapping corrected by receipt issue901-step7d-reviewed-owner-forms: the row payload or its owner record changed after the prior review, which therefore does not carry. The correction's verification is recorded in the receipt; preserve the corrected claim pending a mapping-specific decision.",
+            "review_evidence": "reports/sssom_completion_20260921/mapping-evidence.json",
+            "evidence_key": "901"
+          }
+        }
+      },
+      {
+        "old_position": 752,
+        "old_owner": "data/ingredients/mapped/Cholesterol_Lipid_Concentrate.yaml",
+        "old_row": {
+          "subject_id": "MIM:Cholesterol_Lipid_Concentrate",
+          "subject_label": "cholesterol lipid concentrate",
+          "predicate_id": "skos:exactMatch",
+          "object_id": "kgmicrobe.compound:cholesterol_lipid_concentrate",
+          "object_label": "cholesterol lipid concentrate",
+          "object_source": "kgm:compound",
+          "mapping_justification": "semapv:ManualMappingCuration",
+          "source": "MIM:MIM curation (#288)|MIM:curator=refresh_occurrence_statistics|kgm:mediaingredientmech_reviewed|kgm:mediaingredientmech_reviewed[curator=cbclaw_followups_114]",
+          "mapping_date": "2026-08-27",
+          "confidence": "0.99",
+          "comment": "Registry/identity row (Rule B1) for broadMatch subject; kg-microbe primary id kgmicrobe.compound:cholesterol_lipid_concentrate alongside parent CHEBI:16113.",
+          "other": "",
+          "validation_method": "none|UNKNOWN_TERM|2026-09-02"
+        },
+        "old_decision": {
+          "source_position": 752,
+          "row_sha256": "3959c79ff62fa21b065a0d7263840c959a02bb0ce0c410acf3050872a60c4b66",
+          "owner_record": "data/ingredients/mapped/Cholesterol_Lipid_Concentrate.yaml",
+          "disposition": "SUPPORTED",
+          "review_reason": "Retain the existing explicit scientific approval for the identical owner and complete mapping payload, subject to this review's independent negative findings and relation/alias-scope safeguards. Existing positive review applies to byte-identical source record and assertion payload; not a fresh literature review.",
+          "review_evidence": "reports/sssom_completion_20260921/mapping-evidence.json",
+          "evidence_key": "752"
+        },
+        "continuation": [
+          {
+            "sequence": 10,
+            "before": 752,
+            "after": 752
+          },
+          {
+            "sequence": 11,
+            "before": 752,
+            "after": null
+          }
+        ],
+        "current": null
+      },
+      {
+        "old_position": 1745,
+        "old_owner": "data/ingredients/mapped/MOPS_2M_pH7.yaml",
+        "old_row": {
+          "subject_id": "MIM:MOPS_2M_pH7",
+          "subject_label": "MOPS_2M_pH7",
+          "predicate_id": "skos:exactMatch",
+          "object_id": "kgmicrobe.compound:mops_2m_ph7",
+          "object_label": "MOPS_2M_pH7",
+          "object_source": "kgm:compound",
+          "mapping_justification": "semapv:ManualMappingCuration",
+          "source": "MIM:MIM curation (#114)|MIM:curator=promote_resolved_unmapped|kgm:culturebotai_reviewed|kgm:mediadive_compounds|kgm:mediaingredientmech_reviewed|kgm:mediaingredientmech_reviewed[curator=auto_classify_ingredient_type]|kgm:mediaingredientmech_reviewed[curator=extract_roles_from_synonyms]|kgm:mediaingredientmech_reviewed[curator=fetch_cas_rn_from_pubchem]|kgm:mediaingredientmech_reviewed[curator=migrate_media_roles_to_facets]",
+          "mapping_date": "2026-08-06",
+          "confidence": "0.99",
+          "comment": "Registry/identity row (Rule B1) for broadMatch subject; kg-microbe primary id kgmicrobe.compound:mops_2m_ph7 alongside parent CHEBI:39074.",
+          "other": "",
+          "validation_method": "none|UNKNOWN_TERM|2026-09-02"
+        },
+        "old_decision": {
+          "source_position": 1745,
+          "row_sha256": "3ee878bedb9ec1baaf06545faa951ac88957be0974829a5735dfdda38c8487d7",
+          "owner_record": "data/ingredients/mapped/MOPS_2M_pH7.yaml",
+          "disposition": "SUPPORTED",
+          "review_reason": "Retain the existing explicit scientific approval for the identical owner and complete mapping payload, subject to this review's independent negative findings and relation/alias-scope safeguards. Existing positive review applies to byte-identical source record and assertion payload; not a fresh literature review.",
+          "review_evidence": "reports/sssom_completion_20260921/mapping-evidence.json",
+          "evidence_key": "1745"
+        },
+        "continuation": [
+          {
+            "sequence": 10,
+            "before": 1745,
+            "after": 1745
+          },
+          {
+            "sequence": 11,
+            "before": 1745,
+            "after": null
+          }
+        ],
+        "current": null
+      },
+      {
+        "old_position": 1817,
+        "old_owner": "data/ingredients/mapped/Menadione_Solution.yaml",
+        "old_row": {
+          "subject_id": "MIM:Menadione_Solution",
+          "subject_label": "Menadione solution",
+          "predicate_id": "skos:exactMatch",
+          "object_id": "kgmicrobe.compound:menadione_solution",
+          "object_label": "Menadione solution",
+          "object_source": "kgm:compound",
+          "mapping_justification": "semapv:ManualMappingCuration",
+          "source": "MIM:MIM curation (#288)|MIM:curator=refresh_occurrence_statistics|kgm:chebi_xrefs|kgm:culturebotai_reviewed|kgm:mediaingredientmech_reviewed|kgm:mediaingredientmech_reviewed[curator=audit_mim_merge]|kgm:mediaingredientmech_reviewed[curator=auto_classify_ingredient_type]|kgm:mediaingredientmech_reviewed[curator=correct_stale_ontology_labels.py]|kgm:mediaingredientmech_reviewed[curator=migrate_media_roles_to_facets]|kgm:primary_mappings[kegg_compound]",
+          "mapping_date": "2026-08-27",
+          "confidence": "0.99",
+          "comment": "Registry/identity row (Rule B1) for broadMatch subject; kg-microbe primary id kgmicrobe.compound:menadione_solution alongside parent CHEBI:28869.",
+          "other": "",
+          "validation_method": "none|UNKNOWN_TERM|2026-09-02"
+        },
+        "old_decision": {
+          "source_position": 1817,
+          "row_sha256": "68f606e83d210ffb7f3fcaae7a0d48e7d2e33e206316cde5ee7b90465cd1cda3",
+          "owner_record": "data/ingredients/mapped/Menadione_Solution.yaml",
+          "disposition": "SUPPORTED",
+          "review_reason": "Retain the existing explicit scientific approval for the identical owner and complete mapping payload, subject to this review's independent negative findings and relation/alias-scope safeguards. Existing positive review applies to byte-identical source record and assertion payload; not a fresh literature review.",
+          "review_evidence": "reports/sssom_completion_20260921/mapping-evidence.json",
+          "evidence_key": "1817"
+        },
+        "continuation": [
+          {
+            "sequence": 10,
+            "before": 1817,
+            "after": 1817
+          },
+          {
+            "sequence": 11,
+            "before": 1817,
+            "after": null
+          }
+        ],
+        "current": null
+      },
+      {
+        "old_position": 1736,
+        "old_owner": "data/ingredients/mapped/MES_Buffer.yaml",
+        "old_row": {
+          "subject_id": "MIM:MES_Buffer",
+          "subject_label": "MES buffer",
+          "predicate_id": "skos:exactMatch",
+          "object_id": "kgmicrobe.compound:mes_buffer",
+          "object_label": "MES buffer",
+          "object_source": "kgm:compound",
+          "mapping_justification": "semapv:ManualMappingCuration",
+          "source": "MIM:MIM curation (#114)|MIM:curator=refresh_occurrence_statistics|kgm:culturebotai_reviewed|kgm:mediadive_compounds|kgm:mediaingredientmech_reviewed|kgm:mediaingredientmech_reviewed[curator=auto_classify_ingredient_type]|kgm:mediaingredientmech_reviewed[curator=extract_roles_from_synonyms]|kgm:mediaingredientmech_reviewed[curator=fetch_cas_rn_from_pubchem]|kgm:mediaingredientmech_reviewed[curator=migrate_media_roles_to_facets]",
+          "mapping_date": "2026-08-27",
+          "confidence": "0.99",
+          "comment": "Registry/identity row (Rule B1) for broadMatch subject; kg-microbe primary id kgmicrobe.compound:mes_buffer alongside parent CHEBI:39010.",
+          "other": "",
+          "validation_method": "none|UNKNOWN_TERM|2026-09-02"
+        },
+        "old_decision": {
+          "source_position": 1736,
+          "row_sha256": "6f4a13c6fcfe12c78a473a0cdf34c9ea983e340d3e542d783e9865efeaedd8ce",
+          "owner_record": "data/ingredients/mapped/MES_Buffer.yaml",
+          "disposition": "SUPPORTED",
+          "review_reason": "Retain the existing explicit scientific approval for the identical owner and complete mapping payload, subject to this review's independent negative findings and relation/alias-scope safeguards. Existing positive review applies to byte-identical source record and assertion payload; not a fresh literature review.",
+          "review_evidence": "reports/sssom_completion_20260921/mapping-evidence.json",
+          "evidence_key": "1736"
+        },
+        "continuation": [
+          {
+            "sequence": 10,
+            "before": 1736,
+            "after": 1736
+          },
+          {
+            "sequence": 11,
+            "before": 1736,
+            "after": null
+          }
+        ],
+        "current": null
+      },
+      {
+        "old_position": 378,
+        "old_owner": "data/ingredients/mapped/Amylopectin_From_Maize.yaml",
+        "old_row": {
+          "subject_id": "MIM:Amylopectin_From_Maize",
+          "subject_label": "amylopectin from maize",
+          "predicate_id": "skos:exactMatch",
+          "object_id": "kgmicrobe.compound:amylopectin_from_maize",
+          "object_label": "amylopectin from maize",
+          "object_source": "kgm:compound",
+          "mapping_justification": "semapv:ManualMappingCuration",
+          "source": "MIM:CultureBotHT|MIM:MIM curation (#322)|MIM:curator=mint_registry_for_narrow_records|kgm:chebi_xrefs|kgm:mediaingredientmech_reviewed|kgm:mediaingredientmech_reviewed[curator=audit_cas_chebi_followup]|kgm:mediaingredientmech_reviewed[curator=auto_classify_ingredient_type]|kgm:primary_mappings[kegg_compound]",
+          "mapping_date": "2026-08-13",
+          "confidence": "0.99",
+          "comment": "Registry/identity row (Rule B1) for broadMatch subject; kg-microbe primary id kgmicrobe.compound:amylopectin_from_maize alongside parent CHEBI:28057.",
+          "other": "CAS:9037-22-3",
+          "validation_method": "none|UNKNOWN_TERM|2026-09-02"
+        },
+        "old_decision": {
+          "source_position": 378,
+          "row_sha256": "ab15b1deb46b64df414c530534aff18116b8b4918433d51e2f15870bbfe2ca1b",
+          "owner_record": "data/ingredients/mapped/Amylopectin_From_Maize.yaml",
+          "disposition": "SUPPORTED",
+          "review_reason": "Retain the existing explicit scientific approval for the identical owner and complete mapping payload, subject to this review's independent negative findings and relation/alias-scope safeguards. Existing positive review applies to byte-identical source record and assertion payload; not a fresh literature review.",
+          "review_evidence": "reports/sssom_completion_20260921/mapping-evidence.json",
+          "evidence_key": "378"
+        },
+        "continuation": [
+          {
+            "sequence": 10,
+            "before": 378,
+            "after": 378
+          },
+          {
+            "sequence": 11,
+            "before": 378,
+            "after": null
+          }
+        ],
+        "current": null
+      },
+      {
+        "old_position": 2624,
+        "old_owner": "data/ingredients/mapped/Sodium_Thiophosphate_Tribasic_Hydrate.yaml",
+        "old_row": {
+          "subject_id": "MIM:Sodium_Thiophosphate_Tribasic_Hydrate",
+          "subject_label": "Sodium thiophosphate tribasic hydrate",
+          "predicate_id": "skos:exactMatch",
+          "object_id": "cas:10489-48-2",
+          "object_label": "Sodium thiophosphate tribasic hydrate",
+          "object_source": "registry:cas",
+          "mapping_justification": "semapv:ManualMappingCuration",
+          "source": "MIM:CultureBotHT|MIM:anchor_cas_hydrate_records|MIM:MIM curation (#342)|MIM:curator=regrade_hydrate_to_close_match|kgm:mediaingredientmech_reviewed|kgm:mediaingredientmech_reviewed[curator=anchor_cas_hydrate_records]",
+          "mapping_date": "2026-08-13",
+          "confidence": "0.99",
+          "comment": "Registry/identity row preserving cas:10489-48-2 alongside parent CHEBI:46612.",
+          "other": "CAS:10489-48-2",
+          "validation_method": "none|UNKNOWN_TERM|2026-07-07"
+        },
+        "old_decision": {
+          "source_position": 2624,
+          "row_sha256": "b3cc43a665bf3556c4e6c40834375968792c4f0ab6d6c2533fc79796c79e64a3",
+          "owner_record": "data/ingredients/mapped/Sodium_Thiophosphate_Tribasic_Hydrate.yaml",
+          "disposition": "SUPPORTED",
+          "review_reason": "Retain the existing explicit scientific approval for the identical owner and complete mapping payload, subject to this review's independent negative findings and relation/alias-scope safeguards. Existing positive review applies to byte-identical source record and assertion payload; not a fresh literature review.",
+          "review_evidence": "reports/sssom_completion_20260921/mapping-evidence.json",
+          "evidence_key": "2624"
+        },
+        "continuation": [
+          {
+            "sequence": 10,
+            "before": 2624,
+            "after": 2624
+          },
+          {
+            "sequence": 11,
+            "before": 2624,
+            "after": 2610
+          },
+          {
+            "sequence": 12,
+            "before": 2610,
+            "after": 2610
+          },
+          {
+            "sequence": 13,
+            "before": 2610,
+            "after": 2612
+          },
+          {
+            "sequence": 14,
+            "before": 2612,
+            "after": 2612
+          },
+          {
+            "sequence": 15,
+            "before": 2612,
+            "after": 2612
+          },
+          {
+            "sequence": 16,
+            "before": 2612,
+            "after": 2611
+          },
+          {
+            "sequence": 17,
+            "before": 2611,
+            "after": 2607
+          },
+          {
+            "sequence": 18,
+            "before": 2607,
+            "after": 2606
+          },
+          {
+            "sequence": 19,
+            "before": 2606,
+            "after": 2606
+          },
+          {
+            "sequence": 20,
+            "before": 2606,
+            "after": 2606
+          },
+          {
+            "sequence": 21,
+            "before": 2606,
+            "after": 2606
+          },
+          {
+            "sequence": 22,
+            "before": 2606,
+            "after": 2606
+          },
+          {
+            "sequence": 23,
+            "before": 2606,
+            "after": 2606
+          },
+          {
+            "sequence": 24,
+            "before": 2606,
+            "after": 2607
+          },
+          {
+            "sequence": 25,
+            "before": 2607,
+            "after": 2634
+          },
+          {
+            "sequence": 26,
+            "before": 2634,
+            "after": 2634
+          }
+        ],
+        "current": {
+          "position": 2634,
+          "row": {
+            "subject_id": "MIM:Sodium_Thiophosphate_Tribasic_Hydrate",
+            "subject_label": "Sodium thiophosphate tribasic hydrate",
+            "predicate_id": "skos:exactMatch",
+            "object_id": "cas:10489-48-2",
+            "object_label": "Sodium thiophosphate tribasic hydrate",
+            "object_source": "registry:cas",
+            "mapping_justification": "semapv:ManualMappingCuration",
+            "source": "MIM:CultureBotHT|MIM:anchor_cas_hydrate_records|MIM:MIM curation (#342)|MIM:curator=regrade_hydrate_to_close_match|kgm:mediaingredientmech_reviewed|kgm:mediaingredientmech_reviewed[curator=anchor_cas_hydrate_records]|MIM:MIM Step7d scientific review (#901)|MIM:curator=claude",
+            "mapping_date": "2026-11-03",
+            "confidence": "0.99",
+            "comment": "Registry/identity row preserving cas:10489-48-2 alongside parent CHEBI:46612.",
+            "other": "CAS:10489-48-2",
+            "validation_method": "none|UNKNOWN_TERM|2026-07-07"
+          },
+          "decision": {
+            "source_position": 2634,
+            "row_sha256": "d208dc1000b29f00e6c1d0277dec4b209d2966882f4573a90bd1bd7a0c62e37e",
+            "owner_record": "data/ingredients/mapped/Sodium_Thiophosphate_Tribasic_Hydrate.yaml",
+            "disposition": "WITHHOLD",
+            "review_reason": "Mapping corrected by receipt issue901-step7d-reviewed-owner-forms: the row payload or its owner record changed after the prior review, which therefore does not carry. The correction's verification is recorded in the receipt; preserve the corrected claim pending a mapping-specific decision.",
+            "review_evidence": "reports/sssom_completion_20260921/mapping-evidence.json",
+            "evidence_key": "2634"
+          }
+        }
+      },
+      {
+        "old_position": 1968,
+        "old_owner": "data/ingredients/mapped/NLDM_metabolites.yaml",
+        "old_row": {
+          "subject_id": "MIM:NLDM_metabolites",
+          "subject_label": "NLDM_metabolites",
+          "predicate_id": "skos:exactMatch",
+          "object_id": "kgmicrobe.ingredient:nldm_metabolites",
+          "object_label": "NLDM_metabolites",
+          "object_source": "kgm:ingredient",
+          "mapping_justification": "semapv:ManualMappingCuration",
+          "source": "MIM:MIM curation (#114)|MIM:curator=promote_resolved_unmapped",
+          "mapping_date": "2026-08-06",
+          "confidence": "0.9",
+          "comment": "",
+          "other": "",
+          "validation_method": "manual:promote_resolved_unmapped|PROMOTED|2026-08-06"
+        },
+        "old_decision": {
+          "source_position": 1968,
+          "row_sha256": "c78076c95da31ba439812cd1cfab6f6336fd5e077d88e6d418ee42c090f17013",
+          "owner_record": "data/ingredients/mapped/NLDM_metabolites.yaml",
+          "disposition": "SUPPORTED",
+          "review_reason": "Retain the existing explicit scientific approval for the identical owner and complete mapping payload, subject to this review's independent negative findings and relation/alias-scope safeguards. Existing positive review applies to byte-identical source record and assertion payload; not a fresh literature review.",
+          "review_evidence": "reports/sssom_completion_20260921/mapping-evidence.json",
+          "evidence_key": "1968"
+        },
+        "continuation": [
+          {
+            "sequence": 10,
+            "before": 1968,
+            "after": 1968
+          },
+          {
+            "sequence": 11,
+            "before": 1968,
+            "after": 1957
+          },
+          {
+            "sequence": 12,
+            "before": 1957,
+            "after": 1957
+          },
+          {
+            "sequence": 13,
+            "before": 1957,
+            "after": 1959
+          },
+          {
+            "sequence": 14,
+            "before": 1959,
+            "after": 1959
+          },
+          {
+            "sequence": 15,
+            "before": 1959,
+            "after": 1959
+          },
+          {
+            "sequence": 16,
+            "before": 1959,
+            "after": 1959
+          },
+          {
+            "sequence": 17,
+            "before": 1959,
+            "after": 1955
+          },
+          {
+            "sequence": 18,
+            "before": 1955,
+            "after": 1955
+          },
+          {
+            "sequence": 19,
+            "before": 1955,
+            "after": 1955
+          },
+          {
+            "sequence": 20,
+            "before": 1955,
+            "after": 1955
+          },
+          {
+            "sequence": 21,
+            "before": 1955,
+            "after": 1955
+          },
+          {
+            "sequence": 22,
+            "before": 1955,
+            "after": 1955
+          },
+          {
+            "sequence": 23,
+            "before": 1955,
+            "after": 1955
+          },
+          {
+            "sequence": 24,
+            "before": 1955,
+            "after": 1956
+          },
+          {
+            "sequence": 25,
+            "before": 1956,
+            "after": 1978
+          },
+          {
+            "sequence": 26,
+            "before": 1978,
+            "after": 1978
+          }
+        ],
+        "current": {
+          "position": 1978,
+          "row": {
+            "subject_id": "MIM:NLDM_metabolites",
+            "subject_label": "NLDM_metabolites",
+            "predicate_id": "skos:exactMatch",
+            "object_id": "kgmicrobe.ingredient:nldm_metabolites",
+            "object_label": "NLDM_metabolites",
+            "object_source": "kgm:ingredient",
+            "mapping_justification": "semapv:ManualMappingCuration",
+            "source": "MIM:MIM curation (#114)|MIM:curator=promote_resolved_unmapped|MIM:curator=Codex",
+            "mapping_date": "2026-11-01",
+            "confidence": "0.9",
+            "comment": "",
+            "other": "",
+            "validation_method": "manual:promote_resolved_unmapped|PROMOTED|2026-08-06"
+          },
+          "decision": {
+            "source_position": 1978,
+            "row_sha256": "012855da5edbb9dad561ba8ba82ac8c6bb69fce3af9918b3205de1fe1fb8307c",
+            "owner_record": "data/ingredients/mapped/NLDM_metabolites.yaml",
+            "disposition": "WITHHOLD",
+            "review_reason": "Mapping corrected by receipt issue1004-carnitine-hydrochloride-merge: the row payload or its owner record changed after the prior review, which therefore does not carry. The correction's verification is recorded in the receipt; preserve the corrected claim pending a mapping-specific decision.",
+            "review_evidence": "reports/sssom_completion_20260921/mapping-evidence.json",
+            "evidence_key": "1978"
+          }
+        }
+      },
+      {
+        "old_position": 1780,
+        "old_owner": "data/ingredients/mapped/Maltose_Hydrate.yaml",
+        "old_row": {
+          "subject_id": "MIM:Maltose_Hydrate",
+          "subject_label": "Maltose Hydrate",
+          "predicate_id": "skos:exactMatch",
+          "object_id": "kgmicrobe.compound:maltose_hydrate",
+          "object_label": "Maltose Hydrate",
+          "object_source": "kgm:compound",
+          "mapping_justification": "semapv:ManualMappingCuration",
+          "source": "MIM:MIM curation (#213)|MIM:MIM curation (#342)|MIM:curator=regrade_hydrate_to_close_match|kgm:chebi_xrefs|kgm:culturebotai_reviewed|kgm:mediadive_compounds|kgm:mediaingredientmech_reviewed|kgm:mediaingredientmech_reviewed[curator=audit_mim_merge]|kgm:mediaingredientmech_reviewed[curator=auto_classify_ingredient_type]|kgm:mediaingredientmech_reviewed[curator=correct_stale_ontology_labels.py]|kgm:mediaingredientmech_reviewed[curator=infer_energy_source]|kgm:mediaingredientmech_reviewed[curator=merge_cas_conflict_duplicates]|kgm:metatraits_chemical_synonyms[manual_2026-04-07]|kgm:primary_mappings[bacdive_api]|kgm:primary_mappings[chemicals_sssom]|kgm:primary_mappings[kegg_compound]",
+          "mapping_date": "2026-08-13",
+          "confidence": "0.99",
+          "comment": "Registry/identity row preserving kgmicrobe.compound:maltose_hydrate alongside parent CHEBI:17306.",
+          "other": "",
+          "validation_method": "manual:promote_resolved_unmapped|PROMOTED|2026-08-06"
+        },
+        "old_decision": {
+          "source_position": 1780,
+          "row_sha256": "dbf6918c400618747fa0f452555842a0bce536203bfdc2adf80af2f019e89288",
+          "owner_record": "data/ingredients/mapped/Maltose_Hydrate.yaml",
+          "disposition": "SUPPORTED",
+          "review_reason": "Retain the existing explicit scientific approval for the identical owner and complete mapping payload, subject to this review's independent negative findings and relation/alias-scope safeguards. Existing positive review applies to byte-identical source record and assertion payload; not a fresh literature review.",
+          "review_evidence": "reports/sssom_completion_20260921/mapping-evidence.json",
+          "evidence_key": "1780"
+        },
+        "continuation": [
+          {
+            "sequence": 10,
+            "before": 1780,
+            "after": 1780
+          },
+          {
+            "sequence": 11,
+            "before": 1780,
+            "after": 1770
+          },
+          {
+            "sequence": 12,
+            "before": 1770,
+            "after": 1770
+          },
+          {
+            "sequence": 13,
+            "before": 1770,
+            "after": 1770
+          },
+          {
+            "sequence": 14,
+            "before": 1770,
+            "after": 1770
+          },
+          {
+            "sequence": 15,
+            "before": 1770,
+            "after": 1770
+          },
+          {
+            "sequence": 16,
+            "before": 1770,
+            "after": 1770
+          },
+          {
+            "sequence": 17,
+            "before": 1770,
+            "after": 1766
+          },
+          {
+            "sequence": 18,
+            "before": 1766,
+            "after": 1766
+          },
+          {
+            "sequence": 19,
+            "before": 1766,
+            "after": 1766
+          },
+          {
+            "sequence": 20,
+            "before": 1766,
+            "after": 1766
+          },
+          {
+            "sequence": 21,
+            "before": 1766,
+            "after": 1766
+          },
+          {
+            "sequence": 22,
+            "before": 1766,
+            "after": 1766
+          },
+          {
+            "sequence": 23,
+            "before": 1766,
+            "after": 1766
+          },
+          {
+            "sequence": 24,
+            "before": 1766,
+            "after": 1767
+          },
+          {
+            "sequence": 25,
+            "before": 1767,
+            "after": 1788
+          },
+          {
+            "sequence": 26,
+            "before": 1788,
+            "after": 1788
+          }
+        ],
+        "current": {
+          "position": 1788,
+          "row": {
+            "subject_id": "MIM:Maltose_Hydrate",
+            "subject_label": "Maltose Hydrate",
+            "predicate_id": "skos:exactMatch",
+            "object_id": "kgmicrobe.compound:maltose_hydrate",
+            "object_label": "Maltose Hydrate",
+            "object_source": "kgm:compound",
+            "mapping_justification": "semapv:ManualMappingCuration",
+            "source": "MIM:MIM curation (#213)|MIM:MIM curation (#342)|MIM:curator=regrade_hydrate_to_close_match|kgm:chebi_xrefs|kgm:culturebotai_reviewed|kgm:mediadive_compounds|kgm:mediaingredientmech_reviewed|kgm:mediaingredientmech_reviewed[curator=audit_mim_merge]|kgm:mediaingredientmech_reviewed[curator=auto_classify_ingredient_type]|kgm:mediaingredientmech_reviewed[curator=correct_stale_ontology_labels.py]|kgm:mediaingredientmech_reviewed[curator=infer_energy_source]|kgm:mediaingredientmech_reviewed[curator=merge_cas_conflict_duplicates]|kgm:metatraits_chemical_synonyms[manual_2026-04-07]|kgm:primary_mappings[bacdive_api]|kgm:primary_mappings[chemicals_sssom]|kgm:primary_mappings[kegg_compound]|MIM:MIM Step7d scientific review (#901)|MIM:curator=claude",
+            "mapping_date": "2026-11-03",
+            "confidence": "0.99",
+            "comment": "Registry/identity row preserving kgmicrobe.compound:maltose_hydrate alongside parent CHEBI:17306.",
+            "other": "",
+            "validation_method": "manual:promote_resolved_unmapped|PROMOTED|2026-08-06"
+          },
+          "decision": {
+            "source_position": 1788,
+            "row_sha256": "97d211c820e288edf8191d9e94dd13404ed8cb3bf9e07e77301f3932836d5fe3",
+            "owner_record": "data/ingredients/mapped/Maltose_Hydrate.yaml",
+            "disposition": "WITHHOLD",
+            "review_reason": "Mapping corrected by receipt issue901-step7d-reviewed-owner-forms: the row payload or its owner record changed after the prior review, which therefore does not carry. The correction's verification is recorded in the receipt; preserve the corrected claim pending a mapping-specific decision.",
+            "review_evidence": "reports/sssom_completion_20260921/mapping-evidence.json",
+            "evidence_key": "1788"
+          }
+        }
+      },
+      {
+        "old_position": 55,
+        "old_owner": "data/ingredients/mapped/2-Deoxyadenosine_Monohydrate.yaml",
+        "old_row": {
+          "subject_id": "MIM:2-Deoxyadenosine_Monohydrate",
+          "subject_label": "2-Deoxyadenosine monohydrate",
+          "predicate_id": "skos:exactMatch",
+          "object_id": "cas:16373-93-6",
+          "object_label": "2-Deoxyadenosine monohydrate",
+          "object_source": "registry:cas",
+          "mapping_justification": "semapv:ManualMappingCuration",
+          "source": "MIM:CultureBotHT|MIM:anchor_cas_hydrate_records|MIM:MIM curation (#342)|MIM:curator=regrade_hydrate_to_close_match|kgm:chebi_xrefs|kgm:mediaingredientmech_reviewed|kgm:mediaingredientmech_reviewed[curator=anchor_cas_hydrate_records]|kgm:primary_mappings[kegg_compound]",
+          "mapping_date": "2026-08-13",
+          "confidence": "0.99",
+          "comment": "Registry/identity row preserving cas:16373-93-6 alongside parent CHEBI:17256.",
+          "other": "CAS:16373-93-6",
+          "validation_method": "none|UNKNOWN_TERM|2026-07-07"
+        },
+        "old_decision": {
+          "source_position": 55,
+          "row_sha256": "e4e7126195fca9c570335d6f0730fefafe6713f903df66c484e8c156320a4834",
+          "owner_record": "data/ingredients/mapped/2-Deoxyadenosine_Monohydrate.yaml",
+          "disposition": "SUPPORTED",
+          "review_reason": "Retain the existing explicit scientific approval for the identical owner and complete mapping payload, subject to this review's independent negative findings and relation/alias-scope safeguards. Existing positive review applies to byte-identical source record and assertion payload; not a fresh literature review.",
+          "review_evidence": "reports/sssom_completion_20260921/mapping-evidence.json",
+          "evidence_key": "55"
+        },
+        "continuation": [
+          {
+            "sequence": 10,
+            "before": 55,
+            "after": 55
+          },
+          {
+            "sequence": 11,
+            "before": 55,
+            "after": 55
+          },
+          {
+            "sequence": 12,
+            "before": 55,
+            "after": 55
+          },
+          {
+            "sequence": 13,
+            "before": 55,
+            "after": 55
+          },
+          {
+            "sequence": 14,
+            "before": 55,
+            "after": 55
+          },
+          {
+            "sequence": 15,
+            "before": 55,
+            "after": 55
+          },
+          {
+            "sequence": 16,
+            "before": 55,
+            "after": 55
+          },
+          {
+            "sequence": 17,
+            "before": 55,
+            "after": 55
+          },
+          {
+            "sequence": 18,
+            "before": 55,
+            "after": 55
+          },
+          {
+            "sequence": 19,
+            "before": 55,
+            "after": 55
+          },
+          {
+            "sequence": 20,
+            "before": 55,
+            "after": 55
+          },
+          {
+            "sequence": 21,
+            "before": 55,
+            "after": 55
+          },
+          {
+            "sequence": 22,
+            "before": 55,
+            "after": 55
+          },
+          {
+            "sequence": 23,
+            "before": 55,
+            "after": 55
+          },
+          {
+            "sequence": 24,
+            "before": 55,
+            "after": 55
+          },
+          {
+            "sequence": 25,
+            "before": 55,
+            "after": 55
+          },
+          {
+            "sequence": 26,
+            "before": 55,
+            "after": 55
+          }
+        ],
+        "current": {
+          "position": 55,
+          "row": {
+            "subject_id": "MIM:2-Deoxyadenosine_Monohydrate",
+            "subject_label": "2-Deoxyadenosine monohydrate",
+            "predicate_id": "skos:exactMatch",
+            "object_id": "cas:16373-93-6",
+            "object_label": "2-Deoxyadenosine monohydrate",
+            "object_source": "registry:cas",
+            "mapping_justification": "semapv:ManualMappingCuration",
+            "source": "MIM:CultureBotHT|MIM:anchor_cas_hydrate_records|MIM:MIM curation (#342)|MIM:curator=regrade_hydrate_to_close_match|kgm:chebi_xrefs|kgm:mediaingredientmech_reviewed|kgm:mediaingredientmech_reviewed[curator=anchor_cas_hydrate_records]|kgm:primary_mappings[kegg_compound]|MIM:MIM Step7d scientific review (#901)|MIM:curator=claude",
+            "mapping_date": "2026-11-03",
+            "confidence": "0.99",
+            "comment": "Registry/identity row preserving cas:16373-93-6 alongside parent CHEBI:17256.",
+            "other": "CAS:16373-93-6",
+            "validation_method": "none|UNKNOWN_TERM|2026-07-07"
+          },
+          "decision": {
+            "source_position": 55,
+            "row_sha256": "1eb773313c8e2d84fd40c84098fc9d044c4d9cd14ca934b657a0b3a8aa4ef9e2",
+            "owner_record": "data/ingredients/mapped/2-Deoxyadenosine_Monohydrate.yaml",
+            "disposition": "WITHHOLD",
+            "review_reason": "Mapping corrected by receipt issue901-step7d-reviewed-owner-forms: the row payload or its owner record changed after the prior review, which therefore does not carry. The correction's verification is recorded in the receipt; preserve the corrected claim pending a mapping-specific decision.",
+            "review_evidence": "reports/sssom_completion_20260921/mapping-evidence.json",
+            "evidence_key": "55"
+          }
+        }
+      },
+      {
+        "old_position": 651,
+        "old_owner": "data/ingredients/mapped/Carnitine_Hydrochloride.yaml",
+        "old_row": {
+          "subject_id": "MIM:Carnitine_Hydrochloride",
+          "subject_label": "Carnitine Hydrochloride",
+          "predicate_id": "skos:exactMatch",
+          "object_id": "kgmicrobe.compound:carnitine_hydrochloride",
+          "object_label": "Carnitine Hydrochloride",
+          "object_source": "kgm:compound",
+          "mapping_justification": "semapv:ManualMappingCuration",
+          "source": "MIM:cbclaw_followups_114|MIM:curator=refresh_occurrence_statistics|kgm:chebi_xrefs|kgm:culturebotai_reviewed|kgm:mediaingredientmech_reviewed|kgm:mediaingredientmech_reviewed[curator=auto_classify_ingredient_type]|kgm:mediaingredientmech_reviewed[curator=backfill_parent_terms]|kgm:mediaingredientmech_reviewed[curator=cbclaw_kg_microbe_sweep]|kgm:mediaingredientmech_reviewed[curator=correct_stale_ontology_labels.py]|kgm:mediaingredientmech_reviewed[curator=regrade_synonym_matches]|kgm:mediaingredientmech_reviewed[curator=resolve_unmapped]|kgm:primary_mappings[chemicals_sssom]|kgm:primary_mappings[kegg_compound]",
+          "mapping_date": "2026-08-27",
+          "confidence": "0.99",
+          "comment": "Registry/identity row preserving kgmicrobe.compound:carnitine_hydrochloride alongside parent CHEBI:17126.",
+          "other": "",
+          "validation_method": "none|UNKNOWN_TERM|2026-07-07"
+        },
+        "old_decision": {
+          "source_position": 651,
+          "row_sha256": "ee82699ff7dc3eb49629557f7202119c99fed4e77360b4c8acc8d7f6e4a2ff2c",
+          "owner_record": "data/ingredients/mapped/Carnitine_Hydrochloride.yaml",
+          "disposition": "SUPPORTED",
+          "review_reason": "Retain the existing explicit scientific approval for the identical owner and complete mapping payload, subject to this review's independent negative findings and relation/alias-scope safeguards. Existing positive review applies to byte-identical source record and assertion payload; not a fresh literature review.",
+          "review_evidence": "reports/sssom_completion_20260921/mapping-evidence.json",
+          "evidence_key": "651"
+        },
+        "continuation": [
+          {
+            "sequence": 10,
+            "before": 651,
+            "after": 651
+          },
+          {
+            "sequence": 11,
+            "before": 651,
+            "after": 649
+          },
+          {
+            "sequence": 12,
+            "before": 649,
+            "after": 649
+          },
+          {
+            "sequence": 13,
+            "before": 649,
+            "after": 649
+          },
+          {
+            "sequence": 14,
+            "before": 649,
+            "after": 649
+          },
+          {
+            "sequence": 15,
+            "before": 649,
+            "after": 649
+          },
+          {
+            "sequence": 16,
+            "before": 649,
+            "after": 649
+          },
+          {
+            "sequence": 17,
+            "before": 649,
+            "after": null
+          }
+        ],
+        "current": null
+      }
+    ]
+  },
+  "form_reviews": [
+    {
+      "form": {
+        "path": "source/0dac278466699129a083343a921c2e0ca18a9ab4/reports/sssom_completion_20260921/mapping_review/form_reviews/901-melezitose-v1.json",
+        "sha256": "b816491e4b606aecf9fdc982c5557439e37d1ce61a006185b259036fbad672ef",
+        "bytes": 13367
+      },
+      "native_review": {
+        "path": "source/0dac278466699129a083343a921c2e0ca18a9ab4/reviews/structured/20261101T202408Z-melezitose-901-form-mapping/review.yaml",
+        "sha256": "5eb85ebf5fb6724f92bfda57bd97805a281e48e3a82675f26bbcdd1f56bb470c",
+        "bytes": 37383
+      },
+      "owner": {
+        "path": "source/0dac278466699129a083343a921c2e0ca18a9ab4/data/ingredients/mapped/D-_-melezitose_Monohydrate.yaml",
+        "sha256": "206d615a2983b122e8de655c58a7bf1c30845a3d61dadac2ba06b953930f694c",
+        "bytes": 6088
+      },
+      "evidence_hashes_verified": 27,
+      "checkpoint": {
+        "sequence": 20,
+        "path": "reports/sssom_completion_20260921/mapping_changes/issue901-melezitose-form.json",
+        "sha256": "019e5a9bf82778d7d6749a47b8f2ef131ea80426f6cd166d31d8fd31e6829b87",
+        "after_sha256": "51b268361cd8e5134eb03d22fbf11ab1dd1cdcee0eee58a1cfd1ada02a193f28"
+      },
+      "reviewer": {
+        "identity": "Codex melezitose evidence reviewer",
+        "kind": "agent",
+        "model": "gpt-6",
+        "independence": "self_review",
+        "independence_basis": "This agent prepared the earlier primary-source facts and evidence packet used by the curation writer. It did not author the guarded owner writer or form-review consumer, but its contribution to identity analysis makes this a fresh self-review of actual rows, not an external independent review. A separate adversarial reviewer remains required before activation/merge."
+      },
+      "verdict": "pass_with_limitations",
+      "scientific_review": true,
+      "scope": {
+        "description": "The complete three-row SSSOM triplet for one corrected D-(+)-melezitose monohydrate owner, including each full row, identifier, form relation, label, source vocabulary, validation stamp and entire other payload.",
+        "selection": "Exactly positions 914, 915 and 2982 at receipt 20 endpoint SHA256 51b268361cd8e5134eb03d22fbf11ab1dd1cdcee0eee58a1cfd1ada02a193f28; stable subject/predicate/object selectors and complete-row digests bind targets.",
+        "coverage": "full",
+        "population_size": 3,
+        "reviewed_target_ids": [
+          "melezitose-parent",
+          "melezitose-cas",
+          "melezitose-b1"
+        ],
+        "exclusions": [
+          {
+            "target": "CARBON_SOURCE and historical SEM:d2e2a0eef35747b36f91 / SEM:3c13edcba734032a4e08",
+            "reason": "Biological/formulation role evidence was not researched. Both historical findings and the role disposition remain OPEN; this review does not supersede them."
+          },
+          {
+            "target": "D-_-melezitose_Hydrate.yaml, Melezitose.yaml and other corpus mappings",
+            "reason": "Read only as identity boundary context; no merge, correction, new scientific approval or extrapolation to those records."
+          },
+          {
+            "target": "Whole-record status, KGX release and unrelated mapping decisions",
+            "reason": "These are separate repository gates; this review supports only the three named mapping claims."
+          }
+        ]
+      },
+      "limitations": [
+        "This is an agent self-review with prior source-analysis participation. Independent adversarial review is a separate required subsequent step.",
+        "Only the three mapping claims are reviewed. Empty findings here does not erase the two historical major role/whole-record findings or approve CARBON_SOURCE.",
+        "CAS identity was inspected through PubChem database annotations and the actual CultureBotHT source row, not through a direct CAS Registry query or new experimental evidence.",
+        "No exact monohydrate term was found in the declared archived exact OLS and pinned local ChEBI searches; coverage is bounded and not an assertion of exhaustive or future ontology absence.",
+        "CHEBI:6731 is supported as the matching anhydrous form parent; broadMatch is not exact identity or subclass_of. CHEBI:183824 is a stereochemical near-miss.",
+        "The generic hydrate CAS 207511-10-2 record remains separate and uncurated here; its shared computed chemistry is not merge evidence.",
+        "Source tokens, old validation_method strings and generator confidence values are historical/procedural metadata, not fresh scientific approval. The exact original KG manifest is preserved to explain the source vocabulary change.",
+        "Source.state=working_tree honestly binds actual inspected bytes in an isolated overlay whose durable Git base is e568dbf0e0f759431ed317b973675680f031dd1d. It is a reviewer byte attestation, not a claim those changed bytes were committed at that base. The producer retains its truthful separate 585b90b4 generation checkpoint.",
+        "No paid research/provider calls were used, and no new biological literature, supplier certification or graph-wide validity was assessed."
+      ],
+      "claims": [
+        {
+          "current_position": 926,
+          "checkpoint_position": 914,
+          "claim_kind": "form_parent",
+          "row": {
+            "subject_id": "MIM:D-_-melezitose_Monohydrate",
+            "subject_label": "D-(+)-melezitose monohydrate",
+            "predicate_id": "skos:broadMatch",
+            "object_id": "CHEBI:6731",
+            "object_label": "melezitose",
+            "object_source": "obo:chebi.owl",
+            "mapping_justification": "semapv:ManualMappingCuration",
+            "source": "MIM:CultureBotHT|MIM:anchor_cas_hydrate_records|MIM:MIM curation (#342)|MIM:MIM curation (#901); PubChem CID 16217716; ChEBI:6731|MIM:curator=claude|kgm:mediaingredientmech_reviewed[manifest=9bb29d5605d93dea351be9624d99c5d8ada57d4b9831b22764957b784bd685af]|kgm:native_ontology:chebi",
+            "mapping_date": "2026-11-01",
+            "confidence": "0.9",
+            "comment": "",
+            "other": "",
+            "validation_method": ""
+          },
+          "row_sha256": "bf4990db504f0338c6ece439092954d1104e4916712ff1227b6d844b68fe0f62",
+          "reason": "Fresh row-specific assessment supports the monohydrate-to-melezitose form-of relation. The inspected monohydrate InChI minus its one water component equals both PubChem CID 92817 and active CHEBI:6731 exactly, including stereochemistry. MAPPING_SEMANTICS sections 1-3 require NARROW_MATCH to emit skos:broadMatch with a B1 handle; this is neither exact parent identity nor an ontology subclass claim. The actual parent row publishes no other tokens.",
+          "prior_basis": {
+            "path": "reports/melezitose_form_901_20261101/prior-mapping-basis.json",
+            "evidence_key": "914"
+          },
+          "resolved_negative_reviews": []
+        },
+        {
+          "current_position": 927,
+          "checkpoint_position": 915,
+          "claim_kind": "primary_identity",
+          "row": {
+            "subject_id": "MIM:D-_-melezitose_Monohydrate",
+            "subject_label": "D-(+)-melezitose monohydrate",
+            "predicate_id": "skos:exactMatch",
+            "object_id": "cas:10030-67-8",
+            "object_label": "D-(+)-melezitose monohydrate",
+            "object_source": "registry:cas",
+            "mapping_justification": "semapv:ManualMappingCuration",
+            "source": "MIM:CultureBotHT|MIM:anchor_cas_hydrate_records|MIM:MIM curation (#342)|MIM:MIM curation (#901); PubChem CID 16217716; ChEBI:6731|MIM:curator=claude|kgm:mediaingredientmech_reviewed[manifest=9bb29d5605d93dea351be9624d99c5d8ada57d4b9831b22764957b784bd685af]|kgm:native_ontology:chebi",
+            "mapping_date": "2026-11-01",
+            "confidence": "0.99",
+            "comment": "Registry/identity row preserving cas:10030-67-8 alongside parent CHEBI:6731.",
+            "other": "CAS:10030-67-8",
+            "validation_method": "none|UNKNOWN_TERM|2026-07-07"
+          },
+          "row_sha256": "a644bad003f578f4a63e861ec0ba09cffc2f16459b5b476a275a845c685ed8e5",
+          "reason": "Fresh assessment of corrected owner bytes supports exact cas:10030-67-8 identity for D-(+)-melezitose monohydrate. PubChem CID 16217716 names this CAS through its ChemIDplus, FDA GSRS and NZ EPA annotations and has the matching monohydrate formula and stereochemical InChI; CultureBotHT row 1142 separately records the same supplied form and CAS. The actual CAS:10030-67-8 other token is a same-subject display label. This conclusion replaces, rather than inherits, the withdrawn old-owner approval.",
+          "prior_basis": {
+            "path": "reports/melezitose_form_901_20261101/prior-mapping-basis.json",
+            "evidence_key": "915"
+          },
+          "resolved_negative_reviews": []
+        },
+        {
+          "current_position": 3013,
+          "checkpoint_position": 2982,
+          "claim_kind": "registry_handle",
+          "row": {
+            "subject_id": "MIM:D-_-melezitose_Monohydrate",
+            "subject_label": "D-(+)-melezitose monohydrate",
+            "predicate_id": "skos:exactMatch",
+            "object_id": "kgmicrobe.compound:d-_-melezitose_monohydrate",
+            "object_label": "D-(+)-melezitose monohydrate",
+            "object_source": "kgm:compound",
+            "mapping_justification": "semapv:ManualMappingCuration",
+            "source": "MIM:CultureBotHT|MIM:anchor_cas_hydrate_records|MIM:MIM curation (#342)|MIM:MIM curation (#901); PubChem CID 16217716; ChEBI:6731|MIM:curator=claude|kgm:mediaingredientmech_reviewed[manifest=9bb29d5605d93dea351be9624d99c5d8ada57d4b9831b22764957b784bd685af]|kgm:native_ontology:chebi",
+            "mapping_date": "2026-11-01",
+            "confidence": "0.99",
+            "comment": "Registry/identity row (Rule B1) for broadMatch subject; kg-microbe primary id kgmicrobe.compound:d-_-melezitose_monohydrate alongside parent CHEBI:6731.",
+            "other": "CAS:10030-67-8",
+            "validation_method": ""
+          },
+          "row_sha256": "4e15d8eb5e7cd78d2e9219b175a32daa9b1a47eb14618b16ae2a157036218447",
+          "reason": "Fresh assessment supports the actual native-generated kgmicrobe.compound:d-_-melezitose_monohydrate exact handle for this same CAS-primary supplied-form subject. PubChem chemistry establishes one defined chemical and the owner is SINGLE_INGREDIENT; the handle preserves the subject slug and satisfies the repository section 2/section 3 step 2 B1 contract without collapsing the hydrate into CHEBI:6731. Receipt 20 proves this exact full row was newly added. The CAS display token denotes the same monohydrate; no prior handle approval is inherited.",
+          "prior_basis": null,
+          "resolved_negative_reviews": []
+        }
+      ]
+    },
+    {
+      "form": {
+        "path": "source/0dac278466699129a083343a921c2e0ca18a9ab4/reports/sssom_completion_20260921/mapping_review/form_reviews/901-sodium-perchlorate-v1.json",
+        "sha256": "418e752c7681243da3d8ac3ad4e21e2e4a735a57e3057da30835a52046731171",
+        "bytes": 11898
+      },
+      "native_review": {
+        "path": "source/0dac278466699129a083343a921c2e0ca18a9ab4/reviews/structured/20261101T233454Z-sodium-perchlorate-901-form-mapping/review.yaml",
+        "sha256": "2efbc1f1a35d551724a3e25730e809a09e68d74c8fdbb2e62c0b16f957e889b6",
+        "bytes": 40669
+      },
+      "owner": {
+        "path": "source/0dac278466699129a083343a921c2e0ca18a9ab4/data/ingredients/mapped/Sodium_Perchlorate_Monohydrate.yaml",
+        "sha256": "36464b5ebec13eb2d71864e7b6af5d6069e931f1cb1c340ed24b63c81b8a1be4",
+        "bytes": 7874
+      },
+      "evidence_hashes_verified": 20,
+      "checkpoint": {
+        "sequence": 21,
+        "path": "reports/sssom_completion_20260921/mapping_changes/issue901-sodium-perchlorate-form.json",
+        "sha256": "0ee67f6deeda9bfa685889f50eaf5e6e411ddc43803247837b7e843e613bf2dd",
+        "after_sha256": "9a7a5cecf28c8b498116a42ce00869e915e7b564793f0fb6c1885a252721c16c"
+      },
+      "reviewer": {
+        "identity": "Codex sodium evidence and writer author",
+        "kind": "agent",
+        "model": "gpt-6",
+        "independence": "self_review",
+        "independence_basis": "This agent prepared the primary-source facts/evidence and authored the sodium guarded writer and regression tests, including the corrected #1079 attribution. It did not author the generic FORM consumer. This is a fresh self-review of actual corrected rows, not independent review. Separate independent scientific/adversarial clearance is required before publication/activation."
+      },
+      "verdict": "pass_with_limitations",
+      "scientific_review": true,
+      "scope": {
+        "description": "Complete actual mapping rows2583/2584/2983, including form, direction, identifier/labels, source provenance, dates, comments, validation stamps and every other token.",
+        "selection": "Exactly the three Sodium_Perchlorate_Monohydrate rows at receipt21 endpoint 9a7a5cecf28c8b498116a42ce00869e915e7b564793f0fb6c1885a252721c16c, bound by full-row digests and distinct subject/predicate/object selectors.",
+        "coverage": "full",
+        "population_size": 3,
+        "reviewed_target_ids": [
+          "sodium-parent",
+          "sodium-cas",
+          "sodium-b1"
+        ],
+        "exclusions": [
+          {
+            "target": "ELECTRON_ACCEPTOR and SEM:3ca1788d97d4d07197cf / SEM:61d749c5de2f9bbf9c62",
+            "reason": "Role literature was not reassessed. Existing role payload is preserved but approval is withdrawn; role and historical whole-record findings remain OPEN. No supersession or role approval is made."
+          },
+          {
+            "target": "Global exact-form ontology completion and SNOMED765356005 primary verification",
+            "reason": "The label lead remains unresolved behind primary access restrictions; native schema eligibility does not disprove existence. The authorized repair preserves identity and relation without certifying CAS as globally optimal."
+          },
+          {
+            "target": "Sodium_Perchlorate.yaml, melezitose authority, other mappings and full KG release",
+            "reason": "Counterpart is context only. Existing first FORM is immutable, unrelated decisions are not reviewed here, and full semantic release remains FAIL."
+          }
+        ]
+      },
+      "limitations": [
+        "This is author self-review, not independent clearance; the author wrote the sodium writer and prepared its evidence.",
+        "This candidate remains outside W and no FORM is registered. Comparator#1080 repair has separate independent clearance and its actual repaired preapproval archive passed. Independent fresh-science/adversarial clearance of this self-review remains a separate prerequisite before publication/activation.",
+        "No claim of global exact ontology absence or exhausted section3 step1 is made. SNOMED765356005 remains an unverified exact-form label lead; current schema support is a separate boundary.",
+        "PubChem annotations are database support, not direct CAS Registry or primary experimental inspections. Sigma71852 access timed out; the raw source row is only hash-bound supplier context.",
+        "Only mapping claims are supported. Existing role and whole-record findings remain OPEN; the unchanged publication/context is not reapproved or reinterpreted.",
+        "Source tags, copied parent-source vocabulary, old validation strings and generated confidence are procedural/historical metadata, not new independent endorsement.",
+        "The complete graph semantic release remains FAIL with1733 blocking findings and2336 blocking assertions at the captured preapproval state, despite integrity PASS. This three-row assessment cannot clear those holds.",
+        "Source.state working_tree with durable base330d is an actual overlay byte attestation, not a claim the corrected bytes were committed at330d. The native producer separately records real source checkpointb6290f46.",
+        "No paid research, new provider/network call, status promotion, merge, causal mechanism or broader corpus approval occurs in this review."
+      ],
+      "claims": [
+        {
+          "current_position": 2610,
+          "checkpoint_position": 2583,
+          "claim_kind": "form_parent",
+          "row": {
+            "subject_id": "MIM:Sodium_Perchlorate_Monohydrate",
+            "subject_label": "Sodium perchlorate monohydrate",
+            "predicate_id": "skos:broadMatch",
+            "object_id": "CHEBI:132103",
+            "object_label": "sodium perchlorate",
+            "object_source": "obo:chebi.owl",
+            "mapping_justification": "semapv:ManualMappingCuration",
+            "source": "MIM:CultureBotHT|MIM:CHEBI via OLS (stem-substring)|MIM:MIM curation (#342)|MIM:MIM curation (#901); PubChem CID 516899; ChEBI:132103|MIM:curator=claude|kgm:native_ontology:chebi",
+            "mapping_date": "2026-11-01",
+            "confidence": "0.9",
+            "comment": "",
+            "other": "",
+            "validation_method": ""
+          },
+          "row_sha256": "51baf5d397ac027631a579a054ba21b07ae97d65e0f5f66d2861c81dfdb8df46",
+          "reason": "The actual sodium perchlorate monohydrate row is supported as a form-of skos:broadMatch to CHEBI:132103 sodium perchlorate. Archived PubChem CID516899 has one water component in addition to the sodium/perchlorate structure represented by the water-free ChEBI parent. The parent row has empty other and validation_method cells, resolving the old hydrate-CAS alias leakage and providing an explicit asymmetric relation instead of inherited closeMatch approval. This supports the bounded relation, not global exhaustion of exact ontology alternatives.",
+          "prior_basis": {
+            "path": "reports/sodium_perchlorate_form_901_20261101/prior-mapping-basis.json",
+            "evidence_key": "2583"
+          },
+          "resolved_negative_reviews": []
+        },
+        {
+          "current_position": 2611,
+          "checkpoint_position": 2584,
+          "claim_kind": "primary_identity",
+          "row": {
+            "subject_id": "MIM:Sodium_Perchlorate_Monohydrate",
+            "subject_label": "Sodium perchlorate monohydrate",
+            "predicate_id": "skos:exactMatch",
+            "object_id": "cas:7791-07-3",
+            "object_label": "Sodium perchlorate monohydrate",
+            "object_source": "registry:cas",
+            "mapping_justification": "semapv:ManualMappingCuration",
+            "source": "MIM:CultureBotHT|MIM:CHEBI via OLS (stem-substring)|MIM:MIM curation (#342)|MIM:MIM curation (#901); PubChem CID 516899; ChEBI:132103|MIM:curator=claude|kgm:native_ontology:chebi",
+            "mapping_date": "2026-11-01",
+            "confidence": "0.99",
+            "comment": "Registry/identity row preserving cas:7791-07-3 alongside parent CHEBI:132103.",
+            "other": "CAS:7791-07-3",
+            "validation_method": "none|UNKNOWN_TERM|2026-07-07"
+          },
+          "row_sha256": "9aff710dedc116f4feabb872e257433818b457fe598c63c5fcb1b19a36ec4887",
+          "reason": "The actual exact cas:7791-07-3 row denotes the supplied sodium perchlorate monohydrate. PubChem CID516899 CAS annotations, complete water-containing InChI/formula and CultureBotHT physical row403 agree with the corrected owner. The sole CAS:7791-07-3 display alias denotes that same form. Both historical parent/CAS rows were WITHHOLD: this is a fresh claim assessment, not inherited or withdrawn prior CAS approval, and it does not certify CAS as globally optimal grounding.",
+          "prior_basis": {
+            "path": "reports/sodium_perchlorate_form_901_20261101/prior-mapping-basis.json",
+            "evidence_key": "2584"
+          },
+          "resolved_negative_reviews": []
+        },
+        {
+          "current_position": 3014,
+          "checkpoint_position": 2983,
+          "claim_kind": "registry_handle",
+          "row": {
+            "subject_id": "MIM:Sodium_Perchlorate_Monohydrate",
+            "subject_label": "Sodium perchlorate monohydrate",
+            "predicate_id": "skos:exactMatch",
+            "object_id": "kgmicrobe.compound:sodium_perchlorate_monohydrate",
+            "object_label": "Sodium perchlorate monohydrate",
+            "object_source": "kgm:compound",
+            "mapping_justification": "semapv:ManualMappingCuration",
+            "source": "MIM:CultureBotHT|MIM:CHEBI via OLS (stem-substring)|MIM:MIM curation (#342)|MIM:MIM curation (#901); PubChem CID 516899; ChEBI:132103|MIM:curator=claude|kgm:native_ontology:chebi",
+            "mapping_date": "2026-11-01",
+            "confidence": "0.99",
+            "comment": "Registry/identity row (Rule B1) for broadMatch subject; kg-microbe primary id kgmicrobe.compound:sodium_perchlorate_monohydrate alongside parent CHEBI:132103.",
+            "other": "CAS:7791-07-3",
+            "validation_method": ""
+          },
+          "row_sha256": "069dfd73500435df66a355306b496ddaf00eb01125e623ccd27b292ed7b8a830",
+          "reason": "The actual new kgmicrobe.compound:sodium_perchlorate_monohydrate exact row is supported as the native B1 namespace handle for this same defined CAS-primary chemical subject. The exact lower-case subject slug, SINGLE_INGREDIENT owner, independently supported monohydrate chemistry and receipt21 addition agree. The sole CAS display alias denotes the same form. This handle is not a competing external primary identity and grants no role approval.",
+          "prior_basis": null,
+          "resolved_negative_reviews": []
+        }
+      ]
+    }
+  ],
+  "independent_followup_reviews": [
+    {
+      "identity": {
+        "path": "source/0dac278466699129a083343a921c2e0ca18a9ab4/reviews/structured/20261101T212612Z-melezitose901-final-independent-diagnostics/review.yaml",
+        "sha256": "764c2fd968cd8002b458a1b942d5194db0ec43e8c2511ac8b25758764837664e",
+        "bytes": 646723
+      },
+      "reviewer": {
+        "identity": "Codex independent reviewer /root/step4_design_review",
+        "kind": "agent",
+        "independence": "independent",
+        "independence_basis": "Independent of source writer, consumer, scientific pair, companion and package authors. Authored only read-only/adversarial probes, isolated fixture and durable-base review captures, and this diagnostic evidence; no production implementation, scientific authority or GitHub mutation."
+      },
+      "scientific_review": false,
+      "verdict": "pass_with_limitations",
+      "scope": {
+        "description": "Final diagnostic review of the approved melezitose901 batch, implementation safeguards and exact current evidence/products before final feature commit.",
+        "selection": "Fifteen explicit source, implementation, receipt, authority, mapping/semantic/companion, selector, test, package and protected-data targets. All changed indexed files and complete current native source/owner unions are hashed in a real durable-base overlay.",
+        "coverage": "full",
+        "population_size": 15,
+        "reviewed_target_ids": [
+          "melezitose901:source-owner",
+          "melezitose901:canonical",
+          "melezitose901:writer",
+          "melezitose901:form-consumer",
+          "melezitose901:assembler",
+          "melezitose901:ownership",
+          "melezitose901:receipt20",
+          "melezitose901:scientific-authority",
+          "melezitose901:mapping-review",
+          "melezitose901:semantic-review",
+          "melezitose901:companion",
+          "melezitose901:selectors",
+          "melezitose901:regressions",
+          "melezitose901:execution-evidence",
+          "melezitose901:protected-unified"
+        ],
+        "exclusions": [
+          {
+            "target": "Fresh scientific approval of roles,whole records,other ingredients or full graph",
+            "reason": "Only the separate already audited three-claim scientific pair supplies mapping authority; role/two findings and global scientific release hold remain."
+          },
+          {
+            "target": "Future committed feature head,livePRbody,remoteCI,merge queue and cleanup",
+            "reason": "Those actual future states require separate review; this report binds frozen staged bytes only."
+          },
+          {
+            "target": "New provider research or full offline external-input replay",
+            "reason": "Original primary captures and current receipts are inspected; omitted large external corpora/databases remain explicitly qualified."
+          }
+        ]
+      },
+      "limitations": [
+        "This is scientific_review:false. Diagnostic PASS does not create scientific authority, close issues or release scientific holds.",
+        "Full graph scientific release remains FAIL with 1,732 blocking findings and 2,334 blocking assertions; supported 1,741 mapping / 2,153 edge subset is separate. Target carbon role andboth target findings remain OPEN.",
+        "Actual native B4checks usefive captured available ontology tables; BTO/MICRO remain absent under native warning behavior. Retained23 deferred Rule K entries,101 product-label warnings and18 legacy subject misses resolved by maintainedcodec remain explicit.",
+        "Source fields preserve historical loader provenance supported by exact recovered9bb29 manifest/1848 source objects; they are not current scientific approval. Primary-source absence conclusions remain limited to captured searches and CASannotations, not directCASRegistry or experiments.",
+        "Final4,196 passed/1 skip/33warning fulltest and75 percent package coverage are actual completed gates. The458-source context was captured after launch at 21:00:18.499748Z; equality from capture to completion is proven under no-edit hold, not continuous observation of the earlier 26 seconds. Earlier source freezes remain separate evidence.",
+        "Original full suite1failed4,189 passed1 skip and all 23 selected nonzero command attempts remain historical failures with exact dispositions. Reviewer-only error-text and docs-scope assertion mistakes are distinguished from repaired production defects.",
+        "Package integrity covers explicit860versions/3,600 Git references/148 commands and qualified omissions; it is not a complete scientific replay or generic recursive evidence graph. Changed aggregates are archived; unchanged individual owners use durable Git.",
+        "Receipt 20 literal ../operator provenance remains unchanged and uses an explicit selected alias document; generic package direct lookup of that unsafe spelling is not claimed. Native path safety remains strict.",
+        "Native source provenance and archived Git references require durable e568 available. Feature585b is truthful historical generation attribution, not a required portability ancestor. An arbitrary shallow tip lacking e568 must fetch it.",
+        "One ignored full-KGX manifest 42d058 was restored only in the review overlay from exact archived bytes. It is not falsely represented as a standalone committed file or newly generated output.",
+        "This native review, capture and later exact-head/CI attestations are post-freeze external evidence unless individually selected earlier. No circular claim that their raw receipts were included in the package.",
+        "No actual final feature commit orremote CIexists for this final staged review. Root must check/save the pair, commit, then obtain exact-head/body/livePR and actual merge-group verification."
+      ],
+      "findings": []
+    },
+    {
+      "identity": {
+        "path": "source/0dac278466699129a083343a921c2e0ca18a9ab4/reviews/structured/20261101T215154Z-melezitose-ci1077-1078-independent-diagnostics/review.yaml",
+        "sha256": "0334072737d566837373ab91dac64093fc2b19be9c1e7125c0d125f9e5b79304",
+        "bytes": 37216
+      },
+      "reviewer": {
+        "identity": "Codex independent reviewer /root/step4_design_review",
+        "kind": "agent",
+        "independence": "independent",
+        "independence_basis": "Independent of workflow/report/test repair and appendix authors. Authored only read-only adversarial probes,isolated clean replay,byte comparisons and this native diagnostic; no maintained implementation,scientific authority orGitHub mutation."
+      },
+      "scientific_review": false,
+      "verdict": "pass_with_limitations",
+      "scope": {
+        "description": "Narrow CI prerequisite repairs and appended evidence,not renewed ingredient/scientific curation.",
+        "selection": "Six explicit workflow,semantic report,regression,appendix,historical-package and unchanged canonical targets. Forty-seven inputs include exact retained review pairs,controls and current native graph manifest.",
+        "coverage": "full",
+        "population_size": 6,
+        "reviewed_target_ids": [
+          "melezitose-ci:checkout",
+          "melezitose-ci:semantic-report",
+          "melezitose-ci:regressions",
+          "melezitose-ci:ci-evidence",
+          "melezitose-ci:historical-package",
+          "melezitose-ci:canonical"
+        ],
+        "exclusions": [
+          {
+            "target": "Fresh scientific approval or entire corpus reassessment",
+            "reason": "Current source/claim/role authority remains unchanged; this diagnostic proves bounded preservation only."
+          },
+          {
+            "target": "Final repaired committed head and remoteCI/merge queue",
+            "reason": "This real capture is e568 plus current reviewed working bytes; later actual commit and remote events require separate attestation."
+          }
+        ]
+      },
+      "limitations": [
+        "Original PR5da CI failures remain retained and are not represented as passing. Clean replay proves corrected local prerequisite behavior; no future remoteCI/queue success is asserted.",
+        "Clean replay used5da plus exactthree-file overlay,an empty output directory and existing maintained Python3.13 runtime. It did not reinstall dependencies or claim a repaired committed head.",
+        "The earlier fullsuite4196passed/1skip/33warnings is historical unchanged-source context,not rerun for this repair. Current repair checks are three regressions,actual workflow sequences,QC,semantic integrity andlocked targetedquality.",
+        "Root three-file context was captured afterQC launch under no-edit hold; captured/current hash equality is established,not continuous pre-capture observation.",
+        "Original execution package stays immutable historical evidence. Its old current-scope is intentionally stale for two bindings; the new test is outside that old inventory. No verifier waiver or rewriting occurs.",
+        "Native provenance requires durablee568 available. A shallow tip without that base correctly refuses; history is a workflow prerequisite. The47input capture truthfully uses actual detached-e568 working_tree.",
+        "Ignored full-graph manifest42d058 was copied only into the review overlay from this independent native clean generation and checked againstW. It is not falsely claimed a tracked Git blob.",
+        "Full scientific graph release remains FAIL with existing1732blockingfindings/2334blockingassertions; supported1741mapping/2153edge subset remains separate. Carbon-source role and both targetfindings remain OPEN.",
+        "Earlier B4 absentBTO/MICRO coverage,23deferredaliases and101labelwarnings remain historical diagnostics; no new scientific claim or providerresearch performed.",
+        "This native pair and postpublication capture/readback receipts are outside the already frozen appendix unless explicitly selected. No circular archive membership or supervisor binding is invented."
+      ],
+      "findings": []
+    },
+    {
+      "identity": {
+        "path": "source/0dac278466699129a083343a921c2e0ca18a9ab4/reviews/structured/20261102T001033Z-sodium901-final-independent-diagnostics/review.yaml",
+        "sha256": "9226886a8bed69d3cb425e0bbfc13378f7e60e5cafa2fe0fd2ae7d2975f744d8",
+        "bytes": 559478
+      },
+      "reviewer": {
+        "identity": "Codex independent reviewer /root/step4_design_review",
+        "kind": "agent",
+        "independence": "independent",
+        "independence_basis": "Independent of maintained sodium writer/test, scientific pair/FORM, receipt/comparator, diagnostic packet, companion and package authors. Authored only independent read-only probes, isolated fixtures, exact review captures and this diagnostic pair; no production implementation or GitHub mutations."
+      },
+      "scientific_review": false,
+      "verdict": "pass_with_limitations",
+      "scope": {
+        "description": "Final independent diagnostic review of the approved sodium form-correction batch before final feature commit.",
+        "selection": "Thirteen explicit source, writer, receipt, authority, current native product, selector, regression, diagnostic/archive and protected-data targets; all staged changed paths and current native input/owner unions are captured.",
+        "coverage": "full",
+        "population_size": 13,
+        "reviewed_target_ids": [
+          "sodium901:source-owner",
+          "sodium901:canonical",
+          "sodium901:writer",
+          "sodium901:receipt21",
+          "sodium901:scientific-authority",
+          "sodium901:mapping-review",
+          "sodium901:semantic-review",
+          "sodium901:companion",
+          "sodium901:selectors",
+          "sodium901:regressions",
+          "sodium901:diagnostics",
+          "sodium901:execution-evidence",
+          "sodium901:protected-unified"
+        ],
+        "exclusions": [
+          {
+            "target": "New scientific approval of roles, whole records, other ingredients or the full graph",
+            "reason": "Only the separately audited three-claim scientific pair supplies mapping authority; existing scientific holds remain."
+          },
+          {
+            "target": "Future final commit, PR/body, remote CI, merge queue and cleanup",
+            "reason": "Those actual later states require separate verification."
+          },
+          {
+            "target": "New research or complete offline external-input replay",
+            "reason": "Original captured primary sources and explicit omissions are retained; no paid providers or new research is used."
+          }
+        ]
+      },
+      "limitations": [
+        "This scientific_review:false diagnostic cannot create scientific approval, close issues, authorize curation or release scientific holds.",
+        "Full native semantic release remains FAIL with 1,733 blocking findings and 2,333 blocking assertions. The 1,744-row mapping and 2,155-edge supported subsets pass separately.",
+        "The unresolved SNOMED exact-form lead, blocked primary access and native ontology-source support boundary remain explicit; CAS is not asserted globally optimal. PubChem CAS annotations are database evidence, not direct CAS Registry inspection.",
+        "Default B4 skips its missing sibling path. The actual-node check retains missing BTO/MICRO coverage; 23 deferred Rule K pairs and 101 nonblocking label warnings remain. Eighteen legacy subject stems resolve only through the native codec.",
+        "The historical v1 diagnostic pair has an invalid exact-byte embedded-TSV attestation under #1081 and remains unchanged. V2 repairs raw bytes and qualifies v1; no failed historical observation is relabeled PASS.",
+        "Source history and six native/MIM source tokens are provenance, not inherited approval. New mapping support comes only from the separate actual three-claim review.",
+        "Completed local tests report 4,268 passed, one skipped, 33 warnings and 75% maintained-package coverage. The 517-input freeze precedes test launch but follows QC launch; it does not retrospectively observe the earlier QC interval.",
+        "The package verifies explicit archive/Git/command bindings, not arbitrary recursive evidence or a full offline external-source replay. Full ignored CultureBotHT CSV is omitted while exact row403/source hash are retained.",
+        "Native review provenance and archive references require durable330 to be available. Feature b629 remains truthful generation attribution but is not a required archive-verification ancestor; an arbitrary shallow tip missing durable330 must fetch it.",
+        "One ignored workflow-default full-KGX manifest is restored only in the review overlay from exact archived bytes. It is not represented as a standalone tracked file or newly generated output.",
+        "This final review and post-selection receipts are outside the frozen package. Current-HEAD tracked package verification and exact final-head review await an actual final commit; future PR/queue success is not inferred."
+      ],
+      "findings": []
+    }
+  ],
+  "recipe_and_schema_review": {
+    "uv_lock_byte_identical": true,
+    "standalone_recipe": "Python3.13 / uv sync --frozen / assembler --check / reviewed_sssom export / --validate-only / schema validator; no recipe execution in this audit.",
+    "workflow_changes": [
+      "fetch-depth:0 added for truthful native historical provenance",
+      "Separate opt-in ingredient cohort review moved to reports/owned_name_deferred_669_20261103/companion-review.json; not the standalone full mapping export."
+    ],
+    "exporter_change": "Separate subset-derived date metadata only; current native exporter already permits asymmetric relation with same-subject exact B1 sibling.",
+    "schema_changes": [
+      "New structured record-review schema and form-specific native assessment binding.",
+      "Ingredient schema gains causal_graphs, evidence_source and component evidence support; descriptions explicitly separate structure from scientific authority, prohibit implicit role/edge or SSSOM creation.",
+      "Owner-byte changes, including graph/occurrence refreshes, do not carry approval; RecordRefreshes uses only exact current hashes.",
+      "License declarations changed to BSD-3-Clause; lock unchanged."
+    ],
+    "full_scientific_release": "Not granted. Latest retained upstream checklist records FAIL with 1733 blocking findings,2369 blocking assertions and4 evidence-gap groups; historical checkpoint counts are not re-labeled as candidate runtime results."
+  },
+  "findings": [
+    {
+      "id": "subset-date-compatibility",
+      "artifact": {
+        "path": "finding-subset-date-compatibility-r1.json",
+        "sha256": "dee5c758e435d7f98c37c744bdbca44c609f84bd54cf2209167267e5ea4cc90a",
+        "bytes": 4776
+      },
+      "action": "Root to file/triage before consumer fix."
+    }
+  ],
+  "qualifications": [
+    "Form native authorities disclose author self-review; subsequent independent diagnostic/adversarial reviews are separately retained and scientific_review=false. Do not describe them as human signoff.",
+    "Melezitose CARBON_SOURCE and historical role/whole-record findings stay open; sodium ELECTRON_ACCEPTOR approval withdraws and whole-record findings stay open.",
+    "Sodium SNOMED765356005 remains unresolved behind primary access limits. No global exact-ontology absence or CAS optimality is established.",
+    "Full graph scientific holds, companion ingredient bundle and roles/components are not admitted by full reviewed SSSOM subset success.",
+    "Official source comparison shows131 commits ahead; generated artifact identities/official current CI are root-owned follow-up evidence.",
+    "The two metadata symlinks are recorded but not materialized (#1789). Source snapshots are regular-file review copies, not runnable Git checkouts.",
+    "No new concrete scientific false approval found in the inspected form/withdrawal paths; this is bounded review, not full upstream corpus re-curation."
+  ],
+  "reviewed_code_and_config_identities": [
+    {
+      "path": "source/1848b0fe521bc2462f165912fcf92d09ad9a8cec/uv.lock",
+      "sha256": "f5ce4325376797ada321c0ffba1e6050355e3185c0a079d2c731d17480aeca1a",
+      "bytes": 1075087
+    },
+    {
+      "path": "source/1848b0fe521bc2462f165912fcf92d09ad9a8cec/.github/workflows/qc-reviewed-sssom.yaml",
+      "sha256": "474246379fb470807e53330469a0ed0724c1edbd6f94f306105c78ddf3d21c4e",
+      "bytes": 1948
+    },
+    {
+      "path": "source/1848b0fe521bc2462f165912fcf92d09ad9a8cec/pyproject.toml",
+      "sha256": "07b7ebae6b4960db981ca9ea88153d3d812091367e657e9323f78f6f1ffa1d07",
+      "bytes": 6672
+    },
+    {
+      "path": "source/0dac278466699129a083343a921c2e0ca18a9ab4/uv.lock",
+      "sha256": "f5ce4325376797ada321c0ffba1e6050355e3185c0a079d2c731d17480aeca1a",
+      "bytes": 1075087
+    },
+    {
+      "path": "source/0dac278466699129a083343a921c2e0ca18a9ab4/.github/workflows/qc-reviewed-sssom.yaml",
+      "sha256": "766506487be710bf26423bd08e3ce1a2a12be997ca40ef55edd036d43b9a6374",
+      "bytes": 2003
+    },
+    {
+      "path": "source/0dac278466699129a083343a921c2e0ca18a9ab4/pyproject.toml",
+      "sha256": "6f9eebf51774adb8c9ab742f832518ba1682fc43704ad994f73b25829645fef6",
+      "bytes": 6873
+    },
+    {
+      "path": "source/0dac278466699129a083343a921c2e0ca18a9ab4/src/mediaingredientmech/export/reviewed_sssom.py",
+      "sha256": "2aa3a795d0bd63c99d97883a492bd2654ecd94dd2aa2c000736b76d64b7099f2",
+      "bytes": 16165
+    },
+    {
+      "path": "source/0dac278466699129a083343a921c2e0ca18a9ab4/src/mediaingredientmech/sssom_metadata.py",
+      "sha256": "0c5e08a55ff6845959ec84b1f530f9891e361f1a1b16b9f81b42beafb8a20d66",
+      "bytes": 1722
+    },
+    {
+      "path": "source/0dac278466699129a083343a921c2e0ca18a9ab4/src/mediaingredientmech/form_mapping_review.py",
+      "sha256": "c83a7c57839528f99bdb5fe376cd4b4bd7c8ba73530fa7e5e441787237178c4a",
+      "bytes": 23191
+    },
+    {
+      "path": "source/0dac278466699129a083343a921c2e0ca18a9ab4/src/mediaingredientmech/record_refresh.py",
+      "sha256": "999e4e2bf2a257a26172096221c6472c10782fd67bc00d6857c42e3a80ad63f2",
+      "bytes": 9149
+    },
+    {
+      "path": "source/0dac278466699129a083343a921c2e0ca18a9ab4/src/mediaingredientmech/validation/mapping_change_receipts.py",
+      "sha256": "f9f8f4dfa7ca9ea37b8a39da1d22b6173fe63429212735150e4607c99f35407d",
+      "bytes": 25885
+    },
+    {
+      "path": "source/0dac278466699129a083343a921c2e0ca18a9ab4/reports/sssom_completion_20260921/assemble_review.py",
+      "sha256": "4c79d2572e12b9d0ed57953ffa5a1e323ccda127e3cc879747ae11edca75fb63",
+      "bytes": 41801
+    },
+    {
+      "path": "source/0dac278466699129a083343a921c2e0ca18a9ab4/schema/record_review.yaml",
+      "sha256": "229baf9b69118a1fe318e4c31085c0820e4e3d1365e7b04d6ace451b7c35f9bb",
+      "bytes": 13541
+    },
+    {
+      "path": "source/0dac278466699129a083343a921c2e0ca18a9ab4/src/mediaingredientmech/schema/mediaingredientmech.yaml",
+      "sha256": "bb43dee29b21fdee72a48022456e733e49e95824c4c09674f9b3165c290fe012",
+      "bytes": 104810
+    }
+  ],
+  "audit_script_sha256": "cc448b4a4cb1d562bfec4ea07f4df2062d1c74729b24cecb039dbd47498624a4"
+}

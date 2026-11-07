@@ -1,23 +1,23 @@
 {
   "schema_version": 2,
   "origin": "immutable_commit_export",
-  "source_commit": "1848b0fe521bc2462f165912fcf92d09ad9a8cec",
+  "source_commit": "0dac278466699129a083343a921c2e0ca18a9ab4",
   "source_archive": {
-    "url": "https://codeload.github.com/CultureBotAI/MediaIngredientMech/tar.gz/1848b0fe521bc2462f165912fcf92d09ad9a8cec",
-    "sha256": "33ff549d7a2bf34e943156e800e00149736a30dfc0a974f3ca9a9884358bfef2"
+    "url": "https://codeload.github.com/CultureBotAI/MediaIngredientMech/tar.gz/0dac278466699129a083343a921c2e0ca18a9ab4",
+    "sha256": "51c6029b88a2d1d73ca1cbe13029c9cf60991dc65af2556cec6b1413ee52eb9d"
   },
   "export_recipe": {
     "id": "reviewed_sssom_v1",
     "python_version": "3.13",
     "lock_sha256": "f5ce4325376797ada321c0ffba1e6050355e3185c0a079d2c731d17480aeca1a",
-    "workflow_sha256": "474246379fb470807e53330469a0ed0724c1edbd6f94f306105c78ddf3d21c4e"
+    "workflow_sha256": "766506487be710bf26423bd08e3ce1a2a12be997ca40ef55edd036d43b9a6374"
   },
-  "validation_run_url": "https://github.com/CultureBotAI/MediaIngredientMech/actions/runs/36109949250",
-  "manifest_sha256": "9bb29d5605d93dea351be9624d99c5d8ada57d4b9831b22764957b784bd685af",
+  "validation_run_url": "https://github.com/CultureBotAI/MediaIngredientMech/actions/runs/41900248437",
+  "manifest_sha256": "b02a92446e8a613fd0d96b0dd8147d439733fcf73e731b363a6388e95d616703",
   "files": {
-    "ingredient_mappings.sssom.tsv": "6b52b30e018b369aa322d41dfd4e81fcfae0e895e34d7fe48900abf5835815fb",
-    "withheld_mappings.sssom.tsv": "c37491ed4191889d375b02510137a178ee9b44a341131e42afec07d7953e8405",
-    "mapping-dispositions.tsv": "87b4a72969681e4b808c526552c84c36daa17c6697970735a4e0ba0270523154"
+    "ingredient_mappings.sssom.tsv": "7e68fea7fd788928f29c7671156198af101baaa3b3051f19bab78a5479d2a940",
+    "mapping-dispositions.tsv": "2a075c9c4a699c9d22a5e8b736bc6d7c00c344f19363f28178c0b50b6b590a19",
+    "withheld_mappings.sssom.tsv": "5817fb845c65f995fb0c78095168af1cbf0c837a991004fcd0a9d73cd0874c88"
   },
   "mode": "candidate_only"
 }

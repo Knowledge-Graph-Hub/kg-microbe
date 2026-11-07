@@ -1,0 +1,62 @@
+{
+  "decision_boundary": "No upstream correction is required merely to preserve an already-reviewed local rejection while consuming an immutable product as evidence. Upstream exact equivalence remains unaccepted locally. If complete row/native witness scope differs or a conflict lacks current finite scientific review, it remains a blocker pending review.",
+  "existing_basis": [
+    "Current identity policy has a finite generic-name exclusion and the exact MIM-to-CHEBI pair exclusion; it does not globally reject CHEBI:86658.",
+    "The retained P3556 scope review distinguishes whole egg-yolk product quantity from a particular acyl/stereochemical molecule; retained source has no CAS assertion. This assessment cites retained prior review, not new supplier verification.",
+    "The prior reviewed design explicitly preserves canonical supported MIM bytes as conditional material_scope_supported audit evidence after the derived unified artifact removes the held pair.",
+    "Explicitly structured native molecular synonyms remain eligible; local P3556 observations preserve their exact native source identity and quantities."
+  ],
+  "identities_at_read_time": {
+    "data/rebuild-evidence/mim-1788-20261107/official-export-0dac2784/ingredient_mappings.sssom.tsv": {
+      "bytes": 831693,
+      "sha256": "7e68fea7fd788928f29c7671156198af101baaa3b3051f19bab78a5479d2a940"
+    },
+    "docs/reviews/mediadive-p3556-scope-1241.md": {
+      "bytes": 6368,
+      "sha256": "9736cc6e83b6b11bbb9714edae26f20ead548ccd8ea30b72e0a1822c4293695b"
+    },
+    "kg_microbe/utils/ingredient_identity.py": {
+      "bytes": 11291,
+      "sha256": "2fbf540fcc3a0f62ae855bf38d888246764cd4f0fce2c2ee6ed036ddb0ba4099"
+    },
+    "mappings/ingredient_identity_exclusions.tsv": {
+      "bytes": 29913,
+      "sha256": "adee54d81504734c1c6c164346c3c4db600da6840a7ed3908325ca712a528499"
+    },
+    "scripts/mim_conservative_refresh.py": {
+      "bytes": 48331,
+      "sha256": "dac08e5a188bce365881964994fcd71dbea480e8ad502542efff714b4431cdc3"
+    },
+    "tests/resources/mediadive/p3556_scope.json": {
+      "bytes": 14487,
+      "sha256": "7c06f4e2179356ddf1d917a6938cba5e3bdf6669f42a29019b93963e4a70646c"
+    }
+  },
+  "method": "Independent read-only current policy, historical scope document, immutable fixture and builder control-flow review. No producer, validator, runtime probe, candidate generation or network access. Exact current native-claim comparison is assigned separately to environment reviewer.",
+  "minimal_acceptable_integration": [
+    "Retain the complete upstream supported/withheld products, pin, dates, original fields and partition without reclassifying or rewriting publisher data.",
+    "Authorize only an explicit finite already-reviewed local disposition, bound to the complete actual upstream row, product/manifest identity, current policy bytes and retained native/source witness. New or changed unreviewed conflicts still abort.",
+    "Emit a separate complete native-claim hold record with all source fields, occurrence/multiplicity and identity; do not truncate the upstream 14-column row into the unified 13-column schema. Historical baseline quarantine and current native held claims must remain distinguishable.",
+    "Reconcile native supported claims into materialized exact, reviewed held exact and nonidentity broader counts; never report all upstream supported claims as active KGM identity mappings. Derived relation counts remain separate from upstream claim counts.",
+    "Exclude held exact claims from positive identity/name/xref/formula evidence and from broader projection licensing, including aliases in other/object_label. A broader claim that needs a held exact sibling must fail rather than acquire support.",
+    "Continue historical exact-edge contamination cleanup from actual old evidence; do not use a held current assertion to invent identity connections or suppress unrelated native structural routes.",
+    "Retain explicit structured native names/categories/formulas under current scientific policies; do not globally remove the target to obtain a clean audit.",
+    "Prove exact legacy/current held-row preservation, rejected generic name/xref plus retained native structured controls, correct full count partition, unfamiliar/mutated-conflict refusal, no held-parent projection, second-cycle stability, real runtime behavior and full-source material audit."
+  ],
+  "prohibited_shortcuts": [
+    "Do not change runtime identity policy to accept the upstream claim.",
+    "Do not silently drop/continue on all current or future policy errors.",
+    "Do not change the supported table to make the local projection appear upstream-approved.",
+    "Do not replace the generic claim with a guessed broader class, CAS, charge state or other molecular identity.",
+    "Do not reuse failed candidate-r1 as acceptance evidence."
+  ],
+  "recorded_at": "2026-11-07T10:06:35.780693+00:00",
+  "schema_version": 1,
+  "status": "finite_downstream_hold_is_legitimate_design_not_candidate_acceptance",
+  "trigger": {
+    "builder_guard": "Supported MIM assertion conflicts with current identity policy",
+    "reported_by_root": "candidate-r1 failed before publication",
+    "subject": "MIM:L-alpha-Phosphatidylcholine",
+    "target": "CHEBI:86658"
+  }
+}

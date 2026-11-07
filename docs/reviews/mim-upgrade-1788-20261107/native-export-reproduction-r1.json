@@ -1,0 +1,28 @@
+{
+  "lock_sha256": "f5ce4325376797ada321c0ffba1e6050355e3185c0a079d2c731d17480aeca1a",
+  "origin": {
+    "module": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/data/rebuild-evidence/mim-1788-20261107/source/0dac278466699129a083343a921c2e0ca18a9ab4/src/mediaingredientmech/export/reviewed_sssom.py",
+    "python": "3.13.2 (main, Mar 17 2025, 21:26:38) [Clang 20.1.0 ]"
+  },
+  "products": {},
+  "recipe": "reviewed_sssom_v1 standalone only; no ingredient bundle activation",
+  "recorded_at": "2026-11-07T09:46:00.592301+00:00",
+  "source_commit": "0dac278466699129a083343a921c2e0ca18a9ab4",
+  "status": "fail",
+  "steps": [
+    {
+      "command": [
+        "/Users/marcin/.local/bin/uv",
+        "run",
+        "--frozen",
+        "python",
+        "reports/sssom_completion_20260921/assemble_review.py",
+        "--check"
+      ],
+      "elapsed_seconds": 12.715165376663208,
+      "exit_code": 1,
+      "log": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/data/rebuild-evidence/mim-1788-20261107/native-export-reproduction-r1-step1.log",
+      "log_sha256": "76eaca094e7a5c05c5f112348f8a1e8b43e703ec37fab678cec7dc0f0bdcf0e8"
+    }
+  ]
+}

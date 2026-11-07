@@ -1,0 +1,41 @@
+{
+  "commands": [
+    {
+      "command": [
+        "git",
+        "init",
+        "--bare",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/data/rebuild-evidence/mim-1788-20261107/upstream-provenance.git"
+      ],
+      "elapsed_seconds": 0.014605045318603516,
+      "exit_code": 0
+    },
+    {
+      "command": [
+        "git",
+        "-C",
+        "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/data/rebuild-evidence/mim-1788-20261107/upstream-provenance.git",
+        "-c",
+        "fetch.fsckObjects=true",
+        "-c",
+        "transfer.fsckObjects=true",
+        "fetch",
+        "--filter=blob:none",
+        "--no-tags",
+        "https://github.com/CultureBotAI/MediaIngredientMech.git",
+        "0dac278466699129a083343a921c2e0ca18a9ab4"
+      ],
+      "elapsed_seconds": 0.9908900260925293,
+      "exit_code": 0
+    }
+  ],
+  "fetched_head": "0dac278466699129a083343a921c2e0ca18a9ab4",
+  "recorded_at": "2026-11-07T09:47:52.483226+00:00",
+  "required_ancestors": [
+    "e568dbf0e0f759431ed317b973675680f031dd1d",
+    "330d9e34c5cf69bb355d4d242977eb1a78dbe374"
+  ],
+  "scope": "Real official commit/tree history; filtered blobs are not claimed present. Native working-tree attestation semantics remain unchanged.",
+  "status": "pass",
+  "store": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/data/rebuild-evidence/mim-1788-20261107/upstream-provenance.git"
+}

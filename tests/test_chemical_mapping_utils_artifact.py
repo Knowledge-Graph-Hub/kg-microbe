@@ -1,6 +1,8 @@
 """Read the actual committed mapping artifact once while retaining every acceptance assertion."""
 
 import hashlib
+import json
+from collections import Counter
 from pathlib import Path
 
 import pytest
@@ -107,6 +109,121 @@ class TestSupportedOnlyMimArtifact:
         assert chemical_mapping_utils.find_chebi_by_name("Actinomycin A") is None
         assert chemical_mapping_utils.get_canonical_name("kgmicrobe.compound:actinomycin_a") is None
         assert chemical_mapping_utils.get_parents("kgmicrobe.compound:actinomycin_a") == []
+
+
+_BROADER_FIXTURE = Path(__file__).parent / "resources/mim_reviewed_broader_20261107/source-claims.json"
+_BROADER_FIXTURE_SHA256 = "a08a231ea586e84b549736c76b3e8c5d6c8c4d9a8977da69cdfa481b8ef378c0"
+_BROADER_MANIFEST_SHA256 = "b02a92446e8a613fd0d96b0dd8147d439733fcf73e731b363a6388e95d616703"
+_BROADER_PAIRS = (
+    ("cas:10030-67-8", "CHEBI:6731"),
+    ("kgmicrobe.compound:d-_-melezitose_monohydrate", "CHEBI:6731"),
+    ("cas:7791-07-3", "CHEBI:132103"),
+    ("kgmicrobe.compound:sodium_perchlorate_monohydrate", "CHEBI:132103"),
+)
+_UNIFIED_FIELDS = (
+    "subject_id",
+    "subject_label",
+    "predicate_id",
+    "object_id",
+    "object_label",
+    "object_source",
+    "mapping_justification",
+    "source",
+    "mapping_date",
+    "confidence",
+    "comment",
+    "object_formula",
+    "object_category",
+)
+
+
+def _source_row_sha256(row):
+    """Hash every native column with the pinned publisher's canonical JSON encoding."""
+    return hashlib.sha256(
+        json.dumps(row, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode()
+    ).hexdigest()
+
+
+@pytest.fixture(scope="module")
+def reviewed_broader_claims(artifact_epoch):
+    """Bind four complete directed rows to immutable native broad and same-subject exact claims."""
+    path, identity = artifact_epoch
+    raw = _BROADER_FIXTURE.read_bytes()
+    assert hashlib.sha256(raw).hexdigest() == _BROADER_FIXTURE_SHA256
+    claims = json.loads(raw)["claims"]
+    assert len(claims) == 6
+    for claim in claims:
+        assert claim["decision"]["disposition"] == "SUPPORTED"
+        assert _source_row_sha256(claim["row"]) == claim["decision"]["row_sha256"]
+    originals = [claim["row"] for claim in claims]
+    subjects = {row["subject_id"] for row in originals}
+    native_path = path.with_name("ingredient_mappings.sssom.tsv")
+    observed_native = [
+        row for row in chemical_mapping_utils._iter_sssom_rows(native_path) if row["subject_id"] in subjects
+    ]
+    assert Counter(_source_row_sha256(row) for row in observed_native) == Counter(
+        _source_row_sha256(row) for row in originals
+    )
+    expected = {}
+    for broad in (row for row in originals if row["predicate_id"] == "skos:broadMatch"):
+        for exact in originals:
+            if exact["predicate_id"] != "skos:exactMatch" or exact["subject_id"] != broad["subject_id"]:
+                continue
+            key = exact["object_id"], broad["object_id"]
+            assert key not in expected
+            row = {field: broad.get(field, "") for field in _UNIFIED_FIELDS}
+            row.update(
+                subject_id=exact["object_id"],
+                object_formula="",
+                object_category="",
+                source=(
+                    f"mediaingredientmech_reviewed[manifest={_BROADER_MANIFEST_SHA256}]"
+                    f"[broad-row-sha256={_source_row_sha256(broad)};exact-row-sha256={_source_row_sha256(exact)}]"
+                ),
+            )
+            expected[key] = {"row": row, "broad": broad, "exact": exact}
+    assert set(expected) == set(_BROADER_PAIRS)
+    actual = [row for row in chemical_mapping_utils._iter_sssom_rows(path) if row["predicate_id"] == "skos:broadMatch"]
+    assert Counter(_source_row_sha256(row) for row in actual) == Counter(
+        _source_row_sha256(item["row"]) for item in expected.values()
+    )
+    assert _artifact_identity(path) == identity
+    return expected
+
+
+class TestReviewedBroaderArtifact:
+    """Read all four reviewed form relations without admitting parent identity or aliases."""
+
+    @pytest.mark.parametrize(("child", "parent"), _BROADER_PAIRS)
+    def test_native_form_parents_keep_both_source_hashes_and_nonidentity_scope(
+        self, reviewed_broader_claims, child, parent
+    ):
+        """Actual reader navigation follows each explicit form while all identity routes remain separate."""
+        claim = reviewed_broader_claims[child, parent]
+        broad, exact = claim["broad"], claim["exact"]
+        assert chemical_mapping_utils.get_parents(child) == [parent]
+        assert child not in chemical_mapping_utils.get_parents(parent)
+        assert parent not in chemical_mapping_utils.get_xrefs(child)
+        assert child not in chemical_mapping_utils.get_xrefs(parent)
+        assert broad["subject_id"] not in chemical_mapping_utils.get_xrefs(parent)
+        assert chemical_mapping_utils.get_formula(child) is None
+        native_form_ids = {
+            item["exact"]["object_id"]
+            for item in reviewed_broader_claims.values()
+            if item["exact"]["subject_id"] == broad["subject_id"]
+        }
+        assert chemical_mapping_utils.find_chebi_by_name(broad["subject_label"]) in native_form_ids
+        assert chemical_mapping_utils.find_chebi_by_xref(broad["subject_id"]) in native_form_ids
+        assert chemical_mapping_utils.find_chebi_by_name(broad["object_label"]) == parent
+        parent_names = {
+            chemical_mapping_utils.normalize_name(name)
+            for name in [
+                chemical_mapping_utils.get_canonical_name(parent),
+                *chemical_mapping_utils.get_synonyms(parent),
+            ]
+        }
+        form_names = {broad["subject_label"], *filter(None, exact["other"].split("|"))}
+        assert not parent_names.intersection(chemical_mapping_utils.normalize_name(name) for name in form_names)
 
 
 class TestHydrateEquivalents:

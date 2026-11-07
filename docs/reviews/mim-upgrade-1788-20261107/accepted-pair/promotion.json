@@ -1,0 +1,24 @@
+{
+  "status": "reviewed_pair_installed_production_validation_pending",
+  "reviewed_candidate_sha256": "f1314a41ede9b143c595399ada5178e52306364e69b467810cf71e7cdc4be23d",
+  "old_pair_preserved": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/data/rebuild-evidence/mim-1788-20261107/canonical-pair-before-promotion-r1",
+  "scientific_review_sha256": "d8088826909f15c2c0f21272403d16ec313138a3675cbe9f9e22c68efbe2a73c",
+  "independent_acceptance_sha256": "18d64d16510a5482ab957c31c1c7b74cd87dadc7cedb1423bc38c741c17d2487",
+  "files": {
+    "ingredient_mappings.sssom.tsv": {
+      "before_sha256": "6b52b30e018b369aa322d41dfd4e81fcfae0e895e34d7fe48900abf5835815fb",
+      "after_sha256": "7e68fea7fd788928f29c7671156198af101baaa3b3051f19bab78a5479d2a940",
+      "source": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/data/rebuild-evidence/mim-1788-20261107/official-export-0dac2784/ingredient_mappings.sssom.tsv"
+    },
+    "kgmicrobe_unified_entity_mappings.sssom.tsv.gz": {
+      "before_sha256": "59464e08017cc907a1240a4378d2462efc9e2c1b9d6c3cf0b08b4344ef695ae8",
+      "after_sha256": "f1314a41ede9b143c595399ada5178e52306364e69b467810cf71e7cdc4be23d",
+      "source": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/data/rebuild-evidence/mim-1788-20261107/candidate-r2/candidate.sssom.tsv.gz"
+    }
+  },
+  "source_and_graph_admission": false,
+  "limitations": [
+    "Artifact review is complete; final code gates, all15 genuine producers and graph/archive acceptance remain required.",
+    "MediaDive632unknown qualification and all other pins/scope remain unchanged."
+  ]
+}

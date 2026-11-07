@@ -467,3 +467,332 @@ def test_manifest_changed_during_verification_is_refused(helper, monkeypatch):
     with pytest.raises(ValueError, match="changed during verification"):
         helper.verify_preserved_cache("mid-check", before)
     assert changed
+
+
+@pytest.fixture
+def prerequisite_records(helper, monkeypatch):
+    """Model owned native admission receipts against an independently selected finite plan."""
+    from scripts.adhoc import kgm_rebuild_admission_20261105 as planner
+
+    evidence = helper.ROOT / "data/rebuild-evidence/synthetic-prerequisites"
+    evidence.mkdir(parents=True)
+    monkeypatch.setattr(helper, "EVIDENCE", evidence)
+    config = helper.ROOT / "merge.yaml"
+    config.write_text("synthetic canonical configuration\n")
+    planner_file = helper.ROOT / "scripts/adhoc/kgm_rebuild_admission_20261105.py"
+    planner_file.parent.mkdir(parents=True)
+    planner_file.write_text('"""Synthetic planner origin for this isolated boundary fixture."""\n')
+    monkeypatch.setattr(planner, "__file__", str(planner_file))
+    plan = {
+        "phases": [["ontologies"], ["bacdive", "mediadive"], ["gold"], ["lpsn_api", "microbedecoder"]],
+        "sources": {
+            name: [str(helper.ROOT / "data/transformed" / name / "nodes.tsv")]
+            for name in ("ontologies", "bacdive", "mediadive", "gold", "lpsn_api", "microbedecoder")
+        },
+        "merge_config": str(config),
+        "raw_directory": str(helper.ROOT / "data/raw"),
+        "transformed_directory": str(helper.ROOT / "data/transformed"),
+        "merged_directory": str(helper.ROOT / "data/merged"),
+    }
+    calls = []
+
+    def build_plan(*args):
+        """Return the current fixture plan independently of the receipt's self-description."""
+        calls.append(args)
+        return json.loads(json.dumps(plan))
+
+    monkeypatch.setattr(planner, "build_plan", build_plan)
+    selected = {}
+    for kind, command, names, filename in (
+        ("phase3", "verify-sources", ["ontologies", "bacdive", "mediadive", "gold"], "phase3-admission-r1.json"),
+        ("microbedecoder", "verify-microbedecoder", ["microbedecoder"], "microbedecoder-admission-r1.json"),
+    ):
+        path = evidence / filename
+        path.write_text(
+            json.dumps(
+                {
+                    "root": str(helper.ROOT),
+                    "status": "pass",
+                    "command": command,
+                    "plan": plan,
+                    "verification": {"sources": {name: {} for name in names}},
+                }
+            )
+        )
+        selected[kind + "_receipt"] = path
+        selected[kind + "_sha256"] = helper.digest(path)
+    return selected, plan, calls
+
+
+def _phase_arguments(helper, selected, mode="launch-phase"):
+    """Select public receipt locators only; no synthetic credentials enter argv."""
+    args = [
+        "helper",
+        mode,
+        "--label",
+        "synthetic-phase",
+        "--receipt",
+        str(helper.CONTINUATION / "phase.json"),
+        "--canary-receipt",
+        str(helper.CONTINUATION / "canary.json"),
+    ]
+    for key, value in selected.items():
+        args.extend(["--" + key.replace("_", "-"), str(value)])
+    return args
+
+
+def test_explicit_owned_prerequisites_bind_current_plan_and_exact_receipts(helper, prerequisite_records):
+    """New receipt bytes need independent exact hashes and the current complete plan/cohort."""
+    selected, plan, calls = prerequisite_records
+    checked = helper.prerequisites(**selected)
+    assert checked == {**{key: str(value) for key, value in selected.items()}, "plan": plan}
+    assert calls == [
+        (
+            helper.ROOT,
+            helper.ROOT / "data/raw",
+            helper.ROOT / "data/transformed",
+            helper.ROOT / "merge.yaml",
+            helper.ROOT / "data/merged",
+        )
+    ]
+
+
+def test_historical_default_receipt_selection_is_preserved(helper, prerequisite_records, monkeypatch):
+    """Omitting all four selectors retains the original named-file and digest contract."""
+    selected, plan, _ = prerequisite_records
+    monkeypatch.setattr(helper, "PHASE3_SHA", selected["phase3_sha256"])
+    monkeypatch.setattr(helper, "MICRO_SHA", selected["microbedecoder_sha256"])
+    assert helper.prerequisites() == {**{key: str(value) for key, value in selected.items()}, "plan": plan}
+
+
+@pytest.mark.parametrize("kind", ["phase3", "microbedecoder"])
+@pytest.mark.parametrize(
+    "damage", ["old_root", "wrong_plan", "failed", "wrong_command", "missing_source", "extra_source", "source_list"]
+)
+def test_hash_bound_prerequisite_still_requires_owned_current_admission(helper, prerequisite_records, kind, damage):
+    """Even a supplied matching digest cannot authorize old-root, scope or command changes."""
+    selected, _, _ = prerequisite_records
+    path = selected[kind + "_receipt"]
+    body = json.loads(path.read_text())
+    if damage == "old_root":
+        body["root"] = str(helper.ROOT.parent / "old-W1")
+    elif damage == "wrong_plan":
+        body["plan"]["raw_directory"] = str(helper.ROOT.parent / "old-W1/data/raw")
+    elif damage == "failed":
+        body["status"] = "fail"
+    elif damage == "wrong_command":
+        body["command"] = "plan"
+    elif damage == "missing_source":
+        body["verification"]["sources"].pop(next(iter(body["verification"]["sources"])))
+    elif damage == "extra_source":
+        body["verification"]["sources"]["unexpected"] = {}
+    else:
+        body["verification"]["sources"] = list(body["verification"]["sources"])
+    path.write_text(json.dumps(body))
+    selected[kind + "_sha256"] = helper.digest(path)
+    with pytest.raises(ValueError, match="canonical source admissions"):
+        helper.prerequisites(**selected)
+
+
+@pytest.mark.parametrize("kind", ["phase3", "microbedecoder"])
+def test_changed_selected_receipt_is_refused(helper, prerequisite_records, kind):
+    """A new digest cannot be inferred from changed admission bytes."""
+    selected, _, _ = prerequisite_records
+    with selected[kind + "_receipt"].open("a") as stream:
+        stream.write("\n")
+    with pytest.raises(ValueError, match="receipt identity changed"):
+        helper.prerequisites(**selected)
+
+
+@pytest.mark.parametrize("damage", ["foreign", "traversal", "linked_file", "linked_parent"])
+def test_selected_prerequisite_locators_refuse_escape_and_links(helper, prerequisite_records, damage):
+    """Receipt contents cannot turn an unsafe locator into owned native evidence."""
+    selected, _, _ = prerequisite_records
+    source = selected["phase3_receipt"]
+    if damage == "foreign":
+        target = helper.ROOT.parent / "old-W1" / source.name
+        target.parent.mkdir()
+        target.write_bytes(source.read_bytes())
+    elif damage == "traversal":
+        target = source.parent / "unused" / ".." / source.name
+    elif damage == "linked_file":
+        target = source.with_name("linked.json")
+        target.symlink_to(source)
+    else:
+        alias = source.parent / "linked-directory"
+        alias.symlink_to(source.parent, target_is_directory=True)
+        target = alias / source.name
+    selected["phase3_receipt"] = target
+    with pytest.raises(ValueError, match="owned prerequisite|traversal|links"):
+        helper.prerequisites(**selected)
+
+
+@pytest.mark.parametrize(
+    "missing", ["phase3_receipt", "phase3_sha256", "microbedecoder_receipt", "microbedecoder_sha256"]
+)
+def test_prerequisite_quartet_cannot_mix_explicit_and_historical_selection(helper, prerequisite_records, missing):
+    """Partial overrides cannot accidentally pair new evidence with old pinned receipts."""
+    selected, _, _ = prerequisite_records
+    selected.pop(missing)
+    with pytest.raises(ValueError, match="together"):
+        helper.prerequisites(**selected)
+
+
+def test_duplicate_prerequisite_keys_are_refused_even_with_matching_hash(helper, prerequisite_records):
+    """The receipt root cannot be shadowed by a second apparently owned value."""
+    selected, _, _ = prerequisite_records
+    path = selected["phase3_receipt"]
+    body = path.read_text()
+    path.write_text('{"root":"foreign",' + body[1:])
+    selected["phase3_sha256"] = helper.digest(path)
+    with pytest.raises(ValueError, match="Duplicate JSON"):
+        helper.prerequisites(**selected)
+
+
+@pytest.mark.parametrize("mode", ["canary", "launch-canary"])
+def test_prerequisite_options_cannot_change_fixed_canary_command(helper, prerequisite_records, monkeypatch, mode):
+    """The phase quartet is rejected before imports or credential loading in canary modes."""
+    selected, _, _ = prerequisite_records
+    monkeypatch.setattr(sys, "argv", _phase_arguments(helper, selected, mode))
+    monkeypatch.setattr(helper, "bindings", lambda: pytest.fail("canary bindings should not run"))
+    monkeypatch.setattr(helper, "load_authorized_keys", lambda path: pytest.fail("credentials should not load"))
+    with pytest.raises(ValueError, match="only to phase"):
+        helper.main()
+
+
+@pytest.mark.parametrize("mutation", [None, "receipt_during_cache", "config_during_cache", "receipt_during_key_load"])
+def test_phase_launch_preserves_selection_and_refuses_drift_before_spawn(
+    helper, prerequisite_records, monkeypatch, mutation
+):
+    """The fixed child receives exact public selectors, and guarded bytes survive setup."""
+    selected, _, _ = prerequisite_records
+    monkeypatch.setattr(helper, "bindings", lambda: {})
+    monkeypatch.setattr(helper, "validate_canary", lambda path: {"path": str(path), "sha256": "c" * 64})
+    observed = []
+    monkeypatch.setattr(sys, "argv", _phase_arguments(helper, selected))
+
+    def preserve(label):
+        """Simulate cache work and optional concurrent public-input drift without real caches."""
+        observed.append("cache")
+        if mutation in {"receipt_during_cache", "config_during_cache"}:
+            path = selected["phase3_receipt"] if mutation == "receipt_during_cache" else helper.ROOT / "merge.yaml"
+            with path.open("a") as stream:
+                stream.write("\n")
+
+    def keys(path):
+        """Supply synthetic process-only values without opening any credential locator."""
+        observed.append("keys")
+        if mutation == "receipt_during_key_load":
+            with selected["microbedecoder_receipt"].open("a") as stream:
+                stream.write("\n")
+        return {"LPSN_USERNAME": "synthetic-name", "LPSN_PASSWORD": "synthetic-password"}
+
+    def run(command, **kwargs):
+        """Intercept the launcher; never start a process or authenticate."""
+        observed.append("spawn")
+        assert command[:8] == [
+            str(helper.ROOT / ".venv/bin/python"),
+            "-B",
+            str(helper.LAUNCHER),
+            "launch",
+            "synthetic-phase",
+            "--",
+            "scripts/adhoc/kgm_lpsn_authenticated_20261106.py",
+            "phase",
+        ]
+        for key, value in selected.items():
+            assert command[command.index("--" + key.replace("_", "-")) + 1] == str(value)
+        assert "synthetic-name" not in command and "synthetic-password" not in command
+        assert kwargs["env"]["LPSN_USERNAME"] == "synthetic-name"
+        assert kwargs["env"]["LPSN_PASSWORD"] == "synthetic-password"  # noqa: S105 - synthetic offline fixture
+        assert kwargs["stdout"] == kwargs["stderr"] == helper.subprocess.DEVNULL
+        assert kwargs["cwd"] == helper.ROOT and kwargs["check"] is False
+        return SimpleNamespace(returncode=0)
+
+    monkeypatch.setattr(helper, "preserve_cache", preserve)
+    monkeypatch.setattr(helper, "load_authorized_keys", keys)
+    monkeypatch.setattr(helper.subprocess, "run", run)
+    if mutation is None:
+        assert helper.main() == 0
+        assert observed == ["cache", "keys", "spawn"]
+    else:
+        from kg_microbe.utils.source_finalization import SourceFinalizationRequired
+
+        with pytest.raises(SourceFinalizationRequired, match="changed"):
+            helper.main()
+        assert observed == (["cache", "keys"] if mutation == "receipt_during_key_load" else ["cache"])
+    assert all(key not in os.environ for key in helper.KEYS)
+    assert not (helper.CONTINUATION / "phase.json").exists()
+
+
+def test_phase_child_replays_selected_bytes_before_native_dispatch(helper, prerequisite_records, monkeypatch):
+    """A changed receipt after parent launch cannot reach the native producer in the child."""
+    import kg_microbe.transform as dispatcher
+
+    selected, _, _ = prerequisite_records
+    helper.prerequisites(**selected)
+    monkeypatch.setattr(helper, "bindings", lambda: {})
+    monkeypatch.setattr(helper, "validate_canary", lambda path: pytest.fail("changed prerequisite must fail first"))
+    monkeypatch.setattr(dispatcher, "transform", lambda **kwargs: pytest.fail("native producer must not run"))
+    with selected["phase3_receipt"].open("a") as stream:
+        stream.write("\n")
+    receipt = helper.CONTINUATION / "phase.json"
+    with pytest.raises(ValueError, match="receipt identity changed"):
+        helper.phase(receipt, helper.CONTINUATION / "canary.json", "synthetic-phase", prerequisite_inputs=selected)
+    assert not receipt.exists()
+
+
+def test_wrong_root_prerequisite_refuses_before_cache_credentials_or_launch(helper, prerequisite_records, monkeypatch):
+    """A copied old-checkout success remains inadmissible even with its actual digest."""
+    selected, _, _ = prerequisite_records
+    path = selected["phase3_receipt"]
+    body = json.loads(path.read_text())
+    body["root"] = str(helper.ROOT.parent / "old-W1")
+    path.write_text(json.dumps(body))
+    selected["phase3_sha256"] = helper.digest(path)
+    monkeypatch.setattr(sys, "argv", _phase_arguments(helper, selected))
+    monkeypatch.setattr(helper, "bindings", lambda: {})
+    monkeypatch.setattr(helper, "preserve_cache", lambda label: pytest.fail("cache preservation must not start"))
+    monkeypatch.setattr(helper, "load_authorized_keys", lambda path: pytest.fail("credential source must not open"))
+    monkeypatch.setattr(helper.subprocess, "run", lambda *args, **kwargs: pytest.fail("launcher must not start"))
+    with pytest.raises(ValueError, match="canonical source admissions"):
+        helper.main()
+
+
+def test_selected_phase_records_exact_prerequisites_with_fixed_native_scope(helper, prerequisite_records, monkeypatch):
+    """An intercepted native dispatch retains the selected receipt pair in its producer proof."""
+    import kg_microbe.transform as dispatcher
+
+    selected, plan, _ = prerequisite_records
+    monkeypatch.setattr(helper, "bindings", lambda: {})
+    monkeypatch.setattr(helper, "validate_canary", lambda path: {"path": str(path), "sha256": "c" * 64})
+    preserved = {"manifest": "synthetic-preservation.json", "sha256": "d" * 64, "preserved_files": 2}
+    monkeypatch.setattr(helper, "verify_preserved_cache", lambda *args: dict(preserved))
+    called = []
+
+    def dispatch(**kwargs):
+        """Emit only a tiny synthetic result, never invoke a producer or network service."""
+        called.append(kwargs)
+        directory = helper.ROOT / "data/transformed/lpsn_api"
+        directory.mkdir(parents=True)
+        (directory / "nodes.tsv").write_text("id\tcategory\nLPSN:1\tbiolink:OrganismTaxon\n")
+        (directory / "edges.tsv").write_text("subject\tpredicate\tobject\nLPSN:1\tbiolink:subclass_of\tNCBITaxon:1\n")
+        (directory / "source_finalization.json").write_text('{"synthetic_fixture_only":true}\n')
+
+    monkeypatch.setattr(dispatcher, "transform", dispatch)
+    receipt = helper.CONTINUATION / "phase.json"
+    assert (
+        helper.phase(receipt, helper.CONTINUATION / "canary.json", "synthetic-phase", prerequisite_inputs=selected) == 0
+    )
+    assert called == [
+        {
+            "input_dir": helper.ROOT / "data/raw",
+            "output_dir": helper.ROOT / "data/transformed",
+            "sources": ["lpsn_api"],
+            "show_status": False,
+        }
+    ]
+    proof = json.loads(receipt.read_text())
+    assert proof["prerequisites"] == {**{key: str(value) for key, value in selected.items()}, "plan": plan}
+    assert proof["full_source_admission_pending"] is True
+    assert proof["preserved_cache_before"] == proof["preserved_cache_after"] == preserved

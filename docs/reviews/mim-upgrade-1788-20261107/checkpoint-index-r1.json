@@ -1,0 +1,78 @@
+{
+  "entries": [
+    {
+      "bytes": 113001,
+      "copy": "source-review-chain-r1.json",
+      "evidence": "data/rebuild-evidence/mim-1788-20261107/source-review-chain-r1.json",
+      "sha256": "8f66fd35c2da10ec2e303c3c7920b332132d31962c12ce0f4db0cc76b6770b2d"
+    },
+    {
+      "bytes": 67645,
+      "copy": "official-product-independent-review-r1.json",
+      "evidence": "data/rebuild-evidence/mim-1788-20261107/official-product-independent-review-r1.json",
+      "sha256": "b6c036446c9b8d90066f69259718236419afdd9155428a6256692307d86cbcc2"
+    },
+    {
+      "bytes": 6103,
+      "copy": "form-evidence-review-r1.json",
+      "evidence": "data/rebuild-evidence/mim-1788-20261107/form-evidence-review-r1.json",
+      "sha256": "3198544f323564d71f7ff96421ed4b705a3bc51c8876ee424a8a01db57773bf2"
+    },
+    {
+      "bytes": 1220,
+      "copy": "native-export-reproduction-r1.json",
+      "evidence": "data/rebuild-evidence/mim-1788-20261107/native-export-reproduction-r1.json",
+      "sha256": "ce6bd5cef8e299eaf9522e7f5eac54356167dca05315b9a2e32424dd92d9dae2"
+    },
+    {
+      "bytes": 4157,
+      "copy": "native-export-reproduction-r2.json",
+      "evidence": "data/rebuild-evidence/mim-1788-20261107/native-export-reproduction-r2.json",
+      "sha256": "5dd0b50133c8a0acf43d2861b26de42db98b7c5668b41775b6a51e66564f602f"
+    },
+    {
+      "bytes": 1497,
+      "copy": "upstream-history-fetch-r1.json",
+      "evidence": "data/rebuild-evidence/mim-1788-20261107/upstream-history-fetch-r1.json",
+      "sha256": "713be117b5e233e52eff56c627bd0da57d4882ee901dc4731be16c163b1b3c73"
+    },
+    {
+      "bytes": 1072,
+      "copy": "official-export-acquisition-r1.json",
+      "evidence": "data/rebuild-evidence/mim-1788-20261107/official-export-acquisition-r1.json",
+      "sha256": "4fed8cf57acf472ebc3c66106c738e6a4e298ae0283722f9574b27862e9388b9"
+    },
+    {
+      "bytes": 1169,
+      "copy": "proposed-immutable-pin-r1.json",
+      "evidence": "data/rebuild-evidence/mim-1788-20261107/proposed-immutable-pin-r1.json",
+      "sha256": "8c66be0b68dcb773a908b17de56ff34b6270dc9eebf114e759552b07c3907cd5"
+    },
+    {
+      "bytes": 38098,
+      "copy": "staging-reuse-review-r1.json",
+      "evidence": "data/rebuild-evidence/mim-1788-20261107/staging-reuse-review-r1.json",
+      "sha256": "36fb8dfb2013f87200e9f448192fadab49357db65dd9588058a5ea0ebd29bba0"
+    },
+    {
+      "bytes": 14873,
+      "copy": "kgm-consumer-audit-r1.json",
+      "evidence": "data/rebuild-evidence/mim-1788-20261107/kgm-consumer-audit-r1/review.json",
+      "sha256": "8848017934b6e0c542515b145f26e8d5a7657693e1404ea9dc26bd79b2ef04c6"
+    },
+    {
+      "bytes": 22763,
+      "copy": "reader-repair-matrix.json",
+      "evidence": "data/rebuild-evidence/mim-1788-20261107/kgm-nonexact-consumer-audit-r1/reader-repair-matrix.json",
+      "sha256": "098077808097900cf620799130fed6305621312d8839987aea39202567704877"
+    },
+    {
+      "bytes": 14100,
+      "copy": "predicate-semantics-evidence.json",
+      "evidence": "data/rebuild-evidence/mim-1788-20261107/kgm-nonexact-consumer-audit-r1/predicate-semantics-evidence.json",
+      "sha256": "f3ff9da92d44b426151ec824d359976116b145a8f543bb85bd02efd5ec041f44"
+    }
+  ],
+  "recorded_at": "2026-11-07T09:52:56.166970+00:00",
+  "stage": "source and official-product review checkpoint; isolated KGM implementation and unified candidate pending"
+}

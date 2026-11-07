@@ -16,6 +16,7 @@ import json
 import os
 import re
 import sqlite3
+import tarfile
 import tempfile
 import unicodedata
 from collections import defaultdict
@@ -37,15 +38,22 @@ from kg_microbe.utils.ingredient_identity import (
     IDENTITY_POLICY,
     NAME_SCOPE_POLICY,
     accepted_name_scope,
+    ingredient_authority_label,
     ingredient_case_sensitive_name_scope,
     ingredient_mapping_allowed,
     ingredient_name_scopes,
     ingredient_name_target,
     ingredient_xref_allowed,
 )
+from kg_microbe.utils.sssom_identity_policy import classify_mapping_row
 from scripts import consolidate_chemical_mappings as consolidator
 from scripts.mapping_provenance import context_paths, reproducibility_context
-from scripts.mim_reviewed_release import validate_reviewed_bundle
+from scripts.mim_reviewed_release import row_sha256, validate_reviewed_bundle
+
+HOLD_POLICY = Path(__file__).resolve().parents[1] / "mappings/mim_downstream_holds.json"
+HOLD_POLICY_SHA256 = "ed136aca89d76107a456ddc11f3da49ce31bec8a474abdcab71c8cda9b6a9ddf"
+HOLD_FIXTURE = Path(__file__).resolve().parents[1] / "tests/resources/mediadive/p3556_scope.json"
+HOLD_REVIEW = Path(__file__).resolve().parents[1] / "docs/reviews/mediadive-p3556-scope-1241.md"
 
 INDEPENDENT_SOURCE_KINDS = frozenset(
     {
@@ -528,6 +536,153 @@ def _fresh_rows(curie, entity, fields, date):
         )
 
 
+def _downstream_hold_policy():
+    """Read the single byte-pinned local hold and bind its unchanged scientific evidence."""
+    if HOLD_POLICY.is_symlink() or _hash(HOLD_POLICY) != HOLD_POLICY_SHA256:
+        raise ValueError("Downstream hold policy identity changed")
+    policy = json.loads(HOLD_POLICY.read_text(encoding="utf-8"))
+    for path, binding_field in (
+        (IDENTITY_POLICY, "identity_policy_sha256"),
+        (HOLD_FIXTURE, "fixture_sha256"),
+        (HOLD_REVIEW, "review_document_sha256"),
+    ):
+        if path.is_symlink() or _hash(path) != policy[binding_field]:
+            raise ValueError(f"Downstream hold evidence identity changed: {binding_field}")
+    if row_sha256(policy["row"]) != policy["row_sha256"]:
+        raise ValueError("Downstream hold full-row identity differs")
+    return policy
+
+
+def _supported_partition(bundle, policy, pinned_provenance, upstream_provenance):
+    """Hold only the exact reviewed native claim; every unfamiliar identity conflict remains fatal."""
+    eligible, held = [], []
+    for ordinal, row in enumerate(bundle.supported_rows, 1):
+        if row["subject_id"] == policy["row"]["subject_id"] and row["predicate_id"] == "skos:exactMatch":
+            if row != policy["row"] or row_sha256(row) != policy["row_sha256"]:
+                raise ValueError("Known downstream-held native claim changed")
+            if held:
+                raise ValueError("Downstream-held native occurrence multiplicity changed")
+            decisions = [
+                item
+                for item in bundle.disposition_rows
+                if item["row_sha256"] == policy["row_sha256"] and item["disposition"] == "SUPPORTED"
+            ]
+            if decisions != [policy["decision"]]:
+                raise ValueError("Downstream-held source decision or owner changed")
+            for field in ("manifest_sha256", "source_sha256", "review_sha256"):
+                if getattr(bundle, field) != policy[field]:
+                    raise ValueError(f"Downstream-held source binding changed: {field}")
+            pin = (upstream_provenance or {}).get("pin", {})
+            if (
+                pin.get("source_commit") != policy["source_commit"]
+                or pin.get("source_archive", {}).get("sha256") != policy["source_archive_sha256"]
+            ):
+                raise ValueError("Downstream hold requires the exact pinned source archive")
+            archives = [
+                Path(path) for path, digest in pinned_provenance.items() if digest == policy["source_archive_sha256"]
+            ]
+            if len(archives) != 1 or _hash(archives[0]) != policy["source_archive_sha256"]:
+                raise ValueError("Downstream hold source archive is not an actual bound input")
+            owner_name = "MediaIngredientMech-" + policy["source_commit"] + "/" + policy["decision"]["owner_record"]
+            owner_hashes = []
+            with tarfile.open(archives[0], "r|gz") as archive:
+                for member in archive:
+                    if member.name != owner_name:
+                        continue
+                    if not member.isfile():
+                        raise ValueError("Downstream-held owner is not a unique regular source member")
+                    with archive.extractfile(member) as stream:
+                        digest = hashlib.sha256()
+                        for block in iter(lambda: stream.read(1024 * 1024), b""):
+                            digest.update(block)
+                        owner_hashes.append(digest.hexdigest())
+            if owner_hashes != [policy["owner_sha256"]]:
+                raise ValueError("Downstream-held source owner identity changed")
+            held.append(
+                {
+                    "supported_ordinal": ordinal,
+                    "row": dict(row),
+                    "row_sha256": row_sha256(row),
+                    "decision": dict(decisions[0]),
+                    "owner_sha256": owner_hashes[0],
+                    "source_archive": str(archives[0]),
+                    "source_archive_sha256": policy["source_archive_sha256"],
+                    "disposition": policy["disposition"],
+                    "reason": policy["reason"],
+                }
+            )
+        else:
+            if row["predicate_id"] == "skos:exactMatch" and (
+                not ingredient_context_pair_allowed(row["subject_id"], row["object_id"])
+                or not ingredient_mapping_allowed(row["subject_label"], row["object_id"])
+                or not ingredient_xref_allowed(row["subject_id"], row["object_id"])
+            ):
+                raise ValueError(f"Supported MIM assertion conflicts with current identity policy: {row['subject_id']}")
+            eligible.append(row)
+    return tuple(eligible), held
+
+
+def _held_native_witness(row, policy):
+    """Require the reviewed structured label in the exact current native molecular declaration."""
+    selected = {key: row.get(key, "") for key in policy["native"]}
+    label = ingredient_authority_label(row["id"])
+    if (
+        selected != policy["native"]
+        or label != policy["authority_label"]
+        or label not in [row["name"], *row["synonym"].split("|")]
+    ):
+        raise ValueError("Downstream-held target lacks its current structured native witness")
+    return {"row": selected, "row_sha256": row_sha256(selected), "authority_label": label}
+
+
+def _broader_projections(exact_rows, broader_rows, fields, source):
+    """Project each broader claim only through its explicitly supported exact form siblings."""
+    identities = defaultdict(list)
+    for row in exact_rows:
+        identities[row["subject_id"]].append(row)
+    projected = {}
+    for broad in broader_rows:
+        subject, parent = broad["subject_id"], broad["object_id"]
+        siblings = identities[subject]
+        if not siblings:
+            raise ValueError(f"Supported broader assertion lacks an exact form identity: {subject}")
+        broad_hash = row_sha256(broad)
+        for exact in siblings:
+            child = exact["object_id"]
+            if child == parent:
+                raise ValueError(f"Broader parent is also a supplied exact identity: {subject}")
+            if not ingredient_mapping_allowed(
+                broad["subject_label"], child
+            ) or not runtime.ingredient_hydration_compatible(broad["subject_label"], exact["subject_label"]):
+                raise ValueError(f"Broader source changes its supported exact form scope: {subject}")
+            item = projected.setdefault(
+                (broad_hash, child),
+                {
+                    "source_subject_id": subject,
+                    "broad_row_sha256": broad_hash,
+                    "exact_identity_row_sha256": set(),
+                    "row": dict(
+                        {field: broad.get(field, "") for field in fields},
+                        subject_id=child,
+                        object_formula="",
+                        object_category="",
+                    ),
+                },
+            )
+            item["exact_identity_row_sha256"].add(row_sha256(exact))
+    derivations = []
+    for key in sorted(projected):
+        item = projected[key]
+        hashes = sorted(item["exact_identity_row_sha256"])
+        item["exact_identity_row_sha256"] = hashes
+        item["row"]["source"] = "|".join(
+            f"{source}[broad-row-sha256={item['broad_row_sha256']};exact-row-sha256={digest}]" for digest in hashes
+        )
+        item["derived_row_sha256"] = row_sha256(item["row"])
+        derivations.append(item)
+    return derivations
+
+
 def build_conservative_candidate(
     *,
     baseline: Path,
@@ -572,10 +727,19 @@ def build_conservative_candidate(
             raise ValueError("Invalid pinned provenance input")
         pinned_provenance[str(path.resolve())] = digest
     bundle = validate_reviewed_bundle(release_directory, expected_manifest_sha256=expected_manifest_sha256)
+    if any(row.get("predicate_modifier", "").strip() for row in bundle.supported_rows):
+        raise ValueError("Supported MIM predicate modifiers cannot become positive assertions")
+    native_exact_rows = tuple(row for row in bundle.supported_rows if row["predicate_id"] == "skos:exactMatch")
+    broader_rows = tuple(row for row in bundle.supported_rows if row["predicate_id"] == "skos:broadMatch")
+    if len(native_exact_rows) + len(broader_rows) != len(bundle.supported_rows):
+        raise ValueError("Unsupported predicate in reviewed MIM reconstruction")
     repo_root = Path(__file__).resolve().parents[1]
     build_context = reproducibility_context(repo_root)
     code_paths = (
         Path(__file__).resolve(),
+        HOLD_POLICY,
+        HOLD_FIXTURE,
+        HOLD_REVIEW,
         Path(consolidator.__file__).resolve(),
         Path(runtime.__file__).resolve(),
         Path(__file__).with_name("mim_reviewed_release.py").resolve(),
@@ -586,6 +750,7 @@ def build_conservative_candidate(
         IDENTITY_POLICY.parent.parent / "kg_microbe/utils/ingredient_context.py",
         IDENTITY_POLICY.parent.parent / "kg_microbe/utils/ingredient_identity.py",
         IDENTITY_POLICY.parent.parent / "kg_microbe/utils/cas.py",
+        IDENTITY_POLICY.parent.parent / "kg_microbe/utils/sssom_identity_policy.py",
     )
     inputs = [
         baseline,
@@ -602,9 +767,17 @@ def build_conservative_candidate(
     verified_release_hashes = {"manifest.json": bundle.manifest_sha256, **bundle.manifest["files"]}
     if any(fingerprints[str(bundle.directory / name)] != value for name, value in verified_release_hashes.items()):
         raise ValueError("Reviewed release changed after validation")
+    hold_policy = _downstream_hold_policy()
+    eligible_rows, held_claims = _supported_partition(bundle, hold_policy, pinned_provenance, upstream_provenance)
+    exact_rows = tuple(row for row in eligible_rows if row["predicate_id"] == "skos:exactMatch")
+    held_targets = {item["row"]["object_id"] for item in held_claims}
+    held_native_witnesses = {}
     metadata, fields = _header(baseline)
     if not _REQUIRED_FIELDS.issubset(fields) or not isinstance(metadata.get("curie_map"), dict):
         raise ValueError("Baseline lacks unified SSSOM columns or curie_map")
+    mim_source = "mediaingredientmech_reviewed[manifest=" + bundle.manifest_sha256 + "]"
+    broader_derivations = _broader_projections(exact_rows, broader_rows, fields, mim_source)
+    current_broader_rows = {item["derived_row_sha256"] for item in broader_derivations}
     prefixes = dict(metadata["curie_map"])
     prefix_differences = {}
     for prefix, upstream_uri in bundle.supported_metadata["curie_map"].items():
@@ -615,6 +788,10 @@ def build_conservative_candidate(
     components, initial, baseline_entities = _Components(), set(), set()
     native_hydrate_names = {}
     for _, row in _native_rows(ontology_paths):
+        if row["id"] in held_targets:
+            if row["id"] in held_native_witnesses:
+                raise ValueError("Downstream-held target has repeated native declarations")
+            held_native_witnesses[row["id"]] = _held_native_witness(row, hold_policy)
         if "hydrate" in row["name"].casefold():
             native_hydrate_names[row["id"]] = tuple(row["synonym"].split("|"))
         # New annotations cannot demonstrate historical identity propagation.
@@ -624,11 +801,15 @@ def build_conservative_candidate(
             xref = xref.strip()  # Match _Evidence.add before testing identity scope.
             if evidence.allowed_xref(row["id"], xref):
                 components.join(row["id"], xref)
+    if set(held_native_witnesses) != held_targets:
+        raise ValueError("Downstream-held target lacks its current structured native witness")
     policy_pruned_targets = set()
     policy_metadata_targets = set()
     baseline_count = 0
+    baseline_asymmetric_count = 0
     for row in _rows(baseline):
         baseline_count += 1
+        baseline_asymmetric_count += row["predicate_id"] in {"skos:broadMatch", "skos:narrowMatch"}
         target, subject = row["object_id"], row["subject_id"]
         baseline_entities.add(target)
         components.root(target)
@@ -636,7 +817,10 @@ def build_conservative_candidate(
             policy_pruned_targets.add(target)
         if _historical_object_label_rejected(row):
             policy_metadata_targets.add(target)
-        if _mim_row(row):
+        # Exact current derived broader rows never copied parent identity or
+        # names. Recognize the whole row, including both source hashes, so a
+        # second cycle cannot expand reset scope across this nonidentity link.
+        if _mim_row(row) and row_sha256(row) not in current_broader_rows:
             initial.add(target)
         # Even an invalid historical registry link may have propagated copied
         # aliases. Trace it for quarantine scope only; never reassert the link.
@@ -646,7 +830,11 @@ def build_conservative_candidate(
     for curie, entity in evidence.records.items():
         for xref in entity.xrefs:
             components.join(curie, xref)
-    for row in bundle.supported_rows:
+    if broader_rows:
+        semantics = metadata.get("predicate_semantics", "")
+        if semantics not in {"", "skos"} or (baseline_asymmetric_count and semantics != "skos"):
+            raise ValueError("Cannot mix legacy or unknown asymmetric semantics with supported SKOS broader rows")
+    for row in exact_rows:
         curie = row["object_id"]
         if not consolidator.is_accepted_primary(curie):
             raise ValueError(f"Unsupported current MIM primary: {curie}")
@@ -664,19 +852,19 @@ def build_conservative_candidate(
         curie = row["id"]
         if curie in reconstruction_targets:
             native_found.add(curie)
-            if row["name"] and ingredient_mapping_allowed(row["name"], curie):
-                native_object_labels[curie] = {"label": row["name"], "source": f"native_ontology:{namespace}"}
+            native_label = held_native_witnesses.get(curie, {}).get("authority_label", row["name"])
+            if native_label and ingredient_mapping_allowed(native_label, curie):
+                native_object_labels[curie] = {"label": native_label, "source": f"native_ontology:{namespace}"}
             evidence.add(
                 curie,
-                row["name"],
+                native_label,
                 row["synonym"].split("|"),
                 row.get("same_as", "").split("|"),
                 f"native_ontology:{namespace}",
                 100,
                 category=row["category"],
             )
-    mim_source = "mediaingredientmech_reviewed[manifest=" + bundle.manifest_sha256 + "]"
-    for row in bundle.supported_rows:
+    for row in exact_rows:
         curie = row["object_id"]
         if (
             not ingredient_context_pair_allowed(row["subject_id"], curie)
@@ -697,10 +885,15 @@ def build_conservative_candidate(
             priority=110,
         )
         evidence.records[curie].xrefs[row["subject_id"]].add(mim_source)
+    for row in broader_rows:
+        if not consolidator.is_accepted_primary(row["object_id"]):
+            raise ValueError(f"Unsupported current MIM broader target: {row['object_id']}")
     date = str(bundle.supported_metadata.get("mapping_set_version") or "")
     if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", date):
         raise ValueError("Reviewed release requires an ISO mapping_set_version for deterministic new-row dates")
     candidate_metadata = dict(metadata)
+    if broader_rows:
+        candidate_metadata["predicate_semantics"] = "skos"
     candidate_metadata.update(
         curie_map=prefixes,
         mapping_set_description=f"Conservative MIM candidate; reviewed manifest sha256:{bundle.manifest_sha256}.",
@@ -729,6 +922,15 @@ def build_conservative_candidate(
         "identity_policy_quarantined_rows": 0,
         "identity_policy_relabelled_rows": 0,
         "ingredient_context_scoped_rows": 0,
+        "baseline_asymmetric_rows": baseline_asymmetric_count,
+        "native_supported_rows": len(bundle.supported_rows),
+        "native_withheld_rows": len(bundle.withheld_rows),
+        "eligible_supported_rows": len(eligible_rows),
+        "eligible_exact_rows": len(exact_rows),
+        "downstream_held_rows": len(held_claims),
+        "supported_exact_rows": len(native_exact_rows),
+        "supported_broader_rows": len(broader_rows),
+        "derived_broader_rows": len(broader_derivations),
     }
     output_directory.parent.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory(prefix=".mim-candidate-", dir=output_directory.parent) as temporary:
@@ -800,6 +1002,9 @@ def build_conservative_candidate(
                 for row in _fresh_rows(curie, evidence.records[curie], fields, date):
                     insert(row, handle)
                     stats["rebuilt_rows"] += 1
+            for derivation in broader_derivations:
+                insert(derivation["row"], handle)
+                stats["rebuilt_rows"] += 1
         database.commit()
         names, ranks, mim_xrefs, named_entities, declared_labels = {}, {}, {}, set(), {}
         with consolidator.open_deterministic_gzip(candidate) as handle:
@@ -809,6 +1014,9 @@ def build_conservative_candidate(
             ):
                 handle.write(line + "\n")
                 row = dict(zip(fields, line.split("\t"), strict=True))
+                route, _ = classify_mapping_row(row, candidate_metadata)
+                if route not in {"identity", "attribute", "canonical_name", "synonym"}:
+                    continue
                 if row["object_label"]:
                     named_entities.add(row["object_id"])
                     declared_labels.setdefault(row["object_id"], row["object_label"])
@@ -850,6 +1058,11 @@ def build_conservative_candidate(
                 raise ValueError(f"Input changed during conservative refresh: {path}")
         if reproducibility_context(repo_root) != build_context:
             raise ValueError("Code or environment changed during conservative refresh")
+        supported_targets = defaultdict(set)
+        supported_names = defaultdict(set)
+        for row in exact_rows:
+            supported_targets[row["subject_id"]].add(row["object_id"])
+            supported_names[(row["subject_id"], row["subject_label"])].add(row["object_id"])
         conflicts = [
             {
                 "name": row["subject_label"],
@@ -859,11 +1072,11 @@ def build_conservative_candidate(
                     row["subject_label"], names, named_entities, declared_labels, native_hydrate_names
                 ),
             }
-            for row in bundle.supported_rows
+            for row in exact_rows
             if _candidate_name_lookup(
                 row["subject_label"], names, named_entities, declared_labels, native_hydrate_names
             )
-            != row["object_id"]
+            not in supported_names[(row["subject_id"], row["subject_label"])]
         ]
         accepted_scopes = [
             dict(
@@ -889,14 +1102,31 @@ def build_conservative_candidate(
                 mim_xrefs.get(conflict["subject_id"]),
             )
         ]
-        supported_targets = defaultdict(set)
-        for row in bundle.supported_rows:
-            supported_targets[row["subject_id"]].add(row["object_id"])
         xref_conflicts = [
             {"subject_id": subject, "approved_targets": sorted(targets), "resolved": mim_xrefs.get(subject)}
             for subject, targets in sorted(supported_targets.items())
             if mim_xrefs.get(subject) not in targets
         ]
+        held_ledger = {
+            "schema_version": 1,
+            "policy_sha256": fingerprints[str(HOLD_POLICY)],
+            "manifest_sha256": bundle.manifest_sha256,
+            "source_sha256": bundle.source_sha256,
+            "review_sha256": bundle.review_sha256,
+            "native_supported_count": len(bundle.supported_rows),
+            "eligible_exact_count": len(exact_rows),
+            "eligible_broader_count": len(broader_rows),
+            "downstream_held_count": len(held_claims),
+            "claims": held_claims,
+            "native_witnesses": held_native_witnesses,
+        }
+        held_path = stage / "downstream-held.json"
+        held_text = json.dumps(held_ledger, sort_keys=True, indent=2) + "\n"
+        held_bytes = held_text.encode("utf-8")
+        held_path.write_text(held_text, encoding="utf-8")
+        if held_path.read_bytes() != held_bytes:
+            raise ValueError("Mandatory downstream-held ledger differs from reviewed claims")
+        held_digest = hashlib.sha256(held_bytes).hexdigest()
         report = {
             "schema_version": 1,
             "status": "CANDIDATE_REQUIRES_REVIEW",
@@ -908,6 +1138,7 @@ def build_conservative_candidate(
             "upstream_provenance": upstream_provenance,
             "candidate_sha256": _hash(candidate),
             "quarantine_sha256": _hash(quarantine),
+            "downstream_held_ledger": {"name": held_path.name, "sha256": held_digest, "rows": len(held_claims)},
             "counts": stats,
             "initial_affected_entities": sorted(initial),
             "affected_entities": sorted(affected),
@@ -925,15 +1156,23 @@ def build_conservative_candidate(
             "supported_name_lookup_conflicts": conflicts,
             "accepted_name_scope_distinctions": accepted_scopes,
             "supported_xref_lookup_conflicts": xref_conflicts,
+            "supported_broader_relation_derivations": broader_derivations,
             "supported_multitarget_subjects": {
                 subject: sorted(targets) for subject, targets in sorted(supported_targets.items()) if len(targets) > 1
             },
             "upstream_prefix_differences": prefix_differences,
             "independent_sources": [{"kind": source.kind, "path": str(source.path)} for source in independent_sources],
             "limitations": [
+                "Native SUPPORTED claims partition into eligible exact, eligible broader and reviewed downstream-held "
+                "claims; the separate complete-payload held ledger is not the publisher's WITHHOLD partition.",
+                "Held claims supply no identity, alias or broader licensing; independently witnessed native structured "
+                "names remain eligible. Unknown or changed downstream conflicts are fatal.",
                 "Historical quarantine covers entities and undirected exact-identity closure, including shared xrefs.",
                 "Absent historical provenance cannot be recovered; current direct evidence replaces affected claims.",
                 "No synonym propagation, roles, components, or scientific approval of withheld mappings is performed.",
+                "Supported broader claims project only through explicit same-subject exact identities; "
+                "each derived relation binds both input row hashes and contributes no identity or alias evidence.",
+                "derived_broader_rows is included in rebuilt_rows; supported_broader_rows counts original claims.",
                 (
                     "Source/review bytes were bound to the pinned source archive; scientific review is not repeated."
                     if upstream_provenance
@@ -953,6 +1192,8 @@ def build_conservative_candidate(
             ],
         }
         (stage / "report.json").write_text(json.dumps(report, sort_keys=True, indent=2) + "\n", encoding="utf-8")
+        if _hash(held_path) != held_digest:
+            raise ValueError("Mandatory downstream-held ledger changed before publication")
         if output_directory.exists():
             raise ValueError("Candidate output_directory appeared during generation")
         os.replace(stage, output_directory)

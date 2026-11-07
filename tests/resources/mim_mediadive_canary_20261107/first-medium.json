@@ -1,0 +1,128 @@
+{
+  "catalogue_medium": {
+    "complex_medium": 1,
+    "description": null,
+    "id": 1,
+    "link": "https://www.dsmz.de/microorganisms/medium/pdf/DSMZ_Medium1.pdf",
+    "max_pH": 7,
+    "min_pH": 7,
+    "name": "NUTRIENT AGAR",
+    "reference": null,
+    "source": "DSMZ"
+  },
+  "detail": {
+    "medium": {
+      "complex_medium": "yes",
+      "id": 1,
+      "link": "https://www.dsmz.de/microorganisms/medium/pdf/DSMZ_Medium1.pdf",
+      "max_pH": 7,
+      "min_pH": 7,
+      "name": "NUTRIENT AGAR",
+      "source": "DSMZ"
+    },
+    "solutions": [
+      {
+        "id": 1,
+        "name": "Main sol. 1",
+        "recipe": [
+          {
+            "amount": 5,
+            "compound": "Peptone",
+            "compound_id": 1,
+            "g_l": 5,
+            "optional": 0,
+            "recipe_order": 1,
+            "unit": "g"
+          },
+          {
+            "amount": 3,
+            "compound": "Meat extract",
+            "compound_id": 2,
+            "g_l": 3,
+            "optional": 0,
+            "recipe_order": 2,
+            "unit": "g"
+          },
+          {
+            "amount": 15,
+            "compound": "Agar",
+            "compound_id": 3,
+            "condition": "for solid medium",
+            "g_l": 15,
+            "optional": 0,
+            "recipe_order": 3,
+            "unit": "g"
+          },
+          {
+            "amount": 1000,
+            "compound": "Distilled water",
+            "compound_id": 4,
+            "optional": 0,
+            "recipe_order": 4,
+            "unit": "ml"
+          }
+        ],
+        "steps": [
+          {
+            "step": "Adjust pH to 7.0."
+          },
+          {
+            "step": "For Bacillus strains the addition of 10.0 mg MnSO4 x H2O is recommended for sporulation."
+          }
+        ],
+        "volume": 1000
+      }
+    ]
+  },
+  "solution": {
+    "id": 1,
+    "name": "Main sol. 1",
+    "recipe": [
+      {
+        "amount": 5,
+        "compound": "Peptone",
+        "compound_id": 1,
+        "g_l": 5,
+        "optional": 0,
+        "recipe_order": 1,
+        "unit": "g"
+      },
+      {
+        "amount": 3,
+        "compound": "Meat extract",
+        "compound_id": 2,
+        "g_l": 3,
+        "optional": 0,
+        "recipe_order": 2,
+        "unit": "g"
+      },
+      {
+        "amount": 15,
+        "compound": "Agar",
+        "compound_id": 3,
+        "condition": "for solid medium",
+        "g_l": 15,
+        "optional": 0,
+        "recipe_order": 3,
+        "unit": "g"
+      },
+      {
+        "amount": 1000,
+        "compound": "Distilled water",
+        "compound_id": 4,
+        "optional": 0,
+        "recipe_order": 4,
+        "unit": "ml"
+      }
+    ],
+    "steps": [
+      {
+        "step": "Adjust pH to 7.0."
+      },
+      {
+        "step": "For Bacillus strains the addition of 10.0 mg MnSO4 x H2O is recommended for sporulation."
+      }
+    ],
+    "volume": 1000
+  }
+}

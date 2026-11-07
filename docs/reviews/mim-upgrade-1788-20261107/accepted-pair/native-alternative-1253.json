@@ -1,0 +1,1194 @@
+{
+  "baseline_sha256": "59464e08017cc907a1240a4378d2462efc9e2c1b9d6c3cf0b08b4344ef695ae8",
+  "candidate_sha256": "f1314a41ede9b143c595399ada5178e52306364e69b467810cf71e7cdc4be23d",
+  "classification": "Already addressed #1253 acceptance-helper alternative; no duplicate issue or runtime fix",
+  "complete_19_baseline_rows": [
+    {
+      "comment": "",
+      "confidence": "",
+      "mapping_date": "2026-09-04",
+      "mapping_justification": "semapv:UnspecifiedMatching",
+      "object_category": "biolink:ChemicalEntity",
+      "object_formula": "",
+      "object_id": "CHEBI:16110",
+      "object_label": "1,2-diacyl-sn-glycero-3-phosphocholine(1+)",
+      "object_source": "obo:chebi.owl",
+      "predicate_id": "skos:exactMatch",
+      "source": "chebi_xrefs|primary_mappings[kegg_compound]",
+      "subject_id": "cas:8002-43-5",
+      "subject_label": ""
+    },
+    {
+      "comment": "",
+      "confidence": "",
+      "mapping_date": "2026-09-04",
+      "mapping_justification": "semapv:UnspecifiedMatching",
+      "object_category": "biolink:ChemicalEntity",
+      "object_formula": "",
+      "object_id": "CHEBI:16110",
+      "object_label": "1,2-diacyl-sn-glycero-3-phosphocholine(1+)",
+      "object_source": "obo:chebi.owl",
+      "predicate_id": "skos:exactMatch",
+      "source": "chebi_xrefs|primary_mappings[kegg_compound]",
+      "subject_id": "kegg.compound:C00157",
+      "subject_label": ""
+    },
+    {
+      "comment": "",
+      "confidence": "",
+      "mapping_date": "2026-09-04",
+      "mapping_justification": "semapv:UnspecifiedMatching",
+      "object_category": "biolink:ChemicalEntity",
+      "object_formula": "",
+      "object_id": "CHEBI:16110",
+      "object_label": "1,2-diacyl-sn-glycero-3-phosphocholine(1+)",
+      "object_source": "obo:chebi.owl",
+      "predicate_id": "skos:exactMatch",
+      "source": "chebi_xrefs|primary_mappings[kegg_compound]",
+      "subject_id": "kegg.compound:cpd:C00157",
+      "subject_label": ""
+    },
+    {
+      "comment": "synonym",
+      "confidence": "",
+      "mapping_date": "2026-09-04",
+      "mapping_justification": "semapv:LexicalMatching",
+      "object_category": "biolink:ChemicalEntity",
+      "object_formula": "",
+      "object_id": "CHEBI:16110",
+      "object_label": "1,2-diacyl-sn-glycero-3-phosphocholine(1+)",
+      "object_source": "obo:chebi.owl",
+      "predicate_id": "skos:closeMatch",
+      "source": "chebi_xrefs|primary_mappings[kegg_compound]",
+      "subject_id": "kgm.name:12-diacyl-sn-glycero-3-phosphocholine",
+      "subject_label": "1,2-Diacyl-sn-glycero-3-phosphocholine"
+    },
+    {
+      "comment": "canonical_name",
+      "confidence": "",
+      "mapping_date": "2026-09-04",
+      "mapping_justification": "semapv:LexicalMatching",
+      "object_category": "biolink:ChemicalEntity",
+      "object_formula": "",
+      "object_id": "CHEBI:16110",
+      "object_label": "1,2-diacyl-sn-glycero-3-phosphocholine(1+)",
+      "object_source": "obo:chebi.owl",
+      "predicate_id": "skos:exactMatch",
+      "source": "chebi_xrefs|primary_mappings[kegg_compound]",
+      "subject_id": "kgm.name:12-diacyl-sn-glycero-3-phosphocholine1",
+      "subject_label": "1,2-diacyl-sn-glycero-3-phosphocholine(1+)"
+    },
+    {
+      "comment": "synonym",
+      "confidence": "",
+      "mapping_date": "2026-09-04",
+      "mapping_justification": "semapv:LexicalMatching",
+      "object_category": "biolink:ChemicalEntity",
+      "object_formula": "",
+      "object_id": "CHEBI:16110",
+      "object_label": "1,2-diacyl-sn-glycero-3-phosphocholine(1+)",
+      "object_source": "obo:chebi.owl",
+      "predicate_id": "skos:closeMatch",
+      "source": "chebi_xrefs|primary_mappings[kegg_compound]",
+      "subject_id": "kgm.name:12-diacyl-sn-glycero-3-phosphocholines",
+      "subject_label": "1,2-diacyl-sn-glycero-3-phosphocholines"
+    },
+    {
+      "comment": "synonym",
+      "confidence": "",
+      "mapping_date": "2026-09-04",
+      "mapping_justification": "semapv:LexicalMatching",
+      "object_category": "biolink:ChemicalEntity",
+      "object_formula": "",
+      "object_id": "CHEBI:16110",
+      "object_label": "1,2-diacyl-sn-glycero-3-phosphocholine(1+)",
+      "object_source": "obo:chebi.owl",
+      "predicate_id": "skos:closeMatch",
+      "source": "chebi_xrefs|primary_mappings[kegg_compound]",
+      "subject_id": "kgm.name:3-sn-phosphatidylcholine",
+      "subject_label": "(3-sn-phosphatidyl)choline"
+    },
+    {
+      "comment": "synonym",
+      "confidence": "",
+      "mapping_date": "2026-09-04",
+      "mapping_justification": "semapv:LexicalMatching",
+      "object_category": "biolink:ChemicalEntity",
+      "object_formula": "",
+      "object_id": "CHEBI:16110",
+      "object_label": "1,2-diacyl-sn-glycero-3-phosphocholine(1+)",
+      "object_source": "obo:chebi.owl",
+      "predicate_id": "skos:closeMatch",
+      "source": "chebi_xrefs|primary_mappings[kegg_compound]",
+      "subject_id": "kgm.name:choline_phosphatide",
+      "subject_label": "Choline phosphatide"
+    },
+    {
+      "comment": "synonym",
+      "confidence": "",
+      "mapping_date": "2026-09-04",
+      "mapping_justification": "semapv:LexicalMatching",
+      "object_category": "biolink:ChemicalEntity",
+      "object_formula": "",
+      "object_id": "CHEBI:16110",
+      "object_label": "1,2-diacyl-sn-glycero-3-phosphocholine(1+)",
+      "object_source": "obo:chebi.owl",
+      "predicate_id": "skos:closeMatch",
+      "source": "chebi_xrefs|primary_mappings[kegg_compound]",
+      "subject_id": "kgm.name:l-alpha-phosphatidylcholine",
+      "subject_label": "L-alpha-phosphatidylcholine"
+    },
+    {
+      "comment": "synonym",
+      "confidence": "",
+      "mapping_date": "2026-09-04",
+      "mapping_justification": "semapv:LexicalMatching",
+      "object_category": "biolink:ChemicalEntity",
+      "object_formula": "",
+      "object_id": "CHEBI:16110",
+      "object_label": "1,2-diacyl-sn-glycero-3-phosphocholine(1+)",
+      "object_source": "obo:chebi.owl",
+      "predicate_id": "skos:closeMatch",
+      "source": "chebi_xrefs|primary_mappings[kegg_compound]",
+      "subject_id": "kgm.name:lecithin",
+      "subject_label": "Lecithin"
+    },
+    {
+      "comment": "synonym",
+      "confidence": "",
+      "mapping_date": "2026-09-04",
+      "mapping_justification": "semapv:LexicalMatching",
+      "object_category": "biolink:ChemicalEntity",
+      "object_formula": "",
+      "object_id": "CHEBI:16110",
+      "object_label": "1,2-diacyl-sn-glycero-3-phosphocholine(1+)",
+      "object_source": "obo:chebi.owl",
+      "predicate_id": "skos:closeMatch",
+      "source": "chebi_xrefs|primary_mappings[kegg_compound]",
+      "subject_id": "kgm.name:lecithins",
+      "subject_label": "lecithins"
+    },
+    {
+      "comment": "synonym",
+      "confidence": "",
+      "mapping_date": "2026-09-04",
+      "mapping_justification": "semapv:LexicalMatching",
+      "object_category": "biolink:ChemicalEntity",
+      "object_formula": "",
+      "object_id": "CHEBI:16110",
+      "object_label": "1,2-diacyl-sn-glycero-3-phosphocholine(1+)",
+      "object_source": "obo:chebi.owl",
+      "predicate_id": "skos:closeMatch",
+      "source": "chebi_xrefs|primary_mappings[kegg_compound]",
+      "subject_id": "kgm.name:pc",
+      "subject_label": "PC"
+    },
+    {
+      "comment": "synonym",
+      "confidence": "",
+      "mapping_date": "2026-09-04",
+      "mapping_justification": "semapv:LexicalMatching",
+      "object_category": "biolink:ChemicalEntity",
+      "object_formula": "",
+      "object_id": "CHEBI:16110",
+      "object_label": "1,2-diacyl-sn-glycero-3-phosphocholine(1+)",
+      "object_source": "obo:chebi.owl",
+      "predicate_id": "skos:closeMatch",
+      "source": "chebi_xrefs|primary_mappings[kegg_compound]",
+      "subject_id": "kgm.name:phosphatidyl-n-trimethylethanolamine",
+      "subject_label": "Phosphatidyl-N-trimethylethanolamine"
+    },
+    {
+      "comment": "synonym",
+      "confidence": "",
+      "mapping_date": "2026-09-04",
+      "mapping_justification": "semapv:LexicalMatching",
+      "object_category": "biolink:ChemicalEntity",
+      "object_formula": "",
+      "object_id": "CHEBI:16110",
+      "object_label": "1,2-diacyl-sn-glycero-3-phosphocholine(1+)",
+      "object_source": "obo:chebi.owl",
+      "predicate_id": "skos:closeMatch",
+      "source": "chebi_xrefs|primary_mappings[kegg_compound]",
+      "subject_id": "kgm.name:phosphatidylcholine",
+      "subject_label": "Phosphatidylcholine"
+    },
+    {
+      "comment": "",
+      "confidence": "",
+      "mapping_date": "2026-09-04",
+      "mapping_justification": "semapv:UnspecifiedMatching",
+      "object_category": "biolink:ChemicalEntity",
+      "object_formula": "",
+      "object_id": "CHEBI:16110",
+      "object_label": "1,2-diacyl-sn-glycero-3-phosphocholine(1+)",
+      "object_source": "obo:chebi.owl",
+      "predicate_id": "skos:exactMatch",
+      "source": "chebi_xrefs|primary_mappings[kegg_compound]",
+      "subject_id": "pdb-ccd:PC1",
+      "subject_label": ""
+    },
+    {
+      "comment": "",
+      "confidence": "",
+      "mapping_date": "2026-09-04",
+      "mapping_justification": "semapv:UnspecifiedMatching",
+      "object_category": "biolink:ChemicalEntity",
+      "object_formula": "",
+      "object_id": "CHEBI:196822",
+      "object_label": "PC(16:0/18:2(9E,12E))",
+      "object_source": "obo:chebi.owl",
+      "predicate_id": "skos:exactMatch",
+      "source": "chebi_xrefs",
+      "subject_id": "chemspider:17341551",
+      "subject_label": ""
+    },
+    {
+      "comment": "synonym",
+      "confidence": "",
+      "mapping_date": "2026-09-04",
+      "mapping_justification": "semapv:LexicalMatching",
+      "object_category": "biolink:ChemicalEntity",
+      "object_formula": "",
+      "object_id": "CHEBI:196822",
+      "object_label": "PC(16:0/18:2(9E,12E))",
+      "object_source": "obo:chebi.owl",
+      "predicate_id": "skos:closeMatch",
+      "source": "chebi_xrefs",
+      "subject_id": "kgm.name:2r-3-hexadecanoyloxy-2-9e12e-octadeca-912-dienoyloxypropyl_2-trimethylazaniumylethyl_phosphate",
+      "subject_label": "[(2R)-3-hexadecanoyloxy-2-[(9E,12E)-octadeca-9,12-dienoyl]oxypropyl] 2-(trimethylazaniumyl)ethyl phosphate"
+    },
+    {
+      "comment": "canonical_name",
+      "confidence": "",
+      "mapping_date": "2026-09-04",
+      "mapping_justification": "semapv:LexicalMatching",
+      "object_category": "biolink:ChemicalEntity",
+      "object_formula": "",
+      "object_id": "CHEBI:196822",
+      "object_label": "PC(16:0/18:2(9E,12E))",
+      "object_source": "obo:chebi.owl",
+      "predicate_id": "skos:exactMatch",
+      "source": "chebi_xrefs",
+      "subject_id": "kgm.name:pc1601829e12e",
+      "subject_label": "PC(16:0/18:2(9E,12E))"
+    },
+    {
+      "comment": "",
+      "confidence": "",
+      "mapping_date": "2026-09-04",
+      "mapping_justification": "semapv:UnspecifiedMatching",
+      "object_category": "biolink:ChemicalEntity",
+      "object_formula": "",
+      "object_id": "CHEBI:196822",
+      "object_label": "PC(16:0/18:2(9E,12E))",
+      "object_source": "obo:chebi.owl",
+      "predicate_id": "skos:exactMatch",
+      "source": "chebi_xrefs",
+      "subject_id": "lipidmaps:LMGP01010592",
+      "subject_label": ""
+    }
+  ],
+  "complete_19_candidate_rows": [
+    {
+      "comment": "",
+      "confidence": "",
+      "mapping_date": "2026-09-04",
+      "mapping_justification": "semapv:UnspecifiedMatching",
+      "object_category": "biolink:ChemicalEntity",
+      "object_formula": "",
+      "object_id": "CHEBI:16110",
+      "object_label": "1,2-diacyl-sn-glycero-3-phosphocholine(1+)",
+      "object_source": "obo:chebi.owl",
+      "predicate_id": "skos:exactMatch",
+      "source": "chebi_xrefs|primary_mappings[kegg_compound]",
+      "subject_id": "cas:8002-43-5",
+      "subject_label": ""
+    },
+    {
+      "comment": "",
+      "confidence": "",
+      "mapping_date": "2026-09-04",
+      "mapping_justification": "semapv:UnspecifiedMatching",
+      "object_category": "biolink:ChemicalEntity",
+      "object_formula": "",
+      "object_id": "CHEBI:16110",
+      "object_label": "1,2-diacyl-sn-glycero-3-phosphocholine(1+)",
+      "object_source": "obo:chebi.owl",
+      "predicate_id": "skos:exactMatch",
+      "source": "chebi_xrefs|primary_mappings[kegg_compound]",
+      "subject_id": "kegg.compound:C00157",
+      "subject_label": ""
+    },
+    {
+      "comment": "",
+      "confidence": "",
+      "mapping_date": "2026-09-04",
+      "mapping_justification": "semapv:UnspecifiedMatching",
+      "object_category": "biolink:ChemicalEntity",
+      "object_formula": "",
+      "object_id": "CHEBI:16110",
+      "object_label": "1,2-diacyl-sn-glycero-3-phosphocholine(1+)",
+      "object_source": "obo:chebi.owl",
+      "predicate_id": "skos:exactMatch",
+      "source": "chebi_xrefs|primary_mappings[kegg_compound]",
+      "subject_id": "kegg.compound:cpd:C00157",
+      "subject_label": ""
+    },
+    {
+      "comment": "synonym",
+      "confidence": "",
+      "mapping_date": "2026-09-04",
+      "mapping_justification": "semapv:LexicalMatching",
+      "object_category": "biolink:ChemicalEntity",
+      "object_formula": "",
+      "object_id": "CHEBI:16110",
+      "object_label": "1,2-diacyl-sn-glycero-3-phosphocholine(1+)",
+      "object_source": "obo:chebi.owl",
+      "predicate_id": "skos:closeMatch",
+      "source": "chebi_xrefs|primary_mappings[kegg_compound]",
+      "subject_id": "kgm.name:12-diacyl-sn-glycero-3-phosphocholine",
+      "subject_label": "1,2-Diacyl-sn-glycero-3-phosphocholine"
+    },
+    {
+      "comment": "canonical_name",
+      "confidence": "",
+      "mapping_date": "2026-09-04",
+      "mapping_justification": "semapv:LexicalMatching",
+      "object_category": "biolink:ChemicalEntity",
+      "object_formula": "",
+      "object_id": "CHEBI:16110",
+      "object_label": "1,2-diacyl-sn-glycero-3-phosphocholine(1+)",
+      "object_source": "obo:chebi.owl",
+      "predicate_id": "skos:exactMatch",
+      "source": "chebi_xrefs|primary_mappings[kegg_compound]",
+      "subject_id": "kgm.name:12-diacyl-sn-glycero-3-phosphocholine1",
+      "subject_label": "1,2-diacyl-sn-glycero-3-phosphocholine(1+)"
+    },
+    {
+      "comment": "synonym",
+      "confidence": "",
+      "mapping_date": "2026-09-04",
+      "mapping_justification": "semapv:LexicalMatching",
+      "object_category": "biolink:ChemicalEntity",
+      "object_formula": "",
+      "object_id": "CHEBI:16110",
+      "object_label": "1,2-diacyl-sn-glycero-3-phosphocholine(1+)",
+      "object_source": "obo:chebi.owl",
+      "predicate_id": "skos:closeMatch",
+      "source": "chebi_xrefs|primary_mappings[kegg_compound]",
+      "subject_id": "kgm.name:12-diacyl-sn-glycero-3-phosphocholines",
+      "subject_label": "1,2-diacyl-sn-glycero-3-phosphocholines"
+    },
+    {
+      "comment": "synonym",
+      "confidence": "",
+      "mapping_date": "2026-09-04",
+      "mapping_justification": "semapv:LexicalMatching",
+      "object_category": "biolink:ChemicalEntity",
+      "object_formula": "",
+      "object_id": "CHEBI:16110",
+      "object_label": "1,2-diacyl-sn-glycero-3-phosphocholine(1+)",
+      "object_source": "obo:chebi.owl",
+      "predicate_id": "skos:closeMatch",
+      "source": "chebi_xrefs|primary_mappings[kegg_compound]",
+      "subject_id": "kgm.name:3-sn-phosphatidylcholine",
+      "subject_label": "(3-sn-phosphatidyl)choline"
+    },
+    {
+      "comment": "synonym",
+      "confidence": "",
+      "mapping_date": "2026-09-04",
+      "mapping_justification": "semapv:LexicalMatching",
+      "object_category": "biolink:ChemicalEntity",
+      "object_formula": "",
+      "object_id": "CHEBI:16110",
+      "object_label": "1,2-diacyl-sn-glycero-3-phosphocholine(1+)",
+      "object_source": "obo:chebi.owl",
+      "predicate_id": "skos:closeMatch",
+      "source": "chebi_xrefs|primary_mappings[kegg_compound]",
+      "subject_id": "kgm.name:choline_phosphatide",
+      "subject_label": "Choline phosphatide"
+    },
+    {
+      "comment": "synonym",
+      "confidence": "",
+      "mapping_date": "2026-09-04",
+      "mapping_justification": "semapv:LexicalMatching",
+      "object_category": "biolink:ChemicalEntity",
+      "object_formula": "",
+      "object_id": "CHEBI:16110",
+      "object_label": "1,2-diacyl-sn-glycero-3-phosphocholine(1+)",
+      "object_source": "obo:chebi.owl",
+      "predicate_id": "skos:closeMatch",
+      "source": "chebi_xrefs|primary_mappings[kegg_compound]",
+      "subject_id": "kgm.name:l-alpha-phosphatidylcholine",
+      "subject_label": "L-alpha-phosphatidylcholine"
+    },
+    {
+      "comment": "synonym",
+      "confidence": "",
+      "mapping_date": "2026-09-04",
+      "mapping_justification": "semapv:LexicalMatching",
+      "object_category": "biolink:ChemicalEntity",
+      "object_formula": "",
+      "object_id": "CHEBI:16110",
+      "object_label": "1,2-diacyl-sn-glycero-3-phosphocholine(1+)",
+      "object_source": "obo:chebi.owl",
+      "predicate_id": "skos:closeMatch",
+      "source": "chebi_xrefs|primary_mappings[kegg_compound]",
+      "subject_id": "kgm.name:lecithin",
+      "subject_label": "Lecithin"
+    },
+    {
+      "comment": "synonym",
+      "confidence": "",
+      "mapping_date": "2026-09-04",
+      "mapping_justification": "semapv:LexicalMatching",
+      "object_category": "biolink:ChemicalEntity",
+      "object_formula": "",
+      "object_id": "CHEBI:16110",
+      "object_label": "1,2-diacyl-sn-glycero-3-phosphocholine(1+)",
+      "object_source": "obo:chebi.owl",
+      "predicate_id": "skos:closeMatch",
+      "source": "chebi_xrefs|primary_mappings[kegg_compound]",
+      "subject_id": "kgm.name:lecithins",
+      "subject_label": "lecithins"
+    },
+    {
+      "comment": "synonym",
+      "confidence": "",
+      "mapping_date": "2026-09-04",
+      "mapping_justification": "semapv:LexicalMatching",
+      "object_category": "biolink:ChemicalEntity",
+      "object_formula": "",
+      "object_id": "CHEBI:16110",
+      "object_label": "1,2-diacyl-sn-glycero-3-phosphocholine(1+)",
+      "object_source": "obo:chebi.owl",
+      "predicate_id": "skos:closeMatch",
+      "source": "chebi_xrefs|primary_mappings[kegg_compound]",
+      "subject_id": "kgm.name:pc",
+      "subject_label": "PC"
+    },
+    {
+      "comment": "synonym",
+      "confidence": "",
+      "mapping_date": "2026-09-04",
+      "mapping_justification": "semapv:LexicalMatching",
+      "object_category": "biolink:ChemicalEntity",
+      "object_formula": "",
+      "object_id": "CHEBI:16110",
+      "object_label": "1,2-diacyl-sn-glycero-3-phosphocholine(1+)",
+      "object_source": "obo:chebi.owl",
+      "predicate_id": "skos:closeMatch",
+      "source": "chebi_xrefs|primary_mappings[kegg_compound]",
+      "subject_id": "kgm.name:phosphatidyl-n-trimethylethanolamine",
+      "subject_label": "Phosphatidyl-N-trimethylethanolamine"
+    },
+    {
+      "comment": "synonym",
+      "confidence": "",
+      "mapping_date": "2026-09-04",
+      "mapping_justification": "semapv:LexicalMatching",
+      "object_category": "biolink:ChemicalEntity",
+      "object_formula": "",
+      "object_id": "CHEBI:16110",
+      "object_label": "1,2-diacyl-sn-glycero-3-phosphocholine(1+)",
+      "object_source": "obo:chebi.owl",
+      "predicate_id": "skos:closeMatch",
+      "source": "chebi_xrefs|primary_mappings[kegg_compound]",
+      "subject_id": "kgm.name:phosphatidylcholine",
+      "subject_label": "Phosphatidylcholine"
+    },
+    {
+      "comment": "",
+      "confidence": "",
+      "mapping_date": "2026-09-04",
+      "mapping_justification": "semapv:UnspecifiedMatching",
+      "object_category": "biolink:ChemicalEntity",
+      "object_formula": "",
+      "object_id": "CHEBI:16110",
+      "object_label": "1,2-diacyl-sn-glycero-3-phosphocholine(1+)",
+      "object_source": "obo:chebi.owl",
+      "predicate_id": "skos:exactMatch",
+      "source": "chebi_xrefs|primary_mappings[kegg_compound]",
+      "subject_id": "pdb-ccd:PC1",
+      "subject_label": ""
+    },
+    {
+      "comment": "",
+      "confidence": "",
+      "mapping_date": "2026-09-04",
+      "mapping_justification": "semapv:UnspecifiedMatching",
+      "object_category": "biolink:ChemicalEntity",
+      "object_formula": "",
+      "object_id": "CHEBI:196822",
+      "object_label": "PC(16:0/18:2(9E,12E))",
+      "object_source": "obo:chebi.owl",
+      "predicate_id": "skos:exactMatch",
+      "source": "chebi_xrefs",
+      "subject_id": "chemspider:17341551",
+      "subject_label": ""
+    },
+    {
+      "comment": "synonym",
+      "confidence": "",
+      "mapping_date": "2026-09-04",
+      "mapping_justification": "semapv:LexicalMatching",
+      "object_category": "biolink:ChemicalEntity",
+      "object_formula": "",
+      "object_id": "CHEBI:196822",
+      "object_label": "PC(16:0/18:2(9E,12E))",
+      "object_source": "obo:chebi.owl",
+      "predicate_id": "skos:closeMatch",
+      "source": "chebi_xrefs",
+      "subject_id": "kgm.name:2r-3-hexadecanoyloxy-2-9e12e-octadeca-912-dienoyloxypropyl_2-trimethylazaniumylethyl_phosphate",
+      "subject_label": "[(2R)-3-hexadecanoyloxy-2-[(9E,12E)-octadeca-9,12-dienoyl]oxypropyl] 2-(trimethylazaniumyl)ethyl phosphate"
+    },
+    {
+      "comment": "canonical_name",
+      "confidence": "",
+      "mapping_date": "2026-09-04",
+      "mapping_justification": "semapv:LexicalMatching",
+      "object_category": "biolink:ChemicalEntity",
+      "object_formula": "",
+      "object_id": "CHEBI:196822",
+      "object_label": "PC(16:0/18:2(9E,12E))",
+      "object_source": "obo:chebi.owl",
+      "predicate_id": "skos:exactMatch",
+      "source": "chebi_xrefs",
+      "subject_id": "kgm.name:pc1601829e12e",
+      "subject_label": "PC(16:0/18:2(9E,12E))"
+    },
+    {
+      "comment": "",
+      "confidence": "",
+      "mapping_date": "2026-09-04",
+      "mapping_justification": "semapv:UnspecifiedMatching",
+      "object_category": "biolink:ChemicalEntity",
+      "object_formula": "",
+      "object_id": "CHEBI:196822",
+      "object_label": "PC(16:0/18:2(9E,12E))",
+      "object_source": "obo:chebi.owl",
+      "predicate_id": "skos:exactMatch",
+      "source": "chebi_xrefs",
+      "subject_id": "lipidmaps:LMGP01010592",
+      "subject_label": ""
+    }
+  ],
+  "current_raw_source": {
+    "complete_incident_edges": [
+      {
+        "obj": "http://purl.obolibrary.org/obo/CHEBI_16110",
+        "pred": "is_a",
+        "sub": "http://purl.obolibrary.org/obo/CHEBI_15726"
+      },
+      {
+        "obj": "http://purl.obolibrary.org/obo/CHEBI_49183",
+        "pred": "is_a",
+        "sub": "http://purl.obolibrary.org/obo/CHEBI_16110"
+      },
+      {
+        "obj": "http://purl.obolibrary.org/obo/CHEBI_23888",
+        "pred": "http://purl.obolibrary.org/obo/RO_0000087",
+        "sub": "http://purl.obolibrary.org/obo/CHEBI_16110"
+      },
+      {
+        "obj": "http://purl.obolibrary.org/obo/CHEBI_77746",
+        "pred": "http://purl.obolibrary.org/obo/RO_0000087",
+        "sub": "http://purl.obolibrary.org/obo/CHEBI_16110"
+      },
+      {
+        "obj": "http://purl.obolibrary.org/obo/CHEBI_57643",
+        "pred": "http://purl.obolibrary.org/obo/RO_0018034",
+        "sub": "http://purl.obolibrary.org/obo/CHEBI_16110"
+      },
+      {
+        "obj": "http://purl.obolibrary.org/obo/CHEBI_16110",
+        "pred": "is_a",
+        "sub": "http://purl.obolibrary.org/obo/CHEBI_16999"
+      },
+      {
+        "obj": "http://purl.obolibrary.org/obo/CHEBI_16110",
+        "pred": "is_a",
+        "sub": "http://purl.obolibrary.org/obo/CHEBI_17848"
+      },
+      {
+        "obj": "http://purl.obolibrary.org/obo/CHEBI_16110",
+        "pred": "is_a",
+        "sub": "http://purl.obolibrary.org/obo/CHEBI_18989"
+      },
+      {
+        "obj": "http://purl.obolibrary.org/obo/CHEBI_57643",
+        "pred": "is_a",
+        "sub": "http://purl.obolibrary.org/obo/CHEBI_196822"
+      },
+      {
+        "obj": "http://purl.obolibrary.org/obo/CHEBI_16110",
+        "pred": "is_a",
+        "sub": "http://purl.obolibrary.org/obo/CHEBI_25841"
+      },
+      {
+        "obj": "http://purl.obolibrary.org/obo/CHEBI_16110",
+        "pred": "is_a",
+        "sub": "http://purl.obolibrary.org/obo/CHEBI_27629"
+      },
+      {
+        "obj": "http://purl.obolibrary.org/obo/CHEBI_16110",
+        "pred": "is_a",
+        "sub": "http://purl.obolibrary.org/obo/CHEBI_28633"
+      },
+      {
+        "obj": "http://purl.obolibrary.org/obo/CHEBI_16110",
+        "pred": "is_a",
+        "sub": "http://purl.obolibrary.org/obo/CHEBI_34082"
+      },
+      {
+        "obj": "http://purl.obolibrary.org/obo/CHEBI_16110",
+        "pred": "is_a",
+        "sub": "http://purl.obolibrary.org/obo/CHEBI_40265"
+      },
+      {
+        "obj": "http://purl.obolibrary.org/obo/CHEBI_16110",
+        "pred": "is_a",
+        "sub": "http://purl.obolibrary.org/obo/CHEBI_44699"
+      },
+      {
+        "obj": "http://purl.obolibrary.org/obo/CHEBI_16110",
+        "pred": "is_a",
+        "sub": "http://purl.obolibrary.org/obo/CHEBI_52360"
+      },
+      {
+        "obj": "http://purl.obolibrary.org/obo/CHEBI_16110",
+        "pred": "http://purl.obolibrary.org/obo/RO_0018033",
+        "sub": "http://purl.obolibrary.org/obo/CHEBI_57643"
+      },
+      {
+        "obj": "http://purl.obolibrary.org/obo/CHEBI_16110",
+        "pred": "is_a",
+        "sub": "http://purl.obolibrary.org/obo/CHEBI_59416"
+      },
+      {
+        "obj": "http://purl.obolibrary.org/obo/CHEBI_16110",
+        "pred": "is_a",
+        "sub": "http://purl.obolibrary.org/obo/CHEBI_59423"
+      },
+      {
+        "obj": "http://purl.obolibrary.org/obo/CHEBI_16110",
+        "pred": "is_a",
+        "sub": "http://purl.obolibrary.org/obo/CHEBI_60273"
+      },
+      {
+        "obj": "http://purl.obolibrary.org/obo/CHEBI_16110",
+        "pred": "is_a",
+        "sub": "http://purl.obolibrary.org/obo/CHEBI_60274"
+      },
+      {
+        "obj": "http://purl.obolibrary.org/obo/CHEBI_16110",
+        "pred": "is_a",
+        "sub": "http://purl.obolibrary.org/obo/CHEBI_60319"
+      },
+      {
+        "obj": "http://purl.obolibrary.org/obo/CHEBI_16110",
+        "pred": "is_a",
+        "sub": "http://purl.obolibrary.org/obo/CHEBI_60320"
+      },
+      {
+        "obj": "http://purl.obolibrary.org/obo/CHEBI_16110",
+        "pred": "is_a",
+        "sub": "http://purl.obolibrary.org/obo/CHEBI_60474"
+      },
+      {
+        "obj": "http://purl.obolibrary.org/obo/CHEBI_16110",
+        "pred": "is_a",
+        "sub": "http://purl.obolibrary.org/obo/CHEBI_60653"
+      },
+      {
+        "obj": "http://purl.obolibrary.org/obo/CHEBI_16110",
+        "pred": "is_a",
+        "sub": "http://purl.obolibrary.org/obo/CHEBI_61043"
+      },
+      {
+        "obj": "http://purl.obolibrary.org/obo/CHEBI_57643",
+        "pred": "is_a",
+        "sub": "http://purl.obolibrary.org/obo/CHEBI_86658"
+      }
+    ],
+    "complete_selected_nodes": [
+      {
+        "id": "http://purl.obolibrary.org/obo/CHEBI_16110",
+        "lbl": "1,2-diacyl-sn-glycero-3-phosphocholine(1+)",
+        "meta": {
+          "basicPropertyValues": [
+            {
+              "pred": "http://www.geneontology.org/formats/oboInOwl#hasAlternativeId",
+              "val": "CHEBI:11148"
+            },
+            {
+              "pred": "http://www.geneontology.org/formats/oboInOwl#hasAlternativeId",
+              "val": "CHEBI:11753"
+            },
+            {
+              "pred": "http://www.geneontology.org/formats/oboInOwl#hasAlternativeId",
+              "val": "CHEBI:1681"
+            },
+            {
+              "pred": "http://www.geneontology.org/formats/oboInOwl#hasAlternativeId",
+              "val": "CHEBI:17046"
+            },
+            {
+              "pred": "http://www.geneontology.org/formats/oboInOwl#hasAlternativeId",
+              "val": "CHEBI:18878"
+            },
+            {
+              "pred": "http://www.geneontology.org/formats/oboInOwl#hasAlternativeId",
+              "val": "CHEBI:20200"
+            },
+            {
+              "pred": "http://www.geneontology.org/formats/oboInOwl#hasAlternativeId",
+              "val": "CHEBI:23660"
+            },
+            {
+              "pred": "http://www.geneontology.org/formats/oboInOwl#hasAlternativeId",
+              "val": "CHEBI:26029"
+            },
+            {
+              "pred": "http://www.geneontology.org/formats/oboInOwl#hasAlternativeId",
+              "val": "CHEBI:44694"
+            },
+            {
+              "pred": "http://www.geneontology.org/formats/oboInOwl#hasAlternativeId",
+              "val": "CHEBI:8128"
+            },
+            {
+              "pred": "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace",
+              "val": "chebi_ontology"
+            },
+            {
+              "pred": "https://w3id.org/chemrof/charge",
+              "val": "1"
+            },
+            {
+              "pred": "https://w3id.org/chemrof/generalized_empirical_formula",
+              "val": "C10H19NO8PR2"
+            },
+            {
+              "pred": "https://w3id.org/chemrof/mass",
+              "val": "312.234"
+            },
+            {
+              "pred": "https://w3id.org/chemrof/monoisotopic_mass",
+              "val": "312.08483"
+            },
+            {
+              "pred": "https://w3id.org/chemrof/smiles_string",
+              "val": "[1*]C(=O)OC[C@H](COP(=O)(O)OCC[N+](C)(C)C)OC([2*])=O"
+            }
+          ],
+          "definition": {
+            "val": "A phosphatidylcholine that is a glycerol phosphatide (phosphoglyceride, glycerophospholipid) in which the hydroxy group of choline is esterified with the phosphate group of phosphatidic acid."
+          },
+          "subsets": [
+            "http://purl.obolibrary.org/obo/chebi/3_STAR"
+          ],
+          "synonyms": [
+            {
+              "pred": "hasExactSynonym",
+              "val": "1,2-Diacyl-sn-glycero-3-phosphocholine",
+              "xrefs": [
+                "KEGG_COMPOUND"
+              ]
+            },
+            {
+              "pred": "hasExactSynonym",
+              "synonymType": "http://purl.obolibrary.org/obo/chebi/IUPAC_NAME",
+              "val": "1,2-diacyl-sn-glycero-3-phosphocholine",
+              "xrefs": [
+                "IUPAC"
+              ]
+            },
+            {
+              "pred": "hasRelatedSynonym",
+              "val": "(3-sn-phosphatidyl)choline",
+              "xrefs": [
+                "iubmb"
+              ]
+            },
+            {
+              "pred": "hasRelatedSynonym",
+              "val": "1,2-Diacyl-sn-glycero-3-phosphocholine",
+              "xrefs": [
+                "kegg.compound"
+              ]
+            },
+            {
+              "pred": "hasRelatedSynonym",
+              "synonymType": "http://purl.obolibrary.org/obo/chebi/IUPAC_NAME",
+              "val": "1,2-diacyl-sn-glycero-3-phosphocholine",
+              "xrefs": [
+                "iupac"
+              ]
+            },
+            {
+              "pred": "hasRelatedSynonym",
+              "val": "1,2-diacyl-sn-glycero-3-phosphocholines",
+              "xrefs": [
+                "chebi"
+              ]
+            },
+            {
+              "pred": "hasRelatedSynonym",
+              "val": "Choline phosphatide",
+              "xrefs": [
+                "kegg.compound"
+              ]
+            },
+            {
+              "pred": "hasRelatedSynonym",
+              "val": "L-alpha-phosphatidylcholine",
+              "xrefs": [
+                "chebi"
+              ]
+            },
+            {
+              "pred": "hasRelatedSynonym",
+              "val": "Lecithin",
+              "xrefs": [
+                "kegg.compound"
+              ]
+            },
+            {
+              "pred": "hasRelatedSynonym",
+              "val": "PC",
+              "xrefs": [
+                "chebi"
+              ]
+            },
+            {
+              "pred": "hasRelatedSynonym",
+              "val": "Phosphatidyl-N-trimethylethanolamine",
+              "xrefs": [
+                "kegg.compound"
+              ]
+            },
+            {
+              "pred": "hasRelatedSynonym",
+              "val": "Phosphatidylcholine",
+              "xrefs": [
+                "kegg.compound"
+              ]
+            },
+            {
+              "pred": "hasRelatedSynonym",
+              "val": "lecithins",
+              "xrefs": [
+                "chemidplus"
+              ]
+            }
+          ],
+          "xrefs": [
+            {
+              "meta": {
+                "basicPropertyValues": [
+                  {
+                    "pred": "http://www.geneontology.org/formats/oboInOwl#source",
+                    "val": "cas"
+                  }
+                ]
+              },
+              "val": "cas:8002-43-5"
+            },
+            {
+              "meta": {
+                "basicPropertyValues": [
+                  {
+                    "pred": "http://www.geneontology.org/formats/oboInOwl#source",
+                    "val": "kegg.compound"
+                  }
+                ]
+              },
+              "val": "kegg.compound:C00157"
+            },
+            {
+              "meta": {
+                "basicPropertyValues": [
+                  {
+                    "pred": "http://www.geneontology.org/formats/oboInOwl#source",
+                    "val": "pdb-ccd"
+                  }
+                ]
+              },
+              "val": "pdb-ccd:PC1"
+            },
+            {
+              "meta": {
+                "basicPropertyValues": [
+                  {
+                    "pred": "http://www.geneontology.org/formats/oboInOwl#source",
+                    "val": "pubmed"
+                  }
+                ]
+              },
+              "val": "pubmed:16341241"
+            },
+            {
+              "meta": {
+                "basicPropertyValues": [
+                  {
+                    "pred": "http://www.geneontology.org/formats/oboInOwl#source",
+                    "val": "pubmed"
+                  }
+                ]
+              },
+              "val": "pubmed:3196084"
+            },
+            {
+              "meta": {
+                "basicPropertyValues": [
+                  {
+                    "pred": "http://www.geneontology.org/formats/oboInOwl#source",
+                    "val": "pubmed"
+                  }
+                ]
+              },
+              "val": "pubmed:7192727"
+            }
+          ]
+        },
+        "type": "CLASS"
+      },
+      {
+        "id": "http://purl.obolibrary.org/obo/CHEBI_196822",
+        "lbl": "PC(16:0/18:2(9E,12E))",
+        "meta": {
+          "basicPropertyValues": [
+            {
+              "pred": "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace",
+              "val": "chebi_ontology"
+            },
+            {
+              "pred": "https://w3id.org/chemrof/charge",
+              "val": "0"
+            },
+            {
+              "pred": "https://w3id.org/chemrof/generalized_empirical_formula",
+              "val": "C42H80NO8P"
+            },
+            {
+              "pred": "https://w3id.org/chemrof/inchi_key_string",
+              "val": "JLPULHDHAOZNQI-JLOPVYAASA-N"
+            },
+            {
+              "pred": "https://w3id.org/chemrof/inchi_string",
+              "val": "InChI=1S/C42H80NO8P/c1-6-8-10-12-14-16-18-20-21-23-25-27-29-31-33-35-42(45)51-40(39-50-52(46,47)49-37-36-43(3,4)5)38-48-41(44)34-32-30-28-26-24-22-19-17-15-13-11-9-7-2/h14,16,20-21,40H,6-13,15,17-19,22-39H2,1-5H3/b16-14+,21-20+/t40-/m1/s1"
+            },
+            {
+              "pred": "https://w3id.org/chemrof/mass",
+              "val": "758.075"
+            },
+            {
+              "pred": "https://w3id.org/chemrof/monoisotopic_mass",
+              "val": "757.56216"
+            },
+            {
+              "pred": "https://w3id.org/chemrof/smiles_string",
+              "val": "CCCCC/C=C/C/C=C/CCCCCCCC(=O)O[C@H](COC(=O)CCCCCCCCCCCCCCC)COP(=O)([O-])OCC[N+](C)(C)C"
+            }
+          ],
+          "subsets": [
+            "http://purl.obolibrary.org/obo/chebi/2_STAR"
+          ],
+          "synonyms": [
+            {
+              "pred": "hasExactSynonym",
+              "synonymType": "http://purl.obolibrary.org/obo/chebi/IUPAC_NAME",
+              "val": "[(2R)-3-hexadecanoyloxy-2-[(9E,12E)-octadeca-9,12-dienoyl]oxypropyl] 2-(trimethylazaniumyl)ethyl phosphate",
+              "xrefs": [
+                "SUBMITTER"
+              ]
+            },
+            {
+              "pred": "hasRelatedSynonym",
+              "synonymType": "http://purl.obolibrary.org/obo/chebi/IUPAC_NAME",
+              "val": "[(2R)-3-hexadecanoyloxy-2-[(9E,12E)-octadeca-9,12-dienoyl]oxypropyl] 2-(trimethylazaniumyl)ethyl phosphate",
+              "xrefs": [
+                "submitter"
+              ]
+            }
+          ],
+          "xrefs": [
+            {
+              "meta": {
+                "basicPropertyValues": [
+                  {
+                    "pred": "http://www.geneontology.org/formats/oboInOwl#source",
+                    "val": "chemspider"
+                  }
+                ]
+              },
+              "val": "chemspider:17341551"
+            },
+            {
+              "meta": {
+                "basicPropertyValues": [
+                  {
+                    "pred": "http://www.geneontology.org/formats/oboInOwl#source",
+                    "val": "lipidmaps"
+                  }
+                ]
+              },
+              "val": "lipidmaps:LMGP01010592"
+            }
+          ]
+        },
+        "type": "CLASS"
+      },
+      {
+        "id": "http://purl.obolibrary.org/obo/CHEBI_86658",
+        "lbl": "L-alpha-Phosphatidylcholine",
+        "meta": {
+          "basicPropertyValues": [
+            {
+              "pred": "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace",
+              "val": "chebi_ontology"
+            },
+            {
+              "pred": "https://w3id.org/chemrof/charge",
+              "val": "0"
+            },
+            {
+              "pred": "https://w3id.org/chemrof/generalized_empirical_formula",
+              "val": "C42H80NO8P"
+            },
+            {
+              "pred": "https://w3id.org/chemrof/inchi_key_string",
+              "val": "JLPULHDHAOZNQI-JLOPVYAASA-N"
+            },
+            {
+              "pred": "https://w3id.org/chemrof/inchi_string",
+              "val": "InChI=1S/C42H80NO8P/c1-6-8-10-12-14-16-18-20-21-23-25-27-29-31-33-35-42(45)51-40(39-50-52(46,47)49-37-36-43(3,4)5)38-48-41(44)34-32-30-28-26-24-22-19-17-15-13-11-9-7-2/h14,16,20-21,40H,6-13,15,17-19,22-39H2,1-5H3/b16-14+,21-20+/t40-/m1/s1"
+            },
+            {
+              "pred": "https://w3id.org/chemrof/mass",
+              "val": "758.075"
+            },
+            {
+              "pred": "https://w3id.org/chemrof/monoisotopic_mass",
+              "val": "757.56216"
+            },
+            {
+              "pred": "https://w3id.org/chemrof/smiles_string",
+              "val": "CCCCC/C=C/C/C=C/CCCCCCCC(=O)O[C@H](COC(=O)CCCCCCCCCCCCCCC)COP(=O)([O-])OCC[N+](C)(C)C"
+            }
+          ],
+          "subsets": [
+            "http://purl.obolibrary.org/obo/chebi/1_STAR"
+          ],
+          "synonyms": [
+            {
+              "pred": "hasRelatedSynonym",
+              "val": "[(2R)-3-(1-oxohexadecoxy)-2-[(9E,12E)-1-oxooctadeca-9,12-dienoxy]propyl] 2-(trimethylammonio)ethyl phosphate",
+              "xrefs": [
+                "chebi"
+              ]
+            },
+            {
+              "pred": "hasRelatedSynonym",
+              "val": "[(2R)-3-hexadecanoyloxy-2-[(9E,12E)-octadeca-9,12-dienoyl]oxy-propyl] 2-(trimethylammonio)ethyl phosphate",
+              "xrefs": [
+                "chebi"
+              ]
+            },
+            {
+              "pred": "hasRelatedSynonym",
+              "val": "[(2R)-3-hexadecanoyloxy-2-[(9E,12E)-octadeca-9,12-dienoyl]oxy-propyl] 2-(trimethylazaniumyl)ethyl phosphate",
+              "xrefs": [
+                "chebi"
+              ]
+            },
+            {
+              "pred": "hasRelatedSynonym",
+              "val": "[(2R)-3-hexadecanoyloxy-2-[(9E,12E)-octadeca-9,12-dienoyl]oxypropyl] 2-(trimethylazaniumyl)ethyl phosphate",
+              "xrefs": [
+                "chebi"
+              ]
+            }
+          ]
+        },
+        "type": "CLASS"
+      }
+    ],
+    "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/data/raw/chebi.json",
+    "sha256": "31bf2d3483a4a497cc8addadb0881af6cdd24fcfd46365accf75096178286a71"
+  },
+  "distinct_generic_class": {
+    "https://w3id.org/chemrof/charge": "1",
+    "https://w3id.org/chemrof/generalized_empirical_formula": "C10H19NO8PR2",
+    "https://w3id.org/chemrof/inchi_key_string": null,
+    "https://w3id.org/chemrof/inchi_string": null,
+    "https://w3id.org/chemrof/smiles_string": "[1*]C(=O)OC[C@H](COP(=O)(O)OCC[N+](C)(C)C)OC([2*])=O"
+  },
+  "existing_issue": {
+    "body": "# Distinguish reviewed native molecular alternatives from product identity in candidate checks\n\nThe isolated #1241 candidate's real second-cycle export passed byte-for-byte,\nbut `consumer-review-02` failed its synonym assertion: the acceptance helper\nrequires all four explicit structural names to return CHEBI:86658. One exact\nspelling selects CHEBI:196822 from an earlier, unchanged native-xref row.\nPreserve this failed receipt; it is not completed consumer acceptance.\n\nIndependent extraction from pinned raw ChEBI\n`a5d40380ab78bde0e8b5a704dbee3cba2bcaa7608be46eebc2f4a92932516c9b`\nshows both IDs have identical full InChI, InChIKey, stereospecific SMILES,\nformula and charge 0. The extractor retained their complete declarations and\nincident assertions, not formula-only or lexical evidence. All 19 mapping rows\ntargeting CHEBI:196822 or CHEBI:16110 are unchanged from the baseline candidate.\n\nSeparately, generic L-alpha/L-alpha-symbol queries select CHEBI:16110 only with\nsynonyms enabled. This is an unchanged native related-synonym route to a +1\nwildcard-R class, not exact structural identity or supplier P3556 identity.\nThe explicit P3556 source guard must continue retaining the original local\ningredient. No runtime precedence change, global identifier merge, new same_as\nassertion, native synonym removal or new product grounding is authorized.\n\nFix the finite acceptance check: bind the retained native/full-row witnesses,\nallow CHEBI:196822 only for the exact reviewed structural spelling, distinguish\nthe two reviewed generic lexical-class outcomes, and require review for any\nnew alternative. Preserve canonical-label, native alias availability, removed\nMIM exact-xref, chloride, parent, Potato and unrelated positive controls.\nCheck actual final-candidate rows against the retained complete competing rows.\nTest altered structures/charges, other spellings/targets, missing evidence,\nchanged candidate rows/multiplicity, and canonical-mode misuse. Run replacement\nacceptance only in a new attempt after independent review; keep old helper and\nfailed receipts unchanged.\n\nEvidence: `identity-candidate-1241.7Zc6Ur/reader-diagnostic-1247.ZQSqrf/`\n`NATIVE-INTERPRETATION.md`; `native-alternative-authority.json` SHA-256\n`1cee9914ee50e7e2b7af2598df14339943130ad26684117562bb0c2dfb6491e8`.\nThis is an external acceptance-helper defect, not proof of a new chemical\nmapping regression. Final source replay and all-source KG acceptance remain pending.\n",
+    "closedAt": "2026-09-29T12:45:02Z",
+    "number": 1253,
+    "state": "CLOSED",
+    "title": "Bind candidate reader controls to reviewed native molecular alternatives",
+    "url": "https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1253"
+  },
+  "five_complete_structure_fields_identical": {
+    "https://w3id.org/chemrof/charge": "0",
+    "https://w3id.org/chemrof/generalized_empirical_formula": "C42H80NO8P",
+    "https://w3id.org/chemrof/inchi_key_string": "JLPULHDHAOZNQI-JLOPVYAASA-N",
+    "https://w3id.org/chemrof/inchi_string": "InChI=1S/C42H80NO8P/c1-6-8-10-12-14-16-18-20-21-23-25-27-29-31-33-35-42(45)51-40(39-50-52(46,47)49-37-36-43(3,4)5)38-48-41(44)34-32-30-28-26-24-22-19-17-15-13-11-9-7-2/h14,16,20-21,40H,6-13,15,17-19,22-39H2,1-5H3/b16-14+,21-20+/t40-/m1/s1",
+    "https://w3id.org/chemrof/smiles_string": "CCCCC/C=C/C/C=C/CCCCCCCC(=O)O[C@H](COC(=O)CCCCCCCCCCCCCCC)COP(=O)([O-])OCC[N+](C)(C)C"
+  },
+  "historical_raw_sha256_in_issue": "a5d40380ab78bde0e8b5a704dbee3cba2bcaa7608be46eebc2f4a92932516c9b",
+  "issue_file_sha256": "73fc94626198ff9510ae225dc4169b00de20596db87f22af00e10726cffdc79a",
+  "native_query_results": {
+    "L-alpha-Phosphatidylcholine": {
+      "baseline": {
+        "(False, False, False)": null,
+        "(True, False, False)": "CHEBI:16110",
+        "(True, True, True)": "CHEBI:16110"
+      },
+      "candidate": {
+        "(False, False, False)": null,
+        "(True, False, False)": "CHEBI:16110",
+        "(True, True, True)": "CHEBI:16110"
+      }
+    },
+    "L-\u03b1-Phosphatidylcholine": {
+      "baseline": {
+        "(False, False, False)": null,
+        "(True, False, False)": "CHEBI:16110",
+        "(True, True, True)": "CHEBI:16110"
+      },
+      "candidate": {
+        "(False, False, False)": null,
+        "(True, False, False)": "CHEBI:16110",
+        "(True, True, True)": "CHEBI:16110"
+      }
+    },
+    "[(2R)-3-hexadecanoyloxy-2-[(9E,12E)-octadeca-9,12-dienoyl]oxypropyl] 2-(trimethylazaniumyl)ethyl phosphate": {
+      "baseline": {
+        "(False, False, False)": null,
+        "(True, False, False)": "CHEBI:196822",
+        "(True, True, True)": "CHEBI:196822"
+      },
+      "candidate": {
+        "(False, False, False)": null,
+        "(True, False, False)": "CHEBI:196822",
+        "(True, True, True)": "CHEBI:196822"
+      }
+    }
+  },
+  "no_new_identity_merge_or_supplier_grounding": true,
+  "same_historical_serialization": false,
+  "status": "pass",
+  "superseded_draft": {
+    "disposition": "Do not file; deduplicated to closed #1253 after root provided the existing source review.",
+    "path": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/data/rebuild-evidence/mim-1788-20261107/candidate-r2-scientific-review-r1/finding-p3556-existing-native-synonym-ambiguity.md",
+    "sha256": "6a47ecdda61412bb833226046bbe3b4ff3bbcbca06756925857de0389c9f86cc"
+  }
+}

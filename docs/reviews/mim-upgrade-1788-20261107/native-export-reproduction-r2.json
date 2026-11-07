@@ -1,0 +1,102 @@
+{
+  "git_provenance_store": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/data/rebuild-evidence/mim-1788-20261107/upstream-provenance.git",
+  "history_receipt_sha256": "713be117b5e233e52eff56c627bd0da57d4882ee901dc4731be16c163b1b3c73",
+  "lock_sha256": "f5ce4325376797ada321c0ffba1e6050355e3185c0a079d2c731d17480aeca1a",
+  "origin": {
+    "module": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/data/rebuild-evidence/mim-1788-20261107/source/0dac278466699129a083343a921c2e0ca18a9ab4/src/mediaingredientmech/export/reviewed_sssom.py",
+    "python": "3.13.2 (main, Mar 17 2025, 21:26:38) [Clang 20.1.0 ]"
+  },
+  "products": {
+    "ingredient_mappings.sssom.tsv": {
+      "bytes": 831693,
+      "equals_official_artifact": true,
+      "sha256": "7e68fea7fd788928f29c7671156198af101baaa3b3051f19bab78a5479d2a940"
+    },
+    "manifest.json": {
+      "bytes": 993,
+      "equals_official_artifact": true,
+      "sha256": "b02a92446e8a613fd0d96b0dd8147d439733fcf73e731b363a6388e95d616703"
+    },
+    "mapping-dispositions.tsv": {
+      "bytes": 1814722,
+      "equals_official_artifact": true,
+      "sha256": "2a075c9c4a699c9d22a5e8b736bc6d7c00c344f19363f28178c0b50b6b590a19"
+    },
+    "withheld_mappings.sssom.tsv": {
+      "bytes": 845370,
+      "equals_official_artifact": true,
+      "sha256": "5817fb845c65f995fb0c78095168af1cbf0c837a991004fcd0a9d73cd0874c88"
+    }
+  },
+  "recipe": "reviewed_sssom_v1 standalone only; no ingredient bundle activation",
+  "recorded_at": "2026-11-07T09:48:48.501230+00:00",
+  "source_commit": "0dac278466699129a083343a921c2e0ca18a9ab4",
+  "status": "pass",
+  "steps": [
+    {
+      "command": [
+        "/Users/marcin/.local/bin/uv",
+        "run",
+        "--frozen",
+        "python",
+        "reports/sssom_completion_20260921/assemble_review.py",
+        "--check"
+      ],
+      "elapsed_seconds": 14.16559910774231,
+      "exit_code": 0,
+      "log": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/data/rebuild-evidence/mim-1788-20261107/native-export-reproduction-r2-step1.log",
+      "log_sha256": "8821c35138e5fc4386cdb230731a5bd8831c3395ea4d7901aa1165bba2b37c0d"
+    },
+    {
+      "command": [
+        "/Users/marcin/.local/bin/uv",
+        "run",
+        "--frozen",
+        "python",
+        "-m",
+        "mediaingredientmech.export.reviewed_sssom",
+        "--review",
+        "reports/sssom_completion_20260921/review.json",
+        "--output",
+        "output/mim-reviewed-sssom"
+      ],
+      "elapsed_seconds": 9.954866886138916,
+      "exit_code": 0,
+      "log": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/data/rebuild-evidence/mim-1788-20261107/native-export-reproduction-r2-step2.log",
+      "log_sha256": "b02a92446e8a613fd0d96b0dd8147d439733fcf73e731b363a6388e95d616703"
+    },
+    {
+      "command": [
+        "/Users/marcin/.local/bin/uv",
+        "run",
+        "--frozen",
+        "python",
+        "-m",
+        "mediaingredientmech.export.reviewed_sssom",
+        "--review",
+        "reports/sssom_completion_20260921/review.json",
+        "--output",
+        "output/mim-reviewed-sssom",
+        "--validate-only"
+      ],
+      "elapsed_seconds": 5.08704686164856,
+      "exit_code": 0,
+      "log": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/data/rebuild-evidence/mim-1788-20261107/native-export-reproduction-r2-step3.log",
+      "log_sha256": "b02a92446e8a613fd0d96b0dd8147d439733fcf73e731b363a6388e95d616703"
+    },
+    {
+      "command": [
+        "/Users/marcin/.local/bin/uv",
+        "run",
+        "--frozen",
+        "python",
+        "scripts/validate_reviewed_sssom_schema.py",
+        "output/mim-reviewed-sssom"
+      ],
+      "elapsed_seconds": 4.87574315071106,
+      "exit_code": 0,
+      "log": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/data/rebuild-evidence/mim-1788-20261107/native-export-reproduction-r2-step4.log",
+      "log_sha256": "9073a58e3af64232e3df9394b9d6c3f99ec0f6e8730a9282e96ffedd78fb0fff"
+    }
+  ]
+}

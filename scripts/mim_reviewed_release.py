@@ -15,6 +15,7 @@ import math
 import re
 from collections import Counter
 from dataclasses import dataclass
+from datetime import date
 from pathlib import Path, PurePosixPath
 from typing import Any
 
@@ -199,6 +200,53 @@ def _validate_partition(supported, withheld, dispositions, source_count):
         raise ValueError("The same complete assertion appears in both dispositions")
 
 
+def _validate_subset_dates(supported_metadata, supported, withheld_metadata, withheld):
+    """Verify row-derived subset dates while retaining legacy version-only headers."""
+    groups = ((supported_metadata, supported), (withheld_metadata, withheld))
+    dates = []
+    for _, rows in groups:
+        values = []
+        for row in rows:
+            value = row.get("mapping_date", "").strip()
+            if not value:
+                continue
+            if re.fullmatch(r"[0-9]{4}-[0-9]{2}-[0-9]{2}", value) is None:
+                raise ValueError("Invalid row mapping_date in reviewed subset")
+            try:
+                values.append(date.fromisoformat(value))
+            except ValueError as error:
+                raise ValueError("Invalid row mapping_date in reviewed subset") from error
+        dates.append(values)
+    if all("mapping_date" not in metadata for metadata, _ in groups) and (
+        supported_metadata.get("mapping_set_version") == withheld_metadata.get("mapping_set_version")
+    ):
+        return
+    for (metadata, _), values in zip(groups, dates, strict=True):
+        if values:
+            newest = max(values).isoformat()
+            if metadata.get("mapping_date") != newest or metadata.get("mapping_set_version") != newest:
+                raise ValueError("Reviewed subset mapping_date/version disagree with its maximum row date")
+        elif "mapping_date" in metadata or "mapping_set_version" in metadata:
+            raise ValueError("Undated reviewed subset must omit mapping_date and mapping_set_version")
+
+
+def _validate_supported_predicates(rows):
+    """Admit reviewed identity and broader relations without interpreting either as the other."""
+    if any(row.get("predicate_modifier", "").strip() for row in rows):
+        raise ValueError("Supported MIM predicate modifiers cannot become positive assertions")
+    exact = {(row["subject_id"], row["object_id"]) for row in rows if row["predicate_id"] == "skos:exactMatch"}
+    for row in rows:
+        if row["predicate_id"] not in {"skos:exactMatch", "skos:broadMatch"}:
+            raise ValueError("Supported MIM mappings must use skos:exactMatch or skos:broadMatch")
+        if row["predicate_id"] == "skos:broadMatch":
+            subject = row["subject_id"]
+            slug = subject.removeprefix("MIM:").lower()
+            if not any(
+                (subject, prefix + slug) in exact for prefix in ("kgmicrobe.compound:", "kgmicrobe.ingredient:")
+            ):
+                raise ValueError("Supported broadMatch needs a same-subject exact registry handle")
+
+
 def validate_reviewed_bundle(directory: Path, *, expected_manifest_sha256: str) -> ReviewedBundle:
     """
     Validate a complete pinned release before callers perform integration writes.
@@ -266,10 +314,8 @@ def validate_reviewed_bundle(directory: Path, *, expected_manifest_sha256: str) 
             raise ValueError(f"SSSOM mapping_set_id disagrees with manifest: {group}")
         if len(rows) != counts[group]:
             raise ValueError(f"SSSOM row count disagrees with manifest: {group}")
-    if supported_metadata.get("mapping_set_version") != withheld_metadata.get("mapping_set_version"):
-        raise ValueError("Supported and withheld mapping_set_version differ")
-    if any(row["predicate_id"] != "skos:exactMatch" for row in supported):
-        raise ValueError("Supported MIM mappings must all use skos:exactMatch")
+    _validate_subset_dates(supported_metadata, supported, withheld_metadata, withheld)
+    _validate_supported_predicates(supported)
     fields, dispositions = _table(snapshots[DISPOSITIONS_FILE].decode("utf-8"), DISPOSITIONS_FILE)
     if tuple(fields) != DISPOSITION_FIELDS or len(dispositions) != counts["source"]:
         raise ValueError("Invalid disposition columns or source row count")

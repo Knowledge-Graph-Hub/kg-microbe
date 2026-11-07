@@ -4,6 +4,7 @@ import csv
 import hashlib
 import io
 import json
+from pathlib import Path
 
 import pytest
 import yaml
@@ -307,3 +308,205 @@ def test_symlinked_product_is_rejected(bundle, tmp_path):
     path.symlink_to(target)
     with pytest.raises(ValueError, match="unsafe release file"):
         release.validate_reviewed_bundle(directory, expected_manifest_sha256=pin)
+
+
+def _replace_reviewed_rows(directory, supported, withheld, *, metadata=None):
+    """Bind a complete synthetic review to new rows so deeper semantic guards are reached."""
+    fields = list(supported[0])
+    decisions = []
+    for group, filename, rows, disposition in (
+        ("supported", release.SUPPORTED_FILE, supported, "SUPPORTED"),
+        ("withhold", release.WITHHELD_FILE, withheld, "WITHHOLD"),
+    ):
+        header = _metadata(group)
+        header["curie_map"].update(
+            {
+                "kgmicrobe.compound": "https://w3id.org/kg-microbe/compound/",
+                "cas": "https://example.org/cas/",
+                "obo": "http://purl.obolibrary.org/obo/",
+                "kgm": "https://w3id.org/kg-microbe/",
+                "registry": "https://w3id.org/kg-microbe/registry/",
+            }
+        )
+        header["extension_definitions"] = [
+            {"slot_name": name, "property": "https://example.org/" + name, "type_hint": "xsd:string"}
+            for name in ("source", "validation_method")
+            if name in fields
+        ]
+        if metadata:
+            header.update(metadata[group])
+            header = {key: value for key, value in header.items() if value is not None}
+        text = "".join(f"# {line}\n" for line in yaml.safe_dump(header).splitlines())
+        (directory / filename).write_text(text + _tsv(fields, rows))
+        for row in rows:
+            decisions.append(_decision(row, len(decisions) + 1, disposition))
+    (directory / release.DISPOSITIONS_FILE).write_text(_tsv(release.DISPOSITION_FIELDS, decisions))
+    return _repin(
+        directory,
+        lambda manifest: manifest.update(
+            counts={"source": len(decisions), "supported": len(supported), "withhold": len(withheld)}
+        ),
+    )
+
+
+def _dated_rows():
+    """Use the current release's two distinct subset dates in a tiny synthetic partition."""
+    supported = dict(zip(FIELDS, SUPPORTED, strict=True), mapping_date="2026-11-01")
+    withheld = dict(zip(FIELDS, WITHHELD, strict=True), mapping_date="2026-11-03")
+    metadata = {
+        "supported": {"mapping_date": "2026-11-01", "mapping_set_version": "2026-11-01"},
+        "withhold": {"mapping_date": "2026-11-03", "mapping_set_version": "2026-11-03"},
+    }
+    return [supported], [withheld], metadata
+
+
+def test_subset_dates_preserve_distinct_reviewed_versions(bundle):
+    """A common manifest and complete partition bind products whose true subset dates differ."""
+    directory, _ = bundle
+    supported, withheld, metadata = _dated_rows()
+    pin = _replace_reviewed_rows(directory, supported, withheld, metadata=metadata)
+    before = {p.name: p.read_bytes() for p in directory.iterdir()}
+    result = release.validate_reviewed_bundle(directory, expected_manifest_sha256=pin)
+    assert result.supported_metadata["mapping_set_version"] == "2026-11-01"
+    assert result.withheld_metadata["mapping_set_version"] == "2026-11-03"
+    assert result.supported_rows == tuple(supported)
+    assert result.withheld_rows == tuple(withheld)
+    assert {p.name: p.read_bytes() for p in directory.iterdir()} == before
+
+
+def test_old_equal_date_release_stays_valid(bundle):
+    """The historical native recipe's equal dates remain valid without rewriting metadata."""
+    directory, _ = bundle
+    supported, withheld, metadata = _dated_rows()
+    for row in supported + withheld:
+        row["mapping_date"] = "2026-09-24"
+    for values in metadata.values():
+        values.update(mapping_date="2026-09-24", mapping_set_version="2026-09-24")
+    pin = _replace_reviewed_rows(directory, supported, withheld, metadata=metadata)
+    result = release.validate_reviewed_bundle(directory, expected_manifest_sha256=pin)
+    assert result.supported_metadata["mapping_date"] == result.withheld_metadata["mapping_date"] == "2026-09-24"
+
+
+@pytest.mark.parametrize(
+    "field,value",
+    [("mapping_date", "2026-11-03"), ("mapping_set_version", "2026-11-03"), ("mapping_date", None)],
+)
+def test_subset_date_metadata_cannot_inherit_the_other_partition_date(bundle, field, value):
+    """Even a newly pinned complete bundle must state each dated subset's actual maximum."""
+    directory, _ = bundle
+    supported, withheld, metadata = _dated_rows()
+    metadata["supported"][field] = value
+    pin = _replace_reviewed_rows(directory, supported, withheld, metadata=metadata)
+    with pytest.raises(ValueError, match="subset mapping_date/version"):
+        release.validate_reviewed_bundle(directory, expected_manifest_sha256=pin)
+
+
+@pytest.mark.parametrize("value", ["2026-02-30", "2026-1-01", "２０２６-11-01"])
+def test_invalid_row_dates_cannot_define_subset_metadata(bundle, value):
+    """Malformed calendar or non-ASCII row dates remain invalid after fixture re-signing."""
+    directory, _ = bundle
+    supported, withheld, metadata = _dated_rows()
+    supported[0]["mapping_date"] = value
+    metadata["supported"].update(mapping_date=value, mapping_set_version=value)
+    pin = _replace_reviewed_rows(directory, supported, withheld, metadata=metadata)
+    with pytest.raises(Exception, match="(?i)date|validation|format"):
+        release.validate_reviewed_bundle(directory, expected_manifest_sha256=pin)
+
+
+def _form_rows():
+    """Separate a synthetic supplied-form registry identity from its broader parent assertion."""
+    parent = dict(zip(FIELDS, SUPPORTED, strict=True))
+    parent.update(subject_id="MIM:Monohydrate", subject_label="monohydrate", predicate_id="skos:broadMatch", other="")
+    handle = dict(
+        parent, predicate_id="skos:exactMatch", object_id="kgmicrobe.compound:monohydrate", object_label="monohydrate"
+    )
+    return parent, handle
+
+
+def test_supported_broad_relation_retains_all_original_fields_and_predicate(bundle):
+    """Structural admission returns the reviewed directional row without identity strengthening."""
+    directory, _ = bundle
+    parent, handle = _form_rows()
+    withheld = dict(zip(FIELDS, WITHHELD, strict=True))
+    pin = _replace_reviewed_rows(directory, [parent, handle], [withheld])
+    result = release.validate_reviewed_bundle(directory, expected_manifest_sha256=pin)
+    assert result.supported_rows == (parent, handle)
+    assert [row["predicate_id"] for row in result.supported_rows] == ["skos:broadMatch", "skos:exactMatch"]
+    assert result.supported_rows[0]["other"] == ""
+
+
+@pytest.mark.parametrize("defect", ["missing", "wrong_subject", "wrong_slug", "withheld"])
+def test_broad_relation_needs_a_supported_exact_same_subject_registry_handle(bundle, defect):
+    """A parent relation cannot stand in for the publisher's separate supplied-form identity."""
+    directory, _ = bundle
+    parent, handle = _form_rows()
+    supported = [parent, handle]
+    withheld = [dict(zip(FIELDS, WITHHELD, strict=True))]
+    if defect == "missing":
+        supported.remove(handle)
+    elif defect == "wrong_subject":
+        handle["subject_id"] = "MIM:Other"
+    elif defect == "wrong_slug":
+        handle["object_id"] = "kgmicrobe.compound:other"
+    else:
+        supported.remove(handle)
+        withheld.append(handle)
+    pin = _replace_reviewed_rows(directory, supported, withheld)
+    with pytest.raises(ValueError, match="same-subject exact registry handle"):
+        release.validate_reviewed_bundle(directory, expected_manifest_sha256=pin)
+
+
+@pytest.mark.parametrize("predicate", ["skos:closeMatch", "skos:narrowMatch", "skos:relatedMatch"])
+def test_new_supported_predicates_still_require_an_explicit_consumer_contract(bundle, predicate):
+    """A re-signed disposition does not silently authorize additional relation semantics."""
+    directory, _ = bundle
+    parent, handle = _form_rows()
+    parent["predicate_id"] = predicate
+    pin = _replace_reviewed_rows(directory, [parent, handle], [dict(zip(FIELDS, WITHHELD, strict=True))])
+    with pytest.raises(ValueError, match="skos:exactMatch or skos:broadMatch"):
+        release.validate_reviewed_bundle(directory, expected_manifest_sha256=pin)
+
+
+def test_actual_six_form_claims_keep_native_payloads_in_a_synthetic_partition(bundle):
+    """Exercise the exact archived form rows without pretending the fixture is a full native export."""
+    path = Path(__file__).parent / "resources/mim_reviewed_broader_20261107/source-claims.json"
+    content = path.read_bytes()
+    assert hashlib.sha256(content).hexdigest() == "a08a231ea586e84b549736c76b3e8c5d6c8c4d9a8977da69cdfa481b8ef378c0"
+    claims = json.loads(content)["claims"]
+    rows = [claim["row"] for claim in claims]
+    assert all(_hash_row(claim["row"]) == claim["decision"]["row_sha256"] for claim in claims)
+    withheld = dict.fromkeys(rows[0], "")
+    withheld.update(dict(zip(FIELDS, WITHHELD, strict=True)), mapping_date="2026-11-03")
+    _, _, metadata = _dated_rows()
+    directory, _ = bundle
+    pin = _replace_reviewed_rows(directory, rows, [withheld], metadata=metadata)
+    result = release.validate_reviewed_bundle(directory, expected_manifest_sha256=pin)
+    assert result.supported_rows == tuple(rows)
+    assert sum(row["predicate_id"] == "skos:broadMatch" for row in result.supported_rows) == 2
+    assert sum(row["predicate_id"] == "skos:exactMatch" for row in result.supported_rows) == 4
+
+
+@pytest.mark.parametrize("negated_claim", ["broader", "registry", "cas"])
+def test_negated_supported_claims_fail_even_in_a_complete_hash_bound_partition(bundle, negated_claim):
+    """A reviewed negative mapping cannot authorize positive form or identity reconstruction."""
+    path = Path(__file__).parent / "resources/mim_reviewed_broader_20261107/source-claims.json"
+    original = path.read_bytes()
+    claims = json.loads(original)["claims"]
+    rows = [dict(claim["row"], predicate_modifier="") for claim in claims]
+    withheld = dict.fromkeys(rows[0], "")
+    withheld.update(dict(zip(FIELDS, WITHHELD, strict=True)), mapping_date="2026-11-03")
+    _, _, metadata = _dated_rows()
+    directory, _ = bundle
+    positive_pin = _replace_reviewed_rows(directory, rows, [withheld], metadata=metadata)
+    positive = release.validate_reviewed_bundle(directory, expected_manifest_sha256=positive_pin)
+    assert positive.supported_rows == tuple(rows)
+    if negated_claim == "broader":
+        target = next(row for row in rows if row["predicate_id"] == "skos:broadMatch")
+    else:
+        prefix = "kgmicrobe.compound:" if negated_claim == "registry" else "cas:"
+        target = next(row for row in rows if row["object_id"].startswith(prefix))
+    target["predicate_modifier"] = "Not"
+    negative_pin = _replace_reviewed_rows(directory, rows, [withheld], metadata=metadata)
+    with pytest.raises(ValueError, match="Supported MIM predicate modifiers cannot become positive assertions"):
+        release.validate_reviewed_bundle(directory, expected_manifest_sha256=negative_pin)
+    assert path.read_bytes() == original

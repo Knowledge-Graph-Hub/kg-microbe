@@ -1,0 +1,14 @@
+{
+  "fixture_bytes": 786,
+  "fixture_sha256": "62fe14137bddd13f164ad14ca804fc2b915df7292bd1df09bfd58fec8ca5d09e",
+  "manifest_sha256": "b02a92446e8a613fd0d96b0dd8147d439733fcf73e731b363a6388e95d616703",
+  "product": "mapping-dispositions.tsv",
+  "product_bytes": 1814722,
+  "product_sha256": "2a075c9c4a699c9d22a5e8b736bc6d7c00c344f19363f28178c0b50b6b590a19",
+  "repository": "https://github.com/CultureBotAI/MediaIngredientMech",
+  "schema_version": 1,
+  "selection": "Exact original TSV header and one complete native exported record; all eleven fields unchanged. This subset is not a full native product.",
+  "source_archive_sha256": "51c6029b88a2d1d73ca1cbe13029c9cf60991dc65af2556cec6b1413ee52eb9d",
+  "source_commit": "0dac278466699129a083343a921c2e0ca18a9ab4",
+  "source_position": "1614"
+}

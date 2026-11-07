@@ -1,0 +1,59 @@
+{
+  "findings": {
+    "1794": {
+      "disposition": "repaired_in_reviewed_source",
+      "evidence": [
+        "Bundle validator rejects every nonblank supported predicate_modifier before constructing the exact set used to license broader claims.",
+        "Builder independently rejects modifiers before exact/broader partition, reproducibility capture or projection. No signed supported claim reaches dropped-column construction.",
+        "Three complete hash-bound product mutations cover negated broader, local-registry exact and CAS exact; builder-boundary counterparts require no output directory and no projection. Blank/absent modifiers preserve the positive actual controls."
+      ],
+      "scope": "Static control review only; author/root focused results remain separately authoritative."
+    },
+    "1795": {
+      "disposition": "repaired_in_reviewed_source",
+      "evidence": [
+        "unlinked inspects the supplied lexical path and all ancestors before returning path.resolve().",
+        "main no longer resolves receipt before the link check; normalized original/baseline/receipt feed containment, owned-root refusal and reserved-manifest equality.",
+        "Six offline cases cover escaping dot-dot, aliased owned original, linked receipt ancestor, aliased reserved manifest, default and explicit real independent-copy preservation; no-overwrite remains required.",
+        "Streaming comparison/source-admission/archive integrity behavior is unchanged."
+      ],
+      "scope": "Intended W1 reference remains external, baseline stays inside this helper EVIDENCE root. Comparison grants no semantic admission."
+    }
+  },
+  "identities": {
+    "scripts/adhoc/kgm_rebuild_comparison_20261105.py": {
+      "bytes": 15979,
+      "sha256": "93c4a7428a3d08464968b4547e6ec10dc937d024d9aae16a0c436f2154637be6"
+    },
+    "scripts/mim_conservative_refresh.py": {
+      "bytes": 48331,
+      "sha256": "dac08e5a188bce365881964994fcd71dbea480e8ad502542efff714b4431cdc3"
+    },
+    "scripts/mim_reviewed_release.py": {
+      "bytes": 15508,
+      "sha256": "6705442f35459104838c6480a16ca128093b6b6d4fa0adc0762b7ad47c5f4900"
+    },
+    "tests/test_mim_broader_refresh.py": {
+      "bytes": 17780,
+      "sha256": "f645bed8c4ada1032e9ded3b7bf7cd0f60e3d01cbbaaaa1367f8a957b49505fe"
+    },
+    "tests/test_mim_reviewed_release.py": {
+      "bytes": 23723,
+      "sha256": "ff853180fcf00f0e40bd86c3813822d705dd8d7d61e969a464419179b640ecb2"
+    },
+    "tests/test_rebuild_comparison_locators.py": {
+      "bytes": 4548,
+      "sha256": "b34faad810452e0e3b7a8c73716178e1e21d779edf294d754e3c9b8888d1bd3d"
+    }
+  },
+  "method": "independent read-only source/diff/control inspection; no tests, runtime helpers, candidate generation, validators or archive reads",
+  "recorded_at": "2026-11-07T10:03:21.922563+00:00",
+  "remaining_candidate_acceptance": [
+    "complete paired artifact/material-alias quarantine review",
+    "actual55 runtime overrides plus separate mapping-index/broader probes",
+    "full second cycle",
+    "genuine new-map whole-source producer and source/archive gates"
+  ],
+  "schema_version": 1,
+  "status": "no_remaining_blocker_in_reviewed_repairs"
+}

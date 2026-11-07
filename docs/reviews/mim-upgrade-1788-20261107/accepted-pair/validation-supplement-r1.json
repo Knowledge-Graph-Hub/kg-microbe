@@ -1,0 +1,15 @@
+{
+  "scope": "Later focused artifact validation and final formatting preparation; not the full code gate.",
+  "files": {
+    "artifact-tests.json": {
+      "source": "data/rebuild-evidence/mim-1788-20261107/artifact-focused-r1/result.json",
+      "sha256": "0591016a04cf51ed357da7d40ae0e2671f6d93ac5137620c2740254dbcc7be0e",
+      "bytes": 1473
+    },
+    "final-format-preparation.json": {
+      "source": "data/rebuild-evidence/mim-1788-20261107/format-preparation-r2/result.json",
+      "sha256": "4445c2b9f25c12db270ca372ee5dac442a7650ef4eb897943191ab19ee13b4aa",
+      "bytes": 162
+    }
+  }
+}

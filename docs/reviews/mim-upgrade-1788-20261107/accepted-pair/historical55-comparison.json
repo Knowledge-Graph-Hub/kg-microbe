@@ -1,0 +1,23 @@
+{
+  "status": "passed_override_replay_comparison_only",
+  "baseline_sha256": "9f80bffe4712a72a7d52d78caff817384818ca605e8b812ac4abae61e1a3d6f9",
+  "candidate_sha256": "ac39881ec970fe778577093e91531e56e6e832d8101044fc07f393ad82f9f87d",
+  "counts": {
+    "class_mode_trait_outcomes": 330,
+    "distinct_historical_traits": 55,
+    "failed_outcomes": 0,
+    "passed_outcomes": 330,
+    "route_checks": 1650
+  },
+  "complete_outcomes_identical": true,
+  "input_delta": {
+    "removed": [
+      "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz"
+    ],
+    "added": [
+      "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-mim-1788-20261107/data/rebuild-evidence/mim-1788-20261107/candidate-r2/candidate.sssom.tsv.gz"
+    ],
+    "changed": []
+  },
+  "limitation": "Overrides return before consulting the loader; this preserves all55 override behaviors and does not approve new mapping identities or graph admission."
+}

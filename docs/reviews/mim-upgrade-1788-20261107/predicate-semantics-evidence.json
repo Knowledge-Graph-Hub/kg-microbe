@@ -1,0 +1,241 @@
+{
+  "schema_version": 1,
+  "observed_at": "2026-11-07T09:41:21.228776+00:00",
+  "issue_parent": 1790,
+  "status": "confirmed_upgrade_integration_requirement_not_current_wrong_graph",
+  "baseline": {
+    "path": "mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz",
+    "bytes": 13373982,
+    "sha256": "59464e08017cc907a1240a4378d2462efc9e2c1b9d6c3cf0b08b4344ef695ae8"
+  },
+  "baseline_rows": 591933,
+  "baseline_predicate_counts": {
+    "skos:exactMatch": 336048,
+    "skos:closeMatch": 255885
+  },
+  "baseline_asymmetric_rows": [],
+  "baseline_predicate_semantics_header": [],
+  "source": {
+    "path": "data/rebuild-evidence/mim-1788-20261107/source/0dac278466699129a083343a921c2e0ca18a9ab4/mappings/ingredient_mappings.sssom.tsv",
+    "bytes": 1675751,
+    "sha256": "d5f76fc404967477903fafc79eaba86ecfef9e2c391926ec08c3c1af4a5220b6"
+  },
+  "review": {
+    "path": "data/rebuild-evidence/mim-1788-20261107/source/0dac278466699129a083343a921c2e0ca18a9ab4/reports/sssom_completion_20260921/review.json",
+    "bytes": 2683817,
+    "sha256": "ab301d1f66276cdfeefea79080ce49f26ebb02c1920a53c71512c14b283b16cf"
+  },
+  "source_predicate_semantics_header": [
+    "# predicate_semantics: skos"
+  ],
+  "selected_source_claims": [
+    {
+      "position": 926,
+      "row": {
+        "subject_id": "MIM:D-_-melezitose_Monohydrate",
+        "subject_label": "D-(+)-melezitose monohydrate",
+        "predicate_id": "skos:broadMatch",
+        "object_id": "CHEBI:6731",
+        "object_label": "melezitose",
+        "object_source": "obo:chebi.owl",
+        "mapping_justification": "semapv:ManualMappingCuration",
+        "source": "MIM:CultureBotHT|MIM:anchor_cas_hydrate_records|MIM:MIM curation (#342)|MIM:MIM curation (#901); PubChem CID 16217716; ChEBI:6731|MIM:curator=claude|kgm:mediaingredientmech_reviewed[manifest=9bb29d5605d93dea351be9624d99c5d8ada57d4b9831b22764957b784bd685af]|kgm:native_ontology:chebi",
+        "mapping_date": "2026-11-01",
+        "confidence": "0.9",
+        "comment": "",
+        "other": "",
+        "validation_method": ""
+      },
+      "decision": {
+        "source_position": 926,
+        "row_sha256": "bf4990db504f0338c6ece439092954d1104e4916712ff1227b6d844b68fe0f62",
+        "owner_record": "data/ingredients/mapped/D-_-melezitose_Monohydrate.yaml",
+        "disposition": "SUPPORTED",
+        "review_reason": "Fresh row-specific assessment supports the monohydrate-to-melezitose form-of relation. The inspected monohydrate InChI minus its one water component equals both PubChem CID 92817 and active CHEBI:6731 exactly, including stereochemistry. MAPPING_SEMANTICS sections 1-3 require NARROW_MATCH to emit skos:broadMatch with a B1 handle; this is neither exact parent identity nor an ontology subclass claim. The actual parent row publishes no other tokens.",
+        "review_evidence": "reports/sssom_completion_20260921/mapping-evidence.json",
+        "evidence_key": "926"
+      }
+    },
+    {
+      "position": 927,
+      "row": {
+        "subject_id": "MIM:D-_-melezitose_Monohydrate",
+        "subject_label": "D-(+)-melezitose monohydrate",
+        "predicate_id": "skos:exactMatch",
+        "object_id": "cas:10030-67-8",
+        "object_label": "D-(+)-melezitose monohydrate",
+        "object_source": "registry:cas",
+        "mapping_justification": "semapv:ManualMappingCuration",
+        "source": "MIM:CultureBotHT|MIM:anchor_cas_hydrate_records|MIM:MIM curation (#342)|MIM:MIM curation (#901); PubChem CID 16217716; ChEBI:6731|MIM:curator=claude|kgm:mediaingredientmech_reviewed[manifest=9bb29d5605d93dea351be9624d99c5d8ada57d4b9831b22764957b784bd685af]|kgm:native_ontology:chebi",
+        "mapping_date": "2026-11-01",
+        "confidence": "0.99",
+        "comment": "Registry/identity row preserving cas:10030-67-8 alongside parent CHEBI:6731.",
+        "other": "CAS:10030-67-8",
+        "validation_method": "none|UNKNOWN_TERM|2026-07-07"
+      },
+      "decision": {
+        "source_position": 927,
+        "row_sha256": "a644bad003f578f4a63e861ec0ba09cffc2f16459b5b476a275a845c685ed8e5",
+        "owner_record": "data/ingredients/mapped/D-_-melezitose_Monohydrate.yaml",
+        "disposition": "SUPPORTED",
+        "review_reason": "Fresh assessment of corrected owner bytes supports exact cas:10030-67-8 identity for D-(+)-melezitose monohydrate. PubChem CID 16217716 names this CAS through its ChemIDplus, FDA GSRS and NZ EPA annotations and has the matching monohydrate formula and stereochemical InChI; CultureBotHT row 1142 separately records the same supplied form and CAS. The actual CAS:10030-67-8 other token is a same-subject display label. This conclusion replaces, rather than inherits, the withdrawn old-owner approval.",
+        "review_evidence": "reports/sssom_completion_20260921/mapping-evidence.json",
+        "evidence_key": "927"
+      }
+    },
+    {
+      "position": 2610,
+      "row": {
+        "subject_id": "MIM:Sodium_Perchlorate_Monohydrate",
+        "subject_label": "Sodium perchlorate monohydrate",
+        "predicate_id": "skos:broadMatch",
+        "object_id": "CHEBI:132103",
+        "object_label": "sodium perchlorate",
+        "object_source": "obo:chebi.owl",
+        "mapping_justification": "semapv:ManualMappingCuration",
+        "source": "MIM:CultureBotHT|MIM:CHEBI via OLS (stem-substring)|MIM:MIM curation (#342)|MIM:MIM curation (#901); PubChem CID 516899; ChEBI:132103|MIM:curator=claude|kgm:native_ontology:chebi",
+        "mapping_date": "2026-11-01",
+        "confidence": "0.9",
+        "comment": "",
+        "other": "",
+        "validation_method": ""
+      },
+      "decision": {
+        "source_position": 2610,
+        "row_sha256": "51baf5d397ac027631a579a054ba21b07ae97d65e0f5f66d2861c81dfdb8df46",
+        "owner_record": "data/ingredients/mapped/Sodium_Perchlorate_Monohydrate.yaml",
+        "disposition": "SUPPORTED",
+        "review_reason": "The actual sodium perchlorate monohydrate row is supported as a form-of skos:broadMatch to CHEBI:132103 sodium perchlorate. Archived PubChem CID516899 has one water component in addition to the sodium/perchlorate structure represented by the water-free ChEBI parent. The parent row has empty other and validation_method cells, resolving the old hydrate-CAS alias leakage and providing an explicit asymmetric relation instead of inherited closeMatch approval. This supports the bounded relation, not global exhaustion of exact ontology alternatives.",
+        "review_evidence": "reports/sssom_completion_20260921/mapping-evidence.json",
+        "evidence_key": "2610"
+      }
+    },
+    {
+      "position": 2611,
+      "row": {
+        "subject_id": "MIM:Sodium_Perchlorate_Monohydrate",
+        "subject_label": "Sodium perchlorate monohydrate",
+        "predicate_id": "skos:exactMatch",
+        "object_id": "cas:7791-07-3",
+        "object_label": "Sodium perchlorate monohydrate",
+        "object_source": "registry:cas",
+        "mapping_justification": "semapv:ManualMappingCuration",
+        "source": "MIM:CultureBotHT|MIM:CHEBI via OLS (stem-substring)|MIM:MIM curation (#342)|MIM:MIM curation (#901); PubChem CID 516899; ChEBI:132103|MIM:curator=claude|kgm:native_ontology:chebi",
+        "mapping_date": "2026-11-01",
+        "confidence": "0.99",
+        "comment": "Registry/identity row preserving cas:7791-07-3 alongside parent CHEBI:132103.",
+        "other": "CAS:7791-07-3",
+        "validation_method": "none|UNKNOWN_TERM|2026-07-07"
+      },
+      "decision": {
+        "source_position": 2611,
+        "row_sha256": "9aff710dedc116f4feabb872e257433818b457fe598c63c5fcb1b19a36ec4887",
+        "owner_record": "data/ingredients/mapped/Sodium_Perchlorate_Monohydrate.yaml",
+        "disposition": "SUPPORTED",
+        "review_reason": "The actual exact cas:7791-07-3 row denotes the supplied sodium perchlorate monohydrate. PubChem CID516899 CAS annotations, complete water-containing InChI/formula and CultureBotHT physical row403 agree with the corrected owner. The sole CAS:7791-07-3 display alias denotes that same form. Both historical parent/CAS rows were WITHHOLD: this is a fresh claim assessment, not inherited or withdrawn prior CAS approval, and it does not certify CAS as globally optimal grounding.",
+        "review_evidence": "reports/sssom_completion_20260921/mapping-evidence.json",
+        "evidence_key": "2611"
+      }
+    },
+    {
+      "position": 3013,
+      "row": {
+        "subject_id": "MIM:D-_-melezitose_Monohydrate",
+        "subject_label": "D-(+)-melezitose monohydrate",
+        "predicate_id": "skos:exactMatch",
+        "object_id": "kgmicrobe.compound:d-_-melezitose_monohydrate",
+        "object_label": "D-(+)-melezitose monohydrate",
+        "object_source": "kgm:compound",
+        "mapping_justification": "semapv:ManualMappingCuration",
+        "source": "MIM:CultureBotHT|MIM:anchor_cas_hydrate_records|MIM:MIM curation (#342)|MIM:MIM curation (#901); PubChem CID 16217716; ChEBI:6731|MIM:curator=claude|kgm:mediaingredientmech_reviewed[manifest=9bb29d5605d93dea351be9624d99c5d8ada57d4b9831b22764957b784bd685af]|kgm:native_ontology:chebi",
+        "mapping_date": "2026-11-01",
+        "confidence": "0.99",
+        "comment": "Registry/identity row (Rule B1) for broadMatch subject; kg-microbe primary id kgmicrobe.compound:d-_-melezitose_monohydrate alongside parent CHEBI:6731.",
+        "other": "CAS:10030-67-8",
+        "validation_method": ""
+      },
+      "decision": {
+        "source_position": 3013,
+        "row_sha256": "4e15d8eb5e7cd78d2e9219b175a32daa9b1a47eb14618b16ae2a157036218447",
+        "owner_record": "data/ingredients/mapped/D-_-melezitose_Monohydrate.yaml",
+        "disposition": "SUPPORTED",
+        "review_reason": "Fresh assessment supports the actual native-generated kgmicrobe.compound:d-_-melezitose_monohydrate exact handle for this same CAS-primary supplied-form subject. PubChem chemistry establishes one defined chemical and the owner is SINGLE_INGREDIENT; the handle preserves the subject slug and satisfies the repository section 2/section 3 step 2 B1 contract without collapsing the hydrate into CHEBI:6731. Receipt 20 proves this exact full row was newly added. The CAS display token denotes the same monohydrate; no prior handle approval is inherited.",
+        "review_evidence": "reports/sssom_completion_20260921/mapping-evidence.json",
+        "evidence_key": "3013"
+      }
+    },
+    {
+      "position": 3014,
+      "row": {
+        "subject_id": "MIM:Sodium_Perchlorate_Monohydrate",
+        "subject_label": "Sodium perchlorate monohydrate",
+        "predicate_id": "skos:exactMatch",
+        "object_id": "kgmicrobe.compound:sodium_perchlorate_monohydrate",
+        "object_label": "Sodium perchlorate monohydrate",
+        "object_source": "kgm:compound",
+        "mapping_justification": "semapv:ManualMappingCuration",
+        "source": "MIM:CultureBotHT|MIM:CHEBI via OLS (stem-substring)|MIM:MIM curation (#342)|MIM:MIM curation (#901); PubChem CID 516899; ChEBI:132103|MIM:curator=claude|kgm:native_ontology:chebi",
+        "mapping_date": "2026-11-01",
+        "confidence": "0.99",
+        "comment": "Registry/identity row (Rule B1) for broadMatch subject; kg-microbe primary id kgmicrobe.compound:sodium_perchlorate_monohydrate alongside parent CHEBI:132103.",
+        "other": "CAS:7791-07-3",
+        "validation_method": ""
+      },
+      "decision": {
+        "source_position": 3014,
+        "row_sha256": "069dfd73500435df66a355306b496ddaf00eb01125e623ccd27b292ed7b8a830",
+        "owner_record": "data/ingredients/mapped/Sodium_Perchlorate_Monohydrate.yaml",
+        "disposition": "SUPPORTED",
+        "review_reason": "The actual new kgmicrobe.compound:sodium_perchlorate_monohydrate exact row is supported as the native B1 namespace handle for this same defined CAS-primary chemical subject. The exact lower-case subject slug, SINGLE_INGREDIENT owner, independently supported monohydrate chemistry and receipt21 addition agree. The sole CAS display alias denotes the same form. This handle is not a competing external primary identity and grants no role approval.",
+        "review_evidence": "reports/sssom_completion_20260921/mapping-evidence.json",
+        "evidence_key": "3014"
+      }
+    }
+  ],
+  "code_bindings": [
+    {
+      "path": "scripts/mim_conservative_refresh.py",
+      "bytes": 43149,
+      "sha256": "ec51a2de8f7c701427ca2b58ce807222e360e15379f51ea5666315eae6d94640"
+    },
+    {
+      "path": "scripts/mim_reviewed_release.py",
+      "bytes": 13104,
+      "sha256": "03e6bed504de06c7ea573f0e857b445875def594bf6b2123a7aeed729ef4efb1"
+    },
+    {
+      "path": "kg_microbe/utils/chemical_mapping_utils.py",
+      "bytes": 45383,
+      "sha256": "3ec59d6123da19eae19e997c63dd455ab25e3bbcc867ddabc82352a5c1a12c19"
+    },
+    {
+      "path": "tests/test_sssom_predicate_semantics.py",
+      "bytes": 7633,
+      "sha256": "4972876a50079de0082fcf0e883947306508ada3104da6a325c53200a18ac379"
+    },
+    {
+      "path": "tests/test_sssom_asymmetric_direction.py",
+      "bytes": 19149,
+      "sha256": "6cacda9c88f2ce8674af3f06dd5b9be9511da59948c1a73987400e52c398868d"
+    }
+  ],
+  "interpretations": [
+    {
+      "source_position": 926,
+      "correct_skos_child": "MIM:D-_-melezitose_Monohydrate",
+      "correct_skos_parent": "CHEBI:6731",
+      "absent_header_child": "CHEBI:6731",
+      "absent_header_parent": "MIM:D-_-melezitose_Monohydrate",
+      "basis": "chemical_mapping_utils.py:447-449: object_is_parent=(predicate==skos:broadMatch)==skos_semantics; absent header makes skos_semantics false"
+    },
+    {
+      "source_position": 2610,
+      "correct_skos_child": "MIM:Sodium_Perchlorate_Monohydrate",
+      "correct_skos_parent": "CHEBI:132103",
+      "absent_header_child": "CHEBI:132103",
+      "absent_header_parent": "MIM:Sodium_Perchlorate_Monohydrate",
+      "basis": "chemical_mapping_utils.py:447-449: object_is_parent=(predicate==skos:broadMatch)==skos_semantics; absent header makes skos_semantics false"
+    }
+  ],
+  "execution_scope": "Only static code reads and streaming source-row inspection; no candidate export, native gate, tests or producer."
+}

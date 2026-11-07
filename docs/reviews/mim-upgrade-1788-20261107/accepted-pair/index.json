@@ -1,0 +1,91 @@
+{
+  "schema_version": 1,
+  "scope": "Exact retained review copies; full raw products, complete row witnesses, attempts and run logs stay under data/rebuild-evidence. This is mapping acceptance, not graph/source completion.",
+  "files": {
+    "candidate-generation-report.json": {
+      "source": "data/rebuild-evidence/mim-1788-20261107/candidate-r2/report.json",
+      "sha256": "6e63bf4254ca2a595e93aa8d58fb597c2188003efd75ecdcbc1a43473819a4c0",
+      "bytes": 249323
+    },
+    "downstream-held.json": {
+      "source": "data/rebuild-evidence/mim-1788-20261107/candidate-r2/downstream-held.json",
+      "sha256": "91040e82c6ec148e8cbbc53a9bfb93061da46962f9c5f357d78f151d3d75a5c8",
+      "bytes": 4017
+    },
+    "conservation-review.json": {
+      "source": "data/rebuild-evidence/mim-1788-20261107/candidate-r2-conservation-review-r1/review.json",
+      "sha256": "16719342cdfe75d01323ebec26a895366d5beba60cb3a1db4988d98a55f9a945",
+      "bytes": 162959
+    },
+    "reconstructed-lineage-review.json": {
+      "source": "data/rebuild-evidence/mim-1788-20261107/candidate-r2-reconstructed-lineage-r1/review.json",
+      "sha256": "5ba919b1b4c217a8d4a002e329592bd3e10f8776d32b7230a59076ad660ed289",
+      "bytes": 57733
+    },
+    "independent-acceptance-index.json": {
+      "source": "data/rebuild-evidence/mim-1788-20261107/candidate-r2-independent-acceptance-summary-r1.json",
+      "sha256": "18d64d16510a5482ab957c31c1c7b74cd87dadc7cedb1423bc38c741c17d2487",
+      "bytes": 12583
+    },
+    "scientific-review.json": {
+      "source": "data/rebuild-evidence/mim-1788-20261107/candidate-r2-scientific-review-r1/final-review-r2.json",
+      "sha256": "d8088826909f15c2c0f21272403d16ec313138a3675cbe9f9e22c68efbe2a73c",
+      "bytes": 97474
+    },
+    "native-alternative-1253.json": {
+      "source": "data/rebuild-evidence/mim-1788-20261107/candidate-r2-scientific-review-r1/reviewed-native-alternative-1253.json",
+      "sha256": "b944fa8709f7e21d7eefb0e8e00951b07dac4253aab2d1b4310ebe40cf102162",
+      "bytes": 46276
+    },
+    "field-count-erratum.json": {
+      "source": "data/rebuild-evidence/mim-1788-20261107/candidate-r2-scientific-review-r1/field-count-erratum-r1.json",
+      "sha256": "4e68f2c306a239567b187773fc1aad10a6117a288c1c14bfe48604b376446481",
+      "bytes": 1408
+    },
+    "second-cycle.json": {
+      "source": "data/rebuild-evidence/mim-1788-20261107/candidate-r2-second-cycle-r1-receipt.json",
+      "sha256": "4290cbf1b6a6555cffac1fd72e8e89c86ae0b5faa568d97123de5376e7966ae5",
+      "bytes": 83884
+    },
+    "historical55-comparison.json": {
+      "source": "data/rebuild-evidence/mim-1788-20261107/historical55-paired-comparison-r1.json",
+      "sha256": "c7be56338759fdd3fe7d47b36f38d2ea4a7df67028f0b55e200424d6482822a5",
+      "bytes": 1027
+    },
+    "promotion.json": {
+      "source": "data/rebuild-evidence/mim-1788-20261107/paired-promotion-r2.json",
+      "sha256": "4e57c47b91e9c44864781bfc8871750fb839ed02a9208ecb613d2543e051e878",
+      "bytes": 1697
+    },
+    "affected-tests.json": {
+      "source": "data/rebuild-evidence/mim-1788-20261107/affected-focused-r3/result.json",
+      "sha256": "47902b7b4032614c4e0f0dcca6eab500c040e2cde09832067f318d80110e492c",
+      "bytes": 1356
+    },
+    "format-preparation.json": {
+      "source": "data/rebuild-evidence/mim-1788-20261107/format-preparation-r1/result.json",
+      "sha256": "62ba909e7796c9cd5a8c3efe8b2d000bd2630a53dfb86598a07c991c9d343236",
+      "bytes": 162
+    },
+    "held-repair-review.json": {
+      "source": "data/rebuild-evidence/mim-1788-20261107/downstream-held-repair-independent-review-r2.json",
+      "sha256": "62a63f68127cf0c889ed9e222003122bfe2cfb7e0873ed05e493bab82253e4d0",
+      "bytes": 3517
+    },
+    "canary-helper-review.json": {
+      "source": "data/rebuild-evidence/mim-1788-20261107/mediadive-canary-independent-review-r1.json",
+      "sha256": "48031ba4afefa506294db48b637c976f39585f3a6ac239c6b55177e3126f956f",
+      "bytes": 1810
+    },
+    "promotion-helper-review.json": {
+      "source": "data/rebuild-evidence/mim-1788-20261107/promotion-context-independent-r1/promotion-helper-r2-independent-review.json",
+      "sha256": "98fbe7d5130a61b0defe9ecb614feb704dede32899b6575d76a3cb034e317609",
+      "bytes": 6065
+    },
+    "existing-issue-1253.json": {
+      "source": "data/rebuild-evidence/mim-1788-20261107/existing-native-alternative-issue-1253-r1.json",
+      "sha256": "73fc94626198ff9510ae225dc4169b00de20596db87f22af00e10726cffdc79a",
+      "bytes": 2730
+    }
+  }
+}

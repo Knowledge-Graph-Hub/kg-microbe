@@ -1,0 +1,300 @@
+{
+  "candidate_sha256": "f1314a41ede9b143c595399ada5178e52306364e69b467810cf71e7cdc4be23d",
+  "context_correction": "The four context-quarantined originals were already present in the baseline: NCIT:C61062 Catalase, CAT, CAT Protein, EC 1.11.1.6. They become relatedMatch/native_authority_metadata_only; not generated-only originals.",
+  "first_cycle_conservation": {
+    "baseline_historical_removed": 11737,
+    "baseline_retained_claims": 580196,
+    "context_generated_or_metadata_adjusted": 0,
+    "context_original_present_in_baseline": 4,
+    "historical_full_rows": 11737,
+    "retained_byte_identical_rows": 580192,
+    "retained_context_rows": 4
+  },
+  "first_cycle_row_totals": {
+    "B": 591933,
+    "C": 591914,
+    "Q": 11741
+  },
+  "global_category_row_deltas": {
+    "": {
+      "after": 4,
+      "before": 0
+    },
+    "biolink:ChemicalEntity": {
+      "after": 590871,
+      "before": 590858
+    },
+    "biolink:ChemicalMixture": {
+      "after": 78,
+      "before": 0
+    },
+    "biolink:Food": {
+      "after": 121,
+      "before": 119
+    },
+    "biolink:GrowthMedium": {
+      "after": 18,
+      "before": 0
+    },
+    "biolink:InformationContentEntity": {
+      "after": 4,
+      "before": 0
+    },
+    "biolink:OntologyClass": {
+      "after": 398,
+      "before": 562
+    },
+    "biolink:PhysicalEntity": {
+      "after": 26,
+      "before": 0
+    }
+  },
+  "limits": [
+    "No new approval or recuration of the 580192 unchanged historical rows.",
+    "Row lineage binds current supported/native/curated evidence, not an independent new literature review.",
+    "The 374 category fallbacks remain explicitly documented existing ChemicalEntity prefix rules; no native declaration is claimed for those targets.",
+    "Native held/material/broader finite runtime and all55 reviews are complementary separate receipts.",
+    "No canonical mapping promotion, tracked edit, HTTP, credential access or production-source/graph gate was performed by this reviewer.",
+    "Actual production source, canary and graph admission requirements remain independent."
+  ],
+  "lineage_rows": 11718,
+  "lineage_unresolved": 0,
+  "native_category_entities": {
+    "biolink:AnatomicalEntity": 4,
+    "biolink:ChemicalEntity": 1185,
+    "biolink:ChemicalMixture": 26,
+    "biolink:ChemicalRole": 2,
+    "biolink:Food": 28,
+    "biolink:GrowthMedium": 7,
+    "biolink:InformationContentEntity": 1,
+    "biolink:MacromolecularComplex": 23,
+    "biolink:OntologyClass": 77,
+    "biolink:PhysicalEntity": 9
+  },
+  "nonempty_prior_formula_entities_in_reconstructed_scope": [],
+  "prefix_fallback_entities": {
+    "biolink:ChemicalEntity": 374
+  },
+  "promotion_authorized": false,
+  "recorded_at": "2026-11-07T10:39:01.349569+00:00",
+  "review_artifacts": {
+    "candidate-r2-conservation-review-r1/historical-conflict-production-audit.json": {
+      "path": "data/rebuild-evidence/mim-1788-20261107/candidate-r2-conservation-review-r1/historical-conflict-production-audit.json",
+      "sha256": "22bcfafa800715b285bfaabeb011b99f1e0a0f4eca103e239707df3d28893063"
+    },
+    "candidate-r2-conservation-review-r1/review.json": {
+      "path": "data/rebuild-evidence/mim-1788-20261107/candidate-r2-conservation-review-r1/review.json",
+      "sha256": "16719342cdfe75d01323ebec26a895366d5beba60cb3a1db4988d98a55f9a945"
+    },
+    "candidate-r2-reconstructed-lineage-r1/review.json": {
+      "path": "data/rebuild-evidence/mim-1788-20261107/candidate-r2-reconstructed-lineage-r1/review.json",
+      "sha256": "5ba919b1b4c217a8d4a002e329592bd3e10f8776d32b7230a59076ad660ed289"
+    },
+    "candidate-r2-second-cycle-conservation-r1/review.json": {
+      "path": "data/rebuild-evidence/mim-1788-20261107/candidate-r2-second-cycle-conservation-r1/review.json",
+      "sha256": "367a688e726381f96488b947d1f4bd13157de343a6992d9f51de28933bf2d436"
+    },
+    "candidate-r2-second-cycle-historical-audit-r1.json": {
+      "path": "data/rebuild-evidence/mim-1788-20261107/candidate-r2-second-cycle-historical-audit-r1.json",
+      "sha256": "81fbcf0143ace2ae56e01f43b650c58af10725c38ff736cdab6619453069e31d"
+    },
+    "candidate-r2-second-cycle-r1-receipt.json": {
+      "path": "data/rebuild-evidence/mim-1788-20261107/candidate-r2-second-cycle-r1-receipt.json",
+      "sha256": "4290cbf1b6a6555cffac1fd72e8e89c86ae0b5faa568d97123de5376e7966ae5"
+    },
+    "candidate-r2/report.json": {
+      "path": "data/rebuild-evidence/mim-1788-20261107/candidate-r2/report.json",
+      "sha256": "6e63bf4254ca2a595e93aa8d58fb597c2188003efd75ecdcbc1a43473819a4c0"
+    }
+  },
+  "schema_version": 1,
+  "second_cycle_complete_quarantine_originals": 11718,
+  "second_cycle_equalities": {
+    "broader_derivations": true,
+    "candidate_compressed_bytes": true,
+    "candidate_decoded_bytes": true,
+    "held_ledger_bytes": true,
+    "immutable_upstream_provenance": true,
+    "input_inventory_only_baseline_changed": true,
+    "reproducibility_context": true
+  },
+  "second_cycle_scope_changes": {
+    "affected_entities": {
+      "added": [],
+      "removed": [
+        "cas:10489-48-2",
+        "cas:13517-23-2",
+        "cas:16373-93-6",
+        "cas:207300-70-7",
+        "kgmicrobe.compound:amylopectin_from_maize",
+        "kgmicrobe.compound:carnitine_hydrochloride",
+        "kgmicrobe.compound:cholesterol_lipid_concentrate",
+        "kgmicrobe.compound:heparin_sodium_salt_from_porcine_intestinal_mucosa",
+        "kgmicrobe.compound:maltose_hydrate",
+        "kgmicrobe.compound:menadione_solution",
+        "kgmicrobe.compound:mes_buffer",
+        "kgmicrobe.compound:mops_2m_ph7",
+        "kgmicrobe.ingredient:nldm_metabolites"
+      ]
+    },
+    "initial_affected_entities": {
+      "added": [],
+      "removed": [
+        "cas:10489-48-2",
+        "cas:13517-23-2",
+        "cas:16373-93-6",
+        "cas:207300-70-7",
+        "kgmicrobe.compound:amylopectin_from_maize",
+        "kgmicrobe.compound:carnitine_hydrochloride",
+        "kgmicrobe.compound:cholesterol_lipid_concentrate",
+        "kgmicrobe.compound:heparin_sodium_salt_from_porcine_intestinal_mucosa",
+        "kgmicrobe.compound:maltose_hydrate",
+        "kgmicrobe.compound:menadione_solution",
+        "kgmicrobe.compound:mes_buffer",
+        "kgmicrobe.compound:mops_2m_ph7",
+        "kgmicrobe.ingredient:nldm_metabolites"
+      ]
+    },
+    "reconstruction_targets": {
+      "added": [],
+      "removed": [
+        "cas:10489-48-2",
+        "cas:13517-23-2",
+        "cas:16373-93-6",
+        "cas:207300-70-7",
+        "kgmicrobe.compound:amylopectin_from_maize",
+        "kgmicrobe.compound:carnitine_hydrochloride",
+        "kgmicrobe.compound:cholesterol_lipid_concentrate",
+        "kgmicrobe.compound:heparin_sodium_salt_from_porcine_intestinal_mucosa",
+        "kgmicrobe.compound:maltose_hydrate",
+        "kgmicrobe.compound:menadione_solution",
+        "kgmicrobe.compound:mes_buffer",
+        "kgmicrobe.compound:mops_2m_ph7",
+        "kgmicrobe.ingredient:nldm_metabolites"
+      ]
+    }
+  },
+  "six_local_material_successor_direct_witnesses": {
+    "kgmicrobe.ingredient:amylopectin_from_maize": {
+      "complete_candidate_row": {
+        "comment": "canonical_name",
+        "confidence": "",
+        "mapping_date": "2026-11-01",
+        "mapping_justification": "semapv:LexicalMatching",
+        "object_category": "biolink:ChemicalEntity",
+        "object_formula": "",
+        "object_id": "kgmicrobe.ingredient:amylopectin_from_maize",
+        "object_label": "amylopectin from maize",
+        "object_source": "obo:kgmicrobe.ingredient.owl",
+        "predicate_id": "skos:exactMatch",
+        "source": "mediaingredientmech_reviewed[manifest=b02a92446e8a613fd0d96b0dd8147d439733fcf73e731b363a6388e95d616703]",
+        "subject_id": "kgm.name:amylopectin_from_maize",
+        "subject_label": "amylopectin from maize"
+      },
+      "direct_witness_ids": [
+        "8c9ea7e7ea1cac5c929b1b6423e9f86b33ef7a35ffdd5b74cf66f940586aed35"
+      ]
+    },
+    "kgmicrobe.ingredient:cholesterol_lipid_concentrate": {
+      "complete_candidate_row": {
+        "comment": "canonical_name",
+        "confidence": "",
+        "mapping_date": "2026-11-01",
+        "mapping_justification": "semapv:LexicalMatching",
+        "object_category": "biolink:ChemicalEntity",
+        "object_formula": "",
+        "object_id": "kgmicrobe.ingredient:cholesterol_lipid_concentrate",
+        "object_label": "cholesterol lipid concentrate",
+        "object_source": "obo:kgmicrobe.ingredient.owl",
+        "predicate_id": "skos:exactMatch",
+        "source": "mediaingredientmech_reviewed[manifest=b02a92446e8a613fd0d96b0dd8147d439733fcf73e731b363a6388e95d616703]",
+        "subject_id": "kgm.name:cholesterol_lipid_concentrate",
+        "subject_label": "cholesterol lipid concentrate"
+      },
+      "direct_witness_ids": [
+        "0f329283801cb1163847bc0042a783f341802b042624697223f43960c17b54ce"
+      ]
+    },
+    "kgmicrobe.ingredient:heparin_sodium_salt_from_porcine_intestinal_mucosa": {
+      "complete_candidate_row": {
+        "comment": "canonical_name",
+        "confidence": "",
+        "mapping_date": "2026-11-01",
+        "mapping_justification": "semapv:LexicalMatching",
+        "object_category": "biolink:ChemicalEntity",
+        "object_formula": "",
+        "object_id": "kgmicrobe.ingredient:heparin_sodium_salt_from_porcine_intestinal_mucosa",
+        "object_label": "Heparin sodium salt from porcine intestinal mucosa",
+        "object_source": "obo:kgmicrobe.ingredient.owl",
+        "predicate_id": "skos:exactMatch",
+        "source": "mediaingredientmech_reviewed[manifest=b02a92446e8a613fd0d96b0dd8147d439733fcf73e731b363a6388e95d616703]",
+        "subject_id": "kgm.name:heparin_sodium_salt_from_porcine_intestinal_mucosa",
+        "subject_label": "Heparin sodium salt from porcine intestinal mucosa"
+      },
+      "direct_witness_ids": [
+        "f5b32328aed6c35e308f4c7b42fe16d93618192b850b14fd94df18005a8b2866"
+      ]
+    },
+    "kgmicrobe.ingredient:menadione_solution": {
+      "complete_candidate_row": {
+        "comment": "canonical_name",
+        "confidence": "",
+        "mapping_date": "2026-11-01",
+        "mapping_justification": "semapv:LexicalMatching",
+        "object_category": "biolink:ChemicalEntity",
+        "object_formula": "",
+        "object_id": "kgmicrobe.ingredient:menadione_solution",
+        "object_label": "Menadione solution",
+        "object_source": "obo:kgmicrobe.ingredient.owl",
+        "predicate_id": "skos:exactMatch",
+        "source": "mediaingredientmech_reviewed[manifest=b02a92446e8a613fd0d96b0dd8147d439733fcf73e731b363a6388e95d616703]",
+        "subject_id": "kgm.name:menadione_solution",
+        "subject_label": "Menadione solution"
+      },
+      "direct_witness_ids": [
+        "9c71a0eeeaa380170381ed0085e4e39c3d86d01460ccc29bf206f7f1806b913b"
+      ]
+    },
+    "kgmicrobe.ingredient:mes_buffer": {
+      "complete_candidate_row": {
+        "comment": "canonical_name",
+        "confidence": "",
+        "mapping_date": "2026-11-01",
+        "mapping_justification": "semapv:LexicalMatching",
+        "object_category": "biolink:ChemicalEntity",
+        "object_formula": "",
+        "object_id": "kgmicrobe.ingredient:mes_buffer",
+        "object_label": "MES buffer",
+        "object_source": "obo:kgmicrobe.ingredient.owl",
+        "predicate_id": "skos:exactMatch",
+        "source": "mediaingredientmech_reviewed[manifest=b02a92446e8a613fd0d96b0dd8147d439733fcf73e731b363a6388e95d616703]",
+        "subject_id": "kgm.name:mes_buffer",
+        "subject_label": "MES buffer"
+      },
+      "direct_witness_ids": [
+        "ee65eed289d375a6188677bdf9351285bd4bd2b4982e4ad392941895969b50b2"
+      ]
+    },
+    "kgmicrobe.ingredient:mops_2m_ph7": {
+      "complete_candidate_row": {
+        "comment": "canonical_name",
+        "confidence": "",
+        "mapping_date": "2026-11-01",
+        "mapping_justification": "semapv:LexicalMatching",
+        "object_category": "biolink:ChemicalEntity",
+        "object_formula": "",
+        "object_id": "kgmicrobe.ingredient:mops_2m_ph7",
+        "object_label": "MOPS_2M_pH7",
+        "object_source": "obo:kgmicrobe.ingredient.owl",
+        "predicate_id": "skos:exactMatch",
+        "source": "mediaingredientmech_reviewed[manifest=b02a92446e8a613fd0d96b0dd8147d439733fcf73e731b363a6388e95d616703]",
+        "subject_id": "kgm.name:mops_2m_ph7",
+        "subject_label": "MOPS_2M_pH7"
+      },
+      "direct_witness_ids": [
+        "dc5e96fc359f70d48221c24715ee70e51a22f791b99b7d93971bdaab63eff46e"
+      ]
+    }
+  },
+  "status": "PASS_ASSIGNED_ARTIFACT_LINEAGE_AND_REPRODUCIBILITY_SCOPE"
+}

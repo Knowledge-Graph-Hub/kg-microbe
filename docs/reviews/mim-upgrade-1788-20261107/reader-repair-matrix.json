@@ -1,0 +1,434 @@
+{
+  "schema_version": 1,
+  "observed_at": "2026-11-07T09:42:28.817368+00:00",
+  "base_head": "3b07c58bb63776fdf1482dae34a8ca2212980620",
+  "upstream_commit": "0dac278466699129a083343a921c2e0ca18a9ab4",
+  "parent_issue": 1788,
+  "semantic_issue": 1790,
+  "scope": "Read-only actual-new-source downstream supported/unified reader review, with bounded repair/test proposal only.",
+  "predicate_evidence": {
+    "path": "data/rebuild-evidence/mim-1788-20261107/kgm-nonexact-consumer-audit-r1/predicate-semantics-evidence.json",
+    "bytes": 14100,
+    "sha256": "f3ff9da92d44b426151ec824d359976116b145a8f543bb85bd02efd5ec041f44"
+  },
+  "readers": [
+    {
+      "component": "Complete reviewed-product validator",
+      "code": [
+        "scripts/mim_reviewed_release.py:137-138",
+        "scripts/mim_reviewed_release.py:269-276"
+      ],
+      "behavior": "Current exact-only guard refuses the new supported product. Complete-row hashes and supported/withheld partition are already validated.",
+      "required_change": "Under #1790 explicitly admit reviewed exact and broad predicate semantics without weakening row partition, product identity, metadata or modifier controls; do not drop the two broad rows from the byte-exact product."
+    },
+    {
+      "component": "Conservative candidate identity scope and evidence",
+      "code": [
+        "scripts/mim_conservative_refresh.py:619-699",
+        "scripts/mim_conservative_refresh.py:475-524"
+      ],
+      "behavior": "Every supported row currently enters identity-connected scope and contributes subject/object/other lexical evidence and an exact MIM cross-reference. No supported-row predicate branch exists.",
+      "required_change": "Separate exact identity reconstruction from broader relation retention before any joins or evidence insertion. New broad rows must not join identity components, rename parents, add aliases, or create same_as/xrefs/formulas. Continue tracing historical exactMatch contamination independently, including invalid CAS links. Retain broad provenance as a relation, not as per-entity identity support."
+    },
+    {
+      "component": "Conservative candidate direction metadata",
+      "code": [
+        "scripts/mim_conservative_refresh.py:704-710",
+        "kg_microbe/utils/chemical_mapping_utils.py:173-190",
+        "kg_microbe/utils/chemical_mapping_utils.py:378",
+        "kg_microbe/utils/chemical_mapping_utils.py:447-449"
+      ],
+      "behavior": "Copies no-declaration baseline metadata; runtime treats absent header as legacy inverse. Actual current baseline has zero asymmetric rows.",
+      "required_change": "Apply a reviewed unified SKOS output contract for new rows with explicit direction-conservation checks. Separate finding-unified-predicate-semantics-r1.md retains exact evidence; preserve legacy-reader controls."
+    },
+    {
+      "component": "Candidate self-audit and acceptance report",
+      "code": [
+        "scripts/mim_conservative_refresh.py:808-835",
+        "scripts/mim_conservative_refresh.py:853-901"
+      ],
+      "behavior": "Its internal names, named-entity and MIM-xref maps inspect output rows without route classification; supported name expectations and approved-target groups include all supported rows. Simply adding broad output would let reports treat the parent as an identity or require a false parent lookup.",
+      "required_change": "Derive identity diagnostics only from the same eligible route classes used by production; compare supported name/xref resolution with exact-approved targets only. Audit broad coverage/direction independently. Never clear apparent conflicts by counting a broad parent as an approved exact target. Report both exact and broad counts against all 1,739 declared supported source rows after real export validation."
+    },
+    {
+      "component": "Shared unified lookup runtime",
+      "code": [
+        "kg_microbe/utils/sssom_identity_policy.py:20-58",
+        "kg_microbe/utils/chemical_mapping_utils.py:424-458",
+        "kg_microbe/utils/chemical_mapping_utils.py:539-556",
+        "kg_microbe/utils/chemical_mapping_utils.py:799-825"
+      ],
+      "behavior": "Broad/narrow route is distinct: builds directed parent index, then continues before canonical labels, synonym/formula/xref indexes. Optional unambiguous object category is nonresolving. get_parents performs direct keyed lookup, not MIM-to-registry resolution.",
+      "required_change": "No current runtime repair established. Preserve it; add actual-row tests proving direction and nonidentity properties. Candidate relation child must align with deterministically resolved exact form identities, not an unresolved MIM key or broader parent."
+    },
+    {
+      "component": "MediaDive recipe and compound reader",
+      "code": [
+        "kg_microbe/transform_utils/mediadive/mediadive.py:965-1008",
+        "kg_microbe/transform_utils/mediadive/mediadive.py:1491-1543"
+      ],
+      "behavior": "Name resolution uses shared loader, then guarded legacy and embedded identities; source-owned solution/material exceptions remain. Parent emission uses get_parents(resolved ingredient) and biolink:broad_match/skos:broadMatch, never subclass_of.",
+      "required_change": "No automatic core repair justified. Test complete saved graph output with actual two form subjects and separately supported exact CAS/local identities: stable identity selection, correctly directed parent edge, no parent alias/enrichment, unchanged recipe quantities/occurrences and endpoint unknown qualification. Rejected identities must remain local."
+    },
+    {
+      "component": "MediaDive supported/unified material evidence audit",
+      "code": [
+        "kg_microbe/transform_utils/mediadive/material_scope_audit.py:441-452",
+        "kg_microbe/transform_utils/mediadive/material_scope_audit.py:523-545"
+      ],
+      "behavior": "Consumes supported table only as imported evidence for finite p3556/sugar cases. Uses classify_mapping_row and excludes broader rows from grounding candidates. Does not perform identity lookup from this table.",
+      "required_change": "Preserve classifier behavior; add a broad-row control ensuring no fabricated exact grounding-candidate audit entry, while existing Potato/sugar/catalase/oatmeal/substrate native audits remain bound."
+    },
+    {
+      "component": "Ontology stub reference collector and native metadata",
+      "code": [
+        "kg_microbe/utils/stub_curie_collection.py:44-58",
+        "kg_microbe/utils/stub_curie_collection.py:115-132",
+        "kg_microbe/transform_utils/ontologies_stubs/ontologies_stubs_transform.py:297-306",
+        "kg_microbe/transform_utils/ontologies_stubs/ontologies_stubs_transform.py:1097-1152"
+      ],
+      "behavior": "Scans subject/object CURIEs from supported/unified files independent of predicate, then obtains labels/aliases/xrefs from native authority. Mapping row labels are not copied, and native xrefs are not promoted to same_as. The two actual broader objects are CHEBI (handled by full ontologies), not the NCIT/mesh/BTO/PO/MICRO stub prefixes.",
+      "required_change": "No current core repair established. Verify reference collection and native-only metadata under exact/broad fixtures; no parent-child assertion or alias copying should result from scanning supported rows."
+    },
+    {
+      "component": "BacDive, Madin, MetaTraits, MetaTraits GTDB, MicrobeDecoder",
+      "code": [
+        "kg_microbe/transform_utils/bacdive/bacdive.py:577",
+        "kg_microbe/transform_utils/madin_etal/madin_etal.py:283",
+        "kg_microbe/transform_utils/metatraits/metatraits.py:333",
+        "kg_microbe/transform_utils/metatraits_gtdb/metatraits_gtdb.py:135",
+        "kg_microbe/transform_utils/microbedecoder/microbedecoder.py:561-563"
+      ],
+      "behavior": "Use shared ChemicalMappingLoader identity/name/enrichment methods, not direct parsing of supported predicates. MetaTraits special/manual overrides remain separate and policy-guarded.",
+      "required_change": "Reuse shared nonidentity controls plus selected real producer routes and exact 55 historical override replay. Do not introduce blanket parent fallback to satisfy newly supported broader rows."
+    },
+    {
+      "component": "Downstream GOLD and BactoTraits",
+      "code": [
+        "kg_microbe/transform_utils/gold/gold.py:293",
+        "kg_microbe/transform_utils/bactotraits/bactotraits.py:168"
+      ],
+      "behavior": "Participate through declared ontology-stub/BacDive dependencies, not new direct MIM nonexact parsing.",
+      "required_change": "Fresh rebuild and admission in actual affected closure; no speculative parser edit."
+    },
+    {
+      "component": "Noncanonical CTD and optional NER helper",
+      "code": [
+        "kg_microbe/transform_utils/ctd/ctd.py:66",
+        "kg_microbe/transform_utils/ctd/ctd.py:140",
+        "kg_microbe/utils/ner_utils.py:49-58",
+        "merge.yaml:285-291"
+      ],
+      "behavior": "CTD resolves CAS through shared xref lookup; NER optional fallback uses shared fuzzy name lookup. CTD is commented out of canonical merge.",
+      "required_change": "Preserve shared nonidentity and original-query hydration controls; these paths do not expand current canonical closure merely by appearing in code."
+    },
+    {
+      "component": "Separate scoped ingredient bundle / mim_ingredients",
+      "code": [
+        "kg_microbe/utils/ingredient_bundle.py:305-344",
+        "kg_microbe/transform_utils/mim_ingredients/mim_ingredients.py:85-110",
+        "kg_microbe/transform_utils/mim_ingredients/mim_ingredients.py:176-201"
+      ],
+      "behavior": "Explicit candidate_only selection and independent verified bundle required. Nonidentity rows do not establish serialized identity targets; exact/nonidentity pair contradictions are refused. Supported broad/narrow scoped rows emit correctly directed biolink:broad_match. This is not the default complete MIM supported-product reader.",
+      "required_change": "Keep selection/contract distinct. Do not activate or substitute the optional scoped bundle while upgrading the complete supported release."
+    },
+    {
+      "component": "Legacy full consolidator and bounded identity refresh",
+      "code": [
+        "scripts/consolidate_chemical_mappings.py:1758-1773",
+        "scripts/consolidate_chemical_mappings.py:1839-1916",
+        "scripts/consolidate_chemical_mappings.py:2866-2920"
+      ],
+      "behavior": "Legacy full refresh is forbidden while reviewed pin exists. Its separate mechanism passes asymmetric rows and translates MIM subject using exact counterpart, carries predicate_semantics; original last-wins map is not an endorsed canonical choice for the new multiple-exact cohort.",
+      "required_change": "Do not bypass conservative reconstruction or reactivate floating sibling refresh. Retain asymmetric-mechanism tests. If reused internally, replace last-wins assumptions with explicitly reviewed deterministic exact-target selection and prove no relation disappearance under actual lookup."
+    }
+  ],
+  "required_controls": [
+    {
+      "id": "product_partition",
+      "tests": [
+        "tests/test_mim_reviewed_release.py",
+        "tests/test_mim_immutable_pin.py",
+        "tests/test_reviewed_mim_cli.py"
+      ],
+      "new_control": "Actual exact/broad/withheld immutable rows with all complete-row source decisions and approved finite predicates; reject unknown/nonreviewed predicates and changed modifiers/aliases even with superficially plausible counts."
+    },
+    {
+      "id": "identity_vs_broad",
+      "tests": [
+        "tests/test_mim_conservative_refresh.py",
+        "tests/test_sssom_identity_policy.py",
+        "tests/test_chemical_mapping_utils.py"
+      ],
+      "new_control": "Broad parent contributes no identity component, aliases, names, xrefs, formulas, same_as or independent support. Positive exact CAS/local forms remain usable; parent own native names remain independent. Repeat under reversed source order and injected conflicting prior identity."
+    },
+    {
+      "id": "direction_and_registry",
+      "tests": [
+        "tests/test_sssom_predicate_semantics.py",
+        "tests/test_sssom_asymmetric_direction.py"
+      ],
+      "new_control": "Both actual claims retain child-to-CHEBI direction; no absent-header inversion. Both exact sibling targets (CAS/local) are handled by a reviewed deterministic route; parent lookup follows the identity actually selected. Keep legacy synthetic semantics and unknown-header compatibility tests; measured production baseline has no asymmetric rows."
+    },
+    {
+      "id": "diagnostic_truth",
+      "tests": [
+        "tests/test_mim_conservative_refresh.py"
+      ],
+      "new_control": "Report must not list the parent as approved exact resolution or demand form-name-to-parent identity. Compare exact and broad coverage separately, then account for all supported rows; demonstrate runtime/report agreement rather than implementation-only counters."
+    },
+    {
+      "id": "quarantine_and_cycle",
+      "tests": [
+        "tests/test_mim_historical_claims.py",
+        "tests/test_mim_historical_object_labels.py",
+        "tests/test_historical_identity_quarantine.py",
+        "tests/test_hydrate_candidate.py",
+        "tests/test_invalid_cas_admission.py"
+      ],
+      "new_control": "Preserve every rejected prior complete row/multiplicity and per-claim support; no new broad taint propagation; retain old exact contamination tracing; identical second-cycle directed relations, identity routes and deterministic bytes."
+    },
+    {
+      "id": "native_consumers",
+      "tests": [
+        "tests/test_stub_curie_collection.py",
+        "tests/test_ontologies_stubs.py",
+        "tests/test_mediadive_material_scope_audit.py",
+        "tests/test_mediadive_hydrate_columns.py",
+        "tests/test_mediadive_recipe_identity.py",
+        "tests/test_mediadive_catalase_scope.py",
+        "tests/test_mediadive_sugar_context.py",
+        "tests/test_mediadive_p3556_scope.py"
+      ],
+      "new_control": "Actual final MediaDive edge and occurrence artifacts prove broad_match (not subclass/exact) direction and no false substitutions across all fallback namespaces. Stub nodes must use native labels/aliases only. Existing finite material/endpoint audits stay active."
+    }
+  ],
+  "identities": [
+    {
+      "path": "kg_microbe/transform_utils/bacdive/bacdive.py",
+      "bytes": 193036,
+      "sha256": "c2446a6a5daf2ed87bf1d0aefa625ed51324898b854d8f9f0fdf9a5e00d5af72"
+    },
+    {
+      "path": "kg_microbe/transform_utils/bactotraits/bactotraits.py",
+      "bytes": 17777,
+      "sha256": "0d75c432f89f70f90ace3135e7142909721140ba416a638b95e52ac8fcfd7523"
+    },
+    {
+      "path": "kg_microbe/transform_utils/ctd/ctd.py",
+      "bytes": 8976,
+      "sha256": "033c2ae1562241754a581dc42b54b955136454628f992acd765037c95365e24b"
+    },
+    {
+      "path": "kg_microbe/transform_utils/gold/gold.py",
+      "bytes": 64437,
+      "sha256": "89bc2649e216cb8307d23e3820f8aa23eba35815dd89fae1a99c9cebb248749b"
+    },
+    {
+      "path": "kg_microbe/transform_utils/madin_etal/madin_etal.py",
+      "bytes": 58363,
+      "sha256": "5535f7e956238c3816b86988eb4ca1f06272b1349aae1ca02db4a75c9363fe9a"
+    },
+    {
+      "path": "kg_microbe/transform_utils/mediadive/material_scope_audit.py",
+      "bytes": 38574,
+      "sha256": "3f986f3898287074c7cd504fc2878ee9cdc3fc5611938fbf477de88054785b9e"
+    },
+    {
+      "path": "kg_microbe/transform_utils/mediadive/mediadive.py",
+      "bytes": 80386,
+      "sha256": "5dd9090519838615677c118bcdc95db5304e658dde0dc04876330193a5f7e855"
+    },
+    {
+      "path": "kg_microbe/transform_utils/metatraits/metatraits.py",
+      "bytes": 177986,
+      "sha256": "85d6687fa6ac1af3a11203a7f01b9bf3d387c06a23010ab651a89a4fad06cc3e"
+    },
+    {
+      "path": "kg_microbe/transform_utils/metatraits_gtdb/metatraits_gtdb.py",
+      "bytes": 36142,
+      "sha256": "4d15aaba4b793a6e0c63fbe51f035168c765d061f7ae8752ad8e861924d30ca7"
+    },
+    {
+      "path": "kg_microbe/transform_utils/microbedecoder/microbedecoder.py",
+      "bytes": 81268,
+      "sha256": "8aa801621cae6df7605a38b04a4f1eaf8da57aa2239db770f0ad3c5ab741d63b"
+    },
+    {
+      "path": "kg_microbe/transform_utils/mim_ingredients/mim_ingredients.py",
+      "bytes": 10546,
+      "sha256": "65de9528f8bf30925d6396a7ba4bbbe5add89efcc7076796bcad81439a8e51bf"
+    },
+    {
+      "path": "kg_microbe/transform_utils/ontologies_stubs/ontologies_stubs_transform.py",
+      "bytes": 69615,
+      "sha256": "059947562170e60441b515dd5cdf57e90812e2895f47d15711a6f6f291ee681a"
+    },
+    {
+      "path": "kg_microbe/utils/chemical_mapping_utils.py",
+      "bytes": 45383,
+      "sha256": "3ec59d6123da19eae19e997c63dd455ab25e3bbcc867ddabc82352a5c1a12c19"
+    },
+    {
+      "path": "kg_microbe/utils/ingredient_bundle.py",
+      "bytes": 17128,
+      "sha256": "59e1bf4af7d4de1f42c97ee95515253953166f508764a2edd432e8a7ae7c3561"
+    },
+    {
+      "path": "kg_microbe/utils/ner_utils.py",
+      "bytes": 7842,
+      "sha256": "33bd43eabff362bf18fb4b265841a4177b13282c799b840e1fe9c95065b90292"
+    },
+    {
+      "path": "kg_microbe/utils/sssom_identity_policy.py",
+      "bytes": 2969,
+      "sha256": "3685d46f1621ee471cf5b8c0a94f333f7ff037eac0bf4bc23412bc14e493e53f"
+    },
+    {
+      "path": "kg_microbe/utils/stub_curie_collection.py",
+      "bytes": 5913,
+      "sha256": "ac224f8dbca57d61116384e37fe9f003256907aaddeda6e0ae9a0b3a422bda06"
+    },
+    {
+      "path": "merge.yaml",
+      "bytes": 11627,
+      "sha256": "926c238e577931db06f6674ec96bdf0d85d185a7bcc5028ed6f5bde293d5d1d2"
+    },
+    {
+      "path": "scripts/consolidate_chemical_mappings.py",
+      "bytes": 163049,
+      "sha256": "d31267afccaf3a12689600775a3b10d42d8828c00264b29fc67aca185273efbb"
+    },
+    {
+      "path": "scripts/mim_conservative_refresh.py",
+      "bytes": 43149,
+      "sha256": "ec51a2de8f7c701427ca2b58ce807222e360e15379f51ea5666315eae6d94640"
+    },
+    {
+      "path": "scripts/mim_reviewed_release.py",
+      "bytes": 13104,
+      "sha256": "03e6bed504de06c7ea573f0e857b445875def594bf6b2123a7aeed729ef4efb1"
+    },
+    {
+      "path": "tests/test_chemical_mapping_utils.py",
+      "bytes": 31812,
+      "sha256": "eb0e111ee1b957a692a37a1c500bb08e172b58c768ef736a645e73cd86282acb"
+    },
+    {
+      "path": "tests/test_historical_identity_quarantine.py",
+      "bytes": 10045,
+      "sha256": "cbbe86a27231a688bc5a1413ea069bb6bfd4d1ed01e747c0dbb93184bd13d2c4"
+    },
+    {
+      "path": "tests/test_hydrate_candidate.py",
+      "bytes": 5485,
+      "sha256": "a0b983d106a40da56022eea0dcf7d2a91e54e3cfb5e94143611d9a8667213056"
+    },
+    {
+      "path": "tests/test_invalid_cas_admission.py",
+      "bytes": 18621,
+      "sha256": "2c5ca3c8d21de1d6c6e03a7fbaf8299410f51ed2d1f005d3e3dae44e5098a766"
+    },
+    {
+      "path": "tests/test_mediadive_catalase_scope.py",
+      "bytes": 17180,
+      "sha256": "3f4d0440c610d1e647a6567017160539f610dc317c7f2a888c0f8cecb8ff172a"
+    },
+    {
+      "path": "tests/test_mediadive_hydrate_columns.py",
+      "bytes": 9737,
+      "sha256": "854a84fe3d60b3b9774a947865f8425f557c71ba640c41d30ae3ae1564e0e702"
+    },
+    {
+      "path": "tests/test_mediadive_material_scope_audit.py",
+      "bytes": 17137,
+      "sha256": "d21339de26f8f7e941bbe661e58ec2cea2f0667cf6b65c6a0709043be9369fad"
+    },
+    {
+      "path": "tests/test_mediadive_p3556_scope.py",
+      "bytes": 23895,
+      "sha256": "cb1ee56992e9a042525820cf736a7c7c238e6ca037b30a4bee8452dd8f1e696f"
+    },
+    {
+      "path": "tests/test_mediadive_recipe_identity.py",
+      "bytes": 28676,
+      "sha256": "2808af34fd934c17887e02c65c2d1b5ee91814fb5ad99f3c898e1530316cf1f2"
+    },
+    {
+      "path": "tests/test_mediadive_sugar_context.py",
+      "bytes": 21724,
+      "sha256": "77438956208ba58c55feecca15ec4ec41ae736611a9332174cd22b71333152d1"
+    },
+    {
+      "path": "tests/test_mim_conservative_refresh.py",
+      "bytes": 33925,
+      "sha256": "001c4c3ca2e9c11649129de624a4db5e0c686fef638a35af781415b94aed4d42"
+    },
+    {
+      "path": "tests/test_mim_historical_claims.py",
+      "bytes": 3060,
+      "sha256": "e239ca6f44f37e2c881b8b9fc051146bc303ed90e75cccfa6c8527813368fc3d"
+    },
+    {
+      "path": "tests/test_mim_historical_object_labels.py",
+      "bytes": 5747,
+      "sha256": "2a4b6855da4e4c06e198bd9267e88dc065a9bcf3635ee4ef1d54dd966916b64f"
+    },
+    {
+      "path": "tests/test_mim_immutable_pin.py",
+      "bytes": 13437,
+      "sha256": "fadd192faf5fd0a9e62755b66947b3b33406060b1d2b51a5a37751b73a3cd1c5"
+    },
+    {
+      "path": "tests/test_mim_reviewed_release.py",
+      "bytes": 12871,
+      "sha256": "21c1ea5f86d7c7153b004b5dac7a20636a68ebc4bbb8b8fe0a9074d135c86609"
+    },
+    {
+      "path": "tests/test_ontologies_stubs.py",
+      "bytes": 46258,
+      "sha256": "1c001fd264b2f2b7291e01bd83efa90563c7492ebd0daafbde9d8eb8f5912651"
+    },
+    {
+      "path": "tests/test_reviewed_mim_cli.py",
+      "bytes": 4480,
+      "sha256": "3a44a414a93988aeedff7083e19bc583e0e1476e321de4c887e77f70cc050d87"
+    },
+    {
+      "path": "tests/test_sssom_asymmetric_direction.py",
+      "bytes": 19149,
+      "sha256": "6cacda9c88f2ce8674af3f06dd5b9be9511da59948c1a73987400e52c398868d"
+    },
+    {
+      "path": "tests/test_sssom_identity_policy.py",
+      "bytes": 11744,
+      "sha256": "b4aba67d104eecc1c8f865e320312c1858bfe363e5942534cebe60cd7fc4ec2f"
+    },
+    {
+      "path": "tests/test_sssom_predicate_semantics.py",
+      "bytes": 7633,
+      "sha256": "4972876a50079de0082fcf0e883947306508ada3104da6a325c53200a18ac379"
+    },
+    {
+      "path": "tests/test_stub_curie_collection.py",
+      "bytes": 3645,
+      "sha256": "5223bd164909d01152e7d8e027da8b76ca07dafa82692bfa43e7760cd67a72ed"
+    }
+  ],
+  "implementation_boundary": [
+    "Expected production-reader code changes are not established by this static audit; repair release admission/conservative construction/reporting first, then prove real consumer behavior.",
+    "Broad rows and their exact CAS/local counterparts require prior scientific review; this audit only verifies code interpretation.",
+    "No derived product was generated, no mapping pin/artifact installed, no native/test gate or network used.",
+    "All source-search inventory included ignored files; separate scoped bundle and noncanonical consumers are explicitly distinguished."
+  ],
+  "open_findings": [
+    {
+      "issue": 1790,
+      "scope": "Exact-only release contract plus predicate-unaware candidate identity, diagnostic and form-parent integration."
+    },
+    {
+      "draft": "finding-unified-predicate-semantics-r1.md",
+      "scope": "New broader rows require correct unified output declaration; zero actual baseline asymmetric rows recorded."
+    }
+  ]
+}

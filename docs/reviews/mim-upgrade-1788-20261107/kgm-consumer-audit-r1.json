@@ -1,0 +1,295 @@
+{
+  "schema_version": 1,
+  "observed_at": "2026-11-07T09:37:53.941919+00:00",
+  "head": "3b07c58bb63776fdf1482dae34a8ca2212980620",
+  "scope": "Read-only KGM consumer-policy, historical-cohort, and mappings-only dependency audit before new MIM source/export comparison.",
+  "new_upstream_archive_or_export_reviewed": false,
+  "scientific_acceptance": false,
+  "source_identities": [
+    {
+      "path": "docs/MIM_REVIEWED_RELEASE.md",
+      "bytes": 16869,
+      "sha256": "11ec4ac4580f6de39a83920453851cc4e4a6465d7faaa6d3c5e863f61ba78e97"
+    },
+    {
+      "path": "scripts/refresh_reviewed_mim.py",
+      "bytes": 11941,
+      "sha256": "b421447bdabc3ab76b8c06ba93cd92e9a4f58fdd7122c72c5d0bf85f7c036ff0"
+    },
+    {
+      "path": "scripts/mim_reviewed_release.py",
+      "bytes": 13104,
+      "sha256": "03e6bed504de06c7ea573f0e857b445875def594bf6b2123a7aeed729ef4efb1"
+    },
+    {
+      "path": "scripts/mim_conservative_refresh.py",
+      "bytes": 43149,
+      "sha256": "ec51a2de8f7c701427ca2b58ce807222e360e15379f51ea5666315eae6d94640"
+    },
+    {
+      "path": "scripts/audit_mim_historical_claims.py",
+      "bytes": 4968,
+      "sha256": "4d165a650a0cf0d1b39fb776b9506bc5fee0b76411153bb5463347a094551ace"
+    },
+    {
+      "path": "kg_microbe/utils/ingredient_identity.py",
+      "bytes": 11291,
+      "sha256": "2fbf540fcc3a0f62ae855bf38d888246764cd4f0fce2c2ee6ed036ddb0ba4099"
+    },
+    {
+      "path": "kg_microbe/utils/ingredient_context.py",
+      "bytes": 5802,
+      "sha256": "1d41042b05763064820a13098750448628ebe8aa3b86e5321a9cb767c87868ea"
+    },
+    {
+      "path": "kg_microbe/utils/sssom_identity_policy.py",
+      "bytes": 2969,
+      "sha256": "3685d46f1621ee471cf5b8c0a94f333f7ff037eac0bf4bc23412bc14e493e53f"
+    },
+    {
+      "path": "kg_microbe/utils/chemical_mapping_utils.py",
+      "bytes": 45383,
+      "sha256": "3ec59d6123da19eae19e997c63dd455ab25e3bbcc867ddabc82352a5c1a12c19"
+    },
+    {
+      "path": "kg_microbe/utils/cas.py",
+      "bytes": 1433,
+      "sha256": "39d526c55af41a3c792aa2e5c1fef1486fbb11f3a54c9da0138ea189c4e92775"
+    },
+    {
+      "path": "kg_microbe/utils/transform_fingerprint.py",
+      "bytes": 26921,
+      "sha256": "90272b22dfa0f4b0c690b28a3ef7591ac88f2b52a05925da1061eb5190937e9c"
+    },
+    {
+      "path": "kg_microbe/transform_utils/metatraits/metatraits.py",
+      "bytes": 177986,
+      "sha256": "85d6687fa6ac1af3a11203a7f01b9bf3d387c06a23010ab651a89a4fad06cc3e"
+    },
+    {
+      "path": "kg_microbe/transform_utils/metatraits_gtdb/metatraits_gtdb.py",
+      "bytes": 36142,
+      "sha256": "4d15aaba4b793a6e0c63fbe51f035168c765d061f7ae8752ad8e861924d30ca7"
+    },
+    {
+      "path": "kg_microbe/transform_utils/mediadive/mediadive.py",
+      "bytes": 80386,
+      "sha256": "5dd9090519838615677c118bcdc95db5304e658dde0dc04876330193a5f7e855"
+    },
+    {
+      "path": "kg_microbe/transform_utils/mediadive/material_scope_audit.py",
+      "bytes": 38574,
+      "sha256": "3f986f3898287074c7cd504fc2878ee9cdc3fc5611938fbf477de88054785b9e"
+    },
+    {
+      "path": "kg_microbe/transform_utils/mediadive/recipe_identity.py",
+      "bytes": 29074,
+      "sha256": "b124405ce71e02500acb4b37d0404b189649309103585227a48f5fe5db51202f"
+    },
+    {
+      "path": "kg_microbe/transform_utils/ontologies_stubs/ontologies_stubs_transform.py",
+      "bytes": 69615,
+      "sha256": "059947562170e60441b515dd5cdf57e90812e2895f47d15711a6f6f291ee681a"
+    },
+    {
+      "path": "kg_microbe/transform_utils/bacdive/bacdive.py",
+      "bytes": 193036,
+      "sha256": "c2446a6a5daf2ed87bf1d0aefa625ed51324898b854d8f9f0fdf9a5e00d5af72"
+    },
+    {
+      "path": "kg_microbe/transform_utils/bactotraits/bactotraits.py",
+      "bytes": 17777,
+      "sha256": "0d75c432f89f70f90ace3135e7142909721140ba416a638b95e52ac8fcfd7523"
+    },
+    {
+      "path": "kg_microbe/transform_utils/madin_etal/madin_etal.py",
+      "bytes": 58363,
+      "sha256": "5535f7e956238c3816b86988eb4ca1f06272b1349aae1ca02db4a75c9363fe9a"
+    },
+    {
+      "path": "kg_microbe/transform_utils/gold/gold.py",
+      "bytes": 64437,
+      "sha256": "89bc2649e216cb8307d23e3820f8aa23eba35815dd89fae1a99c9cebb248749b"
+    },
+    {
+      "path": "kg_microbe/transform_utils/microbedecoder/microbedecoder.py",
+      "bytes": 81268,
+      "sha256": "8aa801621cae6df7605a38b04a4f1eaf8da57aa2239db770f0ad3c5ab741d63b"
+    },
+    {
+      "path": "mappings/mim_reviewed_release.json",
+      "bytes": 1169,
+      "sha256": "f082c05656a0910c85176eec7b41deeb77c27967aecb80393fddc262819b6d97"
+    },
+    {
+      "path": "mappings/ingredient_mappings.sssom.tsv",
+      "bytes": 838611,
+      "sha256": "6b52b30e018b369aa322d41dfd4e81fcfae0e895e34d7fe48900abf5835815fb"
+    },
+    {
+      "path": "mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz",
+      "bytes": 13373982,
+      "sha256": "59464e08017cc907a1240a4378d2462efc9e2c1b9d6c3cf0b08b4344ef695ae8"
+    },
+    {
+      "path": "mappings/canonical/special_chemical_mappings.tsv",
+      "bytes": 72894,
+      "sha256": "1e6648b8489c758099c7bbb8afa4a8990cdcaa4e2bbf6296026a08884d3f4e7a"
+    },
+    {
+      "path": "mappings/canonical/chemical_mappings.tsv",
+      "bytes": 1962,
+      "sha256": "73ac6cc03f3e4c0820748dd2adbd857cede40b0d29295a818f70979163bacd41"
+    },
+    {
+      "path": "mappings/ingredient_identity_exclusions.tsv",
+      "bytes": 29913,
+      "sha256": "adee54d81504734c1c6c164346c3c4db600da6840a7ed3908325ca712a528499"
+    },
+    {
+      "path": "mappings/ingredient_name_scopes.tsv",
+      "bytes": 4213,
+      "sha256": "683c5410418f2d33a41985a1d168c8f86e47b7fa2a91ea8c97bc9f029f4d3f8a"
+    },
+    {
+      "path": "mappings/ingredient_context_dispositions.json",
+      "bytes": 985,
+      "sha256": "c1035fa5fac058b3a21c5ee815092020ee6811db659faa29666542d1a3872e8e"
+    },
+    {
+      "path": "mappings/catalase_native_authority.json",
+      "bytes": 4300,
+      "sha256": "b95f503a2d75f162c110bd624e6e09bb29ad2d921901058d53ec01fdb1b801ac"
+    },
+    {
+      "path": "mappings/catalase_historical_groundings.json",
+      "bytes": 4273,
+      "sha256": "6ef70a20e5a7206daa49b2ea10bf2d2aefee44879627a7a64de5d6017e260df2"
+    },
+    {
+      "path": "mappings/mediadive_recipe_identity_policy.json",
+      "bytes": 5796,
+      "sha256": "9f590b55a9183b5dfec6cc9082c6193db79b2fd7b6bd8e938a5c4a35126e059f"
+    },
+    {
+      "path": "mappings/mediadive_recipe_identity_evidence.json",
+      "bytes": 44570,
+      "sha256": "5ec6fc063a5c0c10a77392b20e9f3fe70272479d1ba0a3396dd49a472645ab92"
+    }
+  ],
+  "historical_cohort": {
+    "path": "data/rebuild-evidence/mim-1788-20261107/kgm-consumer-audit-r1/historical-55-cohort.json",
+    "bytes": 152353,
+    "sha256": "35371930ecf55722bbfdfc867c1b0b6bee29667ee57fbb5cae2c9bc11d0925df"
+  },
+  "acceptance_tests": {
+    "path": "data/rebuild-evidence/mim-1788-20261107/kgm-consumer-audit-r1/acceptance-test-inventory.json",
+    "bytes": 106127,
+    "sha256": "5c4a7b709d03d7d4e9f7d0de4a42d8f751eba4dc45c6b76f76f4d2e5414f8f5e"
+  },
+  "confirmed_actionable_defects": [],
+  "findings_disposition": "No new current-code defect established by this bounded static audit. Candidate-specific compatibility and scientific conflicts remain unassessed until exact archive/export evidence is available. Existing safeguards are acceptance requirements, not permission to relabel historical evidence.",
+  "mapping_only_closure": {
+    "producers": [
+      "ontologies_stubs",
+      "bacdive",
+      "mediadive",
+      "madin_etal",
+      "metatraits",
+      "metatraits_gtdb",
+      "bactotraits",
+      "gold",
+      "microbedecoder"
+    ],
+    "conditions": [
+      "Only supported/unified mapping artifacts change; all other selected inputs, shared code and policies remain unchanged and fresh.",
+      "Freshness must be evaluated on the final checkout and actual native receipts. Old merge inputs and receipts remain immutable."
+    ],
+    "dependency_evidence": [
+      "docs/MIM_REVIEWED_RELEASE.md:258-273",
+      "kg_microbe/transform_utils/ontologies_stubs/ontologies_stubs_transform.py:282-306",
+      "kg_microbe/transform_utils/mediadive/mediadive.py:210",
+      "kg_microbe/transform_utils/bactotraits/bactotraits.py:168",
+      "kg_microbe/transform_utils/gold/gold.py:293",
+      "kg_microbe/transform_utils/microbedecoder/microbedecoder.py:245"
+    ],
+    "all_producer_expansion": "kg_microbe/utils changes and shared curation listed in transform_fingerprint.py:43-84 invalidate shared identities for all canonical producers. In particular ingredient identity/name/context/recipe policy changes are not mapping-only.",
+    "metatraits_dynamic_binding": "metatraits.py:275-285 discovers canonical TSVs; metatraits_gtdb.py:85-87 inherits those and parent package code. The special table is a direct runtime path despite exclusion from candidate reconstruction."
+  },
+  "required_consumer_checks": [
+    {
+      "name": "historical_55",
+      "evidence": [
+        "metatraits.py:591-649",
+        "tests/test_mim_antibiotic_scope.py:19-99",
+        "tests/test_ingredient_identity_contract.py:386-410"
+      ],
+      "acceptance": "Replay exact 17+38 source-trait cohort through both real special/manual resolver paths and retain current-code/candidate identities. Current table has 203 rows; historical 194 is not its present denominator. Five historical targets are now correctly local: angustmycin, rubradirin, rhodomycin A, pluramycin A, racemomycin E. Preserve these reviewed corrections; do not restore original reconciled IDs from the historical ledger."
+    },
+    {
+      "name": "potato",
+      "evidence": [
+        "mappings/ingredient_identity_exclusions.tsv:14",
+        "material_scope_audit.py:383-393",
+        "tests/test_mediadive_material_scope_audit.py:115-328"
+      ],
+      "acceptance": "Bare Potato must not acquire cas:93348-51-7 extract identity. Preserve full native occurrence and candidate claims, independent valid selections, nonbare positive controls, mapping/native-input binding, repeated finalization and public admission."
+    },
+    {
+      "name": "oatmeal_substrate_and_nested_solutions",
+      "evidence": [
+        "recipe_identity.py:109-113",
+        "recipe_identity.py:186-200",
+        "recipe_identity.py:429-434",
+        "mappings/mediadive_recipe_identity_policy.json:104",
+        "mappings/mediadive_recipe_identity_policy.json:141"
+      ],
+      "acceptance": "Keep exact native oatmeal/substrate finite holds before unified/legacy/embedded lookup; explicit nested solution IDs own identity. Preserve occurrence order/count/typed quantity/metadata and all four audit files, including honest zero cohorts; reject new or contradictory native context."
+    },
+    {
+      "name": "catalase",
+      "evidence": [
+        "kg_microbe/utils/ingredient_context.py:25-59",
+        "kg_microbe/utils/ingredient_context.py:63-94",
+        "tests/test_mediadive_catalase_scope.py:71-301"
+      ],
+      "acceptance": "NCIT:C61062 human CAT native metadata/activity authority is not a generic catalase ingredient identity. Preserve eight reviewed native observations and historical candidate evidence; deny reintroduction through supported/unified/native reconstruction, legacy and embedded routes, while retaining native positive assay controls."
+    },
+    {
+      "name": "hydrate_and_cas",
+      "evidence": [
+        "kg_microbe/utils/ingredient_identity.py:60-93",
+        "kg_microbe/utils/ingredient_identity.py:219-225",
+        "kg_microbe/utils/sssom_identity_policy.py:20-58",
+        "tests/test_mediadive_hydrate_columns.py:62-191",
+        "tests/test_invalid_cas_admission.py:112-323"
+      ],
+      "acceptance": "Hydrates require native label/scope and correctly directed native part-to-base evidence; weak recipe closeMatch is not identity. Validate CAS shape/checksum before every name/formula/category/parent/hydrate/xref carrier route, including CAS-RN and embedded routes. Preserve rejected full rows and local occurrence context, never repair chemistry by normalization."
+    },
+    {
+      "name": "identity_connected_quarantine_and_aliases",
+      "evidence": [
+        "scripts/mim_conservative_refresh.py:619-699",
+        "scripts/mim_conservative_refresh.py:475-524",
+        "scripts/audit_mim_historical_claims.py:56-108",
+        "tests/test_mim_conservative_refresh.py:221-475"
+      ],
+      "acceptance": "Trace historical nonlexical exactMatch, reversed/shared identifiers and invalid-CAS contamination; include native same_as and admitted independent/supported identities before reconstruction. Native xrefs do not expand scope or establish exact identity. Preserve complete original rows and multiplicity. Reconstruct per-claim alias/source attribution; do not copy entity-wide provenance. Explicitly compare every candidate object_label/other alias because current builder adds both to lexical indexes."
+    }
+  ],
+  "required_artifacts": [
+    "Exact old/new source archive, source SSSOM, review, owner records, export code/lock/workflow identities; separate review of scientific changes before export/implementation.",
+    "Native supported/withheld/disposition manifest and complete-row partition; schema/recipe/Python 3.13/workflow compatibility review. Current KGM contract requires manifest schema 1, fixed three product filenames and eleven disposition columns; never substitute digests into mismatched assumptions.",
+    "Candidate report with before/after input fingerprints, supported and unified byte hashes, full quarantine with row multiplicity, per-claim alias suppression/withdrawal/owner/form/registry delta, and independently reviewed candidate acceptance.",
+    "Second-cycle ordered semantic and byte stability; exact 55-row runtime cohort results against final code/candidate, plus broader relevant tests in acceptance-test-inventory.json.",
+    "Whole current MediaDive source replay with all legacy/embedded/strict/hydrate fallback routes, occurrence/quantity/native identity preservation and current 632 unknown-association qualification retained. Historical 2026-09 occurrence counts are not current-run pass evidence.",
+    "Paired reviewed supported/unified promotion, one real production-path canary, actual invalidated-producer closure rebuild and native/source admission receipts without restamping.",
+    "Final clean code gate and exact-head CI, canonical merge/archive, mapping-induced graph comparison, model/path and release validation on new graph generation; old run remains comparison evidence."
+  ],
+  "review_limits": [
+    "No source export, test, native gate, producer, or network request was run.",
+    "No tracked file or old worktree was changed.",
+    "Searches used for inventory included ignored files; no absence claim is based on a default-ignore search.",
+    "No current upstream alias suppression or review schema compatibility verdict is made without the exact new archive/export."
+  ]
+}

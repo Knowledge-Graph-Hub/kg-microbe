@@ -86,11 +86,13 @@ class _Snapshots:
     """Retain exact read bytes and file identity using the existing snapshot primitive."""
 
     def __init__(self):
+        """Initialize captured bytes, file identities, and directory membership."""
         self.files = {}
         self.identities = {}
         self.directories = {}
 
     def add(self, path, digest=None):
+        """Capture or recheck a regular file, rejecting pin drift and physical aliases."""
         path = Path(path).absolute()
         _require(not any(p.is_symlink() for p in (path, *path.parents)), "aliased input")
         with _regular_open(path) as stream:
@@ -111,6 +113,7 @@ class _Snapshots:
         return raw
 
     def directory(self, root, names):
+        """Require the complete declared file membership of an unaliased directory."""
         root = _root(str(root))
         expected = sorted(names)
         actual = []
@@ -122,6 +125,7 @@ class _Snapshots:
         self.directories[root] = expected
 
     def verify(self):
+        """Recheck every captured file and complete product directory."""
         for path, (raw, identity) in list(self.files.items()):
             _require(self.add(path) == raw and self.files[path][1] == identity, "snapshot drift")
         for root, names in list(self.directories.items()):
@@ -375,6 +379,7 @@ class StableSourceCandidate:
         held = set(payload["consumer_admission"]["held_owners"])
 
         def counts(rows):
+            """Count supported source owners by their separate external mapping category."""
             result = {"exact_external": 0, "stable_mim_plus_inexact": 0, "stable_mim_only": 0}
             for owner in owners:
                 predicates = {

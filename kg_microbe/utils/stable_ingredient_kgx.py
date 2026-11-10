@@ -244,6 +244,7 @@ def project_stable_candidate(native_payload, *, manifest_sha256):
     candidate = "MIM.candidate:" + manifest_sha256
 
     def node(identifier, kind, label=""):
+        """Add one explicitly identified node without merging different identifiers."""
         if identifier not in nodes:
             nodes[identifier] = {
                 ID_COLUMN: identifier,
@@ -259,6 +260,7 @@ def project_stable_candidate(native_payload, *, manifest_sha256):
             }
 
     def edge(subject, predicate, obj, relation, envelope):
+        """Append an edge with its complete independent assertion envelope."""
         value = {
             SUBJECT_COLUMN: subject,
             PREDICATE_COLUMN: predicate,
@@ -275,12 +277,14 @@ def project_stable_candidate(native_payload, *, manifest_sha256):
         edges.append(value)
 
     def information(envelope):
+        """Retain an information assertion without authorizing an active mapping."""
         envelope = dict(envelope, representation="information_assertion")
         identifier = "MIM.assertion:" + _digest([manifest_sha256, len(edges), envelope])
         node(identifier, "assertion_record")
         edge(identifier, RELATED_TO_PREDICATE, candidate, "IAO:0000136", envelope)
 
     def active(envelope):
+        """Emit the reviewed mapping with its original predicate and payload."""
         payload = envelope["payload"]
         subject, obj = _identifier(payload["subject_id"]), _identifier(payload["object_id"])
         for identifier, label in ((subject, payload.get("subject_label", "")), (obj, payload.get("object_label", ""))):

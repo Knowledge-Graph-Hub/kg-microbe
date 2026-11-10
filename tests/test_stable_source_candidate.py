@@ -38,6 +38,7 @@ def select(root, producer, executable, output, *, companion_mode="required/v1"):
     companion = root / "companion-output"
 
     def head(folder):
+        """Read the actual fixture or producer Git revision."""
         return subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=folder).decode().strip()  # noqa: S607
 
     receipt = json.loads((source / "producer.json").read_bytes())
@@ -298,6 +299,7 @@ def test_mutation_after_native_validation_refused(native_selection, monkeypatch)
     original = subprocess.run
 
     def change_after_native(argv, **kwargs):
+        """Inject source drift only after the genuine native validation succeeds."""
         result = original(argv, **kwargs)
         if any(str(value).endswith("stable_source_native_bridge.py") for value in argv):
             assert result.returncode == 0, result.stderr.decode()
@@ -497,6 +499,7 @@ def test_late_candidate_write_drift_preserves_failure(native_selection, tmp_path
     original = _Snapshots.add
 
     def drift(snapshot, file, digest=None):
+        """Change installed assertion bytes after their manifest has been captured."""
         result = original(snapshot, file, digest)
         if Path(file) == output / "manifest.json":
             with (output / "assertions.json").open("ab") as stream:

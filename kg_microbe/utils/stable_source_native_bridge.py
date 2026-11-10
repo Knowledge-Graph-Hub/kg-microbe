@@ -147,12 +147,18 @@ def validate(request):
     # compatible stale pyc. Native source_bindings additionally uses its own
     # captured-module implementation and full producer/dependency verification.
     class SourceOnly(importlib.machinery.SourceFileLoader):
+        """Load selected first-party source without using bytecode caches."""
+
         def get_code(self, fullname):
+            """Compile the selected source bytes directly."""
             return self.source_to_code(self.get_data(self.path), self.path)
 
     class NativeFinder:
+        """Restrict native MIM imports to the selected producer source tree."""
+
         @staticmethod
         def find_spec(fullname, path=None, target=None):
+            """Bind native imports to source-only loaders after checking their origin."""
             if fullname == "mediaingredientmech" or fullname.startswith("mediaingredientmech."):
                 spec = importlib.machinery.PathFinder.find_spec(fullname, path)
                 if spec and isinstance(spec.loader, importlib.machinery.SourceFileLoader):

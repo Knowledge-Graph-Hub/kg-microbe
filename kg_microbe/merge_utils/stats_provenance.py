@@ -148,13 +148,18 @@ def git_commit(repo_root: Path, ignore: Iterable[Path] = ()) -> str:
     ``git describe --dirty`` cannot be used as-is: at annotation time KGX has
     just rewritten the stats file, so the tree is always dirty by exactly
     that file. Paths in ``ignore`` (the stats file) are excluded from the
-    dirtiness check; untracked files never count. ``unknown`` when git or
-    the checkout is unavailable.
+    dirtiness check; untracked files never count. The supplied directory must
+    physically match Git's checkout root; discovering an enclosing checkout
+    does not identify this root's provenance (#1832). Return ``unknown`` when
+    git or that checkout is unavailable.
     """
     git = shutil.which("git")
     if git is None:
         return "unknown"
     try:
+        checkout = _git(git, repo_root, "rev-parse", "--show-toplevel").removesuffix("\n")
+        if not checkout or not Path(checkout).samefile(repo_root):
+            return "unknown"
         head = _git(git, repo_root, "rev-parse", "--short", "HEAD").strip()
         # Not stripped: `git status --porcelain` emits "XY PATH", two status
         # columns then a space, so an unstaged change reads " M path". Stripping

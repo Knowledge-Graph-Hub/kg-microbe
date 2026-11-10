@@ -1,0 +1,19 @@
+profile_id: mimprofile:stable-source-kgx/v1
+profile_version: 1
+biolink_version: 4.4.2
+mode: candidate_only
+companion_modes: [required/v1, absent/v1]
+production_authorized: false
+prefixes:
+  MIM.ingredient: https://culturebotai.github.io/MediaIngredientMech/ingredient/MIM_
+  MIM.assertion: https://w3id.org/mediaingredientmech/assertion/
+  MIM.candidate: https://w3id.org/mediaingredientmech/candidate/
+# This is an opt-in numeric ingredient profile, not a global MIM prefix map.
+original_mim_prefix: https://culturebotai.github.io/MediaIngredientMech/ingredient/MIM_
+identifier_pattern: 'MIM\.ingredient:[0-9]{7}'
+columns:
+  ingredient_profile: {type: curie, cardinality: one}
+  ingredient_record_kind: {type: string, cardinality: one, record: node}
+  ingredient_bundle_sha256: {type: sha256, cardinality: one}
+  ingredient_assertion_json: {type: json_object, cardinality: one, record: edge}
+record_kinds: [stable_concept, source_record, external_reference, assertion_record, candidate_manifest]

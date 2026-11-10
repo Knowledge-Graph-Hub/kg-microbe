@@ -14,6 +14,8 @@ from typing import Any
 
 import pytest
 
+pytest_plugins = ("tests.stable_mim_gate",)
+
 TEST_RESOURCES = Path(__file__).resolve().parent / "resources"
 
 #: CSV's field limit as the session started, before any test module was imported.

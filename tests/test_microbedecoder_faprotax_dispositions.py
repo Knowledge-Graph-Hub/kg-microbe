@@ -253,7 +253,8 @@ def test_actual_attribute_endpoints_fit_pinned_biolink_without_retyping(tmp_path
 
 
 @pytest.mark.parametrize("literal", ["chemoheterotrophy", "human_associated"])
-def test_extra_foreign_column_claim_to_protected_attribute_is_refused(tmp_path, monkeypatch, literal):
+@pytest.mark.parametrize("inverse", [False, True])
+def test_extra_foreign_column_claim_to_protected_attribute_is_refused(tmp_path, monkeypatch, literal, inverse):
     """Extra assertions cannot hide beside the genuine edge or revive audit-only labels (#1853)."""
     transform, _ = _run(tmp_path, monkeypatch)
     audit = next(
@@ -261,6 +262,9 @@ def test_extra_foreign_column_claim_to_protected_attribute_is_refused(tmp_path, 
         for row in _rows(transform.output_dir / observation_audit.AUDIT_FILE)
         if row["source_column"] == fap.COLUMN and json.loads(row["original_claim_json"])["value"] == literal
     )
+    audit_path = transform.output_dir / observation_audit.AUDIT_FILE
+    before_audit = audit_path.read_bytes()
+    before_nodes = transform.output_node_file.read_bytes()
     forged = json.loads(audit["original_claim_json"])
     assert forged["object"] == observation_audit.source_attribute_curie(fap.COLUMN, literal)
     original = _rows(transform.output_edge_file)
@@ -268,10 +272,16 @@ def test_extra_foreign_column_claim_to_protected_attribute_is_refused(tmp_path, 
     assert len(genuine) == (1 if literal in TARGETS else 0)
     if literal in AUDIT_ONLY:
         assert audit["emitted_claim_json"] == "null"
-    forged["source_column"] = "Bergey_Type_of_metabolism"
+    forged.update(source_column="Bergey_Type_of_metabolism", value="foreign_value")
+    if inverse:
+        forged["subject"], forged["object"] = forged["object"], forged["subject"]
     _write(transform.output_edge_file, [*original, forged], transform.edge_header)
     # The complete genuine original cohort remains; failure must concern the added assertion.
     assert _rows(transform.output_edge_file)[:-1] == original
+    assert audit_path.read_bytes() == before_audit
+    assert transform.output_node_file.read_bytes() == before_nodes
+    with pytest.raises(ValueError, match="graph differs"):
+        transform.verify_native_inputs()
     with pytest.raises(ValueError, match="graph differs"):
         _replay(transform)
 

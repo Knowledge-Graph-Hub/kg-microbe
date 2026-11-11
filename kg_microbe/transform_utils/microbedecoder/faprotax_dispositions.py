@@ -31,6 +31,7 @@ from kg_microbe.transform_utils.constants import (
     PREDICTION,
     PROVIDED_BY_COLUMN,
     SOURCE_COLUMN,
+    SUBJECT_COLUMN,
     VALUE_COLUMN,
 )
 from kg_microbe.transform_utils.microbedecoder import observation_audit
@@ -268,7 +269,7 @@ def verify_outputs(snapshots, directory, edge_fields, *, admission=None):
         for row in reader:
             if None in row or any(value is None for value in row.values()):
                 raise ValueError("Malformed FAPROTAX graph row")
-            if row[OBJECT_COLUMN] in targets or (
+            if any(row[endpoint] in targets for endpoint in (SUBJECT_COLUMN, OBJECT_COLUMN)) or (
                 row[SOURCE_COLUMN] == COLUMN and row[VALUE_COLUMN] in REVIEWED_LITERALS
             ):
                 if any(value for key, value in row.items() if key not in edge_fields):

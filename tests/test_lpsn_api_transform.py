@@ -254,10 +254,14 @@ def test_publication_aggregation_is_order_stable_and_blank_text_does_not_erase_l
     """Source order cannot change conflict disposition or retained citation provenance."""
 
     class Writer:
+        """Collect emitted rows to compare aggregation across source orders."""
+
         def __init__(self):
+            """Start an empty collection for one aggregation order."""
             self.rows = []
 
         def writerow(self, row):
+            """Retain one emitted row without changing its fields."""
             self.rows.append(row)
 
     inputs = [

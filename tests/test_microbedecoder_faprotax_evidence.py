@@ -51,6 +51,7 @@ def _run(tmp_path, mapped, *, monkeypatch):
         write_empty_join_gss(tmp_path / "raw").parent,
         tmp_path,
         chemical_loader=_NoChebi(),
+        include_bacdive_snapshot=True,
         process_mappings=process_table,
     )
     bind_fixture_quarantine_policy(transform, FIXTURE_DIR / "faprotax_evidence.csv")
@@ -182,6 +183,8 @@ def test_registered_finalization_preserves_faprotax_evidence(tmp_path, mapped):
     shutil.copyfile(ROOT / process_table, root / process_table)
     phenotype_table = Path("mappings/canonical/microbedecoder_phenotype_mappings.tsv")
     shutil.copyfile(ROOT / phenotype_table, root / phenotype_table)
+    faprotax_table = Path("mappings/canonical/microbedecoder_faprotax_dispositions.tsv")
+    shutil.copyfile(ROOT / faprotax_table, root / faprotax_table)
     scope_table = Path("mappings/canonical/microbedecoder_process_scope_definitions.tsv")
     shutil.copyfile(ROOT / scope_table, root / scope_table)
     # The injected resolver never reads unified mappings; give the real finalizer

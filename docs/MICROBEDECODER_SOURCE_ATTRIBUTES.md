@@ -4,6 +4,12 @@ Decision for [#1104](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/11
 scoped to the 27 `BacDive_*` snapshot columns. This does not change the broader
 taxon/phenotype convention tracked in #643 or the taxonomic backbone in #834.
 
+The current [edge-quality policy](MICROBEDECODER_EDGE_QUALITY_1846.md) keeps
+these snapshots in `reported_observations.tsv` by default. Explicit
+`MICROBEDECODER_INCLUDE_BACDIVE_SNAPSHOT=true` enables the graph representation
+below; native join refusals and complete observation conservation apply in both
+modes. Historical counts below describe the original modeling review.
+
 ## Evidence and model
 
 The reviewed transform emits 362,361 `has_phenotype` edges from these columns.
@@ -87,6 +93,7 @@ complete local pinned model during the review.
 
 Rerun `microbedecoder`, then merge with the new source output. Consumers that
 previously read these raw snapshot observations through `has_phenotype` should
-query `has_attribute`, scoped by MicrobeDecoder provenance and `source_column`.
+read the complete observation audit by default, or query `has_attribute` for
+an explicitly opted-in snapshot run, scoped by provenance and `source_column`.
 The live BacDive transform, curated phenotype assertions from other sources,
 LPSN identities, and strain/taxon `subclass_of` edges are unchanged.

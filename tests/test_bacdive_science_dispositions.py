@@ -13,7 +13,7 @@ from kg_microbe.transform_utils.bacdive import isolation_categories as categorie
 from kg_microbe.transform_utils.bacdive import supplied_taxid_policy as supplied
 from kg_microbe.transform_utils.bacdive import taxonomy_evidence as taxonomy
 from kg_microbe.transform_utils.bacdive.bacdive import BacDiveTransform
-from kg_microbe.transform_utils.constants import BACDIVE_DEPOSIT_CLAIMS_FILE
+from kg_microbe.transform_utils.constants import BACDIVE_DEPOSIT_CLAIMS_FILE, EXACT_MATCH, SAME_AS_PREDICATE
 from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.source_finalization import SourceFinalizationRequired
 from tests.test_bacdive_isolation_categories import CATEGORIES, SECTION, _counter
@@ -79,7 +79,10 @@ def test_actual_ordered_and_reversed_claims_withhold_parent_without_erasing_clai
         row for row in rows if row["predicate"] == "biolink:subclass_of" and row["object"].startswith("NCBITaxon:")
     ]
     assert any(node["id"] == subject for node in nodes)
-    assert any(row["subject"] == subject and row["predicate"] == "biolink:close_match" for row in rows)
+    assert any(
+        row["subject"] == subject and row["predicate"] == SAME_AS_PREDICATE and row["relation"] == EXACT_MATCH
+        for row in rows
+    )
     [audit] = tax_audit(transform)
     decision = json.loads(audit["lookup_evidence_json"])
     witness = json.loads(audit["native_evidence_json"])
@@ -166,7 +169,7 @@ def test_withheld_candidates_contest_an_independently_claimed_deposit(tmp_path, 
 
     The fixture authority gives 4427's candidates no ancestry, so neither lies
     beneath the independent record's NCBITaxon:20. Asserting it would equate
-    two possibly unrelated organisms through close_match. Instead the deposit gets
+    two possibly unrelated organisms through same_as. Instead the deposit gets
     no parent, neither record links to it, and the claims report and the node
     say why. TEST ONLY, cited by 4427 alone, keeps its record link.
     """
@@ -176,9 +179,13 @@ def test_withheld_candidates_contest_an_independently_claimed_deposit(tmp_path, 
     assert "kgmicrobe.strain:TEST-SHARED" not in parents
     assert "kgmicrobe.strain:TEST-ONLY" not in parents
     assert "kgmicrobe.strain:bacdive_4427" not in parents
-    links = {(row["subject"], row["object"]) for row in rows if row["predicate"] == "biolink:close_match"}
+    links = {
+        (row["subject"], row["object"])
+        for row in rows
+        if (row["predicate"], row["relation"]) == (SAME_AS_PREDICATE, EXACT_MATCH)
+    }
     assert ("kgmicrobe.strain:bacdive_4427", "kgmicrobe.strain:TEST-ONLY") in links
-    assert not [pair for pair in links if pair[1] == "kgmicrobe.strain:TEST-SHARED"]
+    assert not [row for row in rows if "kgmicrobe.strain:TEST-SHARED" in (row["subject"], row["object"])]
     assert transform._taxonomy_evidence_guard.deposit_rows == {}
     assert _deposit_claims_report(transform) == [
         {
@@ -230,7 +237,11 @@ def test_withheld_candidates_beneath_the_claim_leave_it_standing(tmp_path, monke
     assert parents["kgmicrobe.strain:TEST-SHARED"]["object"] == "NCBITaxon:10"
     assert parents["kgmicrobe.strain:TEST-SHARED"]["knowledge_level"] == "observation"
     assert "kgmicrobe.strain:bacdive_4427" not in parents
-    links = {(row["subject"], row["object"]) for row in rows if row["predicate"] == "biolink:close_match"}
+    links = {
+        (row["subject"], row["object"])
+        for row in rows
+        if (row["predicate"], row["relation"]) == (SAME_AS_PREDICATE, EXACT_MATCH)
+    }
     assert {
         ("kgmicrobe.strain:bacdive_4427", "kgmicrobe.strain:TEST-SHARED"),
         ("kgmicrobe.strain:bacdive_999999", "kgmicrobe.strain:TEST-SHARED"),
@@ -323,11 +334,7 @@ def test_a_co_citer_with_only_a_late_parent_contests_a_withheld_deposit(tmp_path
     rows = scoped_rows(transform)
     parents = {(row["subject"], row["object"]) for row in rows if row["predicate"] == "biolink:subclass_of"}
     assert ("kgmicrobe.strain:bacdive_10", "NCBITaxon:99") in parents
-    assert not [
-        row
-        for row in rows
-        if row["predicate"] == "biolink:close_match" and row["object"] == "kgmicrobe.strain:TEST-SHARED"
-    ]
+    assert not [row for row in rows if "kgmicrobe.strain:TEST-SHARED" in (row["subject"], row["object"])]
     assert _deposit_claims_report(transform) == [
         {
             "strain_id": "kgmicrobe.strain:TEST-SHARED",

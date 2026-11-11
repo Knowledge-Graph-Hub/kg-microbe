@@ -159,6 +159,41 @@
       "path": "data/edge-quality-20261110/final-report-independent-numeric-scope-review-r1.json",
       "bytes": 2386,
       "sha256": "892195ea2c7971eea16f368fe121e04fb60ccee377da1a9b7071bd2cd02b1cf8"
+    },
+    {
+      "path": "data/edge-quality-20261110/pr-gates-execution-r1.json",
+      "bytes": 978,
+      "sha256": "cc4211def46f7cf35195efb64e57725db6fc1327e94ae6a1039b6b45dfbac3dd"
+    },
+    {
+      "path": "data/edge-quality-20261110/pr-gates-interruption-r1.json",
+      "bytes": 515,
+      "sha256": "2eef9c1b6bfa9b943ff8c544c67d31f00dc1d954ee2f3a03f265a53b99f0e196"
+    },
+    {
+      "path": "data/validation/pr-gates/kgm-edge-quality-1842-1846-20261111-r1-gates.json",
+      "bytes": 1536,
+      "sha256": "96e9fec7b6e1e7012e23924111aa9e093a02c4be0e257f73b8f2fbaf9991201c"
+    },
+    {
+      "path": "data/validation/pr-gates/kgm-edge-quality-1842-1846-20261111-r1-4.log",
+      "bytes": 31091,
+      "sha256": "b25f9a2617e129cea649f54de7850da8b906442a7c5104d165ffa2bd532ef722"
+    },
+    {
+      "path": "data/edge-quality-20261110/bacdive-1856-focused-r1.json",
+      "bytes": 602,
+      "sha256": "46ce9d762fe6b53f42887d489cd24b2cbedad0ce6bb504ce2e9150bd6440a2c5"
+    },
+    {
+      "path": "data/edge-quality-20261110/reviews/bacdive-1856-independent-review-r1.json",
+      "bytes": 6672,
+      "sha256": "664560b2b598fac3ae443f87fcd46601ae98ef14013d9fce0ef846e7902c40da"
+    },
+    {
+      "path": "data/edge-quality-20261110/reviews/bacdive-final-gate-test-repair-r1/completion.json",
+      "bytes": 1541,
+      "sha256": "23686f37146a2b4ebecc864fa832bc4225fb963ef70d93d4f162d87cb4a5a061"
     }
   ],
   "historical_limits": [
@@ -182,8 +217,8 @@
     "source_finalization_sha256": "9858d8c3c32f75fb05c689c90e1bae693aad9133bf1e03af9ee649fe4c474259"
   },
   "repository_gate": {
-    "command": "poetry run python scripts/run_pr_gates.py edge-quality-1842-1846-20261111-r1",
-    "ledger": "data/validation/pr-gates/kgm-edge-quality-1842-1846-20261111-r1-gates.json",
+    "command": "poetry run python scripts/run_pr_gates.py edge-quality-1842-1846-20261111-r2",
+    "ledger": "data/validation/pr-gates/kgm-edge-quality-1842-1846-20261111-r2-gates.json",
     "report_committed_before_gate": true,
     "status_source": "Use the exact-candidate ledger and PR checks; this evidence index is committed before gate execution."
   },
@@ -443,5 +478,17 @@
     "historical_graph_rows": 367050,
     "duplicate_claim_field": "BacDive_Flagellum_arrangement",
     "duplicate_value": "polar"
+  },
+  "failed_repository_gate": {
+    "candidate": "e6d9c9398e49f0ff6919c526ceea4396723ea7cb",
+    "label": "edge-quality-1842-1846-20261111-r1",
+    "actual_exit_code": 2,
+    "interrupted_after_confirmed_failures": true,
+    "passed": 1410,
+    "failed": 6,
+    "skipped": 2,
+    "finding_issue": 1856,
+    "full_suite_completed": false,
+    "repair_validation": "224 affected tests passed in 95.09s; independent repair review passed; production code unchanged."
   }
 }

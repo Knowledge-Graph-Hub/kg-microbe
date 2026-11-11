@@ -206,7 +206,7 @@ def test_the_record_is_linked_to_the_deposits_it_safely_cites():
     still have no provenance. The link is written after resolution rather than
     inline, because whether it is safe to assert depends on records not yet read
     (#899) — that ordering is pinned by
-    `test_close_match_is_emitted_after_resolution_not_during_the_loop`.
+    `test_deposit_equivalence_is_emitted_after_resolution_not_during_the_loop`.
 
     Inspected rather than run: `BacDiveTransform.run` needs the NCBITaxon
     adapter, which makes an end-to-end unit test impractical (see the module
@@ -378,7 +378,7 @@ def test_a_deposit_that_kept_its_parent_is_safe_to_link():
 
 def test_a_deposit_with_disjoint_claims_is_not_safe_to_link():
     """
-    `close_match` is symmetric and maps to `SEMMEDDB:same_as` (#899).
+    `same_as` / `skos:exactMatch` is symmetric; the collision guard remains essential (#899, #1845).
 
     `kgmicrobe.strain:AS-1` is claimed by BacDive 7239 (*Methylophilus
     methylotrophus*) and 134230 (*Alteromonas simiduii*) — one in-house
@@ -402,7 +402,7 @@ def test_an_unverifiable_deposit_is_not_linked_either():
     assert resolution_asserts_a_parent(RESOLUTION_SUPPRESSED_NO_ANCESTRY) is False
 
 
-def test_close_match_is_emitted_after_resolution_not_during_the_loop():
+def test_deposit_equivalence_is_emitted_after_resolution_not_during_the_loop():
     """
     Whether a citation is safe depends on records not yet read (#899).
 
@@ -418,6 +418,7 @@ def test_close_match_is_emitted_after_resolution_not_during_the_loop():
     loop_block = source.split("if culture_number_from_external_links:")[1].split("if phys_and_metabolism_enzymes:")[0]
     assert "deposit_citations.append" in loop_block
     assert "CLOSE_MATCH_PREDICATE" not in loop_block, "citation must not be asserted inline"
+    assert "SAME_AS_PREDICATE" not in loop_block, "current deposit equivalence must also wait for resolution"
 
 
 def test_a_contested_deposit_node_explains_its_own_emptiness():
@@ -513,7 +514,7 @@ def test_a_withheld_record_contests_the_deposit_it_shares(deposit, claims, withh
     These are the three deposits in ``bacdive_strains.json`` that a record with
     withheld supplied taxids shares with another record. Each surviving claim is
     lineage-disjoint from every candidate, so asserting it would give the deposit
-    one organism's parent and, through ``close_match``, equate both organisms.
+    one organism's parent and, through ``same_as``, equate both organisms.
     """
     resolved, contested = resolve_deposit_parents(
         {deposit: claims}, ancestors_of=_withheld_ancestors, withheld={deposit: withheld}

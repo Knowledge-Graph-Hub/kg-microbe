@@ -31,6 +31,11 @@ import pickle
 import random
 from collections import defaultdict
 
+if __package__:
+    from .habitat_compat import habitat_pair
+else:
+    from habitat_compat import habitat_pair
+
 BACDIVE = "data/transformed/bacdive/edges.tsv"
 PREGO = "data/transformed/prego/edges.tsv"
 UBERON = "data/transformed/ontologies/uberon_nodes.tsv"
@@ -112,19 +117,21 @@ def collect(loc_gold, loc_terms, loc_taxa, fn, fn_terms, fn_taxa_all, taxa, posi
     obs = {"location_of": defaultdict(list), "capable_of": defaultdict(list)}
     with open(PREGO) as fh:
         h = next(fh).rstrip("\n").split("\t")
-        si, oi, sci = h.index("subject"), h.index("object"), h.index("prego_score")
+        si, pi, oi, sci = h.index("subject"), h.index("predicate"), h.index("object"), h.index("prego_score")
         for line in fh:
             f = line.rstrip("\n").split("\t")
-            if len(f) <= sci:
+            if len(f) < len(h):
                 continue
             s, o = f[si], f[oi]
             try:
                 score = float(f[sci])
             except ValueError:
                 continue
-            if (s.startswith("ENVO:") or s.startswith("BTO:")) and o.startswith("NCBITaxon:"):
-                if o in taxa and s in loc_terms and o in loc_taxa:
-                    obs["location_of"][s].append((score, (s, o) in loc_gold, o))
+            pair = habitat_pair(s, f[pi], o, ("ENVO:", "BTO:"))
+            if pair is not None:
+                term, taxon = pair
+                if taxon in taxa and term in loc_terms and taxon in loc_taxa:
+                    obs["location_of"][term].append((score, (term, taxon) in loc_gold, taxon))
             elif s.startswith("NCBITaxon:") and o.startswith("GO:") and s in taxa:
                 if positive_only:
                     # Same semantics as location: comparable if both endpoints are
@@ -177,7 +184,9 @@ def main(positive_only: bool = False):
     loc_gold, loc_terms, loc_taxa = build_location_gold()
     fn, fn_terms, fn_taxa = build_function_labels(positive_only)
     matched = loc_taxa & fn_taxa
-    print(f"  label policy: {'POSITIVE-ONLY (matched to location)' if positive_only else 'positives + explicit negatives'}")
+    print(
+        f"  label policy: {'POSITIVE-ONLY (matched to location)' if positive_only else 'positives + explicit negatives'}"
+    )
     print(f"  taxa with isolation records : {len(loc_taxa):,}")
     print(f"  taxa with assay results     : {len(fn_taxa):,}")
     print(f"  MATCHED (used below)        : {len(matched):,}\n")
@@ -197,8 +206,10 @@ def main(positive_only: bool = False):
         r, n = ratio(per_term, degree)
         point[pred] = r
         terms = sum(1 for rows in per_term.values() if rows)
-        print(f"  {pred:<12} terms {terms:>4} | in-stratum n {n:>7,} | high/low ratio "
-              f"{'n/a' if r is None else f'{r:.3f}'}")
+        print(
+            f"  {pred:<12} terms {terms:>4} | in-stratum n {n:>7,} | high/low ratio "
+            f"{'n/a' if r is None else f'{r:.3f}'}"
+        )
 
     if point["location_of"] is None or point["capable_of"] is None:
         print("\n  insufficient matched data for an interaction estimate")
@@ -222,10 +233,17 @@ def main(positive_only: bool = False):
         lo = diffs[int(0.025 * len(diffs))]
         hi = diffs[int(0.975 * len(diffs))]
         print(f"  two-way clustered 95% CI over {len(diffs)} resamples: [{lo:+.3f}, {hi:+.3f}]")
-        print(f"  fraction of resamples with location_of > capable_of: "
-              f"{sum(1 for d in diffs if d > 0) / len(diffs):.3f}")
-        print("\n  -> " + ("supports the predicate split" if lo > 0 else
-                           "CI spans zero; the split is NOT established on matched taxa"))
+        print(
+            f"  fraction of resamples with location_of > capable_of: {sum(1 for d in diffs if d > 0) / len(diffs):.3f}"
+        )
+        print(
+            "\n  -> "
+            + (
+                "supports the predicate split"
+                if lo > 0
+                else "CI spans zero; the split is NOT established on matched taxa"
+            )
+        )
 
 
 if __name__ == "__main__":

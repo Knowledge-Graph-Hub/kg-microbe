@@ -562,6 +562,7 @@ class BacDiveJoinGuard:
         expected_audit = Counter(_json(self._audit(key)) for key in self.selected)
         if actual_audit != expected_audit:
             _fail("original native/audit rows lost, changed or duplicated")
+        protected_attributes = self._verify_observation_audit(directory)
         actual_links, actual_snapshots = Counter(), Counter()
         with edge_path.open(encoding="utf-8", newline="") as stream, _field_limit_for(stream):
             reader = csv.DictReader(stream, delimiter="\t", quoting=csv.QUOTE_NONE)
@@ -570,6 +571,16 @@ class BacDiveJoinGuard:
             for row in reader:
                 if None in row or any(value is None for value in row.values()):
                     _fail("malformed source edge row")
+                column = row.get(SOURCE_COLUMN)
+                if (
+                    any(row.get(endpoint) in protected_attributes for endpoint in (SUBJECT_COLUMN, OBJECT_COLUMN))
+                    or (not self.include_snapshot and column in BACDIVE_SNAPSHOT_COLUMNS)
+                    or (
+                        column in observation_audit.BERGEY_PLACEHOLDERS
+                        and row.get(VALUE_COLUMN) == observation_audit.BERGEY_PLACEHOLDERS[column]
+                    )
+                ):
+                    _fail("audit-only observation reintroduced as a graph assertion")
                 # This producer emits BacDive-strain endpoints only for the
                 # native BacDive_ID link family. Inspect either orientation,
                 # without trusting predicate/relation to identify that family:
@@ -595,8 +606,7 @@ class BacDiveJoinGuard:
         )
         if actual_snapshots != Counter(dict.fromkeys(expected_snapshots, 1)):
             _fail("snapshot subjects or complete source assertions changed")
-        self._verify_snapshot_nodes_and_audits(directory)
-        self._verify_observation_audit(directory)
+        self._verify_snapshot_nodes_and_audits(directory, protected_attributes=protected_attributes)
 
     def _verify_observation_audit(self, directory):
         """Rejoin every audit-only occurrence to the admitted native source, without loss."""
@@ -617,11 +627,11 @@ class BacDiveJoinGuard:
                 include_snapshot=self.include_snapshot,
             )
             try:
-                observation_audit.verify_rows(audit, expected)
+                return observation_audit.verify_rows(audit, expected)
             except ValueError as error:
                 _fail(str(error))
 
-    def _verify_snapshot_nodes_and_audits(self, directory):
+    def _verify_snapshot_nodes_and_audits(self, directory, *, protected_attributes):
         """Verify five record declarations and dependent-only phenotype audit projection."""
         nodes, audits = Counter(), Counter()
         for name in ("nodes.tsv", "phenotype_normalizations.tsv"):
@@ -635,6 +645,8 @@ class BacDiveJoinGuard:
                 for row in reader:
                     if None in row or any(value is None for value in row.values()):
                         _fail("malformed snapshot node/phenotype row")
+                    if name == "nodes.tsv" and row.get(ID_COLUMN) in protected_attributes:
+                        _fail("audit-only observation reintroduced as an Attribute declaration")
                     if name == "nodes.tsv" and row.get(ID_COLUMN, "").startswith(_RECORD_PREFIX):
                         nodes[_json({key: value for key, value in row.items() if value})] += 1
                     elif name == "phenotype_normalizations.tsv" and (

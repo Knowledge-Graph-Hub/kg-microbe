@@ -13,6 +13,7 @@ from kg_microbe.transform_utils.constants import (
     HAS_ATTRIBUTE_RELATION,
     LPSN_PREFIX,
     MICROBEDECODER,
+    OBJECT_COLUMN,
     SOURCE_ATTRIBUTE_PREFIX,
     SOURCE_COLUMN,
     SOURCE_RECORD_COLUMN,
@@ -121,6 +122,9 @@ def verify_rows(audit_stream, expected):
         raise ValueError("MicrobeDecoder observation audit header changed")
     # The separate mandatory FAPROTAX native verifier checks every FAPROTAX row.
     selected = (row for row in reader if row.get(SOURCE_COLUMN) != "FAPROTAX_Type_of_metabolism")
+    protected = {source_attribute_curie(column, literal) for column, literal in BERGEY_PLACEHOLDERS.items()}
     for actual, original in zip_longest(selected, expected):
         if actual != original:
             raise ValueError("MicrobeDecoder observation audit differs from admitted native observations")
+        protected.add(json.loads(original["original_claim_json"])[OBJECT_COLUMN])
+    return frozenset(protected)

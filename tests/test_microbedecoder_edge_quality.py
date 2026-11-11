@@ -72,6 +72,7 @@ def test_explicit_opt_in_retains_exact_original_snapshot_graph_payload(tmp_path,
     assert all(value == 1 for value in actual.values())
     assert on.producer_native_inputs[joins.CONTRACT_KEY]["snapshot_nodes"] == 5
     on.verify_native_inputs()
+    joins.verify_recorded_inputs(_native_report(on), on.output_dir / "source_finalization.json").verify()
 
 
 @pytest.mark.parametrize("mutation", ["missing", "duplicate", "source_cell", "value", "predicate"])
@@ -165,3 +166,80 @@ def test_bergey_placeholders_keep_complete_observation_and_citation_only_in_audi
     assert all(row["source_citation"] == transform._escape_literal(source["Bergey_Article_link"]) for row in claims)
     assert all(row["source_citation_base64"] for row in claims)
     assert [json.loads(row["source_cell_json"]) for row in rows] == ["Other", "Not reported"]
+
+
+@pytest.mark.parametrize("mutation", ["native", "foreign_column", "changed_target", "inverse", "node_only"])
+def test_unselected_snapshot_reinjection_is_refused_with_complete_audit(tmp_path, monkeypatch, mutation):
+    """An ordinary native record cannot regain a disabled snapshot through either replay path (#1854)."""
+    transform, raw, _, _, _ = prepare(tmp_path, monkeypatch, include_bacdive_snapshot=False)
+    transform.run(raw)
+    claim = next(
+        json.loads(row["original_claim_json"])
+        for row in _rows(transform.output_dir / audit.AUDIT_FILE)
+        if row["disposition"] == audit.SNAPSHOT_AUDIT_ONLY and row["source_record"].endswith("#record=2")
+    )
+    assert claim["source_record"] not in transform._bacdive_join_guard.selected
+    _assert_additive_audit_only_refusal(transform, claim, mutation)
+
+
+@pytest.mark.parametrize("mode", [False, True])
+@pytest.mark.parametrize("column", tuple(audit.BERGEY_PLACEHOLDERS))
+@pytest.mark.parametrize("mutation", ["native", "foreign_column", "changed_target", "node_only"])
+def test_bergey_placeholder_reinjection_is_refused_in_either_mode(tmp_path, monkeypatch, mode, column, mutation):
+    """Exact missing-report values remain audit-only even with snapshot opt-in and an intact audit."""
+    native = {
+        "LPSN_ID": "101",
+        "BacDive_ID": "",
+        "BacDive_Oxygen_tolerance": "aerobic",
+        "FAPROTAX_Type_of_metabolism": "chemoheterotrophy",
+        "Bergey_Type_of_metabolism": "Other",
+        "Bergey_Substrates_for_end_products": "Not reported",
+        "Bergey_Article_link": "https://doi.org/10.1234/synthetic",
+    }
+    transform, raw, _, _, _ = prepare(
+        tmp_path, monkeypatch, selected=(), native_cases=[{"native_row": native}], include_bacdive_snapshot=mode
+    )
+    transform.run(raw)
+    claim = next(
+        json.loads(row["original_claim_json"])
+        for row in _rows(transform.output_dir / audit.AUDIT_FILE)
+        if row["source_column"] == column
+    )
+    _assert_additive_audit_only_refusal(transform, claim, mutation)
+
+
+def _assert_additive_audit_only_refusal(transform, claim, mutation):
+    """Keep every valid edge/audit byte, then test native and detached refusal of one added claim."""
+    transform.verify_native_inputs()
+    joins.verify_recorded_inputs(_native_report(transform), transform.output_dir / "source_finalization.json").verify()
+    before_edges = _rows(transform.output_edge_file)
+    before_nodes = transform.output_node_file.read_bytes()
+    before_audit = (transform.output_dir / audit.AUDIT_FILE).read_bytes()
+    forged = dict(claim)
+    target = forged["object"]
+    if mutation == "foreign_column":
+        forged.update(source_column="foreign_column", value="foreign_value")
+    elif mutation == "changed_target":
+        forged["object"] = "fixture:foreign_attribute"
+    elif mutation == "inverse":
+        forged["subject"], forged["object"] = forged["object"], forged["subject"]
+        forged.update(source_column="foreign_column", value="foreign_value")
+    if mutation != "node_only":
+        _write(transform.output_edge_file, [*before_edges, forged], transform.edge_header)
+    else:
+        # Test declarations separately: a forbidden node must not mask a missing edge guard.
+        node = dict.fromkeys(transform.node_header, "")
+        node.update(id=target, category="biolink:Attribute", name=claim["value"], provided_by="infores:microbedecoder")
+        _write(transform.output_node_file, [*_rows(transform.output_node_file), node], transform.node_header)
+    if mutation != "node_only":
+        assert transform.output_node_file.read_bytes() == before_nodes
+    else:
+        assert _rows(transform.output_edge_file) == before_edges
+    assert _rows(transform.output_edge_file)[: len(before_edges)] == before_edges
+    assert (transform.output_dir / audit.AUDIT_FILE).read_bytes() == before_audit
+    # Bind the mutated file bytes in the detached report: refusal must be scientific, not a stale output hash.
+    report = _native_report(transform)
+    with pytest.raises(SourceFinalizationRequired, match="audit-only observation reintroduced"):
+        transform.verify_native_inputs()
+    with pytest.raises(SourceFinalizationRequired, match="audit-only observation reintroduced"):
+        joins.verify_recorded_inputs(report, transform.output_dir / "source_finalization.json")

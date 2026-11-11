@@ -274,3 +274,63 @@ def test_extra_foreign_column_claim_to_protected_attribute_is_refused(tmp_path, 
     assert _rows(transform.output_edge_file)[:-1] == original
     with pytest.raises(ValueError, match="graph differs"):
         _replay(transform)
+
+
+def test_actual_kgx_merge_preserves_declared_img_genomes(tmp_path, monkeypatch, local_source_schema):
+    """Merge genuine tiny producer TSVs and inspect the published archive, not only source admission."""
+    import csv
+    import tarfile
+    from multiprocessing.pool import ThreadPool
+
+    import yaml
+
+    from kg_microbe.merge_utils import kgx_source, merge_kg
+    from kg_microbe.utils.biolink_model import prepare_kgx
+
+    transform, _ = _run(tmp_path / "producer", monkeypatch)
+    transform.finalize(fresh_run=True)
+    verify_finalized_source_files([transform.output_node_file, transform.output_edge_file])
+    audit_path = transform.output_dir / observation_audit.AUDIT_FILE
+    audit_before = audit_path.read_bytes()
+    prepare_kgx()
+    from kgx.cli import cli_utils
+
+    monkeypatch.setattr(cli_utils, "Pool", ThreadPool)
+    monkeypatch.setattr(merge_kg, "_repo_root", lambda: tmp_path)
+    output = tmp_path / "merged"
+    config = {
+        # This test exercises real KGX ingestion/export, not a dispatcher-complete release.
+        # The source above is genuinely finalized; its synthetic siblings have no CLI markers.
+        "configuration": {"output_directory": str(output), "allow_unfinalized_sources": True},
+        "merged_graph": {
+            "source": {
+                "microbedecoder": {
+                    "input": {
+                        "format": "tsv",
+                        "filename": [str(transform.output_node_file), str(transform.output_edge_file)],
+                    }
+                }
+            },
+            "destination": {"release": {"format": "tsv", "filename": "tiny", "compression": "tar.gz"}},
+        },
+    }
+    config_path = tmp_path / "merge.yaml"
+    config_path.write_text(yaml.safe_dump(config))
+    with kgx_source.local_prefix_context():
+        merge_kg.load_and_merge(str(config_path), processes=1)
+    with tarfile.open(output / "tiny.tar.gz") as archive:
+        nodes = list(csv.DictReader(io.StringIO(archive.extractfile("tiny_nodes.tsv").read().decode()), delimiter="\t"))
+        edges = list(csv.DictReader(io.StringIO(archive.extractfile("tiny_edges.tsv").read().decode()), delimiter="\t"))
+    genomes = {row["id"]: row for row in nodes if row["id"].startswith("IMG:")}
+    assert set(genomes) == {"IMG:123", "IMG:456"}
+    assert all(row["category"] == "biolink:Genome" for row in genomes.values())
+    assert all(row["provided_by"] == "infores:microbedecoder" for row in genomes.values())
+    memberships = [row for row in edges if row["subject"].startswith("IMG:")]
+    assert len(memberships) == 2
+    assert {(row["subject"], row["predicate"], row["relation"], row["object"]) for row in memberships} == {
+        (genome, "biolink:in_taxon", "RO:0002162", "lpsn:101") for genome in genomes
+    }
+    for field in ("primary_knowledge_source", "knowledge_level", "agent_type", "source_column", "source_record"):
+        expected = {row[field] for row in _rows(transform.output_edge_file) if row["subject"].startswith("IMG:")}
+        assert {row[field] for row in memberships} == expected
+    assert audit_path.read_bytes() == audit_before

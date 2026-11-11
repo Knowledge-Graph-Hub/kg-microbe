@@ -1,6 +1,7 @@
 """Tests for the LPSN JSON API transform (auth-gated enrichment layer)."""
 
 import csv
+import hashlib
 import json
 from pathlib import Path
 
@@ -8,6 +9,8 @@ import pytest
 
 from kg_microbe.transform_utils.lpsn.lpsn import LPSN_KNOWLEDGE_SOURCE, LPSN_PREFIX
 from kg_microbe.transform_utils.lpsn_api.lpsn_api import LPSNAPITransform
+from kg_microbe.transform_utils.lpsn_api.native_inputs import AUDIT_FILE, GSS_ROLE, RECORD_ROLE_PREFIX
+from kg_microbe.utils.source_finalization import SourceFinalizationRequired, verify_finalized_source_files
 
 
 class _FakeLpsnClient:
@@ -576,3 +579,144 @@ def test_a_run_that_dies_midway_leaves_no_output_file(api_transform, monkeypatch
     assert not api_transform.output_node_file.exists()
     assert not api_transform.output_edge_file.exists()
     assert not list(Path(api_transform.output_dir).glob("*.partial"))
+
+
+def test_cold_cache_records_are_consumed_and_audited_after_persistence(api_transform):
+    """Generated API records are dynamic inputs, so an empty cache can bootstrap offline."""
+    assert not (api_transform.input_base_dir / "lpsn/api_cache/1002.json").exists()
+    api_transform.run()
+    api_transform.verify_consumed_inputs()
+    snapshots = api_transform.consumed_input_snapshots
+    assert set(snapshots) == {GSS_ROLE, *(RECORD_ROLE_PREFIX + key for key in ("1001", "1002", "1005"))}
+    for snapshot in snapshots.values():
+        assert hashlib.sha256(Path(snapshot["path"]).read_bytes()).hexdigest() == snapshot["sha256"]
+    rows = _read_tsv(api_transform.output_dir / AUDIT_FILE)
+    assert len(rows) == 6  # GSS selection, three API records, two absent API cache paths.
+    assert {row["record_no"] for row in rows if row["state"] == "absent"} == {"999", "1004"}
+    assert set(api_transform.producer_audit_snapshots) == {AUDIT_FILE}
+
+
+def _native_report(transform):
+    """Capture the native subset without using a saved report to hydrate live evidence."""
+    return {
+        "producer_native_inputs": transform.producer_native_inputs,
+        "consumed_inputs": transform.consumed_input_snapshots,
+        "raw_input_directory": str(transform.input_base_dir.resolve()),
+    }
+
+
+@pytest.mark.parametrize("damage", ["change", "delete", "retarget", "cache_directory_retarget", "gss_change"])
+@pytest.mark.parametrize("saved", [False, True])
+def test_selected_api_input_drift_blocks_live_and_saved_admission(api_transform, tmp_path, damage, saved):
+    """A valid original file cannot bless changed bytes, a disappeared record or a new selected locator."""
+    api_transform.run()
+    report = _native_report(api_transform)
+    cache = api_transform.input_base_dir / "lpsn/api_cache"
+    path = cache / "1002.json"
+    if damage == "change":
+        path.write_text(path.read_text().replace("Primary species", "Changed species"))
+    elif damage == "delete":
+        path.unlink()
+    elif damage == "retarget":
+        other = tmp_path / "same-record.json"
+        other.write_bytes(path.read_bytes())
+        path.unlink()
+        path.symlink_to(other)
+    elif damage == "cache_directory_retarget":
+        other = tmp_path / "other-cache"
+        cache.rename(other)
+        cache.symlink_to(other, target_is_directory=True)
+    else:
+        with api_transform._find_gss_nodes().open("a") as handle:
+            handle.write("lpsn:99999\tbiolink:OrganismTaxon\n")
+    with pytest.raises(SourceFinalizationRequired, match="changed|missing|locator|record"):
+        if saved:
+            LPSNAPITransform.verify_recorded_native_inputs(
+                report, api_transform.output_dir / "source_finalization.json"
+            )
+        else:
+            api_transform.verify_consumed_inputs()
+
+
+def test_saved_admission_retains_locator_binding_after_initial_verification(api_transform, tmp_path):
+    """Read-only merge admission keeps selected paths bound throughout its publication window."""
+    api_transform.run()
+    report = _native_report(api_transform)
+    guard = LPSNAPITransform.verify_recorded_native_inputs(
+        report, api_transform.output_dir / "source_finalization.json"
+    )
+    path = api_transform.input_base_dir / "lpsn/api_cache/1002.json"
+    other = tmp_path / "same-record.json"
+    other.write_bytes(path.read_bytes())
+    path.unlink()
+    path.symlink_to(other)
+    with pytest.raises(SourceFinalizationRequired, match="locator changed"):
+        guard.verify()
+
+
+def test_previously_absent_selected_api_cache_record_invalidates_completion(api_transform):
+    """A newly available parent record requires regeneration rather than retaining a stale stub."""
+    api_transform.run()
+    report = _native_report(api_transform)
+    (api_transform.input_base_dir / "lpsn/api_cache/999.json").write_text('{"id": 999, "full_name": "New parent"}')
+    with pytest.raises(SourceFinalizationRequired, match="appeared"):
+        api_transform.verify_native_inputs()
+    with pytest.raises(SourceFinalizationRequired, match="appeared"):
+        LPSNAPITransform.verify_recorded_native_inputs(report, api_transform.output_dir / "source_finalization.json")
+
+
+def test_unselected_cached_record_does_not_invalidate_completion(api_transform):
+    """The contract follows requested records, not unrelated cache membership."""
+    api_transform.run()
+    (api_transform.input_base_dir / "lpsn/api_cache/99999.json").write_text('{"id": 99999}')
+    api_transform.verify_consumed_inputs()
+
+
+@pytest.mark.parametrize("damage", ["delete", "drop_row", "drop_contract_record", "drop_snapshot"])
+def test_record_audit_and_dynamic_inventory_cannot_be_omitted(api_transform, damage):
+    """Selected records, consumed snapshots and mandatory audit rows must agree exactly."""
+    api_transform.run()
+    report = _native_report(api_transform)
+    audit = api_transform.output_dir / AUDIT_FILE
+    if damage == "delete":
+        audit.unlink()
+    elif damage == "drop_row":
+        audit.write_text("\n".join(audit.read_text().splitlines()[:-1]) + "\n")
+    elif damage == "drop_contract_record":
+        del report["producer_native_inputs"]["records"]["1002"]
+    else:
+        del report["consumed_inputs"][RECORD_ROLE_PREFIX + "1002"]
+    with pytest.raises(SourceFinalizationRequired):
+        LPSNAPITransform.verify_recorded_native_inputs(report, api_transform.output_dir / "source_finalization.json")
+
+
+def test_recorded_native_contract_cannot_replace_live_consumption(api_transform):
+    """Restore/finalization never turns a mutable report into proof that this instance read its inputs."""
+    api_transform.run()
+    replacement = api_transform.producer_native_inputs
+    replacement["records"].clear()
+    assert api_transform.producer_native_inputs["records"]
+    with pytest.raises(SourceFinalizationRequired, match="native reads differ"):
+        api_transform.producer_native_inputs = replacement
+
+
+def test_finalized_lpsn_source_retains_record_evidence_and_rejects_stale_labels(api_transform):
+    """Exercise the actual source finalization and merge freshness boundary with a canned client."""
+    api_transform.run()
+    report = api_transform.finalize(fresh_run=True)
+    api_transform.verify_consumed_inputs()
+    assert api_transform.finalize() == report
+    assert report["consumed_inputs"][RECORD_ROLE_PREFIX + "1002"] in report["inputs"]
+    assert AUDIT_FILE in report["producer_audit_members"]
+    paths = [api_transform.output_node_file, api_transform.output_edge_file]
+    verify_finalized_source_files(paths)
+    cache = api_transform.input_base_dir / "lpsn/api_cache/1002.json"
+    original = cache.read_bytes()
+    cache.write_bytes(original.replace(b"Primary species", b"Changed species"))
+    with pytest.raises(SourceFinalizationRequired, match="changed"):
+        verify_finalized_source_files(paths)
+    cache.write_bytes(original)
+    verify_finalized_source_files(paths)
+    (api_transform.output_dir / AUDIT_FILE).unlink()
+    with pytest.raises(SourceFinalizationRequired, match="missing"):
+        verify_finalized_source_files(paths)

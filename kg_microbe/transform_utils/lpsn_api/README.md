@@ -64,11 +64,23 @@ in LPSN's authenticated JSON API (per-record):
 poetry run kg transform -s lpsn_api
 ```
 
-Output: `data/transformed/lpsn_api/{nodes,edges}.tsv`.
+Output: `data/transformed/lpsn_api/{nodes,edges}.tsv`, plus the required
+`lpsn_api_records.tsv` consumed-record audit.
 
 Every API response is cached to `data/raw/lpsn/api_cache/<record_no>.json`
 (gitignored) so partial runs resume cleanly and re-runs skip
 already-fetched records.
+
+Cached and live API payloads must be objects with an `id` that exactly matches
+the requested record number before any source field is attributed (#1837).
+New responses are written atomically, then parsed from immutable consumed-input
+snapshots. The GSS selection and every consumed API record's bytes are bound to
+source completion, together with their selected lexical cache paths (#1838).
+Changed, missing or redirected inputs invalidate completion and require a new
+run. The record audit also records requested cache paths that stayed absent;
+an absent cache file is not evidence of a remote API answer. Unrequested cache
+entries are outside the inventory. An initially empty cache remains supported
+because generated API records are recorded dynamically after persistence.
 
 Records the API does not serve at all — every basonym that predates the
 Approved Lists (665 in the 2026-09-10 graph, #1004) — are labelled from
@@ -78,6 +90,10 @@ the page body. Those are cached apart, under `data/raw/lpsn/web_cache/`,
 and the node's description says the label came from the page. No edges are
 minted from a page. If the page fetch fails too, the node is an unnamed
 stub in our namespace, as before.
+
+The new consumed-record contract covers API-derived fields, including publication
+citation labels. Existing web-fallback names are outside this API-specific input
+binding; the audit does not claim to verify their page bytes.
 
 ## Expected wall-clock
 
@@ -91,5 +107,8 @@ stub in our namespace, as before.
   fix instructions.
 - Missing `lpsn` PyPI package → `RuntimeError` telling you to
   `poetry add lpsn`.
-- Any per-record fetch error → counted, logged, and the run continues.
+- Per-record transport errors → counted, logged, and the run continues.
   Re-run to pick up whatever's left.
+- Malformed or misidentified cached/live API payloads, failed cache writes or
+  changed consumed inputs → abort before source completion; no silent re-fetch
+  substitutes new bytes for failed consumed evidence.

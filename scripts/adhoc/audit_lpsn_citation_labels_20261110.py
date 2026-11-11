@@ -1,10 +1,10 @@
 """
-Audit source-owned LPSN publication labels for KG-Microbe #1834 / EdgeMech #36, 2026-11-10.
+Audit source-owned LPSN publication labels for KG-Microbe #1834/#1837/#1838, 2026-11-10.
 
 Inputs: cached LPSN API JSON records and SHA-pinned incomplete-node Parquet.
 Outputs: source hash ledger, emitted nodes/edges and measured coverage receipt.
 Default one actual record; --all follows a verified persisted canary. Offline:
-uses production _emit/_emit_publication_nodes, not fetching or a full graph merge.
+uses production run/_fetch with a canned offline client, not a full graph merge.
 """
 
 import argparse
@@ -12,15 +12,24 @@ import csv
 import hashlib
 import inspect
 import json
-import os
-from collections import Counter
 from pathlib import Path
 
 import pyarrow.parquet as pq
 
 from kg_microbe.transform_utils.lpsn_api.lpsn_api import LPSNAPITransform
+from kg_microbe.transform_utils.lpsn_api.native_inputs import AUDIT_FILE
 from kg_microbe.utils.atomic_io import atomic_write
-from kg_microbe.utils.tsv_io import tsv_writer
+
+
+class OfflineMissingClient:
+    """Represent API cache misses without authentication or network calls."""
+
+    def search(self, **kwargs):
+        """Accept a production record request without contacting LPSN."""
+
+    def retrieve(self):
+        """Return a canned empty API result for records absent from the local cache."""
+        return iter(())
 
 
 def digest(path):
@@ -52,28 +61,28 @@ def main():
     )
     if not paths:
         raise ValueError("No cached source records selected")
+    if args.cache.name != "api_cache" or args.cache.parent.name != "lpsn":
+        raise ValueError("Expected the production raw/lpsn/api_cache directory")
     args.output.mkdir(parents=True, exist_ok=False)
-    transform = LPSNAPITransform(input_dir=args.cache, output_dir=args.output, client=object())
-    ledger, skipped = [], Counter()
-    nodes_path, edges_path = args.output / "nodes.tsv", args.output / "edges.tsv"
-    with atomic_write(nodes_path, newline="") as nodes_handle, atomic_write(edges_path, newline="") as edges_handle:
-        nodes, edges = tsv_writer(nodes_handle), tsv_writer(edges_handle)
-        nodes.writerow(transform.node_header)
-        edges.writerow(transform.edge_header)
+    selection = args.output / "selected_gss_nodes.tsv"
+    with atomic_write(selection, newline="") as handle:
+        writer = csv.writer(handle, delimiter="\t")
+        writer.writerow(["id", "category"])
         for path in paths:
             if path.is_symlink() or path.stat().st_size > 1024**2:
                 raise ValueError("Expected bounded regular cached API record")
-            raw = path.read_bytes()
-            ledger.append({"path": str(path), "sha256": hashlib.sha256(raw).hexdigest()})
-            record = json.loads(raw)
-            if not isinstance(record, dict) or str(record.get("id")) != path.stem:
-                skipped["missing_or_mismatched_record_identity"] += 1
-                continue
-            transform._emit(path.stem, record, nodes, edges)
-        transform._emit_publication_nodes(nodes)
-        for handle in (nodes_handle, edges_handle):
-            handle.flush()
-            os.fsync(handle.fileno())
+            writer.writerow([f"lpsn:{path.stem}", "biolink:OrganismTaxon"])
+    transform = LPSNAPITransform(
+        input_dir=args.cache.parent.parent,
+        output_dir=args.output,
+        client=OfflineMissingClient(),
+        page_fetch=lambda record_no: None,
+    )
+    transform.run(data_file=selection)
+    transform.verify_consumed_inputs()
+    contract = transform.producer_native_inputs
+    ledger = [{"record_no": record_no, **item} for record_no, item in sorted(contract["records"].items())]
+    nodes_path, edges_path = transform.output_node_file, transform.output_edge_file
     with nodes_path.open(newline="") as handle:
         publication_nodes = [
             row for row in csv.DictReader(handle, delimiter="\t") if row["category"] == "biolink:Publication"
@@ -83,9 +92,7 @@ def main():
         raise ValueError("Publication IDs multiplied in persisted output")
     labeled = {row["id"] for row in publication_nodes if row["name"].strip()}
     conflicts = {row["id"] for row in publication_nodes if "Conflicting LPSN citation texts" in row["description"]}
-    for entry in ledger:
-        if digest(Path(entry["path"])) != entry["sha256"]:
-            raise ValueError("Cached source changed during audit")
+    transform.verify_consumed_inputs()
     if digest(args.missing_nodes) != args.missing_sha256:
         raise ValueError("Incomplete-node artifact changed during audit")
     with atomic_write(args.output / "source-records.json") as handle:
@@ -94,7 +101,9 @@ def main():
     receipt = {
         "producer_module": inspect.getfile(LPSNAPITransform),
         "cached_records_selected": len(paths),
-        "skipped_records": dict(skipped),
+        "consumed_api_records": sum(item["state"] == "present" for item in ledger),
+        "absent_selected_api_records": sum(item["state"] == "absent" for item in ledger),
+        "producer_stats": dict(transform._stats),
         "unique_publication_nodes": len(identifiers),
         "unique_source_citation_labels": len(labeled),
         "conflicting_citation_nodes": len(conflicts),
@@ -111,6 +120,8 @@ def main():
         },
         "missing_nodes_sha256": args.missing_sha256,
         "source_record_ledger_sha256": digest(args.output / "source-records.json"),
+        "producer_record_audit_sha256": digest(transform.output_dir / AUDIT_FILE),
+        "gss_selection_sha256": digest(selection),
         "nodes_sha256": digest(nodes_path),
         "edges_sha256": digest(edges_path),
         "limitations": [
@@ -118,7 +129,10 @@ def main():
             "Different citation strings for one identifier remain unresolved, including formatting differences.",
             "IMG genome IDs and INSDC accessions have no owner-supplied record titles in these inputs; "
             "no names are invented.",
-            "This executes the production record/node emitters; it does not rebuild or merge the full graph.",
+            "This executes production run/_fetch using cached API records and canned empty responses for misses; "
+            "it does not contact LPSN or rebuild/merge the full graph.",
+            "The record contract covers GSS selection and API cache bytes/locators; pre-existing web fallback "
+            "names are outside this new binding. API misses are local cache absence, not proof of a remote API answer.",
         ],
     }
     with atomic_write(args.output / "receipt.json") as handle:

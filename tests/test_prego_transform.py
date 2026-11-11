@@ -1,6 +1,7 @@
 """Tests for the PREGO transform."""
 
 import csv
+import io
 import shutil
 import tarfile
 from collections import defaultdict
@@ -147,7 +148,7 @@ def test_classify_row_inverse_dropped():
 
 
 def test_classify_row_bto_kept():
-    """Taxon→BTO is emitted (as BTO→taxon on emit); BTO→taxon inverse is dropped."""
+    """Taxon→BTO is emitted; its native BTO→taxon inverse is dropped."""
     assert classify_row(-2, -25) == KEEP_TAXON_TO_BTO
     assert classify_row(-25, -2) == DROP_INVERSE_TAXON_TO_BTO
 
@@ -223,16 +224,17 @@ def test_taxon_to_go_edges_use_capable_of(prego_transform: PregoTransform):
     assert all(e["predicate"] == CAPABLE_OF_PREDICATE for e in tax_go)
 
 
-def test_envo_to_taxon_edges_use_location_of_matching_bacdive(
+def test_taxon_to_envo_edges_use_located_in(
     prego_transform: PregoTransform,
 ):
-    """ENVO→NCBITaxon edges use biolink:location_of, matching bacdive convention."""
+    """NCBITaxon→ENVO habitat edges use the normalized located_in direction."""
     prego_transform.run()
     edges = _read_tsv(prego_transform.output_edge_file)
-    envo_edges = [e for e in edges if e["subject"].startswith("ENVO:")]
-    assert len(envo_edges) == 1, f"expected 1 canonical ENVO→NCBITaxon edge, got {len(envo_edges)}"
-    assert envo_edges[0]["predicate"] == "biolink:location_of"
-    assert envo_edges[0]["object"] == "NCBITaxon:693444"
+    envo_edges = [e for e in edges if e["object"].startswith("ENVO:")]
+    assert len(envo_edges) == 1, f"expected 1 canonical NCBITaxon→ENVO edge, got {len(envo_edges)}"
+    assert envo_edges[0]["predicate"] == "biolink:located_in"
+    assert envo_edges[0]["subject"] == "NCBITaxon:693444"
+    assert envo_edges[0]["relation"] == "RO:0001025"
 
 
 def test_doid_with_mondo_xref_emits_mondo_edge(prego_transform: PregoTransform):
@@ -264,8 +266,9 @@ def test_inverse_direction_rows_are_dropped(prego_transform: PregoTransform):
     edges = _read_tsv(prego_transform.output_edge_file)
     # No edges should have GO as subject (only as object in taxon→GO).
     assert not any(e["subject"].startswith("GO:") for e in edges)
-    # No edges should have ENVO as object (only as subject in ENVO→taxon).
-    assert not any(e["object"].startswith("ENVO:") for e in edges)
+    # Native inverse rows are dropped before normalizing the retained habitat row.
+    assert not any(e["subject"].startswith("ENVO:") for e in edges)
+    assert sum(e["object"].startswith("ENVO:") for e in edges) == 1
 
 
 def test_taxon_taxon_dropped_but_bto_now_kept(prego_transform: PregoTransform):
@@ -274,7 +277,7 @@ def test_taxon_taxon_dropped_but_bto_now_kept(prego_transform: PregoTransform):
 
     Regression net for the v1→v2 scope change: BTO used to be deferred
     and land in ``bto_deferred_v2``. It now emits as an edge with
-    ``biolink:location_of`` direction matching bacdive.
+    ``biolink:located_in`` from organism to environment.
     """
     prego_transform.run()
     report = _read_tsv(prego_transform.unmapped_report_file)
@@ -283,10 +286,11 @@ def test_taxon_taxon_dropped_but_bto_now_kept(prego_transform: PregoTransform):
     assert "bto_deferred_v2" not in reasons, "BTO should now emit, not drop"
     # BTO edge should be present.
     edges = _read_tsv(prego_transform.output_edge_file)
-    bto_edges = [e for e in edges if e["subject"].startswith("BTO:")]
-    assert len(bto_edges) == 1, f"expected 1 BTO→NCBITaxon edge; got {len(bto_edges)}"
-    assert bto_edges[0]["predicate"] == "biolink:location_of"
-    assert bto_edges[0]["object"] == "NCBITaxon:562"
+    bto_edges = [e for e in edges if e["object"].startswith("BTO:")]
+    assert len(bto_edges) == 1, f"expected 1 NCBITaxon→BTO edge; got {len(bto_edges)}"
+    assert bto_edges[0]["predicate"] == "biolink:located_in"
+    assert bto_edges[0]["subject"] == "NCBITaxon:562"
+    assert bto_edges[0]["relation"] == "RO:0001025"
 
 
 def test_edges_carry_prego_metadata(prego_transform: PregoTransform):
@@ -681,7 +685,7 @@ def test_multi_archive_edges_from_both_land_in_output(
     # From archive 1 (literature.tar.gz):
     assert ("NCBITaxon:100", "GO:0000034") in edge_pairs, "archive 1 taxon→GO_MF edge missing"
     # From archive 2 (environmental.tar.gz):
-    assert ("ENVO:00003064", "NCBITaxon:1224") in edge_pairs, "archive 2 ENVO→taxon edge missing"
+    assert ("NCBITaxon:1224", "ENVO:00003064") in edge_pairs, "archive 2 taxon→ENVO edge missing"
     assert ("NCBITaxon:100", "GO:0000049") in edge_pairs, "archive 2 taxon→GO edge missing"
     assert ("NCBITaxon:1224", "GO:0016020") in edge_pairs, "archive 2 second taxon→GO edge missing"
 
@@ -1048,11 +1052,11 @@ def test_emitted_provenance_snapshot(prego_transform: PregoTransform):
     env = ("environmental_samples", "sample_count", "statistical_association", "data_analysis_pipeline")
 
     expected = {
-        ("BTO:0000763", "NCBITaxon:562"): text_mined,
+        ("NCBITaxon:562", "BTO:0000763"): text_mined,
         ("NCBITaxon:562", "MONDO:0007256"): text_mined,
         # Genome-annotation rows. These emitted as `literature`/`prediction`
         # before #713 moved them into the archive they belong to.
-        ("ENVO:00000011", "NCBITaxon:693444"): genome_assertion,
+        ("NCBITaxon:693444", "ENVO:00000011"): genome_assertion,
         ("NCBITaxon:100", "GO:0000034"): genome_assertion,
         ("NCBITaxon:100", "GO:0005634"): genome_assertion,
         ("NCBITaxon:100", "GO:0006355"): genome_assertion,
@@ -1411,7 +1415,7 @@ def test_emitted_edges_carry_populated_metadata(prego_input_dir: Path, prego_out
 # ---------------------------------------------------------------------------
 
 
-def test_habitat_shapes_emit_only_location_of(prego_input_dir: Path, prego_output_dir: Path):
+def test_habitat_shapes_emit_only_located_in(prego_input_dir: Path, prego_output_dir: Path):
     """
     PREGO is ~99% taxon->GO by volume, and that part has no positive evidence.
 
@@ -1427,7 +1431,7 @@ def test_habitat_shapes_emit_only_location_of(prego_input_dir: Path, prego_outpu
 
     assert edges, "habitat mode must still emit something"
     predicates = {e["predicate"] for e in edges}
-    assert predicates == {"biolink:location_of"}, predicates
+    assert predicates == {"biolink:located_in"}, predicates
     assert not any(e["predicate"] == CAPABLE_OF_PREDICATE for e in edges)
 
 
@@ -1502,10 +1506,11 @@ def test_shapes_defaults_to_habitat_and_rejects_nonsense(prego_input_dir: Path, 
     A typo must still fail loudly rather than silently emit everything.
     """
     monkeypatch.delenv("PREGO_SHAPES", raising=False)
+    monkeypatch.delenv("PREGO_HABITAT_MIN_SCORE", raising=False)
     default = PregoTransform(input_dir=prego_input_dir, output_dir=prego_output_dir)
     assert default.shapes == "habitat"
     assert default.output_dir.name == "prego_habitat", "and must write where merge.yaml looks"
-    assert default.habitat_min_score == 1.0, "the documented tau=1.0 policy applies by default"
+    assert default.habitat_min_score == 3.0, "the conservative #1844 floor applies by default"
 
     with pytest.raises(ValueError, match="PREGO_SHAPES"):
         PregoTransform(input_dir=prego_input_dir, output_dir=prego_output_dir, shapes="habitats")
@@ -1531,7 +1536,7 @@ def test_habitat_mode_writes_to_its_own_directory(prego_input_dir: Path, prego_o
     full.run()
     assert habitat.output_edge_file.exists() and full.output_edge_file.exists()
     habitat_predicates = {e["predicate"] for e in _read_tsv(habitat.output_edge_file)}
-    assert habitat_predicates == {"biolink:location_of"}, "the habitat build must survive a later full run"
+    assert habitat_predicates == {"biolink:located_in"}, "the habitat build must survive a later full run"
 
 
 def test_deliberate_filters_stay_out_of_the_curation_report(prego_input_dir: Path, prego_output_dir: Path):
@@ -1552,3 +1557,28 @@ def test_deliberate_filters_stay_out_of_the_curation_report(prego_input_dir: Pat
     assert "below_habitat_min_score" not in reasons, reasons
     counted = transform._stats["rows_dropped_by_reason"]
     assert counted.get("non_habitat_shape", 0) > 0, "but it must still be counted in the summary"
+
+
+def test_default_habitat_floor_filters_actual_output(prego_input_dir, prego_output_dir, monkeypatch):
+    """Default output keeps environmental scores >=3 and the unchanged genome channel."""
+    monkeypatch.delenv("PREGO_SHAPES", raising=False)
+    monkeypatch.delenv("PREGO_HABITAT_MIN_SCORE", raising=False)
+    # Explicit offline boundary controls supplement the native-shape fixture.
+    payload = "".join(
+        f"-27\tENVO:00002007\t-2\t562\tMGnify\tfixture habitat\t{score}\tTRUE\t\n"
+        for score in ("2.9", "3.0", "3.1")
+    ).encode()
+    with tarfile.open(prego_input_dir / "prego/environmental_samples.tar.gz", "w:gz") as archive:
+        member = tarfile.TarInfo("database_pairs.tsv")
+        member.size = len(payload)
+        archive.addfile(member, io.BytesIO(payload))
+    transform = PregoTransform(input_dir=prego_input_dir, output_dir=prego_output_dir)
+    transform.run()
+    edges = _read_tsv(transform.output_edge_file)
+    environmental = [row for row in edges if row["prego_channel"] == CHANNEL_ENVIRONMENTAL]
+    assert {row["prego_score"] for row in environmental} == {"3.0", "3.1"}
+    assert all(float(row["prego_score"]) >= 3 for row in environmental)
+    assert any(row["prego_channel"] == CHANNEL_GENOMES for row in edges)
+    assert transform._stats["rows_dropped_by_reason"]["below_habitat_min_score"] > 0
+    assert all(row["subject"].startswith("NCBITaxon:") for row in edges)
+    assert all(row["predicate"] == "biolink:located_in" and row["relation"] == "RO:0001025" for row in edges)

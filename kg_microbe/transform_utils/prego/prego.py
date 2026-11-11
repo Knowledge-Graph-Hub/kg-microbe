@@ -16,7 +16,7 @@ Emitted edge shapes (canonical directions matching KGM convention — see
 `utils.classify_row`):
 
 - ``NCBITaxon:X → biolink:capable_of → GO:Y``  (all 3 GO namespaces)
-- ``ENVO:Y → biolink:location_of → NCBITaxon:X``  (matches bacdive)
+- ``NCBITaxon:X → biolink:located_in → ENVO:Y``
 - ``NCBITaxon:X → biolink:associated_with → MONDO:Y``  (DOID routed via xref)
 
 Each edge carries per-row PREGO metadata (``score``, ``channel``,
@@ -46,9 +46,11 @@ from kg_microbe.transform_utils.constants import (
     DEPRECATED_COLUMN,
     ID_COLUMN,
     KNOWLEDGE_LEVEL_COLUMN,
+    LOCATED_IN,
+    LOCATED_IN_PREDICATE,
     NAME_COLUMN,
     OBJECT_COLUMN,
-    ORIGINAL_SUBJECT_COLUMN,
+    ORIGINAL_OBJECT_COLUMN,
     PREDICATE_COLUMN,
     PREGO,
     PREGO_CHANNEL_COLUMN,
@@ -108,7 +110,7 @@ from kg_microbe.utils.tsv_io import tsv_dict_writer, tsv_writer
 # Edge predicates and relations. PREGO uses only biolink predicates; the
 # RELATION_COLUMN carries an RO term where an obvious one applies, else empty.
 # ---------------------------------------------------------------------------
-# Emitted-shape selection. `habitat` keeps only the location_of shapes.
+# Emitted-shape selection. `habitat` keeps only the located_in shapes.
 _SHAPES_ALL = "all"
 _SHAPES_HABITAT = "habitat"
 # Habitat output lives apart from the full build so both can coexist.
@@ -118,9 +120,7 @@ _HABITAT_OUTPUT_DIR = "prego_habitat"
 # Counted in the summary, excluded from the curation report.
 _CONFIGURED_DROP_REASONS = frozenset({"non_habitat_shape", "below_habitat_min_score"})
 
-_LOCATION_OF_PREDICATE = "biolink:location_of"
 _ASSOCIATED_WITH_PREDICATE = "biolink:associated_with"
-_RELATION_LOCATION_OF = "RO:0001015"  # source → location_of → organism
 _RELATION_CAPABLE_OF = "RO:0002215"  # organism → capable_of → process
 _RELATION_ASSOCIATED_WITH = "RO:0002610"  # correlated with
 
@@ -215,9 +215,9 @@ class PregoTransform(Transform):
         :param input_dir: Raw data directory.
         :param output_dir: Transform output directory.
         :param shapes: ``habitat`` (default) or ``all``. ``habitat`` emits only the
-            ``location_of`` shapes (ENVO/BTO -> taxon), which are ~1% of PREGO by
-            volume and the only part with measured, independently replicated
-            enrichment, and it is what ``merge.yaml`` reads. ``all`` additionally
+            ``located_in`` shapes (taxon -> ENVO/BTO/FOODON), the bounded
+            habitat scope selected by ``merge.yaml``. Score discrimination is
+            not established (``docs/PREGO_SCORE_VALIDATION.md``). ``all`` additionally
             emits the taxon→GO edges and pairs with ``merge.prego-full.yaml``; it
             is the experimental build, costing a 12.2 GB ``edges.tsv`` and a
             three-hour merge. Defaulting to ``habitat`` keeps the default
@@ -226,8 +226,8 @@ class PregoTransform(Transform):
             default pipeline produced a graph with no PREGO at all.
             Env: ``PREGO_SHAPES``.
         :param habitat_min_score: Raw-score floor applied to *continuous-channel*
-            habitat rows only, leaving the genome channel whole. Defaults to 1.0,
-            the policy in ``docs/PREGO_SCORE_VALIDATION.md``; set 0 to disable.
+            habitat rows only, leaving the genome channel whole. Defaults to 3.0,
+            the conservative source-score floor in #1844; set 0 to disable.
             Env: ``PREGO_HABITAT_MIN_SCORE``.
         :param min_confidence: Star threshold in [0, 4]; rows below it are
             dropped. Defaults to the ``PREGO_MIN_CONFIDENCE`` environment
@@ -241,7 +241,7 @@ class PregoTransform(Transform):
             list(self.edge_header)
             + list(_PREGO_EDGE_EXTRA_COLUMNS)
             + [
-                ORIGINAL_SUBJECT_COLUMN,
+                ORIGINAL_OBJECT_COLUMN,
                 SOURCE_ASSERTION_ID_COLUMN,
             ]
         )
@@ -262,7 +262,7 @@ class PregoTransform(Transform):
             raise ValueError(f"PREGO_SHAPES must be {_SHAPES_ALL!r} or {_SHAPES_HABITAT!r}, got {shapes!r}")
         self.shapes = shapes
         if habitat_min_score is None:
-            habitat_min_score = float(os.environ.get("PREGO_HABITAT_MIN_SCORE", "1.0") or 0)
+            habitat_min_score = float(os.environ.get("PREGO_HABITAT_MIN_SCORE", "3.0") or 0)
         if habitat_min_score < 0:
             raise ValueError(f"PREGO_HABITAT_MIN_SCORE must be >= 0, got {habitat_min_score}")
         # Only meaningful when habitat shapes are what is being emitted. Applying
@@ -976,11 +976,11 @@ class PregoTransform(Transform):
             if not entity1_id.startswith("ENVO:"):
                 self._record_drop("envo_id_prefix_mismatch", entity1_type, entity1_id, entity2_type, entity2_id)
                 return
-            subject = entity1_id
-            obj = f"NCBITaxon:{entity2_id}"
-            predicate = _LOCATION_OF_PREDICATE
-            relation = _RELATION_LOCATION_OF
-            pending_nodes = ((subject, _ENVO_CATEGORY), (obj, _NCBITAXON_CATEGORY))
+            subject = f"NCBITaxon:{entity2_id}"
+            obj = entity1_id
+            predicate = LOCATED_IN_PREDICATE
+            relation = LOCATED_IN
+            pending_nodes = ((subject, _NCBITAXON_CATEGORY), (obj, _ENVO_CATEGORY))
 
         elif outcome == KEEP_TAXON_TO_DOID:
             mondo = doid_to_mondo.get(entity2_id)
@@ -1003,13 +1003,12 @@ class PregoTransform(Transform):
             if not entity2_id.startswith("BTO:"):
                 self._record_drop("bto_id_prefix_mismatch", entity1_type, entity1_id, entity2_type, entity2_id)
                 return
-            # Flip direction to match bacdive convention: BTO tissue is the
-            # subject on `location_of` edges, taxon is the object.
-            subject = entity2_id
-            obj = f"NCBITaxon:{entity1_id}"
-            predicate = _LOCATION_OF_PREDICATE
-            relation = _RELATION_LOCATION_OF
-            pending_nodes = ((subject, _BTO_CATEGORY), (obj, _NCBITAXON_CATEGORY))
+            # Keep the organism as subject for the normalized habitat assertion.
+            subject = f"NCBITaxon:{entity1_id}"
+            obj = entity2_id
+            predicate = LOCATED_IN_PREDICATE
+            relation = LOCATED_IN
+            pending_nodes = ((subject, _NCBITAXON_CATEGORY), (obj, _BTO_CATEGORY))
 
         # Applied last, after every eligibility check. Run earlier it attributed
         # rows to "below_min_confidence" that would have been dropped anyway,
@@ -1034,14 +1033,14 @@ class PregoTransform(Transform):
 
         # Native identity migration follows eligibility against the original
         # ENVO row, so the reviewed FOODON successor does not fail its guard.
-        decision = self._identity_decisions.get(subject) if outcome == KEEP_ENVO_TO_TAXON else None
-        original_subject, assertion_id = "", ""
+        decision = self._identity_decisions.get(obj) if outcome == KEEP_ENVO_TO_TAXON else None
+        original_object, assertion_id = "", ""
         if decision is not None:
             if context is None or self._identity_audit_writer is None:
                 raise ValueError("PREGO identity migration requires physical source context and an audit writer")
-            original_subject = subject
-            subject = decision.target_id
-            pending_nodes = ((subject, _ENVO_CATEGORY), (obj, _NCBITAXON_CATEGORY))
+            original_object = obj
+            obj = decision.target_id
+            pending_nodes = ((subject, _NCBITAXON_CATEGORY), (obj, _ENVO_CATEGORY))
             assertion_key = [
                 Path(context["archive"]).name,
                 context["archive_sha256"],
@@ -1069,7 +1068,7 @@ class PregoTransform(Transform):
             direct_flag=direct_flag,
             evidence_url=evidence_url,
         )
-        emitted[self.edge_header.index(ORIGINAL_SUBJECT_COLUMN)] = original_subject
+        emitted[self.edge_header.index(ORIGINAL_OBJECT_COLUMN)] = original_object
         emitted[self.edge_header.index(SOURCE_ASSERTION_ID_COLUMN)] = assertion_id
         edge_writer.writerow(emitted)
         if decision is not None:
@@ -1077,8 +1076,8 @@ class PregoTransform(Transform):
             self._identity_audit_writer.writerow(
                 {
                     "source_assertion_id": assertion_id,
-                    "original_subject": original_subject,
-                    "normalized_subject": subject,
+                    "original_object": original_object,
+                    "normalized_object": obj,
                     "disposition": decision.disposition,
                     **{
                         key: context[key]
@@ -1086,7 +1085,7 @@ class PregoTransform(Transform):
                     },
                     "original_record_json": json.dumps(row, ensure_ascii=False),
                     "emitted_edge_json": json.dumps(dict(zip(self.edge_header, emitted, strict=True)), sort_keys=True),
-                    "subject_node_json": json.dumps(self._node_row(subject, _ENVO_CATEGORY), sort_keys=True),
+                    "object_node_json": json.dumps(self._node_row(obj, _ENVO_CATEGORY), sort_keys=True),
                     "native_proof_json": decision.proof_json,
                     "policy_sha256": identities["prego_envo_policy"]["sha256"],
                     "envo_sha256": identities["prego_native_envo"]["sha256"],

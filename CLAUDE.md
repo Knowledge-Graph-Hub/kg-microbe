@@ -166,10 +166,9 @@ and go to the source's deposit-claim report, because picking one would make
 the answer depend on file order. That report carries every deposit whose
 claimants disagreed, whichever way it went, so a coarsened taxonomy and a
 suppressed one are both visible and neither is confused with an ontology
-lookup that failed. A record that cites a deposit links to it with
-`biolink:close_match`, so the deposit's provenance is in the graph — but only
-where the deposit kept a parent. `close_match` is symmetric and maps to
-`SEMMEDDB:same_as`, so on a deposit whose claimants proved to be unrelated
+lookup that failed. A BacDive record that safely cites a deposit links to it with
+`biolink:same_as` / `skos:exactMatch` (#1845), so the deposit's provenance is in
+the graph. On a deposit whose claimants proved to be unrelated
 organisms it would assert an equivalence between them; those citations stay in
 the claims report, and the node carries a description saying so. See issues
 #892, #894, #899 and #907. A deposit cited by a single record keeps that record's
@@ -181,7 +180,9 @@ deposit gets no parent and no record links (#1421).
 
 ## Operational traps
 
-- PREGO defaults to `PREGO_SHAPES=habitat` and `PREGO_MIN_CONFIDENCE=0`.
+- PREGO defaults to `PREGO_SHAPES=habitat`, `PREGO_MIN_CONFIDENCE=0`, and
+  `PREGO_HABITAT_MIN_SCORE=3.0` for environmental-samples habitat rows. It emits
+  organism → `biolink:located_in` / `RO:0001025` → environment (#1844).
   `PREGO_SHAPES=all` changes the output directory and graph size;
   `PREGO_MIN_CONFIDENCE` is a global cutoff, not a substitute for per-shape
   curation. Use `merge.noprego.yaml` when PREGO's size is not acceptable; see

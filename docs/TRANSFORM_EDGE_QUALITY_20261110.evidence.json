@@ -194,6 +194,161 @@
       "path": "data/edge-quality-20261110/reviews/bacdive-final-gate-test-repair-r1/completion.json",
       "bytes": 1541,
       "sha256": "23686f37146a2b4ebecc864fa832bc4225fb963ef70d93d4f162d87cb4a5a061"
+    },
+    {
+      "path": "data/edge-quality-20261110/pr-gates-execution-r2.json",
+      "bytes": 977,
+      "sha256": "428fc83774ba7bacc655f2770452dd9f9e4e4b315629ff37c6b8de5643597360"
+    },
+    {
+      "path": "data/edge-quality-20261110/pr-gates-interruption-r2.json",
+      "bytes": 682,
+      "sha256": "8c6d6f1227a512451b94921e22bfbc05bfb40112c86b61659f9a8964d2247532"
+    },
+    {
+      "path": "data/edge-quality-20261110/pr-gates-r2-status-correction.json",
+      "bytes": 854,
+      "sha256": "0db1aba64271942e3a4e331155678b447354c1c2d3b2826da500cd476c8e47c9"
+    },
+    {
+      "path": "data/validation/pr-gates/kgm-edge-quality-1842-1846-20261111-r2-gates.json",
+      "bytes": 1536,
+      "sha256": "79e0f3718195a048e6baa448da9c24a6b63675f535a5bfcbdc4a17d3a57e41ac"
+    },
+    {
+      "path": "data/validation/pr-gates/kgm-edge-quality-1842-1846-20261111-r2-4.log",
+      "bytes": 23379,
+      "sha256": "aef5f2adf315ed5ea6f62cc3839b83bc43465baad83094756e77a47c81c8660d"
+    },
+    {
+      "path": "data/edge-quality-20261110/ci-66e63cb5-failed-build-r1.log",
+      "bytes": 359361,
+      "sha256": "b0261202ed97992a39319039fbde626057fcdc9e6bf888488ffff7a32bc63519"
+    },
+    {
+      "path": "data/edge-quality-20261110/reviews/gold-consumer-ci-diagnosis-r1.json",
+      "bytes": 12614,
+      "sha256": "63193583986d17b571a174a6b821d7514cb9eb12279caa8b79a0abb229dd2588"
+    },
+    {
+      "path": "data/edge-quality-20261110/reviews/microbedecoder-ci-diagnosis-r1.json",
+      "bytes": 18256,
+      "sha256": "baf23f6f5c4e7af6bc0f5e5a2ee9fdd2448acf2ae6108339b5b0cc4710fbfbc8"
+    },
+    {
+      "path": "data/edge-quality-20261110/reviews/gold-consumer-fixture-repair-1857-r1/completion.json",
+      "bytes": 2980,
+      "sha256": "cef62affa865771aaeaf39249021c0af96ab81587fbb0843cee9ae9df9d247fd"
+    },
+    {
+      "path": "data/edge-quality-20261110/reviews/reader-current-proof-selection-root-review-r1.json",
+      "bytes": 960,
+      "sha256": "a16e3e765d57bb1dab9ac2e603813fc95ab279afa1c1faf1a3cf69708a5ac08c"
+    },
+    {
+      "path": "data/edge-quality-20261110/md-1857-1858-focused-r1.json",
+      "bytes": 2381,
+      "sha256": "32e8564ac97eff28cb2ce5fd3f1c4fe4f9cb7f18228a26ad7c676c500e533db4"
+    },
+    {
+      "path": "data/edge-quality-20261110/md-1857-1858-focused-r2.json",
+      "bytes": 472,
+      "sha256": "bdbd7e59723426deb1d29ba240b63896645dbe9705aee4301639ea177d506bc7"
+    },
+    {
+      "path": "data/edge-quality-20261110/md-1857-1858-focused-r3.json",
+      "bytes": 472,
+      "sha256": "67983c786232b9ec35320739e97e82dcde9d5abce03783782ebd224be7d080bd"
+    },
+    {
+      "path": "data/edge-quality-20261110/md-1857-1858-focused-r4.json",
+      "bytes": 472,
+      "sha256": "0e3d9497ee8b9b785d84235d290f7595b002717c85fb241e4efe9556fb0ef231"
+    },
+    {
+      "path": "data/edge-quality-20261110/md-1857-1858-focused-r5.json",
+      "bytes": 2382,
+      "sha256": "86adf81be89412c9ff90fff6d4df4852a8617684c5629645eb85abaae1211676"
+    },
+    {
+      "path": "data/edge-quality-20261110/reviews/microbedecoder-inventory-1858-independent-review-r1.json",
+      "bytes": 6291,
+      "sha256": "c75c3d4834507a00e84b919e00837e4be12cedf7baae904985478a5b445cafe8"
+    },
+    {
+      "path": "data/edge-quality-20261110/reviews/microbedecoder-inventory-faprotax-independent-review-r1.json",
+      "bytes": 9539,
+      "sha256": "71a7164620b43ce32426fd4124a35e420b31a1348dc2897a907fd9025a8016c2"
+    },
+    {
+      "path": "data/edge-quality-20261110/reviews/inventory-1858-literal-writer-fix-formatted-r2.json",
+      "bytes": 477,
+      "sha256": "86b2654b177e0e1bf3a864743192fe9eca1a91c4b86fb4f7a08fcaf8a7f88fbd"
+    },
+    {
+      "path": "data/edge-quality-20261110/reviews/material-inventory-authority-repair-r1/completion-r2.json",
+      "bytes": 1905,
+      "sha256": "025a936c5442c62f89a90610c544bd8dec6f38760024de8830c3100f151119ef"
+    },
+    {
+      "path": "data/edge-quality-20261110/microbedecoder-inventory-execution-r1/result.json",
+      "bytes": 2640,
+      "sha256": "cee9589d7983ed0d71a00608bde60299694e114d3a413b6303a373e267462322"
+    },
+    {
+      "path": "data/edge-quality-20261110/microbedecoder-inventory-execution-r2/result.json",
+      "bytes": 3567,
+      "sha256": "a49487e7e96541032ee8cc44ff2da3d62fb04ae2d9794068f7659c8d4854265c"
+    },
+    {
+      "path": "data/edge-quality-20261110/microbedecoder-inventory-execution-r3/result.json",
+      "bytes": 6835,
+      "sha256": "c00f227f16b17c316823d0a6bbd698b855d457232cd12618f84e32e8d02eecfa"
+    },
+    {
+      "path": "data/edge-quality-20261110/microbedecoder-curation-inventory-r3/summary.json",
+      "bytes": 9671,
+      "sha256": "b04ba236ea02a8262ce5edde0e7a50e37c929344e289244b4040ee81bab24c3c"
+    },
+    {
+      "path": "data/edge-quality-20261110/reviews/img-membership-inventory-failure-r1/review.json",
+      "bytes": 8495,
+      "sha256": "8e8c7191315909aeedb3d92ebb5621fae96247bf378d00c9c3a90d2d2cc15ef1"
+    },
+    {
+      "path": "data/edge-quality-20261110/reviews/complete-native-crosswalk-scope-r1/review.json",
+      "bytes": 28851,
+      "sha256": "72898a4093e9f0f8481ee5d7b3ead5bcfb4d7d970cffaa09df9d38d6c349769e"
+    },
+    {
+      "path": "data/edge-quality-20261110/reviews/complete-native-crosswalk-scope-r1/closing-reconciliation-r2.json",
+      "bytes": 12917,
+      "sha256": "5ce7b39f4cdd78eadc834f4f128da0a1f2ef1c268fd5426a70538166a1fd88a6"
+    },
+    {
+      "path": "data/edge-quality-20261110/reviews/microbedecoder-inventory-1858-upstream-independent-review-r3.json",
+      "bytes": 1633,
+      "sha256": "e641f73ec9442994ed0b214142b192749959ef9728a795df988f8192e3915183"
+    },
+    {
+      "path": "data/edge-quality-20261110/reviews/microbedecoder-inventory-1858-assembly-independent-review-r1.json",
+      "bytes": 9779,
+      "sha256": "192755db860dc92904c74e2ecc836499d11bd3818e301bf40bc041344ceee230"
+    },
+    {
+      "path": "data/edge-quality-20261110/reviews/microbedecoder-inventory-1858-assembly-independent-closing-r2.json",
+      "bytes": 2011,
+      "sha256": "9789bc1fec82a4d4782561160d8b2de616edaa04b6b1ff5c22ac33610a468586"
+    },
+    {
+      "path": "data/edge-quality-20261110/reviews/inventory-1858-assembly-r3.json",
+      "bytes": 765,
+      "sha256": "7ad2ee9a958f4b6525feaef0173dfada10291985e473d4cc8ee1726b52d0ca65"
+    },
+    {
+      "path": "data/edge-quality-20261110/gate_progress_v3.py",
+      "bytes": 1573,
+      "sha256": "e6fab24468170209a71f7cb62ef96b122388c357f1ed6b2bc3f4270d1f64aa20"
     }
   ],
   "historical_limits": [
@@ -217,8 +372,8 @@
     "source_finalization_sha256": "9858d8c3c32f75fb05c689c90e1bae693aad9133bf1e03af9ee649fe4c474259"
   },
   "repository_gate": {
-    "command": "poetry run python scripts/run_pr_gates.py edge-quality-1842-1846-20261111-r2",
-    "ledger": "data/validation/pr-gates/kgm-edge-quality-1842-1846-20261111-r2-gates.json",
+    "command": "poetry run python scripts/run_pr_gates.py edge-quality-1842-1846-20261111-r3",
+    "ledger": "data/validation/pr-gates/kgm-edge-quality-1842-1846-20261111-r3-gates.json",
     "report_committed_before_gate": true,
     "status_source": "Use the exact-candidate ledger and PR checks; this evidence index is committed before gate execution."
   },
@@ -490,5 +645,64 @@
     "finding_issue": 1856,
     "full_suite_completed": false,
     "repair_validation": "224 affected tests passed in 95.09s; independent repair review passed; production code unchanged."
+  },
+  "interrupted_repository_gate_r2": {
+    "candidate": "aff6e6558a84badfc925638c19a8677264465789",
+    "actual_exit_code": 1,
+    "interrupted_at_percent": 41,
+    "observed_local_failure_markers": 10,
+    "failed_module": "tests/test_gold_organism_folds.py",
+    "correction": "Tail-only polling initially missed failures; authoritative correction artifact retained",
+    "full_suite_completed": false,
+    "summary_not_available": "pytest tmp_path stash teardown KeyError after SIGINT; no fabricated aggregate counts"
+  },
+  "downstream_inventory_repairs": {
+    "issues": [
+      1857,
+      1858
+    ],
+    "production_transform_changed": false,
+    "reader_sha256": "ef9ade0dff47667434228f1a0558b60382fa904f2f00976558e32522b1177f84",
+    "final_focused_modules": 38,
+    "final_focused_passed": 1634,
+    "final_focused_seconds": 236.38,
+    "earlier_attempts_retained": true,
+    "overlapping_selections_not_summed": true
+  },
+  "native_inventory_r3": {
+    "actual_exit_code": 0,
+    "waited_reaped": true,
+    "seconds": 4.302,
+    "nodes": 34915,
+    "edges": 131247,
+    "inventory_rows": 444,
+    "typed_attributes": 20,
+    "qualifying_prediction_edges": 35286,
+    "owned_loaded_modules": 46,
+    "report_version": 4,
+    "scope": "current_finite_policy",
+    "source_admission_claimed": false,
+    "all_inputs_and_prior_failures_unchanged": true,
+    "materials_chemical_identity_approved": false,
+    "materials_raw_record_validation": null
+  },
+  "crosswalk_comparison_qualification": {
+    "genome_membership_rows_exact_historical_match": 33958,
+    "IMG_rows": 18374,
+    "assembly_rows": 15584,
+    "assembly_genome_declarations_local": 48,
+    "assembly_genome_declarations_selected_GTDB": 15536,
+    "other_substitutions": [
+      {
+        "from": "NCBITaxon:317018",
+        "to": "NCBITaxon:272918"
+      },
+      {
+        "from": "NCBITaxon:388051",
+        "to": "NCBITaxon:2821359"
+      }
+    ],
+    "substitutions_supported_by_selected_taxdump_and_finalizer_audit": true,
+    "blanket_all_crosswalk_parity_claimed": false
   }
 }

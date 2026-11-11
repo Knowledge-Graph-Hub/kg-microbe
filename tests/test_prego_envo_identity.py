@@ -443,4 +443,5 @@ def test_generated_foodon_json_is_not_a_preflight_input(tmp_path):
     raw.mkdir()
     (raw / "envo.json").write_text("{}")
     (raw / "foodon.owl").write_text("")
+    (raw / "bto.db.gz").write_bytes(b"declared input; contents checked by producer")
     assert _missing_declared_inputs(["prego"], Path(__file__).resolve().parents[1], raw) == []

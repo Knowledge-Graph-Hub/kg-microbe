@@ -66,13 +66,18 @@ from dotenv import load_dotenv
 
 from kg_microbe.transform_utils.constants import (
     AGENT_TYPE_COLUMN,
+    CATEGORY_COLUMN,
     CLOSE_MATCH_PREDICATE,
+    DESCRIPTION_COLUMN,
     EXACT_MATCH,
+    ID_COLUMN,
     KNOWLEDGE_ASSERTION,
     KNOWLEDGE_LEVEL_COLUMN,
     LPSN_API_SOURCE,
     MANUAL_AGENT,
+    NAME_COLUMN,
     NCBI_CATEGORY,
+    PROVIDED_BY_COLUMN,
     RDFS_SUBCLASS_OF,
     SAME_AS_PREDICATE,
     SUBCLASS_PREDICATE,
@@ -90,7 +95,9 @@ JSON_FULL_NAME = "full_name"
 JSON_AUTHORITY = "authority"
 JSON_PUBLICATION_DOI = "publication_doi"
 JSON_PUBLICATION_PMID = "publication_pmid"
+JSON_PUBLICATION_TEXT = "publication_text"
 JSON_IJSEM_LIST_DOI = "ijsem_list_doi"
+JSON_IJSEM_LIST_TEXT = "ijsem_list_text"
 JSON_LPSN_PARENT_ID = "lpsn_parent_id"
 JSON_BASONYM_ID = "basonym_id"
 JSON_IS_LEGITIMATE = "is_legitimate"
@@ -236,6 +243,7 @@ class LPSNAPITransform(Transform):
         self._client_override = client
         self._page_fetch = page_fetch or fetch_taxon_page
         self._web_cache_dir: Optional[Path] = None
+        self._publication_citations: Dict[str, Dict[str, set]] = {}
         self._stats = {
             "fetched": 0,
             "from_cache": 0,
@@ -286,6 +294,7 @@ class LPSNAPITransform(Transform):
         self._web_cache_dir.mkdir(parents=True, exist_ok=True)
 
         self.output_dir.mkdir(parents=True, exist_ok=True)
+        self._publication_citations = {}
         # Atomic: a crash mid-run must leave no nodes.tsv/edges.tsv at all. A
         # truncated pair reads as complete to the merge, and the lpsn transform
         # already publishes this way (#820, #981, #985).
@@ -311,6 +320,7 @@ class LPSNAPITransform(Transform):
                 self._emit(record_no, record, node_writer, edge_writer)
                 for ref in self._linked_record_nos(record_no, record):
                     self._ensure_declared(client, ref, cache_dir, node_writer, edge_writer)
+            self._emit_publication_nodes(node_writer)
 
         print(
             f"[lpsn_api] fetched={self._stats['fetched']:,} "
@@ -504,23 +514,27 @@ class LPSNAPITransform(Transform):
         # Publication cross-refs. LPSN populates one or both of DOI/PMID
         # per record for the valid publication of the name, plus (often)
         # a separate DOI for the IJSEM validation-list publication.
-        for doi_key in (JSON_PUBLICATION_DOI, JSON_IJSEM_LIST_DOI):
+        for doi_key, text_key in (
+            (JSON_PUBLICATION_DOI, JSON_PUBLICATION_TEXT),
+            (JSON_IJSEM_LIST_DOI, JSON_IJSEM_LIST_TEXT),
+        ):
             doi = (record.get(doi_key) or "").strip()
             if doi:
-                # doi: nodes are stubs — a downstream Publication
-                # ontology (or an OMA-style DOI expander) can supply
-                # richer metadata. For now, emit a minimal node so the
-                # edge target isn't a dangling reference.
+                # The associated source citation supplies a display label,
+                # not an inferred paper title. Conflicts are resolved only
+                # after all source records have contributed their evidence.
                 edge_writer.writerow(
                     self._edge(record_no, CLOSE_MATCH_PREDICATE, f"{DOI_PREFIX}{doi}", "skos:closeMatch")
                 )
-                node_writer.writerow(self._stub_publication_node(f"{DOI_PREFIX}{doi}"))
+                self._record_publication_citation(f"{DOI_PREFIX}{doi}", record_no, text_key, record.get(text_key))
         pmid = str(record.get(JSON_PUBLICATION_PMID) or "").strip()
         if pmid:
             edge_writer.writerow(
                 self._edge(record_no, CLOSE_MATCH_PREDICATE, f"{PMID_PREFIX}{pmid}", "skos:closeMatch")
             )
-            node_writer.writerow(self._stub_publication_node(f"{PMID_PREFIX}{pmid}"))
+            self._record_publication_citation(
+                f"{PMID_PREFIX}{pmid}", record_no, JSON_PUBLICATION_TEXT, record.get(JSON_PUBLICATION_TEXT)
+            )
 
         # 16S rRNA sequence provenance — the TYGS-adjacent bridge to
         # NCBI. Every INSDC accession registered by this taxon's type
@@ -712,14 +726,41 @@ class LPSNAPITransform(Transform):
                 row[headers.index(col)] = val
         return row
 
-    def _stub_publication_node(self, curie: str) -> list:
-        """Build a minimal nodes.tsv row for a DOI/PMID stub target."""
+    def _record_publication_citation(self, curie: str, record_no: str, field: str, value: Any) -> None:
+        """Retain exact source-field attribution; malformed/missing text supplies no label."""
+        citation = value.strip() if isinstance(value, str) else ""
+        candidates = self._publication_citations.setdefault(curie, {})
+        candidates.setdefault(citation, set()).add(f"{LPSN_PREFIX}{record_no}.{field}")
+
+    def _emit_publication_nodes(self, writer) -> None:
+        """Emit one stable node per publication, withholding conflicting citation labels."""
+        for curie, candidates in sorted(self._publication_citations.items()):
+            nonempty = [citation for citation in candidates if citation]
+            label = nonempty[0] if len(nonempty) == 1 else ""
+            if label:
+                status = "Label is LPSN source citation text, not a separately verified publication title."
+            elif nonempty:
+                status = "Conflicting LPSN citation texts; publication label remains unresolved."
+            else:
+                status = "No usable LPSN source citation text; publication label remains unresolved."
+            provenance = [
+                {"citation": citation, "source_fields": sorted(locators)}
+                for citation, locators in sorted(candidates.items())
+            ]
+            writer.writerow(
+                self._stub_publication_node(curie, label, status + " " + json.dumps(provenance, sort_keys=True))
+            )
+
+    def _stub_publication_node(self, curie: str, label: str = "", description: str = "") -> list:
+        """Build a DOI/PMID node carrying only unambiguous source-owned citation text."""
         headers = self.node_header
         row = [""] * len(headers)
         for col, val in {
-            "id": curie,
-            "category": "biolink:Publication",
-            "provided_by": LPSN_KNOWLEDGE_SOURCE,
+            ID_COLUMN: curie,
+            CATEGORY_COLUMN: "biolink:Publication",
+            NAME_COLUMN: label,
+            DESCRIPTION_COLUMN: description,
+            PROVIDED_BY_COLUMN: LPSN_KNOWLEDGE_SOURCE,
         }.items():
             if col in headers:
                 row[headers.index(col)] = val

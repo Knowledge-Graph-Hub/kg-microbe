@@ -1,0 +1,7 @@
+[
+  ["obo:bto.owl", "owl:versionIRI", "obo:bto/releases/2021-10-26/bto.owl", null],
+  ["BTO:0000763", "rdf:type", "owl:Class", null],
+  ["BTO:0000763", "rdfs:label", null, "lung"],
+  ["BTO:0001481", "rdf:type", "owl:Class", null],
+  ["BTO:0001481", "rdfs:label", null, "plant"]
+]

@@ -86,7 +86,9 @@ def api_records():
             "id": 1002,
             "publication_doi": "10.1099/00207713-19-1-1",
             "publication_pmid": 12345,
+            "publication_text": "Fixture authors. Primary species description. Fixture Journal 2000; 1:1-2.",
             "ijsem_list_doi": "10.1099/ijsem.0.999999",
+            "ijsem_list_text": "Fixture editor. Validation list. Fixture Journal 2001; 2:3-4.",
             "lpsn_parent_id": 1001,  # genus
             "basonym_id": None,
             "is_legitimate": True,
@@ -183,6 +185,89 @@ def test_publication_stub_nodes_are_emitted(api_transform):
     pubs = {n["id"] for n in nodes if n["category"] == "biolink:Publication"}
     assert "doi:10.1099/00207713-19-1-1" in pubs
     assert "PMID:12345" in pubs
+
+
+def test_publication_labels_use_the_matching_source_citation(api_transform, api_records):
+    """Main DOI/PMID and validation-list DOI retain distinct bibliographic provenance."""
+    api_transform.run()
+    nodes = {row["id"]: row for row in _read_tsv(api_transform.output_node_file)}
+    main = api_records["1002"]["publication_text"]
+    for curie in ("doi:10.1099/00207713-19-1-1", "PMID:12345"):
+        assert nodes[curie]["name"] == main
+        assert "not a separately verified publication title" in nodes[curie]["description"]
+        assert "lpsn:1002.publication_text" in nodes[curie]["description"]
+        assert nodes[curie]["provided_by"] == LPSN_KNOWLEDGE_SOURCE
+    validation = nodes["doi:10.1099/ijsem.0.999999"]
+    assert validation["name"] == api_records["1002"]["ijsem_list_text"]
+    assert "lpsn:1002.ijsem_list_text" in validation["description"]
+
+
+@pytest.mark.parametrize("value", [None, "", " \t ", 123, ["citation"], {"title": "not source text"}])
+def test_missing_or_malformed_citations_do_not_create_synthetic_labels(api_transform, api_records, value):
+    """Keep identifiers and edges even when source-owned names are unavailable."""
+    api_records["1002"]["publication_text"] = value
+    api_records["1002"]["ijsem_list_text"] = value
+    api_transform.run()
+    nodes = {row["id"]: row for row in _read_tsv(api_transform.output_node_file)}
+    for curie in ("doi:10.1099/00207713-19-1-1", "PMID:12345", "doi:10.1099/ijsem.0.999999"):
+        assert nodes[curie]["name"] == ""
+        assert "No usable LPSN source citation" in nodes[curie]["description"]
+    assert {row["object"] for row in _read_tsv(api_transform.output_edge_file)} >= {
+        "doi:10.1099/00207713-19-1-1",
+        "PMID:12345",
+        "doi:10.1099/ijsem.0.999999",
+    }
+
+
+@pytest.mark.parametrize("conflicting", [False, True])
+def test_shared_publications_keep_duplicate_or_conflicting_source_citations(api_transform, api_records, conflicting):
+    """Repeated IDs produce one node; contradictory citations never choose a winner."""
+    first = api_records["1002"]
+    api_records["1005"].update(
+        publication_doi=first["publication_doi"],
+        publication_pmid=first["publication_pmid"],
+        publication_text="Different source citation." if conflicting else first["publication_text"],
+    )
+    api_transform.run()
+    nodes = _read_tsv(api_transform.output_node_file)
+    for curie in ("doi:10.1099/00207713-19-1-1", "PMID:12345"):
+        selected = [row for row in nodes if row["id"] == curie]
+        assert len(selected) == 1
+        node = selected[0]
+        assert node["name"] == ("" if conflicting else first["publication_text"])
+        assert "lpsn:1002.publication_text" in node["description"]
+        assert "lpsn:1005.publication_text" in node["description"]
+        assert ("Conflicting LPSN citation texts" in node["description"]) == conflicting
+
+
+def test_publication_aggregation_is_order_stable_and_blank_text_does_not_erase_label(api_transform):
+    """Source order cannot change conflict disposition or retained citation provenance."""
+
+    class Writer:
+        def __init__(self):
+            self.rows = []
+
+        def writerow(self, row):
+            self.rows.append(row)
+
+    inputs = [
+        ("doi:10.1234/example", "2", "publication_text", "Citation A."),
+        ("doi:10.1234/example", "1", "publication_text", ""),
+        ("PMID:123", "3", "publication_text", "Citation C."),
+        ("PMID:123", "4", "publication_text", "Conflicting citation."),
+    ]
+    outputs = []
+    for records in (inputs, list(reversed(inputs))):
+        api_transform._publication_citations = {}
+        for record in records:
+            api_transform._record_publication_citation(*record)
+        writer = Writer()
+        api_transform._emit_publication_nodes(writer)
+        outputs.append(writer.rows)
+    assert outputs[0] == outputs[1]
+    nodes = {row[0]: dict(zip(api_transform.node_header, row, strict=True)) for row in outputs[0]}
+    assert nodes["doi:10.1234/example"]["name"] == "Citation A."
+    assert nodes["PMID:123"]["name"] == ""
 
 
 def test_parent_id_emits_subclass_edge(api_transform):

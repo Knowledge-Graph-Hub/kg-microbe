@@ -5,7 +5,13 @@ in LPSN's authenticated JSON API (per-record):
 
 - **Publication provenance** — `publication_doi`, `publication_pmid`,
   `ijsem_list_doi` become `biolink:close_match` edges to `doi:*` /
-  `PMID:*` CURIEs plus minimal `biolink:Publication` stub nodes.
+  `PMID:*` CURIEs plus `biolink:Publication` nodes. Their labels use the
+  corresponding `publication_text` or `ijsem_list_text` citation supplied by
+  LPSN, with the source field recorded in the description. These are complete
+  source citations, not separately verified paper titles. Repeated identifiers
+  are emitted once; conflicting nonempty citation strings leave the label
+  unresolved and retain the alternatives in the description. Missing or malformed
+  citation text supplies no label. No identifier-derived label is invented (#1834).
 - **Full above-genus taxonomy** — `lpsn_parent_id` becomes a
   `biolink:subclass_of` edge that connects genera up to family / order
   / class / phylum / domain LPSN records the GSS export doesn't include.

@@ -6,6 +6,8 @@ from contextlib import nullcontext
 from pathlib import Path
 
 from kg_microbe.merge_utils.source_admission import SourceAdmission
+from kg_microbe.transform_utils.prego.bto_metadata import FILENAME as BTO_FILENAME
+from kg_microbe.transform_utils.prego.bto_metadata import ROLE as BTO_ROLE
 from kg_microbe.transform_utils.prego.envo_identity import POLICY_FILE
 from kg_microbe.utils.atomic_io import atomic_write
 from kg_microbe.utils.source_finalization import SourceFinalizationRequired
@@ -55,6 +57,7 @@ def verify_native_contract(contract, snapshots, raw_dir, *, admission=None, poli
         ("prego_envo_policy", Path(policy_path)),
         ("prego_native_envo", Path(raw_dir) / "envo.json"),
         ("prego_native_foodon", Path(raw_dir) / "foodon.json"),
+        (BTO_ROLE, Path(raw_dir) / BTO_FILENAME),
     ):
         identity = guard.capture(path)
         if snapshots.get(role) != {"path": str(path.resolve()), "sha256": identity["sha256"]}:

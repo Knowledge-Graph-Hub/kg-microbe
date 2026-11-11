@@ -66,6 +66,7 @@ from kg_microbe.transform_utils.constants import (
     SUBJECT_COLUMN,
     SYNONYM_COLUMN,
 )
+from kg_microbe.transform_utils.prego import bto_metadata
 from kg_microbe.transform_utils.prego.calibration import (
     STAR_MAX,
     ScoreHistogram,
@@ -190,9 +191,10 @@ class PregoTransform(Transform):
     DATA_INPUTS = (
         "mappings/prego_envo_identity_dispositions.tsv",
         "data/raw/envo.json",
+        "data/raw/bto.db.gz",
     )
-    REQUIRED_CONSUMED_INPUTS = ("prego_envo_policy", "prego_native_envo", "prego_native_foodon")
-    REQUIRED_AUDIT_FILES = ("prego_envo_identity.tsv",)
+    REQUIRED_CONSUMED_INPUTS = ("prego_envo_policy", "prego_native_envo", "prego_native_foodon", bto_metadata.ROLE)
+    REQUIRED_AUDIT_FILES = ("prego_envo_identity.tsv", bto_metadata.AUDIT_FILE)
 
     # Ceiling on distinct habitat values tracked per run. The measured value
     # space is ~42; 1000 leaves generous headroom while bounding memory if the
@@ -289,6 +291,9 @@ class PregoTransform(Transform):
         self._identity_decisions = {}
         self._identity_nodes = {}
         self._identity_audit_writer = None
+        self._bto_metadata = {}
+        self._bto_version = ""
+        self._bto_audit_writer = None
         # Per-resource cutoffs actually applied, written next to the outputs
         # so a filtered run says what it dropped.
         self.calibration_table_file = self.output_dir / "confidence_calibration.tsv"
@@ -397,6 +402,7 @@ class PregoTransform(Transform):
             self.output_node_file.open("w", newline="") as node_fh,
             self.output_edge_file.open("w", newline="") as edge_fh,
             (self.output_dir / self.REQUIRED_AUDIT_FILES[0]).open("w", encoding="utf-8", newline="") as audit_fh,
+            (self.output_dir / bto_metadata.AUDIT_FILE).open("w", encoding="utf-8", newline="") as bto_audit_fh,
         ):
             node_writer = tsv_writer(node_fh)
             edge_writer = tsv_writer(edge_fh)
@@ -404,13 +410,17 @@ class PregoTransform(Transform):
             edge_writer.writerow(self.edge_header)
             self._identity_audit_writer = tsv_dict_writer(audit_fh, fieldnames=AUDIT_COLUMNS)
             self._identity_audit_writer.writeheader()
+            self._bto_audit_writer = tsv_dict_writer(bto_audit_fh, fieldnames=bto_metadata.AUDIT_COLUMNS)
+            self._bto_audit_writer.writeheader()
 
             for archive_path in archives:
                 self._process_archive(archive_path, doid_to_mondo, node_writer, edge_writer, show_status=show_status)
 
         self._identity_audit_writer = None
+        self._bto_audit_writer = None
         self.verify_consumed_inputs()
-        self.record_producer_audit(self.REQUIRED_AUDIT_FILES[0])
+        for audit_name in self.REQUIRED_AUDIT_FILES:
+            self.record_producer_audit(audit_name)
         self._write_unmapped_report()
         self._print_summary()
 
@@ -425,6 +435,7 @@ class PregoTransform(Transform):
             foodon = stack.enter_context(self.consume_input("prego_native_foodon", self.input_base_dir / "foodon.json"))
             self._identity_decisions = load_identity_decisions(policy, envo, foodon)
         self._identity_nodes = {item.target_id: item for item in self._identity_decisions.values()}
+        self._bto_metadata, self._bto_version = bto_metadata.load_bto_metadata(self)
 
     @property
     def producer_native_inputs(self):
@@ -1095,10 +1106,9 @@ class PregoTransform(Transform):
 
         When Phase 6b is active (:attr:`_synonym_lookup` populated), the
         dictionary's alternate names for ``node_id`` land as pipe-delimited
-        values in the ``synonym`` column. The ``name`` column stays empty —
-        merge-time dedup upgrades the name from the ontologies transform's
-        richer row, so PREGO doesn't need to compete for that source of
-        truth.
+        values in the ``synonym`` column. BTO names come from the selected
+        SemSQL authority; reviewed ENVO identities use native declarations.
+        Other names are supplied by the owning ontology during merge.
         """
         if node_id in self._emitted_nodes:
             return
@@ -1108,6 +1118,17 @@ class PregoTransform(Transform):
         if row[SYNONYM_COLUMN]:
             self._stats["nodes_enriched_with_synonyms"] += 1
         node_writer.writerow([row[c] for c in self.node_header])
+        if node_id.startswith("BTO:") and self._bto_audit_writer is not None:
+            self._bto_audit_writer.writerow(
+                {
+                    "id": node_id,
+                    "status": "labelled_class" if row[NAME_COLUMN] else "unresolved_class_or_label",
+                    "name": row[NAME_COLUMN],
+                    "deprecated": row[DEPRECATED_COLUMN],
+                    "authority_sha256": self.consumed_input_snapshots[bto_metadata.ROLE]["sha256"],
+                    "version_iri": self._bto_version,
+                }
+            )
 
     def _node_row(self, node_id, category):
         """Project a native-backed node without transferring a retired donor's metadata."""
@@ -1119,6 +1140,11 @@ class PregoTransform(Transform):
         if identity is not None:
             row[NAME_COLUMN] = identity.name
             row[DEPRECATED_COLUMN] = "True" if identity.deprecated else ""
+        bto = self._bto_metadata.get(node_id)
+        if bto is not None:
+            row[NAME_COLUMN] = bto["name"]
+            row[DEPRECATED_COLUMN] = "True" if bto["deprecated"] else ""
+            row[PROVIDED_BY_COLUMN] = PREGO_KNOWLEDGE_SOURCE + "|infores:bto"
         synonyms = self._synonym_lookup.get(node_id)
         if synonyms:
             # Case-insensitively deduplicated at load time; sort for stable

@@ -1,6 +1,7 @@
 """Tests for the LPSN JSON API transform (auth-gated enrichment layer)."""
 
 import csv
+import hashlib
 import json
 from pathlib import Path
 
@@ -8,6 +9,15 @@ import pytest
 
 from kg_microbe.transform_utils.lpsn.lpsn import LPSN_KNOWLEDGE_SOURCE, LPSN_PREFIX
 from kg_microbe.transform_utils.lpsn_api.lpsn_api import LPSNAPITransform
+from kg_microbe.transform_utils.lpsn_api.native_inputs import (
+    AUDIT_COLUMNS,
+    AUDIT_FILE,
+    GSS_ROLE,
+    RECORD_ROLE_PREFIX,
+    audit_rows,
+)
+from kg_microbe.utils.source_finalization import SourceFinalizationRequired, verify_finalized_source_files
+from kg_microbe.utils.tsv_io import tsv_writer
 
 
 class _FakeLpsnClient:
@@ -86,7 +96,9 @@ def api_records():
             "id": 1002,
             "publication_doi": "10.1099/00207713-19-1-1",
             "publication_pmid": 12345,
+            "publication_text": "Fixture authors. Primary species description. Fixture Journal 2000; 1:1-2.",
             "ijsem_list_doi": "10.1099/ijsem.0.999999",
+            "ijsem_list_text": "Fixture editor. Validation list. Fixture Journal 2001; 2:3-4.",
             "lpsn_parent_id": 1001,  # genus
             "basonym_id": None,
             "is_legitimate": True,
@@ -183,6 +195,93 @@ def test_publication_stub_nodes_are_emitted(api_transform):
     pubs = {n["id"] for n in nodes if n["category"] == "biolink:Publication"}
     assert "doi:10.1099/00207713-19-1-1" in pubs
     assert "PMID:12345" in pubs
+
+
+def test_publication_labels_use_the_matching_source_citation(api_transform, api_records):
+    """Main DOI/PMID and validation-list DOI retain distinct bibliographic provenance."""
+    api_transform.run()
+    nodes = {row["id"]: row for row in _read_tsv(api_transform.output_node_file)}
+    main = api_records["1002"]["publication_text"]
+    for curie in ("doi:10.1099/00207713-19-1-1", "PMID:12345"):
+        assert nodes[curie]["name"] == main
+        assert "not a separately verified publication title" in nodes[curie]["description"]
+        assert "lpsn:1002.publication_text" in nodes[curie]["description"]
+        assert nodes[curie]["provided_by"] == LPSN_KNOWLEDGE_SOURCE
+    validation = nodes["doi:10.1099/ijsem.0.999999"]
+    assert validation["name"] == api_records["1002"]["ijsem_list_text"]
+    assert "lpsn:1002.ijsem_list_text" in validation["description"]
+
+
+@pytest.mark.parametrize("value", [None, "", " \t ", 123, ["citation"], {"title": "not source text"}])
+def test_missing_or_malformed_citations_do_not_create_synthetic_labels(api_transform, api_records, value):
+    """Keep identifiers and edges even when source-owned names are unavailable."""
+    api_records["1002"]["publication_text"] = value
+    api_records["1002"]["ijsem_list_text"] = value
+    api_transform.run()
+    nodes = {row["id"]: row for row in _read_tsv(api_transform.output_node_file)}
+    for curie in ("doi:10.1099/00207713-19-1-1", "PMID:12345", "doi:10.1099/ijsem.0.999999"):
+        assert nodes[curie]["name"] == ""
+        assert "No usable LPSN source citation" in nodes[curie]["description"]
+    assert {row["object"] for row in _read_tsv(api_transform.output_edge_file)} >= {
+        "doi:10.1099/00207713-19-1-1",
+        "PMID:12345",
+        "doi:10.1099/ijsem.0.999999",
+    }
+
+
+@pytest.mark.parametrize("conflicting", [False, True])
+def test_shared_publications_keep_duplicate_or_conflicting_source_citations(api_transform, api_records, conflicting):
+    """Repeated IDs produce one node; contradictory citations never choose a winner."""
+    first = api_records["1002"]
+    api_records["1005"].update(
+        publication_doi=first["publication_doi"],
+        publication_pmid=first["publication_pmid"],
+        publication_text="Different source citation." if conflicting else first["publication_text"],
+    )
+    api_transform.run()
+    nodes = _read_tsv(api_transform.output_node_file)
+    for curie in ("doi:10.1099/00207713-19-1-1", "PMID:12345"):
+        selected = [row for row in nodes if row["id"] == curie]
+        assert len(selected) == 1
+        node = selected[0]
+        assert node["name"] == ("" if conflicting else first["publication_text"])
+        assert "lpsn:1002.publication_text" in node["description"]
+        assert "lpsn:1005.publication_text" in node["description"]
+        assert ("Conflicting LPSN citation texts" in node["description"]) == conflicting
+
+
+def test_publication_aggregation_is_order_stable_and_blank_text_does_not_erase_label(api_transform):
+    """Source order cannot change conflict disposition or retained citation provenance."""
+
+    class Writer:
+        """Collect emitted rows to compare aggregation across source orders."""
+
+        def __init__(self):
+            """Start an empty collection for one aggregation order."""
+            self.rows = []
+
+        def writerow(self, row):
+            """Retain one emitted row without changing its fields."""
+            self.rows.append(row)
+
+    inputs = [
+        ("doi:10.1234/example", "2", "publication_text", "Citation A."),
+        ("doi:10.1234/example", "1", "publication_text", ""),
+        ("PMID:123", "3", "publication_text", "Citation C."),
+        ("PMID:123", "4", "publication_text", "Conflicting citation."),
+    ]
+    outputs = []
+    for records in (inputs, list(reversed(inputs))):
+        api_transform._publication_citations = {}
+        for record in records:
+            api_transform._record_publication_citation(*record)
+        writer = Writer()
+        api_transform._emit_publication_nodes(writer)
+        outputs.append(writer.rows)
+    assert outputs[0] == outputs[1]
+    nodes = {row[0]: dict(zip(api_transform.node_header, row, strict=True)) for row in outputs[0]}
+    assert nodes["doi:10.1234/example"]["name"] == "Citation A."
+    assert nodes["PMID:123"]["name"] == ""
 
 
 def test_parent_id_emits_subclass_edge(api_transform):
@@ -491,3 +590,233 @@ def test_a_run_that_dies_midway_leaves_no_output_file(api_transform, monkeypatch
     assert not api_transform.output_node_file.exists()
     assert not api_transform.output_edge_file.exists()
     assert not list(Path(api_transform.output_dir).glob("*.partial"))
+
+
+def test_cold_cache_records_are_consumed_and_audited_after_persistence(api_transform):
+    """Generated API records are dynamic inputs, so an empty cache can bootstrap offline."""
+    assert not (api_transform.input_base_dir / "lpsn/api_cache/1002.json").exists()
+    api_transform.run()
+    api_transform.verify_consumed_inputs()
+    snapshots = api_transform.consumed_input_snapshots
+    assert set(snapshots) == {GSS_ROLE, *(RECORD_ROLE_PREFIX + key for key in ("1001", "1002", "1005"))}
+    for snapshot in snapshots.values():
+        assert hashlib.sha256(Path(snapshot["path"]).read_bytes()).hexdigest() == snapshot["sha256"]
+    rows = _read_tsv(api_transform.output_dir / AUDIT_FILE)
+    assert len(rows) == 6  # GSS selection, three API records, two absent API cache paths.
+    assert {row["record_no"] for row in rows if row["state"] == "absent"} == {"999", "1004"}
+    assert set(api_transform.producer_audit_snapshots) == {AUDIT_FILE}
+
+
+def _native_report(transform):
+    """Capture the native subset without using a saved report to hydrate live evidence."""
+    return {
+        "producer_native_inputs": transform.producer_native_inputs,
+        "consumed_inputs": transform.consumed_input_snapshots,
+        "raw_input_directory": str(transform.input_base_dir.resolve()),
+    }
+
+
+@pytest.mark.parametrize("damage", ["change", "delete", "retarget", "cache_directory_retarget", "gss_change"])
+@pytest.mark.parametrize("saved", [False, True])
+def test_selected_api_input_drift_blocks_live_and_saved_admission(api_transform, tmp_path, damage, saved):
+    """A valid original file cannot bless changed bytes, a disappeared record or a new selected locator."""
+    api_transform.run()
+    report = _native_report(api_transform)
+    cache = api_transform.input_base_dir / "lpsn/api_cache"
+    path = cache / "1002.json"
+    if damage == "change":
+        path.write_text(path.read_text().replace("Primary species", "Changed species"))
+    elif damage == "delete":
+        path.unlink()
+    elif damage == "retarget":
+        other = tmp_path / "same-record.json"
+        other.write_bytes(path.read_bytes())
+        path.unlink()
+        path.symlink_to(other)
+    elif damage == "cache_directory_retarget":
+        other = tmp_path / "other-cache"
+        cache.rename(other)
+        cache.symlink_to(other, target_is_directory=True)
+    else:
+        with api_transform._find_gss_nodes().open("a") as handle:
+            handle.write("lpsn:99999\tbiolink:OrganismTaxon\n")
+    with pytest.raises(SourceFinalizationRequired, match="changed|missing|locator|record"):
+        if saved:
+            LPSNAPITransform.verify_recorded_native_inputs(
+                report, api_transform.output_dir / "source_finalization.json"
+            )
+        else:
+            api_transform.verify_consumed_inputs()
+
+
+def test_saved_admission_retains_locator_binding_after_initial_verification(api_transform, tmp_path):
+    """Read-only merge admission keeps selected paths bound throughout its publication window."""
+    api_transform.run()
+    report = _native_report(api_transform)
+    guard = LPSNAPITransform.verify_recorded_native_inputs(
+        report, api_transform.output_dir / "source_finalization.json"
+    )
+    path = api_transform.input_base_dir / "lpsn/api_cache/1002.json"
+    other = tmp_path / "same-record.json"
+    other.write_bytes(path.read_bytes())
+    path.unlink()
+    path.symlink_to(other)
+    with pytest.raises(SourceFinalizationRequired, match="locator changed"):
+        guard.verify()
+
+
+def test_previously_absent_selected_api_cache_record_invalidates_completion(api_transform):
+    """A newly available parent record requires regeneration rather than retaining a stale stub."""
+    api_transform.run()
+    report = _native_report(api_transform)
+    (api_transform.input_base_dir / "lpsn/api_cache/999.json").write_text('{"id": 999, "full_name": "New parent"}')
+    with pytest.raises(SourceFinalizationRequired, match="appeared"):
+        api_transform.verify_native_inputs()
+    with pytest.raises(SourceFinalizationRequired, match="appeared"):
+        LPSNAPITransform.verify_recorded_native_inputs(report, api_transform.output_dir / "source_finalization.json")
+
+
+def test_unselected_cached_record_does_not_invalidate_completion(api_transform):
+    """The contract follows requested records, not unrelated cache membership."""
+    api_transform.run()
+    (api_transform.input_base_dir / "lpsn/api_cache/99999.json").write_text('{"id": 99999}')
+    api_transform.verify_consumed_inputs()
+
+
+@pytest.mark.parametrize("damage", ["delete", "drop_row", "drop_contract_record", "drop_snapshot"])
+def test_record_audit_and_dynamic_inventory_cannot_be_omitted(api_transform, damage):
+    """Selected records, consumed snapshots and mandatory audit rows must agree exactly."""
+    api_transform.run()
+    report = _native_report(api_transform)
+    audit = api_transform.output_dir / AUDIT_FILE
+    if damage == "delete":
+        audit.unlink()
+    elif damage == "drop_row":
+        audit.write_text("\n".join(audit.read_text().splitlines()[:-1]) + "\n")
+    elif damage == "drop_contract_record":
+        del report["producer_native_inputs"]["records"]["1002"]
+    else:
+        del report["consumed_inputs"][RECORD_ROLE_PREFIX + "1002"]
+    with pytest.raises(SourceFinalizationRequired):
+        LPSNAPITransform.verify_recorded_native_inputs(report, api_transform.output_dir / "source_finalization.json")
+
+
+def test_recorded_native_contract_cannot_replace_live_consumption(api_transform):
+    """Restore/finalization never turns a mutable report into proof that this instance read its inputs."""
+    api_transform.run()
+    replacement = api_transform.producer_native_inputs
+    replacement["records"].clear()
+    assert api_transform.producer_native_inputs["records"]
+    with pytest.raises(SourceFinalizationRequired, match="native reads differ"):
+        api_transform.producer_native_inputs = replacement
+
+
+def test_finalized_lpsn_source_retains_record_evidence_and_rejects_stale_labels(api_transform):
+    """Exercise the actual source finalization and merge freshness boundary with a canned client."""
+    api_transform.run()
+    report = api_transform.finalize(fresh_run=True)
+    api_transform.verify_consumed_inputs()
+    assert api_transform.finalize() == report
+    assert report["consumed_inputs"][RECORD_ROLE_PREFIX + "1002"] in report["inputs"]
+    assert AUDIT_FILE in report["producer_audit_members"]
+    paths = [api_transform.output_node_file, api_transform.output_edge_file]
+    verify_finalized_source_files(paths)
+    cache = api_transform.input_base_dir / "lpsn/api_cache/1002.json"
+    original = cache.read_bytes()
+    cache.write_bytes(original.replace(b"Primary species", b"Changed species"))
+    with pytest.raises(SourceFinalizationRequired, match="changed"):
+        verify_finalized_source_files(paths)
+    cache.write_bytes(original)
+    verify_finalized_source_files(paths)
+    (api_transform.output_dir / AUDIT_FILE).unlink()
+    with pytest.raises(SourceFinalizationRequired, match="missing"):
+        verify_finalized_source_files(paths)
+
+
+def _rewrite_native_record_audit(transform, report):
+    """Model coordinated metadata editing, including all recorded audit-byte identities."""
+    audit = transform.output_dir / AUDIT_FILE
+    with audit.open("w", newline="") as handle:
+        writer = tsv_writer(handle)
+        writer.writerow(AUDIT_COLUMNS)
+        writer.writerows(audit_rows(report["producer_native_inputs"]))
+    identity = {"bytes": audit.stat().st_size, "sha256": hashlib.sha256(audit.read_bytes()).hexdigest()}
+    report["producer_audit_members"][AUDIT_FILE] = identity
+    report["audit_members"][AUDIT_FILE] = identity
+    (transform.output_dir / "source_finalization.json").write_text(json.dumps(report))
+
+
+@pytest.mark.parametrize("record_no", ["1002", "1001", "999"])
+def test_coordinated_record_omission_cannot_override_verified_source_selection(api_transform, record_no):
+    """GSS roots, linked payloads and absent linked records remain mandatory after rehashed ledger edits."""
+    api_transform.run()
+    report = api_transform.finalize(fresh_run=True)
+    paths = [api_transform.output_node_file, api_transform.output_edge_file]
+    before = [path.read_bytes() for path in paths]
+    verify_finalized_source_files(paths)
+    del report["producer_native_inputs"]["records"][record_no]
+    snapshot = report["consumed_inputs"].pop(RECORD_ROLE_PREFIX + record_no, None)
+    if snapshot is not None:
+        report["inputs"] = [item for item in report["inputs"] if item["path"] != snapshot["path"]]
+    _rewrite_native_record_audit(api_transform, report)
+    assert [path.read_bytes() for path in paths] == before
+    with pytest.raises(SourceFinalizationRequired, match=f"required selected record omitted: {record_no}"):
+        verify_finalized_source_files(paths)
+
+
+def test_coordinated_extra_record_cannot_expand_verified_source_selection(api_transform):
+    """An unrelated cache payload cannot be inserted into the source's claimed request inventory."""
+    api_transform.run()
+    report = api_transform.finalize(fresh_run=True)
+    extra = api_transform.input_base_dir / "lpsn/api_cache/99999.json"
+    extra.write_text('{"id": 99999}')
+    snapshot = {"path": str(extra.resolve()), "sha256": hashlib.sha256(extra.read_bytes()).hexdigest()}
+    report["producer_native_inputs"]["records"]["99999"] = {
+        "state": "present",
+        "locator": str(extra.absolute()),
+        **snapshot,
+    }
+    report["consumed_inputs"][RECORD_ROLE_PREFIX + "99999"] = snapshot
+    report["inputs"].append(snapshot)
+    _rewrite_native_record_audit(api_transform, report)
+    with pytest.raises(SourceFinalizationRequired, match="outside the required selection"):
+        verify_finalized_source_files([api_transform.output_node_file, api_transform.output_edge_file])
+
+
+def _run_selection_fixture(tmp_path, roots, records):
+    """Run bounded topology fixtures through the same producer and saved admission rules."""
+    raw, output = tmp_path / "raw", tmp_path / "transformed"
+    raw.mkdir()
+    _write_gss_nodes(output / "lpsn/nodes.tsv", roots)
+    transform = LPSNAPITransform(
+        input_dir=raw, output_dir=output, client=_FakeLpsnClient(records), page_fetch=_FakePageFetch({})
+    )
+    transform.run()
+    LPSNAPITransform.verify_recorded_native_inputs(
+        _native_report(transform), transform.output_dir / "source_finalization.json"
+    )
+    return transform
+
+
+def test_independent_inventory_preserves_cycle_and_duplicate_link_semantics(tmp_path):
+    """Cycles, self links and repeated parent/basonym references request each linked record once."""
+    transform = _run_selection_fixture(
+        tmp_path,
+        ["1"],
+        {
+            "1": {"id": 1, "lpsn_parent_id": 2, "basonym_id": 2},
+            "2": {"id": 2, "lpsn_parent_id": 3, "basonym_id": 2},
+            "3": {"id": 3, "lpsn_parent_id": 1, "basonym_id": 2},
+        },
+    )
+    assert set(transform.producer_native_inputs["records"]) == {"1", "2", "3"}
+
+
+@pytest.mark.parametrize("second_root", [False, True])
+def test_independent_inventory_preserves_depth_boundary_and_predeclared_roots(tmp_path, second_root):
+    """Depth 12 is consumed, depth 13 is skipped, and a later GSS root starts its own traversal."""
+    records = {str(number): {"id": number, "lpsn_parent_id": number + 1} for number in range(1, 17)}
+    records["17"] = {"id": 17}
+    transform = _run_selection_fixture(tmp_path, ["1", "15"] if second_root else ["1"], records)
+    expected = {str(number) for number in range(1, 18 if second_root else 15)}
+    assert set(transform.producer_native_inputs["records"]) == expected

@@ -1,7 +1,10 @@
 """Stage exact native identity excerpts without bypassing PREGO's read contract."""
 
+import gzip
 import io
+import json
 import shutil
+import sqlite3
 import tarfile
 from pathlib import Path
 
@@ -14,6 +17,22 @@ def stage_prego_identity_inputs(raw_dir):
     raw_dir.mkdir(parents=True, exist_ok=True)
     for name in ("envo.json", "foodon.json"):
         shutil.copyfile(IDENTITY_FIXTURES / name, raw_dir / name)
+    stage_bto_metadata(raw_dir)
+
+
+def stage_bto_metadata(raw_dir):
+    """Build an isolated SemSQL fixture from immutable source declarations."""
+    database = Path(raw_dir) / "bto-fixture.db"
+    with sqlite3.connect(database) as connection:
+        connection.execute("CREATE TABLE statements (subject TEXT, predicate TEXT, object TEXT, value TEXT)")
+        connection.executemany(
+            "INSERT INTO statements VALUES (?,?,?,?)",
+            json.loads((IDENTITY_FIXTURES / "bto-statements.json").read_text()),
+        )
+    with database.open("rb") as source, (Path(raw_dir) / "bto.db.gz").open("wb") as target:
+        with gzip.GzipFile(fileobj=target, mode="wb", mtime=0) as compressed:
+            shutil.copyfileobj(source, compressed)
+    database.unlink()
 
 
 def prepare_prego_empty_archive_inputs(transform):

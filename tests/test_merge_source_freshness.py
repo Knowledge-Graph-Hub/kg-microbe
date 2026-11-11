@@ -215,7 +215,9 @@ def prepare_madin_environment_correction_input(transform):
 
 def prepare_prego_identity_inputs(transform):
     """Bind native authority and the real zero-observation producer audit without bypassing contracts."""
+    from kg_microbe.transform_utils.prego import bto_metadata
     from kg_microbe.transform_utils.prego.envo_identity import AUDIT_COLUMNS
+    from tests.prego_identity_fixtures import stage_bto_metadata
 
     for name in ("envo.json", "foodon.json"):
         target = transform.input_base_dir / name
@@ -223,17 +225,22 @@ def prepare_prego_identity_inputs(transform):
         if not target.exists():
             shutil.copyfile(source, target)
         assert target.read_bytes() == source.read_bytes(), "Do not rewrite an already selected native authority"
+    if not (transform.input_base_dir / bto_metadata.FILENAME).exists():
+        stage_bto_metadata(transform.input_base_dir)
     transform._prepare_identity_decisions()
     assert len(transform._identity_decisions) == 10
     prepare_prego_empty_archive_inputs(transform)
     audit_name = "prego_envo_identity.tsv"
-    assert type(transform).REQUIRED_AUDIT_FILES == (audit_name,)
+    assert type(transform).REQUIRED_AUDIT_FILES == (audit_name, bto_metadata.AUDIT_FILE)
     # The graph fixture contains only fixture:1/fixture:2, never a PREGO source
     # observation. Its audit is deliberately empty, not a fake accepted cohort.
     with (transform.output_dir / audit_name).open("w", encoding="utf-8", newline="") as stream:
         tsv_dict_writer(stream, fieldnames=AUDIT_COLUMNS).writeheader()
     transform.record_producer_audit(audit_name)
-    return ("prego_envo_policy", "prego_native_envo", "prego_native_foodon")
+    with (transform.output_dir / bto_metadata.AUDIT_FILE).open("w", encoding="utf-8", newline="") as stream:
+        tsv_dict_writer(stream, fieldnames=bto_metadata.AUDIT_COLUMNS).writeheader()
+    transform.record_producer_audit(bto_metadata.AUDIT_FILE)
+    return ("prego_envo_policy", "prego_native_envo", "prego_native_foodon", bto_metadata.ROLE)
 
 
 def record_source(transform):

@@ -53,33 +53,54 @@ who want the API enrichment run both:
 The merge step then combines both nodes.tsv / edges.tsv files.
 """
 
-import csv
 import html
 import json
 import os
 import re
+from copy import deepcopy
 from pathlib import Path
 from typing import Any, Callable, Dict, Iterator, Optional, Union
 
 import requests
 from dotenv import load_dotenv
 
+from kg_microbe.merge_utils.source_admission import SourceAdmission
 from kg_microbe.transform_utils.constants import (
     AGENT_TYPE_COLUMN,
+    CATEGORY_COLUMN,
     CLOSE_MATCH_PREDICATE,
+    DESCRIPTION_COLUMN,
     EXACT_MATCH,
+    ID_COLUMN,
     KNOWLEDGE_ASSERTION,
     KNOWLEDGE_LEVEL_COLUMN,
     LPSN_API_SOURCE,
     MANUAL_AGENT,
+    NAME_COLUMN,
     NCBI_CATEGORY,
+    PROVIDED_BY_COLUMN,
     RDFS_SUBCLASS_OF,
     SAME_AS_PREDICATE,
     SUBCLASS_PREDICATE,
 )
 from kg_microbe.transform_utils.lpsn.lpsn import LPSN_KNOWLEDGE_SOURCE, LPSN_PREFIX
+from kg_microbe.transform_utils.lpsn_api.native_inputs import (
+    AUDIT_COLUMNS,
+    AUDIT_FILE,
+    GSS_ROLE,
+    MAX_LINK_DEPTH,
+    RECORD_ROLE_PREFIX,
+    audit_rows,
+    iter_gss_record_nos,
+    linked_record_nos,
+    validate_record,
+    validate_record_no,
+    verify_native_contract,
+    verify_record_audit,
+)
 from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.atomic_io import atomic_write
+from kg_microbe.utils.source_finalization import SourceFinalizationRequired
 from kg_microbe.utils.tsv_io import tsv_writer
 
 # JSON keys returned by the LPSN API (documented at
@@ -90,7 +111,9 @@ JSON_FULL_NAME = "full_name"
 JSON_AUTHORITY = "authority"
 JSON_PUBLICATION_DOI = "publication_doi"
 JSON_PUBLICATION_PMID = "publication_pmid"
+JSON_PUBLICATION_TEXT = "publication_text"
 JSON_IJSEM_LIST_DOI = "ijsem_list_doi"
+JSON_IJSEM_LIST_TEXT = "ijsem_list_text"
 JSON_LPSN_PARENT_ID = "lpsn_parent_id"
 JSON_BASONYM_ID = "basonym_id"
 JSON_IS_LEGITIMATE = "is_legitimate"
@@ -195,6 +218,8 @@ class LPSNAPITransform(Transform):
 
     #: Reads this transform's output; see Transform.TRANSFORM_INPUTS (#845).
     TRANSFORM_INPUTS = ("lpsn",)
+    REQUIRED_CONSUMED_INPUTS = (GSS_ROLE,)
+    REQUIRED_AUDIT_FILES = (AUDIT_FILE,)
 
     def __init__(
         self,
@@ -236,6 +261,9 @@ class LPSNAPITransform(Transform):
         self._client_override = client
         self._page_fetch = page_fetch or fetch_taxon_page
         self._web_cache_dir: Optional[Path] = None
+        self._publication_citations: Dict[str, Dict[str, set]] = {}
+        self._native_contract = None
+        self._native_input_admission = None
         self._stats = {
             "fetched": 0,
             "from_cache": 0,
@@ -268,6 +296,9 @@ class LPSNAPITransform(Transform):
 
         """
         _ = show_status
+        self.begin_consumed_inputs()
+        self._native_contract = None
+        self._native_input_admission = SourceAdmission()
 
         gss_nodes = Path(data_file) if data_file else self._find_gss_nodes()
         if not gss_nodes.is_file():
@@ -286,12 +317,23 @@ class LPSNAPITransform(Transform):
         self._web_cache_dir.mkdir(parents=True, exist_ok=True)
 
         self.output_dir.mkdir(parents=True, exist_ok=True)
+        self._publication_citations = {}
+        raw = Path(self.input_base_dir).absolute()
+        self._native_contract = {
+            "version": 1,
+            "raw_locator": str(raw),
+            "raw_directory": str(self._native_input_admission.bind_path(raw)),
+            "cache_directory": str(self._native_input_admission.bind_path(cache_dir)),
+            "gss": {"locator": str(gss_nodes.absolute())},
+            "records": {},
+        }
         # Atomic: a crash mid-run must leave no nodes.tsv/edges.tsv at all. A
         # truncated pair reads as complete to the merge, and the lpsn transform
         # already publishes this way (#820, #981, #985).
         with (
             atomic_write(self.output_node_file, newline="") as node_fh,
             atomic_write(self.output_edge_file, newline="") as edge_fh,
+            atomic_write(self.output_dir / AUDIT_FILE, newline="") as audit_fh,
         ):
             node_writer = tsv_writer(node_fh)
             edge_writer = tsv_writer(edge_fh)
@@ -311,6 +353,20 @@ class LPSNAPITransform(Transform):
                 self._emit(record_no, record, node_writer, edge_writer)
                 for ref in self._linked_record_nos(record_no, record):
                     self._ensure_declared(client, ref, cache_dir, node_writer, edge_writer)
+            self._emit_publication_nodes(node_writer)
+            audit_writer = tsv_writer(audit_fh)
+            audit_writer.writerow(AUDIT_COLUMNS)
+            audit_writer.writerows(audit_rows(self._native_contract))
+            # Abort atomic graph writes if any selected input drifted during the run.
+            self._native_input_admission = verify_native_contract(
+                self.producer_native_inputs,
+                self.consumed_input_snapshots,
+                raw,
+                admission=self._native_input_admission,
+            )
+
+        self.record_producer_audit(AUDIT_FILE)
+        self.verify_native_inputs()
 
         print(
             f"[lpsn_api] fetched={self._stats['fetched']:,} "
@@ -325,6 +381,50 @@ class LPSNAPITransform(Transform):
     # ------------------------------------------------------------------
     # internals
     # ------------------------------------------------------------------
+    @property
+    def producer_native_inputs(self):
+        """Return the selected API record inventory without exposing mutable producer state."""
+        return deepcopy(self._native_contract)
+
+    @producer_native_inputs.setter
+    def producer_native_inputs(self, recorded):
+        """Reject replacing actual reads with assertions copied from a completion report."""
+        if recorded != self.producer_native_inputs:
+            raise SourceFinalizationRequired("LPSN API native reads differ from recorded completion; run the producer")
+
+    def verify_native_inputs(self, *, byte_verified=False, output_dir=None):
+        """Require selected API record bytes, locators and the mandatory producer audit."""
+        del byte_verified
+        self._native_input_admission = verify_native_contract(
+            self.producer_native_inputs,
+            self.consumed_input_snapshots,
+            self.input_base_dir,
+            admission=self._native_input_admission,
+        )
+        # Finalization atomically republishes audits with identical bytes. Do
+        # not keep output inodes or temporary staging paths in the input guard.
+        verify_record_audit(self.producer_native_inputs, Path(output_dir or self.output_dir) / AUDIT_FILE)
+
+    @classmethod
+    def verify_recorded_native_inputs(cls, report, report_path, *, admission=None):
+        """Bind saved API reads to their selected cache paths during read-only merge admission."""
+        contract = report.get("producer_native_inputs")
+        raw = contract.get("raw_locator") if isinstance(contract, dict) else None
+        if (
+            report_path is None
+            or not isinstance(raw, str)
+            or not Path(raw).is_absolute()
+            or str(Path(raw).resolve()) != report.get("raw_input_directory")
+        ):
+            raise SourceFinalizationRequired("LPSN API validation requires its completion location and raw directory")
+        return verify_native_contract(
+            contract,
+            report.get("consumed_inputs", {}),
+            raw,
+            audit_path=Path(report_path).parent / AUDIT_FILE,
+            admission=admission,
+        )
+
     def _find_gss_nodes(self) -> Path:
         """Return the default path to the GSS transform's nodes.tsv output."""
         # Base class sets self.output_base_dir = data/transformed and
@@ -371,12 +471,10 @@ class LPSNAPITransform(Transform):
 
     def _iter_record_nos(self, gss_nodes: Path) -> Iterator[str]:
         """Yield the record_no ('1002' etc.) for every LPSN node in the GSS output."""
-        with open(gss_nodes, newline="") as fh:
-            reader = csv.DictReader(fh, delimiter="\t")
-            for row in reader:
-                lpsn_curie = (row.get("id") or "").strip()
-                if lpsn_curie.startswith(LPSN_PREFIX):
-                    yield lpsn_curie[len(LPSN_PREFIX) :]
+        self._native_input_admission.bind_path(gss_nodes)
+        with self.consume_input(GSS_ROLE, gss_nodes) as fh:
+            yield from iter_gss_record_nos(fh)
+        self._native_contract["gss"].update(self._consumed_input_snapshots[GSS_ROLE])
 
     def _fetch(self, client: Any, record_no: str, cache_dir: Path) -> Optional[dict]:
         """
@@ -384,18 +482,17 @@ class LPSNAPITransform(Transform):
 
         On cache miss, calls ``client.search(id=record_no)`` then
         ``client.retrieve()`` (the lpsn 1.0.0 search-then-retrieve flow).
-        Errors are printed and counted; a failure on one record never aborts
-        the run so a partial re-fetch resumes on the next call.
+        Transport errors are counted; malformed or misidentified payloads abort
+        before attribution. Every usable response is persisted and consumed from
+        an immutable snapshot, including records fetched into a cold cache.
         """
-        cache_path = cache_dir / f"{record_no}.json"
+        validate_record_no(record_no)
+        cache_path = (cache_dir / f"{record_no}.json").absolute()
+        self._native_input_admission.bind_path(cache_path)
         if cache_path.exists():
-            try:
-                with open(cache_path) as fh:
-                    self._stats["from_cache"] += 1
-                    return json.load(fh)
-            except (json.JSONDecodeError, OSError) as e:
-                print(f"[lpsn_api] cache read failed for {record_no}: {e}")
-                # fall through to re-fetch
+            record = self._consume_api_record(record_no, cache_path)
+            self._stats["from_cache"] += 1
+            return record
 
         try:
             # The lpsn client is search-then-retrieve. The 1.0.0 package
@@ -403,13 +500,13 @@ class LPSNAPITransform(Transform):
             # (``search(id="1002")``) that primes the result set directly;
             # passing ``query=`` instead routes into advanced_search and
             # 400s with "unexpected parameter -> query". ``retrieve()`` then
-            # yields the record(s). We accept either a single-record dict OR
-            # a list-of-dicts to stay tolerant of minor version drift.
+            # yields records, each as a dict or an API client record object.
             client.search(id=record_no)
             records = list(client.retrieve())
         except Exception as e:  # noqa: BLE001 — LPSN raises varied exceptions
             self._stats["errors"] += 1
             print(f"[lpsn_api] fetch failed for {record_no}: {e}")
+            self._record_absent_api_record(record_no, cache_path)
             return None
 
         if not records:
@@ -419,20 +516,41 @@ class LPSNAPITransform(Transform):
             # page; reading them as errors next to 665 successes misled (#1020).
             self._stats["api_misses"] = self._stats.get("api_misses", 0) + 1
             print(f"[lpsn_api] no record returned for {record_no}")
+            self._record_absent_api_record(record_no, cache_path)
             return None
-        record = records[0] if isinstance(records[0], dict) else records[0].__dict__
-
-        try:
-            with open(cache_path, "w") as fh:
-                json.dump(record, fh)
-        except OSError as e:
-            print(f"[lpsn_api] cache write failed for {record_no}: {e}")
+        if len(records) != 1:
+            raise SourceFinalizationRequired(f"LPSN API returned multiple payloads for requested record {record_no}")
+        value = records[0]
+        record = validate_record(value if isinstance(value, dict) else getattr(value, "__dict__", value), record_no)
+        with atomic_write(cache_path) as fh:
+            json.dump(record, fh)
+        record = self._consume_api_record(record_no, cache_path)
         self._stats["fetched"] += 1
         return record
 
+    def _consume_api_record(self, record_no, cache_path):
+        """Parse and validate the same immutable bytes recorded for source completion."""
+        role = RECORD_ROLE_PREFIX + record_no
+        with self.consume_input(role, cache_path) as handle:
+            record = validate_record(json.load(handle), record_no)
+        snapshot = self._consumed_input_snapshots[role]
+        self._native_contract["records"][record_no] = {"state": "present", "locator": str(cache_path), **snapshot}
+        return record
+
+    def _record_absent_api_record(self, record_no, cache_path):
+        """Retain absent selected cache paths; this is not a snapshot of a remote API answer."""
+        if self._native_input_admission.capture(cache_path, optional=True) is not None:
+            raise SourceFinalizationRequired(f"LPSN API cache appeared during retrieval: {cache_path}")
+        self._native_contract["records"][record_no] = {
+            "state": "absent",
+            "locator": str(cache_path),
+            "path": str(cache_path.resolve()),
+            "sha256": "",
+        }
+
     #: How far up `lpsn_parent_id` to walk. LPSN's ranks stop at domain; a
     #: cycle in the data would otherwise be an infinite fetch loop.
-    _MAX_LINK_DEPTH = 12
+    _MAX_LINK_DEPTH = MAX_LINK_DEPTH
 
     @staticmethod
     def _linked_record_nos(record_no: str, record: dict) -> list:
@@ -443,12 +561,7 @@ class LPSNAPITransform(Transform):
         :param record: Its JSON payload.
         :return: Parent and basonym record numbers, as strings, excluding self.
         """
-        refs = []
-        for key in (JSON_LPSN_PARENT_ID, JSON_BASONYM_ID):
-            value = str(record.get(key) or "").strip()
-            if value.isdigit() and value != record_no:
-                refs.append(value)
-        return refs
+        return linked_record_nos(record_no, record)
 
     def _ensure_declared(
         self, client: Any, record_no: str, cache_dir: Path, node_writer, edge_writer, depth: int = 0
@@ -504,23 +617,27 @@ class LPSNAPITransform(Transform):
         # Publication cross-refs. LPSN populates one or both of DOI/PMID
         # per record for the valid publication of the name, plus (often)
         # a separate DOI for the IJSEM validation-list publication.
-        for doi_key in (JSON_PUBLICATION_DOI, JSON_IJSEM_LIST_DOI):
+        for doi_key, text_key in (
+            (JSON_PUBLICATION_DOI, JSON_PUBLICATION_TEXT),
+            (JSON_IJSEM_LIST_DOI, JSON_IJSEM_LIST_TEXT),
+        ):
             doi = (record.get(doi_key) or "").strip()
             if doi:
-                # doi: nodes are stubs — a downstream Publication
-                # ontology (or an OMA-style DOI expander) can supply
-                # richer metadata. For now, emit a minimal node so the
-                # edge target isn't a dangling reference.
+                # The associated source citation supplies a display label,
+                # not an inferred paper title. Conflicts are resolved only
+                # after all source records have contributed their evidence.
                 edge_writer.writerow(
                     self._edge(record_no, CLOSE_MATCH_PREDICATE, f"{DOI_PREFIX}{doi}", "skos:closeMatch")
                 )
-                node_writer.writerow(self._stub_publication_node(f"{DOI_PREFIX}{doi}"))
+                self._record_publication_citation(f"{DOI_PREFIX}{doi}", record_no, text_key, record.get(text_key))
         pmid = str(record.get(JSON_PUBLICATION_PMID) or "").strip()
         if pmid:
             edge_writer.writerow(
                 self._edge(record_no, CLOSE_MATCH_PREDICATE, f"{PMID_PREFIX}{pmid}", "skos:closeMatch")
             )
-            node_writer.writerow(self._stub_publication_node(f"{PMID_PREFIX}{pmid}"))
+            self._record_publication_citation(
+                f"{PMID_PREFIX}{pmid}", record_no, JSON_PUBLICATION_TEXT, record.get(JSON_PUBLICATION_TEXT)
+            )
 
         # 16S rRNA sequence provenance — the TYGS-adjacent bridge to
         # NCBI. Every INSDC accession registered by this taxon's type
@@ -712,14 +829,41 @@ class LPSNAPITransform(Transform):
                 row[headers.index(col)] = val
         return row
 
-    def _stub_publication_node(self, curie: str) -> list:
-        """Build a minimal nodes.tsv row for a DOI/PMID stub target."""
+    def _record_publication_citation(self, curie: str, record_no: str, field: str, value: Any) -> None:
+        """Retain exact source-field attribution; malformed/missing text supplies no label."""
+        citation = value.strip() if isinstance(value, str) else ""
+        candidates = self._publication_citations.setdefault(curie, {})
+        candidates.setdefault(citation, set()).add(f"{LPSN_PREFIX}{record_no}.{field}")
+
+    def _emit_publication_nodes(self, writer) -> None:
+        """Emit one stable node per publication, withholding conflicting citation labels."""
+        for curie, candidates in sorted(self._publication_citations.items()):
+            nonempty = [citation for citation in candidates if citation]
+            label = nonempty[0] if len(nonempty) == 1 else ""
+            if label:
+                status = "Label is LPSN source citation text, not a separately verified publication title."
+            elif nonempty:
+                status = "Conflicting LPSN citation texts; publication label remains unresolved."
+            else:
+                status = "No usable LPSN source citation text; publication label remains unresolved."
+            provenance = [
+                {"citation": citation, "source_fields": sorted(locators)}
+                for citation, locators in sorted(candidates.items())
+            ]
+            writer.writerow(
+                self._stub_publication_node(curie, label, status + " " + json.dumps(provenance, sort_keys=True))
+            )
+
+    def _stub_publication_node(self, curie: str, label: str = "", description: str = "") -> list:
+        """Build a DOI/PMID node carrying only unambiguous source-owned citation text."""
         headers = self.node_header
         row = [""] * len(headers)
         for col, val in {
-            "id": curie,
-            "category": "biolink:Publication",
-            "provided_by": LPSN_KNOWLEDGE_SOURCE,
+            ID_COLUMN: curie,
+            CATEGORY_COLUMN: "biolink:Publication",
+            NAME_COLUMN: label,
+            DESCRIPTION_COLUMN: description,
+            PROVIDED_BY_COLUMN: LPSN_KNOWLEDGE_SOURCE,
         }.items():
             if col in headers:
                 row[headers.index(col)] = val

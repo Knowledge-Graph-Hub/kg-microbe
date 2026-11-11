@@ -63,9 +63,7 @@ def test_typed_values_keep_shared_field_identity_but_separate_record_observation
                 assert (edge["predicate"], edge["relation"]) == ("biolink:has_attribute", "SIO:000008")
                 assert node["has_attribute_type"] == reviewed[edge["value"]]
             else:
-                assert edge["value"] == "phototrophy"
-                assert edge["predicate"] == "biolink:has_attribute"
-                assert node["has_attribute_type"] == ""
+                pytest.fail("Unsupported phototrophy must remain in the complete source audit only")
         if node["has_attribute_type"]:
             assert node["category"] == "biolink:Attribute"
             assert "|" not in node["has_attribute_type"]

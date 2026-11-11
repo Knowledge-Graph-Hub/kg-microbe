@@ -20,8 +20,8 @@ Scope:
 - Nodes for every LPSN record (family / genus / species / subspecies).
 - subclass_of edges from subspecies → species → genus (only when the
   parent row is present in the same CSV — no LPSN API calls).
-- close_match edges to `kgmicrobe.strain:*` for every culture-collection
-  deposit named in ``nomenclatural_type``.
+- in_taxon edges from each `kgmicrobe.strain:*` culture-collection deposit
+  named in ``nomenclatural_type`` to its LPSN taxon.
 - close_match edges to `NCBITaxon:*` for every row (genus / species /
   subspecies) whose scientific name resolves to exactly one NCBITaxon
   via the local NCBI index. The index is pre-filtered to the bacterial
@@ -55,6 +55,8 @@ from kg_microbe.transform_utils.constants import (
     CLOSE_MATCH_RELATION,
     EXACT_MATCH,
     ID_COLUMN,
+    IN_TAXON_PREDICATE,
+    IN_TAXON_RELATION,
     KNOWLEDGE_ASSERTION,
     KNOWLEDGE_LEVEL_COLUMN,
     LPSN_SOURCE,
@@ -499,7 +501,7 @@ class LPSNTransform(Transform):
                 # is skipped.
                 if (row.get(COL_SP_EPITHET) or "").strip():
                     for strain_curie, deposit_label in self._extract_strain_deposits(row):
-                        edge_writer.writerow(self._make_close_match_edge(record_no, strain_curie))
+                        edge_writer.writerow(self._make_type_strain_edge(record_no, strain_curie))
                         # Buffered, not written here: several records can cite
                         # one deposit, and a node row belongs to the deposit,
                         # not to the citation.
@@ -961,21 +963,21 @@ class LPSNTransform(Transform):
                 row_out[headers.index(col)] = val
         return row_out
 
+    def _make_type_strain_edge(self, record_no: str, strain_curie: str) -> list:
+        """Restate a native type-deposit membership as strain in_taxon LPSN taxon."""
+        values = {
+            "subject": strain_curie,
+            "predicate": IN_TAXON_PREDICATE,
+            "object": f"{LPSN_PREFIX}{record_no}",
+            "relation": IN_TAXON_RELATION,
+            "primary_knowledge_source": LPSN_KNOWLEDGE_SOURCE,
+            KNOWLEDGE_LEVEL_COLUMN: KNOWLEDGE_ASSERTION,
+            AGENT_TYPE_COLUMN: MANUAL_AGENT,
+        }
+        return [values.get(column, "") for column in self.edge_header]
+
     def _make_close_match_edge(self, record_no: str, strain_curie: str, *, inferred: bool = False) -> list:
-        """
-        Build one edges.tsv row linking an LPSN taxon to a culture-collection strain.
-
-        Emits ``subject=lpsn:<record_no> predicate=biolink:close_match
-        object=kgmicrobe.strain:<code> relation=skos:closeMatch
-        primary_knowledge_source=infores:lpsn``. BacDive's transform emits
-        the same ``kgmicrobe.strain:*`` CURIE for every culture-collection
-        deposit it sees, so the merge step reconciles both sides.
-
-        Declared type deposits restate expert-curated LPSN records. NCBI/GTDB
-        name-and-rank matches instead set ``inferred=True``: the match is a
-        software-generated similarity prediction, not a curator's assertion or
-        a logical entailment from equal labels (#1071).
-        """
+        """Build a name/rank taxonomy match, retaining its prediction provenance."""
         headers = self.edge_header
         row_out = [""] * len(headers)
         for col, val in {

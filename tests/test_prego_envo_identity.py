@@ -220,21 +220,21 @@ def test_native_record_multiset_and_lossless_audit_survive(tmp_path, shapes, rev
     )
     expected = Counter(
         (
-            decisions[item["row"][1]].target_id if item["row"][1] in decisions else item["row"][1],
             "NCBITaxon:" + item["row"][3],
+            decisions[item["row"][1]].target_id if item["row"][1] in decisions else item["row"][1],
             *item["row"][4:],
             item["channel"],
         )
         for item in records
     )
     assert actual == expected
-    assert all(edge["relation"] == "RO:0001015" and edge["predicate"] == "biolink:location_of" for edge in edges)
+    assert all(edge["relation"] == "RO:0001025" and edge["predicate"] == "biolink:located_in" for edge in edges)
     for item in audit:
         native = json.loads(item["original_record_json"])
         emitted = json.loads(item["emitted_edge_json"])
         assert emitted in edges
-        assert item["original_subject"] == native[1] == emitted["original_subject"]
-        assert item["normalized_subject"] == emitted["subject"]
+        assert item["original_object"] == native[1] == emitted["original_object"]
+        assert item["normalized_object"] == emitted["object"]
         assert int(item["physical_line"]) >= 2
         assert item["member"] == "nested/database_pairs.tsv"
         assert item["envo_sha256"] == hashlib.sha256((transform.input_base_dir / "envo.json").read_bytes()).hexdigest()
@@ -261,7 +261,7 @@ def test_identity_only_applies_after_shape_type_and_score_eligibility(tmp_path):
     edges = _rows(transform.output_edge_file)
     audit = _rows(transform.output_dir / "prego_envo_identity.tsv")
     assert len(edges) == 5 and len(audit) == 4
-    assert any(row["subject"] == substring["row"][1] and row["original_subject"] == "" for row in edges)
+    assert any(row["object"] == substring["row"][1] and row["original_object"] == "" for row in edges)
     assert all(json.loads(row["original_record_json"])[0] == "-27" for row in audit)
 
 

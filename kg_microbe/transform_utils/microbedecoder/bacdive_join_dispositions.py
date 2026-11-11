@@ -47,6 +47,7 @@ from kg_microbe.transform_utils.constants import (
     VALUE_COLUMN,
     VALUE_ENCODING_COLUMN,
 )
+from kg_microbe.transform_utils.microbedecoder import observation_audit
 from kg_microbe.transform_utils.microbedecoder.utils import (
     BACDIVE_CROSSWALK_COLUMN,
     BACDIVE_SNAPSHOT_COLUMNS,
@@ -246,10 +247,24 @@ def _snapshot_node(source_record, rows):
 class BacDiveJoinGuard:
     """Bind actual source reads, six refusals, and the complete retained BacDive-link family."""
 
-    def __init__(self, policy_payload, evidence_payload, raw_stream, gss_stream, *, fields, bindings, admission):
+    def __init__(
+        self,
+        policy_payload,
+        evidence_payload,
+        raw_stream,
+        gss_stream,
+        *,
+        fields,
+        bindings,
+        admission,
+        include_snapshot=True,
+    ):
         """Parse only already admitted bytes and seal the original selection evidence."""
         if _hash(policy_payload) != POLICY_SHA256 or _hash(evidence_payload) != EVIDENCE_SHA256:
             _fail("curated policy/evidence differs from reviewed immutable bytes")
+        if type(include_snapshot) is not bool:
+            _fail("snapshot graph mode must be a boolean")
+        self.include_snapshot = include_snapshot
         self.admission = admission
         self.fields = tuple(fields)
         self.bindings = _parsed(_json(bindings))
@@ -402,6 +417,7 @@ class BacDiveJoinGuard:
             _json(
                 [
                     self.fields,
+                    self.include_snapshot,
                     self.bindings,
                     self.policy,
                     self.evidence,
@@ -488,10 +504,12 @@ class BacDiveJoinGuard:
             "policy_sha256": POLICY_SHA256,
             "evidence_sha256": EVIDENCE_SHA256,
             "disposition": _DISPOSITION,
-            "snapshot_disposition": SNAPSHOT_DISPOSITION,
-            "snapshot_node_json": _json(selected["snapshot_node"]),
+            "snapshot_disposition": SNAPSHOT_DISPOSITION
+            if self.include_snapshot
+            else observation_audit.SNAPSHOT_AUDIT_ONLY,
+            "snapshot_node_json": _json(selected["snapshot_node"] if self.include_snapshot else None),
             "snapshot_original_claims_json": _json(selected["snapshot_original"]),
-            "snapshot_emitted_claims_json": _json(selected["snapshot_emitted"]),
+            "snapshot_emitted_claims_json": _json(selected["snapshot_emitted"] if self.include_snapshot else []),
         }
 
     def snapshot_node(self, source_record, native_row, accepted_subject):
@@ -544,6 +562,7 @@ class BacDiveJoinGuard:
         expected_audit = Counter(_json(self._audit(key)) for key in self.selected)
         if actual_audit != expected_audit:
             _fail("original native/audit rows lost, changed or duplicated")
+        protected_attributes = self._verify_observation_audit(directory)
         actual_links, actual_snapshots = Counter(), Counter()
         with edge_path.open(encoding="utf-8", newline="") as stream, _field_limit_for(stream):
             reader = csv.DictReader(stream, delimiter="\t", quoting=csv.QUOTE_NONE)
@@ -552,6 +571,16 @@ class BacDiveJoinGuard:
             for row in reader:
                 if None in row or any(value is None for value in row.values()):
                     _fail("malformed source edge row")
+                column = row.get(SOURCE_COLUMN)
+                if (
+                    any(row.get(endpoint) in protected_attributes for endpoint in (SUBJECT_COLUMN, OBJECT_COLUMN))
+                    or (not self.include_snapshot and column in BACDIVE_SNAPSHOT_COLUMNS)
+                    or (
+                        column in observation_audit.BERGEY_PLACEHOLDERS
+                        and row.get(VALUE_COLUMN) == observation_audit.BERGEY_PLACEHOLDERS[column]
+                    )
+                ):
+                    _fail("audit-only observation reintroduced as a graph assertion")
                 # This producer emits BacDive-strain endpoints only for the
                 # native BacDive_ID link family. Inspect either orientation,
                 # without trusting predicate/relation to identify that family:
@@ -570,12 +599,39 @@ class BacDiveJoinGuard:
                     actual_snapshots[_json({field: row.get(field, "") for field in self.fields})] += 1
         if actual_links != Counter(dict.fromkeys(self.retained_links, 1)):
             _fail("retained native BacDive links differ from exact reviewed six removals")
-        expected_snapshots = {_json(row) for item in self.selected.values() for row in item["snapshot_emitted"]}
+        expected_snapshots = (
+            {_json(row) for item in self.selected.values() for row in item["snapshot_emitted"]}
+            if self.include_snapshot
+            else set()
+        )
         if actual_snapshots != Counter(dict.fromkeys(expected_snapshots, 1)):
             _fail("snapshot subjects or complete source assertions changed")
-        self._verify_snapshot_nodes_and_audits(directory)
+        self._verify_snapshot_nodes_and_audits(directory, protected_attributes=protected_attributes)
 
-    def _verify_snapshot_nodes_and_audits(self, directory):
+    def _verify_observation_audit(self, directory):
+        """Rejoin every audit-only occurrence to the admitted native source, without loss."""
+        path = Path(directory) / observation_audit.AUDIT_FILE
+        if path.is_symlink() or not path.is_file():
+            _fail("missing or linked observation audit")
+        with (
+            Path(self.bindings[ROLE_RAW]["path"]).open(encoding="utf-8", errors="surrogateescape", newline="") as raw,
+            path.open(encoding="utf-8", newline="") as audit,
+            _field_limit_for(audit),
+        ):
+            expected = observation_audit.expected_rows(
+                raw,
+                raw_sha256=self.bindings[ROLE_RAW]["sha256"],
+                fields=self.fields,
+                accepted=self.accepted,
+                selected=self.selected,
+                include_snapshot=self.include_snapshot,
+            )
+            try:
+                return observation_audit.verify_rows(audit, expected)
+            except ValueError as error:
+                _fail(str(error))
+
+    def _verify_snapshot_nodes_and_audits(self, directory, *, protected_attributes):
         """Verify five record declarations and dependent-only phenotype audit projection."""
         nodes, audits = Counter(), Counter()
         for name in ("nodes.tsv", "phenotype_normalizations.tsv"):
@@ -589,6 +645,8 @@ class BacDiveJoinGuard:
                 for row in reader:
                     if None in row or any(value is None for value in row.values()):
                         _fail("malformed snapshot node/phenotype row")
+                    if name == "nodes.tsv" and row.get(ID_COLUMN) in protected_attributes:
+                        _fail("audit-only observation reintroduced as an Attribute declaration")
                     if name == "nodes.tsv" and row.get(ID_COLUMN, "").startswith(_RECORD_PREFIX):
                         nodes[_json({key: value for key, value in row.items() if value})] += 1
                     elif name == "phenotype_normalizations.tsv" and (
@@ -597,7 +655,9 @@ class BacDiveJoinGuard:
                     ):
                         audits[_json(row)] += 1
         expected_nodes = Counter(
-            _json(item["snapshot_node"]) for item in self.selected.values() if item["snapshot_node"]
+            _json(item["snapshot_node"])
+            for item in self.selected.values()
+            if item["snapshot_node"] and self.include_snapshot
         )
         expected_audits = Counter(_json(row) for item in self.selected.values() for row in item["phenotype_audits"])
         if nodes != expected_nodes or audits != expected_audits:
@@ -611,7 +671,8 @@ class BacDiveJoinGuard:
             self._verify_output(transform.output_dir)
             self._sealed = _json(
                 {
-                    "version": 1,
+                    "version": 2,
+                    "include_bacdive_snapshot": self.include_snapshot,
                     "bindings": self.bindings,
                     "policy_sha256": POLICY_SHA256,
                     "evidence_sha256": EVIDENCE_SHA256,
@@ -621,7 +682,12 @@ class BacDiveJoinGuard:
                     "quarantined_links": len(self.selected),
                     "retained_link_assertions": len(self.retained_links),
                     "scope": _SCOPE,
-                    "snapshot_nodes": sum(item["snapshot_node"] is not None for item in self.selected.values()),
+                    "snapshot_nodes": sum(item["snapshot_node"] is not None for item in self.selected.values())
+                    if self.include_snapshot
+                    else 0,
+                    "audit_only_snapshot_occurrences": 0
+                    if self.include_snapshot
+                    else sum(len(item["snapshot_original"]) for item in self.selected.values()),
                     "snapshot_occurrences": sum(len(item["snapshot_original"]) for item in self.selected.values()),
                 }
             )
@@ -647,7 +713,9 @@ class BacDiveJoinGuard:
             # Recorded reconstruction has no mutable producer configuration;
             # it independently rejoins its saved original lexical locators.
             if configured_selectors is not None:
-                policy, raw_directory = configured_selectors
+                policy, raw_directory, include_snapshot = configured_selectors
+                if type(include_snapshot) is not bool or include_snapshot != self.include_snapshot:
+                    _fail("configured snapshot graph mode differs from the original run")
                 if (
                     policy is None
                     or raw_directory is None
@@ -657,7 +725,7 @@ class BacDiveJoinGuard:
                 ):
                     _fail("configured producer policy/GSS locator differs from the original read")
             self._inputs(snapshots)
-            if contract != self.contract():
+            if _json(contract) != _json(self.contract()):
                 _fail("source native contract missing or changed")
             self.require_complete()
             self._verify_output(output_dir)
@@ -705,6 +773,7 @@ def prepare(transform, raw_snapshot, raw_path, policy_path):
             fields=transform.edge_header,
             bindings=bindings,
             admission=admission,
+            include_snapshot=transform.include_bacdive_snapshot,
         )
     guard._inputs(transform.consumed_input_snapshots)
     return guard
@@ -716,6 +785,8 @@ def restore(report, report_path, *, admission=None):
     contract = report.get("producer_native_inputs", {}).get(CONTRACT_KEY)
     if not isinstance(contract, dict) or set(contract.get("bindings", {})) != set(REQUIRED_INPUTS):
         _fail("mandatory recorded finite contract is absent")
+    if contract.get("version") != 2 or type(contract.get("include_bacdive_snapshot")) is not bool:
+        _fail("recorded snapshot graph mode missing or invalid")
     snapshots = report.get("consumed_inputs", {})
     bindings = {}
     for role, saved in contract["bindings"].items():
@@ -739,12 +810,14 @@ def restore(report, report_path, *, admission=None):
             fields=contract["edge_fields"],
             bindings=bindings,
             admission=admission,
+            include_snapshot=contract["include_bacdive_snapshot"],
         )
     directory = Path(report_path).parent
     if contract.get("edge_members") != ["edges.tsv"] or "edges.tsv" not in report.get("members", {}):
         _fail("original producer edge scope missing or changed")
     for name, collection in (
         (AUDIT_FILE, "producer_audit_members"),
+        (observation_audit.AUDIT_FILE, "producer_audit_members"),
         ("phenotype_normalizations.tsv", "producer_audit_members"),
         ("edges.tsv", "members"),
         ("nodes.tsv", "members"),
@@ -759,7 +832,8 @@ def restore(report, report_path, *, admission=None):
     guard._snapshot_dispatches = set(guard.selected)
     guard._sealed = _json(
         {
-            "version": 1,
+            "version": 2,
+            "include_bacdive_snapshot": guard.include_snapshot,
             "bindings": guard.bindings,
             "policy_sha256": POLICY_SHA256,
             "evidence_sha256": EVIDENCE_SHA256,
@@ -769,7 +843,12 @@ def restore(report, report_path, *, admission=None):
             "quarantined_links": len(guard.selected),
             "retained_link_assertions": len(guard.retained_links),
             "scope": _SCOPE,
-            "snapshot_nodes": sum(item["snapshot_node"] is not None for item in guard.selected.values()),
+            "snapshot_nodes": sum(item["snapshot_node"] is not None for item in guard.selected.values())
+            if guard.include_snapshot
+            else 0,
+            "audit_only_snapshot_occurrences": 0
+            if guard.include_snapshot
+            else sum(len(item["snapshot_original"]) for item in guard.selected.values()),
             "snapshot_occurrences": sum(len(item["snapshot_original"]) for item in guard.selected.values()),
         }
     )
@@ -820,5 +899,6 @@ def verify_transform(transform, *, output_dir=None):
         configured_selectors=(
             getattr(transform, "bacdive_join_policy", None),
             getattr(transform, "input_base_dir", None),
+            getattr(transform, "include_bacdive_snapshot", None),
         ),
     )

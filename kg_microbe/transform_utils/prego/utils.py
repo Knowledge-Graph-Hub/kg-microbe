@@ -58,6 +58,8 @@ DATABASE_PAIRS_NCOL = len(DATABASE_PAIRS_COLUMNS)
 # Sentinel outcomes for :func:`classify_row`. Kept as short strings so the
 # unmapped-associations report reads clearly for a curator scanning it.
 KEEP_TAXON_TO_GO = "taxon_to_go"
+# These selectors describe native archive orientation; emission normalizes
+# habitat associations to organism -> located_in -> environment (#1844).
 KEEP_ENVO_TO_TAXON = "envo_to_taxon"
 KEEP_TAXON_TO_DOID = "taxon_to_doid"
 KEEP_TAXON_TO_BTO = "taxon_to_bto"

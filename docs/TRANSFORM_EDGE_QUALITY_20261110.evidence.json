@@ -1,0 +1,708 @@
+{
+  "repository": "Knowledge-Graph-Hub/kg-microbe",
+  "branch": "fix/transform-edge-quality-1842-1846",
+  "base_commit": "e3d1213a8bf7a4408204ebd48c19e42ec2e14b5e",
+  "native_microbedecoder_candidate": "22a0d1d0addb690f31189ca98a1e13afcdf37d1a",
+  "scope": "Transform repairs, native single-source canaries, focused tests and independent reviews; no complete graph or release admission",
+  "artifacts": [
+    {
+      "path": "data/edge-quality-20261110/metatraits-1842/author-validation-r1.json",
+      "bytes": 20403,
+      "sha256": "297ac70cc6eafe5ea93404ee262a01c09f0858bf348ac2b5633fa42148630985"
+    },
+    {
+      "path": "data/edge-quality-20261110/metatraits-1842/canary/metatraits-receipt.json",
+      "bytes": 1639,
+      "sha256": "9b5c7168197c15b0b1d853a7008534c874040b1391288873125c52bab99264b8"
+    },
+    {
+      "path": "data/edge-quality-20261110/metatraits-1842/canary/metatraits_gtdb-receipt.json",
+      "bytes": 1665,
+      "sha256": "2644bc0e2891695f4e84ea3a8a4b4fdbf6002de82aa4e501773127c7e2eb373d"
+    },
+    {
+      "path": "data/edge-quality-20261110/lpsn-native-canary-r2/receipt.json",
+      "bytes": 19557,
+      "sha256": "14e1b6f0f2d2ed1ebb91a38695021a3997bc2df2dea272bc6def814afba73570"
+    },
+    {
+      "path": "data/edge-quality-20261110/lpsn-1851-completion-r1.json",
+      "bytes": 12462,
+      "sha256": "cf67bdb5df7c1adc3a26bc8249134dc614f9d994de62333feefcb2cc5e2e8584"
+    },
+    {
+      "path": "data/edge-quality-20261110/lpsn-pinned-predicate-schema-review-r1.json",
+      "bytes": 36943,
+      "sha256": "0b56250f6f9f352717e7d578586bbf0985f334d59e2272d7f44f29a113f672e5"
+    },
+    {
+      "path": "data/edge-quality-20261110/prego-canary-r2/result.json",
+      "bytes": 1463,
+      "sha256": "63b9d0326ea55db8a531edcedfb70dfb1b0cc498b24afbd5f7e07c8b9ad9ec41"
+    },
+    {
+      "path": "data/edge-quality-20261110/prego-validation-1848-actual-readcheck-r2.json",
+      "bytes": 4683,
+      "sha256": "04ce8dda8f182ca1ad29225bafefadb17120172d2020d00102e51cda0fc57615"
+    },
+    {
+      "path": "data/edge-quality-20261110/bacdive-1845/canary-completion-r2.json",
+      "bytes": 9382,
+      "sha256": "c7aa3ae4190f90ae4a07c07b39e4268ae102c174359bc1fdbdf03cba98c793a7"
+    },
+    {
+      "path": "data/edge-quality-20261110/bacdive-1845/canary-r2/authority-build-receipt.json",
+      "bytes": 3020,
+      "sha256": "513b802d5f9b4bd3aaf833cf21bfa6b1b1ba9d09a4a3e8d3496ddc7aa525bd18"
+    },
+    {
+      "path": "data/edge-quality-20261110/microbedecoder-canary/gold-execution-r1.json",
+      "bytes": 2824,
+      "sha256": "a1173019fa3a1daa0025e25f0eca8df9f0a9890ee911363a59102bcada856dc7"
+    },
+    {
+      "path": "data/edge-quality-20261110/metatraits-independent-review-r1.json",
+      "bytes": 9689,
+      "sha256": "8b35977281e1c721196ff7a39237c284c9bbf79acaec3b6005a4a3ad64902918"
+    },
+    {
+      "path": "data/edge-quality-20261110/prego-bacdive-independent-review-r1.json",
+      "bytes": 5166,
+      "sha256": "0ec46d0b33f7d2e56479093b1aec61ffbd48aa71d2b4f2290ccd1494a16d938c"
+    },
+    {
+      "path": "data/edge-quality-20261110/reviews/lpsn-independent-review-r1.json",
+      "bytes": 1979,
+      "sha256": "9e5622d5fb67cb07e28b662418b31a30a643858808a0757c8a6144d96aa76ad2"
+    },
+    {
+      "path": "data/edge-quality-20261110/reviews/prego-validation-independent-review-r2.json",
+      "bytes": 2228,
+      "sha256": "3bd0d99e7c0a72b70fbac86298ced8c4a5544fa4f33ad8faf4245b215089b738"
+    },
+    {
+      "path": "data/edge-quality-20261110/reviews/microbedecoder-final-independent-review-r3.json",
+      "bytes": 8362,
+      "sha256": "678664bd0a6cca4cc6b9c771c97886fc925ca54bdcd5b4a1d3c3fc8111d5c1ed"
+    },
+    {
+      "path": "data/edge-quality-20261110/microbedecoder-review/repair-1854-r1.json",
+      "bytes": 5950,
+      "sha256": "67a59eae56ebf719db065e580eaa6f50a06f969ca9025c1caa97dbb7a75a0f51"
+    },
+    {
+      "path": "data/edge-quality-20261110/microbedecoder-review/repair-1853-inverse-r1.json",
+      "bytes": 2682,
+      "sha256": "478de975670c5ec0e39f580e64e4eb3dad2fdf103a78ce129a91a8fd1330dfbe"
+    },
+    {
+      "path": "data/edge-quality-20261110/microbedecoder-canary/microbedecoder-execution-r1.json",
+      "bytes": 1347,
+      "sha256": "fbabf002d97230c0e298baaf9af1f6cadf73f053f41239568c3ee65a072472a9"
+    },
+    {
+      "path": "data/edge-quality-20261110/microbedecoder-canary/go-prerequisite-r2/corrected-closing.json",
+      "bytes": 7390,
+      "sha256": "628f367f6372f6f7031f7ba09464150dbe0c3058b9ea04bd6c8887228b820984"
+    },
+    {
+      "path": "data/edge-quality-20261110/reviews/microbedecoder-1855-preparation-independent-review-r2.json",
+      "bytes": 3967,
+      "sha256": "47d50c3055e6f4be6811a8f3eeedac51b2c0d672cf26fbf1751845633c8c405e"
+    },
+    {
+      "path": "data/edge-quality-20261110/reviews/microbedecoder-1855-authority-count-correction-r1.json",
+      "bytes": 10588,
+      "sha256": "b54e00b2dc44d6adb0ab48d5ffdf532ec125dea679531a6c31ffc639b8c0030f"
+    },
+    {
+      "path": "data/edge-quality-20261110/microbedecoder-review/repair-1855-r1.json",
+      "bytes": 4635,
+      "sha256": "400f3a508b4f242378e5585578c82abb876563ce25cd62747d5bd41bff4a053c"
+    },
+    {
+      "path": "data/edge-quality-20261110/final-template-independent-corrections-r1.json",
+      "bytes": 9810,
+      "sha256": "9a2337423354753778d7f50bd1580d0d7745e0a3acaf448b494f1c47aab38752"
+    },
+    {
+      "path": "data/edge-quality-20261110/microbedecoder-canary/microbedecoder-run-r2/result.json",
+      "bytes": 1442133,
+      "sha256": "b5902af1603eff3810a74561f21d91cc19e8acc8dc4672eabe549276c60c15a3"
+    },
+    {
+      "path": "data/edge-quality-20261110/microbedecoder-canary/microbedecoder-execution-r2.json",
+      "bytes": 1380,
+      "sha256": "6a7039f744d4a8de126d4722aa2c997921467870246f4f100e3f046bd9331fc0"
+    },
+    {
+      "path": "data/edge-quality-20261110/microbedecoder-canary/native/transformed/microbedecoder/source_finalization.json",
+      "bytes": 280899,
+      "sha256": "9858d8c3c32f75fb05c689c90e1bae693aad9133bf1e03af9ee649fe4c474259"
+    },
+    {
+      "path": "data/edge-quality-20261110/microbedecoder-canary/root-unresolved-comparison-r2.json",
+      "bytes": 827,
+      "sha256": "d8edd94fa75a9058d23e1984b49863dff687c5d66997ba081d9e7abaf0e03ee0"
+    },
+    {
+      "path": "data/edge-quality-20261110/microbedecoder-canary/microbedecoder-cohort-reconciliation-r2.json",
+      "bytes": 26298,
+      "sha256": "e35733941c816a290c2f030d18558cf4f93bfaa94721ffaa10e3968f5f0dd47f"
+    },
+    {
+      "path": "data/edge-quality-20261110/microbedecoder-canary/microbedecoder-closing-r2.json",
+      "bytes": 5989,
+      "sha256": "f04067f337a718d373a9500c28c13f04109d4f2e45ed8c50cd041251fc558090"
+    },
+    {
+      "path": "data/edge-quality-20261110/final-report-independent-numeric-scope-review-r1.json",
+      "bytes": 2386,
+      "sha256": "892195ea2c7971eea16f368fe121e04fb60ccee377da1a9b7071bd2cd02b1cf8"
+    },
+    {
+      "path": "data/edge-quality-20261110/pr-gates-execution-r1.json",
+      "bytes": 978,
+      "sha256": "cc4211def46f7cf35195efb64e57725db6fc1327e94ae6a1039b6b45dfbac3dd"
+    },
+    {
+      "path": "data/edge-quality-20261110/pr-gates-interruption-r1.json",
+      "bytes": 515,
+      "sha256": "2eef9c1b6bfa9b943ff8c544c67d31f00dc1d954ee2f3a03f265a53b99f0e196"
+    },
+    {
+      "path": "data/validation/pr-gates/kgm-edge-quality-1842-1846-20261111-r1-gates.json",
+      "bytes": 1536,
+      "sha256": "96e9fec7b6e1e7012e23924111aa9e093a02c4be0e257f73b8f2fbaf9991201c"
+    },
+    {
+      "path": "data/validation/pr-gates/kgm-edge-quality-1842-1846-20261111-r1-4.log",
+      "bytes": 31091,
+      "sha256": "b25f9a2617e129cea649f54de7850da8b906442a7c5104d165ffa2bd532ef722"
+    },
+    {
+      "path": "data/edge-quality-20261110/bacdive-1856-focused-r1.json",
+      "bytes": 602,
+      "sha256": "46ce9d762fe6b53f42887d489cd24b2cbedad0ce6bb504ce2e9150bd6440a2c5"
+    },
+    {
+      "path": "data/edge-quality-20261110/reviews/bacdive-1856-independent-review-r1.json",
+      "bytes": 6672,
+      "sha256": "664560b2b598fac3ae443f87fcd46601ae98ef14013d9fce0ef846e7902c40da"
+    },
+    {
+      "path": "data/edge-quality-20261110/reviews/bacdive-final-gate-test-repair-r1/completion.json",
+      "bytes": 1541,
+      "sha256": "23686f37146a2b4ebecc864fa832bc4225fb963ef70d93d4f162d87cb4a5a061"
+    },
+    {
+      "path": "data/edge-quality-20261110/pr-gates-execution-r2.json",
+      "bytes": 977,
+      "sha256": "428fc83774ba7bacc655f2770452dd9f9e4e4b315629ff37c6b8de5643597360"
+    },
+    {
+      "path": "data/edge-quality-20261110/pr-gates-interruption-r2.json",
+      "bytes": 682,
+      "sha256": "8c6d6f1227a512451b94921e22bfbc05bfb40112c86b61659f9a8964d2247532"
+    },
+    {
+      "path": "data/edge-quality-20261110/pr-gates-r2-status-correction.json",
+      "bytes": 854,
+      "sha256": "0db1aba64271942e3a4e331155678b447354c1c2d3b2826da500cd476c8e47c9"
+    },
+    {
+      "path": "data/validation/pr-gates/kgm-edge-quality-1842-1846-20261111-r2-gates.json",
+      "bytes": 1536,
+      "sha256": "79e0f3718195a048e6baa448da9c24a6b63675f535a5bfcbdc4a17d3a57e41ac"
+    },
+    {
+      "path": "data/validation/pr-gates/kgm-edge-quality-1842-1846-20261111-r2-4.log",
+      "bytes": 23379,
+      "sha256": "aef5f2adf315ed5ea6f62cc3839b83bc43465baad83094756e77a47c81c8660d"
+    },
+    {
+      "path": "data/edge-quality-20261110/ci-66e63cb5-failed-build-r1.log",
+      "bytes": 359361,
+      "sha256": "b0261202ed97992a39319039fbde626057fcdc9e6bf888488ffff7a32bc63519"
+    },
+    {
+      "path": "data/edge-quality-20261110/reviews/gold-consumer-ci-diagnosis-r1.json",
+      "bytes": 12614,
+      "sha256": "63193583986d17b571a174a6b821d7514cb9eb12279caa8b79a0abb229dd2588"
+    },
+    {
+      "path": "data/edge-quality-20261110/reviews/microbedecoder-ci-diagnosis-r1.json",
+      "bytes": 18256,
+      "sha256": "baf23f6f5c4e7af6bc0f5e5a2ee9fdd2448acf2ae6108339b5b0cc4710fbfbc8"
+    },
+    {
+      "path": "data/edge-quality-20261110/reviews/gold-consumer-fixture-repair-1857-r1/completion.json",
+      "bytes": 2980,
+      "sha256": "cef62affa865771aaeaf39249021c0af96ab81587fbb0843cee9ae9df9d247fd"
+    },
+    {
+      "path": "data/edge-quality-20261110/reviews/reader-current-proof-selection-root-review-r1.json",
+      "bytes": 960,
+      "sha256": "a16e3e765d57bb1dab9ac2e603813fc95ab279afa1c1faf1a3cf69708a5ac08c"
+    },
+    {
+      "path": "data/edge-quality-20261110/md-1857-1858-focused-r1.json",
+      "bytes": 2381,
+      "sha256": "32e8564ac97eff28cb2ce5fd3f1c4fe4f9cb7f18228a26ad7c676c500e533db4"
+    },
+    {
+      "path": "data/edge-quality-20261110/md-1857-1858-focused-r2.json",
+      "bytes": 472,
+      "sha256": "bdbd7e59723426deb1d29ba240b63896645dbe9705aee4301639ea177d506bc7"
+    },
+    {
+      "path": "data/edge-quality-20261110/md-1857-1858-focused-r3.json",
+      "bytes": 472,
+      "sha256": "67983c786232b9ec35320739e97e82dcde9d5abce03783782ebd224be7d080bd"
+    },
+    {
+      "path": "data/edge-quality-20261110/md-1857-1858-focused-r4.json",
+      "bytes": 472,
+      "sha256": "0e3d9497ee8b9b785d84235d290f7595b002717c85fb241e4efe9556fb0ef231"
+    },
+    {
+      "path": "data/edge-quality-20261110/md-1857-1858-focused-r5.json",
+      "bytes": 2382,
+      "sha256": "86adf81be89412c9ff90fff6d4df4852a8617684c5629645eb85abaae1211676"
+    },
+    {
+      "path": "data/edge-quality-20261110/reviews/microbedecoder-inventory-1858-independent-review-r1.json",
+      "bytes": 6291,
+      "sha256": "c75c3d4834507a00e84b919e00837e4be12cedf7baae904985478a5b445cafe8"
+    },
+    {
+      "path": "data/edge-quality-20261110/reviews/microbedecoder-inventory-faprotax-independent-review-r1.json",
+      "bytes": 9539,
+      "sha256": "71a7164620b43ce32426fd4124a35e420b31a1348dc2897a907fd9025a8016c2"
+    },
+    {
+      "path": "data/edge-quality-20261110/reviews/inventory-1858-literal-writer-fix-formatted-r2.json",
+      "bytes": 477,
+      "sha256": "86b2654b177e0e1bf3a864743192fe9eca1a91c4b86fb4f7a08fcaf8a7f88fbd"
+    },
+    {
+      "path": "data/edge-quality-20261110/reviews/material-inventory-authority-repair-r1/completion-r2.json",
+      "bytes": 1905,
+      "sha256": "025a936c5442c62f89a90610c544bd8dec6f38760024de8830c3100f151119ef"
+    },
+    {
+      "path": "data/edge-quality-20261110/microbedecoder-inventory-execution-r1/result.json",
+      "bytes": 2640,
+      "sha256": "cee9589d7983ed0d71a00608bde60299694e114d3a413b6303a373e267462322"
+    },
+    {
+      "path": "data/edge-quality-20261110/microbedecoder-inventory-execution-r2/result.json",
+      "bytes": 3567,
+      "sha256": "a49487e7e96541032ee8cc44ff2da3d62fb04ae2d9794068f7659c8d4854265c"
+    },
+    {
+      "path": "data/edge-quality-20261110/microbedecoder-inventory-execution-r3/result.json",
+      "bytes": 6835,
+      "sha256": "c00f227f16b17c316823d0a6bbd698b855d457232cd12618f84e32e8d02eecfa"
+    },
+    {
+      "path": "data/edge-quality-20261110/microbedecoder-curation-inventory-r3/summary.json",
+      "bytes": 9671,
+      "sha256": "b04ba236ea02a8262ce5edde0e7a50e37c929344e289244b4040ee81bab24c3c"
+    },
+    {
+      "path": "data/edge-quality-20261110/reviews/img-membership-inventory-failure-r1/review.json",
+      "bytes": 8495,
+      "sha256": "8e8c7191315909aeedb3d92ebb5621fae96247bf378d00c9c3a90d2d2cc15ef1"
+    },
+    {
+      "path": "data/edge-quality-20261110/reviews/complete-native-crosswalk-scope-r1/review.json",
+      "bytes": 28851,
+      "sha256": "72898a4093e9f0f8481ee5d7b3ead5bcfb4d7d970cffaa09df9d38d6c349769e"
+    },
+    {
+      "path": "data/edge-quality-20261110/reviews/complete-native-crosswalk-scope-r1/closing-reconciliation-r2.json",
+      "bytes": 12917,
+      "sha256": "5ce7b39f4cdd78eadc834f4f128da0a1f2ef1c268fd5426a70538166a1fd88a6"
+    },
+    {
+      "path": "data/edge-quality-20261110/reviews/microbedecoder-inventory-1858-upstream-independent-review-r3.json",
+      "bytes": 1633,
+      "sha256": "e641f73ec9442994ed0b214142b192749959ef9728a795df988f8192e3915183"
+    },
+    {
+      "path": "data/edge-quality-20261110/reviews/microbedecoder-inventory-1858-assembly-independent-review-r1.json",
+      "bytes": 9779,
+      "sha256": "192755db860dc92904c74e2ecc836499d11bd3818e301bf40bc041344ceee230"
+    },
+    {
+      "path": "data/edge-quality-20261110/reviews/microbedecoder-inventory-1858-assembly-independent-closing-r2.json",
+      "bytes": 2011,
+      "sha256": "9789bc1fec82a4d4782561160d8b2de616edaa04b6b1ff5c22ac33610a468586"
+    },
+    {
+      "path": "data/edge-quality-20261110/reviews/inventory-1858-assembly-r3.json",
+      "bytes": 765,
+      "sha256": "7ad2ee9a958f4b6525feaef0173dfada10291985e473d4cc8ee1726b52d0ca65"
+    },
+    {
+      "path": "data/edge-quality-20261110/gate_progress_v3.py",
+      "bytes": 1573,
+      "sha256": "e6fab24468170209a71f7cb62ef96b122388c357f1ed6b2bc3f4270d1f64aa20"
+    }
+  ],
+  "historical_limits": [
+    "The first LPSN review preceded the later #1851 exact-relation repair; use the fresh r2 canary and scoped tests for that repair.",
+    "BacDive receipt binds executed source 3500de11; subsequent format-only call-layout change is not a new producer admission.",
+    "Failed attempts remain in durable evidence and are never relabeled as passes.",
+    "Native MicrobeDecoder r1 failed during finalization on missing private GO; retain actual exit1 and preserved-output path map.",
+    "Use corrected-closing.json for GO preparation: original raw completion incorrectly said no GOLD native replay; replay did run, without rerunning GOLD production.",
+    "The conditional authority inventory has 111 named declarations out of 113 IDs; MICRO:0000178 and MICRO:0000182 retain five historical unresolved observations.",
+    "LPSN canaries use cached responses and disabled enrichment; no production finalization claim."
+  ],
+  "native_microbedecoder_result": {
+    "status": "PASS",
+    "actual_exit_code": 0,
+    "seconds": 664.0259469999,
+    "nodes": 34915,
+    "edges": 131247,
+    "distinct_IMG_genomes": 18374,
+    "original_raw_unchanged": true,
+    "source_canary_head": "22a0d1d0addb690f31189ca98a1e13afcdf37d1a",
+    "source_finalization_sha256": "9858d8c3c32f75fb05c689c90e1bae693aad9133bf1e03af9ee649fe4c474259"
+  },
+  "repository_gate": {
+    "command": "poetry run python scripts/run_pr_gates.py edge-quality-1842-1846-20261111-r3",
+    "ledger": "data/validation/pr-gates/kgm-edge-quality-1842-1846-20261111-r3-gates.json",
+    "report_committed_before_gate": true,
+    "status_source": "Use the exact-candidate ledger and PR checks; this evidence index is committed before gate execution."
+  },
+  "faprotax_reviewed_label_counts": {
+    "aerobic_anoxygenic_phototrophy": {
+      "audit_occurrences": 42,
+      "audit_only_occurrences": 0,
+      "current_edges": 42,
+      "historical_edges": 42,
+      "issue_table_reported_edges": 44,
+      "prediction_occurrences": 42
+    },
+    "aerobic_chemoheterotrophy": {
+      "audit_occurrences": 7875,
+      "audit_only_occurrences": 0,
+      "current_edges": 7875,
+      "historical_edges": 7875,
+      "issue_table_reported_edges": 7875,
+      "prediction_occurrences": 7875
+    },
+    "animal_parasites_or_symbionts": {
+      "audit_occurrences": 802,
+      "audit_only_occurrences": 802,
+      "current_edges": 0,
+      "historical_edges": 802,
+      "issue_table_reported_edges": 848,
+      "prediction_occurrences": 0
+    },
+    "anoxygenic_photoautotrophy": {
+      "audit_occurrences": 109,
+      "audit_only_occurrences": 0,
+      "current_edges": 109,
+      "historical_edges": 109,
+      "issue_table_reported_edges": 94,
+      "prediction_occurrences": 109
+    },
+    "anoxygenic_photoautotrophy_Fe_oxidizing": {
+      "audit_occurrences": 4,
+      "audit_only_occurrences": 0,
+      "current_edges": 4,
+      "historical_edges": 4,
+      "issue_table_reported_edges": 11,
+      "prediction_occurrences": 4
+    },
+    "anoxygenic_photoautotrophy_H2_oxidizing": {
+      "audit_occurrences": 26,
+      "audit_only_occurrences": 0,
+      "current_edges": 26,
+      "historical_edges": 26,
+      "issue_table_reported_edges": 2,
+      "prediction_occurrences": 26
+    },
+    "anoxygenic_photoautotrophy_S_oxidizing": {
+      "audit_occurrences": 98,
+      "audit_only_occurrences": 0,
+      "current_edges": 98,
+      "historical_edges": 98,
+      "issue_table_reported_edges": 78,
+      "prediction_occurrences": 98
+    },
+    "chemoheterotrophy": {
+      "audit_occurrences": 10493,
+      "audit_only_occurrences": 0,
+      "current_edges": 10493,
+      "historical_edges": 10493,
+      "issue_table_reported_edges": 10493,
+      "prediction_occurrences": 10493
+    },
+    "fish_parasites": {
+      "audit_occurrences": 4,
+      "audit_only_occurrences": 4,
+      "current_edges": 0,
+      "historical_edges": 4,
+      "issue_table_reported_edges": 1,
+      "prediction_occurrences": 0
+    },
+    "human_associated": {
+      "audit_occurrences": 424,
+      "audit_only_occurrences": 424,
+      "current_edges": 0,
+      "historical_edges": 424,
+      "issue_table_reported_edges": 607,
+      "prediction_occurrences": 0
+    },
+    "human_gut": {
+      "audit_occurrences": 150,
+      "audit_only_occurrences": 150,
+      "current_edges": 0,
+      "historical_edges": 150,
+      "issue_table_reported_edges": 106,
+      "prediction_occurrences": 0
+    },
+    "human_pathogens_all": {
+      "audit_occurrences": 291,
+      "audit_only_occurrences": 0,
+      "current_edges": 291,
+      "historical_edges": 291,
+      "issue_table_reported_edges": 468,
+      "prediction_occurrences": 291
+    },
+    "human_pathogens_diarrhea": {
+      "audit_occurrences": 14,
+      "audit_only_occurrences": 0,
+      "current_edges": 14,
+      "historical_edges": 14,
+      "issue_table_reported_edges": 2,
+      "prediction_occurrences": 14
+    },
+    "human_pathogens_gastroenteritis": {
+      "audit_occurrences": 23,
+      "audit_only_occurrences": 0,
+      "current_edges": 23,
+      "historical_edges": 23,
+      "issue_table_reported_edges": 6,
+      "prediction_occurrences": 23
+    },
+    "human_pathogens_meningitis": {
+      "audit_occurrences": 28,
+      "audit_only_occurrences": 0,
+      "current_edges": 28,
+      "historical_edges": 28,
+      "issue_table_reported_edges": 9,
+      "prediction_occurrences": 28
+    },
+    "human_pathogens_nosocomia": {
+      "audit_occurrences": 11,
+      "audit_only_occurrences": 0,
+      "current_edges": 11,
+      "historical_edges": 11,
+      "issue_table_reported_edges": 2,
+      "prediction_occurrences": 11
+    },
+    "human_pathogens_pneumonia": {
+      "audit_occurrences": 20,
+      "audit_only_occurrences": 0,
+      "current_edges": 20,
+      "historical_edges": 20,
+      "issue_table_reported_edges": 5,
+      "prediction_occurrences": 20
+    },
+    "human_pathogens_septicemia": {
+      "audit_occurrences": 27,
+      "audit_only_occurrences": 0,
+      "current_edges": 27,
+      "historical_edges": 27,
+      "issue_table_reported_edges": 8,
+      "prediction_occurrences": 27
+    },
+    "intracellular_parasites": {
+      "audit_occurrences": 169,
+      "audit_only_occurrences": 169,
+      "current_edges": 0,
+      "historical_edges": 169,
+      "issue_table_reported_edges": 134,
+      "prediction_occurrences": 0
+    },
+    "invertebrate_parasites": {
+      "audit_occurrences": 69,
+      "audit_only_occurrences": 69,
+      "current_edges": 0,
+      "historical_edges": 69,
+      "issue_table_reported_edges": 17,
+      "prediction_occurrences": 0
+    },
+    "mammal_gut": {
+      "audit_occurrences": 151,
+      "audit_only_occurrences": 151,
+      "current_edges": 0,
+      "historical_edges": 151,
+      "issue_table_reported_edges": 110,
+      "prediction_occurrences": 0
+    },
+    "methylotrophy": {
+      "audit_occurrences": 217,
+      "audit_only_occurrences": 0,
+      "current_edges": 217,
+      "historical_edges": 217,
+      "issue_table_reported_edges": 207,
+      "prediction_occurrences": 217
+    },
+    "oil_bioremediation": {
+      "audit_occurrences": 14,
+      "audit_only_occurrences": 14,
+      "current_edges": 0,
+      "historical_edges": 14,
+      "issue_table_reported_edges": 4,
+      "prediction_occurrences": 0
+    },
+    "oxygenic_photoautotrophy": {
+      "audit_occurrences": 5221,
+      "audit_only_occurrences": 0,
+      "current_edges": 5221,
+      "historical_edges": 5221,
+      "issue_table_reported_edges": 5221,
+      "prediction_occurrences": 5221
+    },
+    "photoautotrophy": {
+      "audit_occurrences": 5327,
+      "audit_only_occurrences": 0,
+      "current_edges": 5327,
+      "historical_edges": 5327,
+      "issue_table_reported_edges": 5327,
+      "prediction_occurrences": 5327
+    },
+    "photoheterotrophy": {
+      "audit_occurrences": 94,
+      "audit_only_occurrences": 0,
+      "current_edges": 94,
+      "historical_edges": 94,
+      "issue_table_reported_edges": 160,
+      "prediction_occurrences": 94
+    },
+    "photosynthetic_cyanobacteria": {
+      "audit_occurrences": 5221,
+      "audit_only_occurrences": 0,
+      "current_edges": 5221,
+      "historical_edges": 5221,
+      "issue_table_reported_edges": 5221,
+      "prediction_occurrences": 5221
+    },
+    "phototrophy": {
+      "audit_occurrences": 5391,
+      "audit_only_occurrences": 5391,
+      "current_edges": 0,
+      "historical_edges": 5391,
+      "issue_table_reported_edges": 5391,
+      "prediction_occurrences": 0
+    },
+    "plant_pathogen": {
+      "audit_occurrences": 145,
+      "audit_only_occurrences": 0,
+      "current_edges": 145,
+      "historical_edges": 145,
+      "issue_table_reported_edges": 30,
+      "prediction_occurrences": 145
+    },
+    "predatory_or_exoparasitic": {
+      "audit_occurrences": 23,
+      "audit_only_occurrences": 23,
+      "current_edges": 0,
+      "historical_edges": 23,
+      "issue_table_reported_edges": 6,
+      "prediction_occurrences": 0
+    }
+  },
+  "snapshot_duplicate_native_record_ordinals": [
+    5104,
+    5251,
+    15094,
+    16313,
+    16323,
+    20304
+  ],
+  "snapshot_count_units": {
+    "audited_occurrences": 367056,
+    "distinct_complete_native_claim_payloads": 367050,
+    "historical_graph_rows": 367050,
+    "duplicate_claim_field": "BacDive_Flagellum_arrangement",
+    "duplicate_value": "polar"
+  },
+  "failed_repository_gate": {
+    "candidate": "e6d9c9398e49f0ff6919c526ceea4396723ea7cb",
+    "label": "edge-quality-1842-1846-20261111-r1",
+    "actual_exit_code": 2,
+    "interrupted_after_confirmed_failures": true,
+    "passed": 1410,
+    "failed": 6,
+    "skipped": 2,
+    "finding_issue": 1856,
+    "full_suite_completed": false,
+    "repair_validation": "224 affected tests passed in 95.09s; independent repair review passed; production code unchanged."
+  },
+  "interrupted_repository_gate_r2": {
+    "candidate": "aff6e6558a84badfc925638c19a8677264465789",
+    "actual_exit_code": 1,
+    "interrupted_at_percent": 41,
+    "observed_local_failure_markers": 10,
+    "failed_module": "tests/test_gold_organism_folds.py",
+    "correction": "Tail-only polling initially missed failures; authoritative correction artifact retained",
+    "full_suite_completed": false,
+    "summary_not_available": "pytest tmp_path stash teardown KeyError after SIGINT; no fabricated aggregate counts"
+  },
+  "downstream_inventory_repairs": {
+    "issues": [
+      1857,
+      1858
+    ],
+    "production_transform_changed": false,
+    "reader_sha256": "ef9ade0dff47667434228f1a0558b60382fa904f2f00976558e32522b1177f84",
+    "final_focused_modules": 38,
+    "final_focused_passed": 1634,
+    "final_focused_seconds": 236.38,
+    "earlier_attempts_retained": true,
+    "overlapping_selections_not_summed": true
+  },
+  "native_inventory_r3": {
+    "actual_exit_code": 0,
+    "waited_reaped": true,
+    "seconds": 4.302,
+    "nodes": 34915,
+    "edges": 131247,
+    "inventory_rows": 444,
+    "typed_attributes": 20,
+    "qualifying_prediction_edges": 35286,
+    "owned_loaded_modules": 46,
+    "report_version": 4,
+    "scope": "current_finite_policy",
+    "source_admission_claimed": false,
+    "all_inputs_and_prior_failures_unchanged": true,
+    "materials_chemical_identity_approved": false,
+    "materials_raw_record_validation": null
+  },
+  "crosswalk_comparison_qualification": {
+    "genome_membership_rows_exact_historical_match": 33958,
+    "IMG_rows": 18374,
+    "assembly_rows": 15584,
+    "assembly_genome_declarations_local": 48,
+    "assembly_genome_declarations_selected_GTDB": 15536,
+    "other_substitutions": [
+      {
+        "from": "NCBITaxon:317018",
+        "to": "NCBITaxon:272918"
+      },
+      {
+        "from": "NCBITaxon:388051",
+        "to": "NCBITaxon:2821359"
+      }
+    ],
+    "substitutions_supported_by_selected_taxdump_and_finalizer_audit": true,
+    "blanket_all_crosswalk_parity_claimed": false
+  }
+}

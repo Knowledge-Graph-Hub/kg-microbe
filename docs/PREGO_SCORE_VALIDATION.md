@@ -5,6 +5,13 @@
 
 Companion to [`PREGO_INGEST_PLAN.md`](PREGO_INGEST_PLAN.md), which covers acquisition and schema. This document covers **whether PREGO's `prego_score` means anything**, measured against four independent gold standards.
 
+**Current emission policy (#1844, 2026-11-10):** the default habitat transform uses
+`PREGO_HABITAT_MIN_SCORE=3.0` for the environmental-samples channel and emits
+`NCBITaxon → biolink:located_in` (`RO:0001025`) `→ ENVO/BTO/FOODON`. The genome
+channel remains intact. This is a conservative inclusion choice; it does not
+establish that the score predicts biological correctness. The historical
+measurements and their qualification below are unchanged.
+
 ---
 
 ## Verdict

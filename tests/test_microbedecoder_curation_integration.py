@@ -37,6 +37,7 @@ def _transform(tmp_path):
         write_empty_join_gss(tmp_path / "raw").parent,
         tmp_path,
         chemical_loader=_NoChebi(),
+        include_bacdive_snapshot=True,
         process_mappings=mapping,
         phenotype_mappings=phenotypes,
         process_scopes=scopes,
@@ -80,6 +81,7 @@ def test_real_mapping_retains_source_evidence_and_has_no_ontology_stubs(monkeypa
         "process_authority",
         "process_go_authority",
         "phenotype_mappings",
+        "faprotax_dispositions",
         "process_scope_definitions",
         "chemical_authority",
         "crosswalk_raw",
@@ -93,7 +95,7 @@ def test_real_mapping_retains_source_evidence_and_has_no_ontology_stubs(monkeypa
 
 
 def test_missing_report_is_preserved_without_a_chemical_or_negative_assertion(monkeypatch, tmp_path):
-    """Only the exact reviewed Bergey substrate token becomes a missing-report attribute."""
+    """Only the exact reviewed Bergey substrate token becomes an audit-only missing report."""
     transform = _transform(tmp_path)
     source = tmp_path / "missing.csv"
     records = [
@@ -111,7 +113,11 @@ def test_missing_report_is_preserved_without_a_chemical_or_negative_assertion(mo
     bind_inactive_join_policy(transform, source, monkeypatch)
     transform.run(data_file=source)
     rows = {row["subject"]: row for row in _rows(transform.output_edge_file)}
-    note = rows["lpsn:101"]
+    assert "lpsn:101" not in rows
+    retained = _rows(transform.output_dir / "reported_observations.tsv")
+    assert len(retained) == 1
+    note = json.loads(retained[0]["original_claim_json"])
+    assert retained[0]["emitted_claim_json"] == "null"
     assert note["predicate"] == "biolink:has_attribute"
     assert note["relation"] == "SIO:000008"
     assert note["object"].startswith("kgmicrobe.source_attribute:")
@@ -121,7 +127,7 @@ def test_missing_report_is_preserved_without_a_chemical_or_negative_assertion(mo
     assert note["primary_knowledge_source"] == "infores:bergey-manual"
     assert note["knowledge_level"] == "knowledge_assertion"
     nodes = {row["id"]: row for row in _rows(transform.output_node_file)}
-    assert nodes[note["object"]]["category"] == "biolink:Attribute"
+    assert note["object"] not in nodes
     assert rows["lpsn:102"]["predicate"] == rows["lpsn:103"]["predicate"] == "biolink:consumes"
     assert not any("not_capable" in row["predicate"] for row in rows.values())
 
@@ -174,7 +180,10 @@ def test_missing_authority_fails_before_overwriting_graph_and_rerun_reloads(monk
         bind_inactive_join_policy(transform, FIXTURE_DIR / "faprotax_evidence.csv", monkeypatch)
         transform.run(data_file=FIXTURE_DIR / "faprotax_evidence.csv")
     assert transform.output_edge_file.read_bytes() == before
-    shutil.copyfile(FIXTURE_DIR / "metpo_nodes.tsv", authority)
+    authority.write_text(
+        (FIXTURE_DIR / "metpo_nodes.tsv").read_text()
+        + (FIXTURE_DIR / "faprotax_1847_metpo_nodes.tsv").read_text().split("\n", 1)[1]
+    )
     bind_fixture_quarantine_policy(transform, FIXTURE_DIR / "faprotax_evidence.csv")
     write_empty_join_gss(transform.input_base_dir)
     bind_inactive_join_policy(transform, FIXTURE_DIR / "faprotax_evidence.csv", monkeypatch)
@@ -263,6 +272,17 @@ def test_reported_group_disposition_never_fabricates_a_process(monkeypatch, tmp_
     bind_inactive_join_policy(transform, quarantine_source, monkeypatch)
     transform.run(data_file=quarantine_source)
     rows = _rows(transform.output_edge_file)
+    from tests.test_microbedecoder_faprotax_dispositions import AUDIT_ONLY
+
+    if (column == "FAPROTAX_Type_of_metabolism" and literal in AUDIT_ONLY) or (
+        column == "Bergey_Type_of_metabolism" and literal == "Other"
+    ):
+        assert rows == []
+        audit = _rows(transform.output_dir / "reported_observations.tsv")
+        assert len(audit) == 1 and audit[0]["emitted_claim_json"] == "null"
+        assert json.loads(audit[0]["original_claim_json"])["value"] == literal
+        assert _rows(transform.output_node_file) == []
+        return
     assert len(rows) == 1
     row = rows[0]
     assert (row["predicate"], row["relation"]) == ("biolink:has_attribute", "SIO:000008")

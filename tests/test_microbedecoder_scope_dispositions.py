@@ -1,7 +1,11 @@
 """Preserve compound trophic and application scope without inventing identities."""
 
+import json
+
 import pytest
 
+from kg_microbe.transform_utils.microbedecoder import faprotax_dispositions as fap
+from kg_microbe.transform_utils.microbedecoder import observation_audit
 from kg_microbe.transform_utils.microbedecoder.source_annotations import (
     is_reported_metabolism_annotation,
 )
@@ -23,9 +27,21 @@ REVIEWED = (
 )
 
 
+REVIEWED_TARGETS = {
+    "aerobic_anoxygenic_phototrophy": "METPO:1000657",
+    "aerobic_chemoheterotrophy": "METPO:1000636",
+    "anoxygenic_photoautotrophy": "METPO:1000656",
+    "anoxygenic_photoautotrophy_Fe_oxidizing": "METPO:1000656",
+    "anoxygenic_photoautotrophy_H2_oxidizing": "METPO:1000656",
+    "anoxygenic_photoautotrophy_S_oxidizing": "METPO:1000656",
+    "oxygenic_photoautotrophy": "METPO:1000656",
+    "methylotrophy": "METPO:1000651",
+}
+
+
 @pytest.mark.parametrize("literal", REVIEWED)
-def test_compound_group_keeps_full_literal_prediction_and_no_native_type(monkeypatch, tmp_path, literal):
-    """Changing representation is not permission to add an exact phenotype grounding."""
+def test_compound_group_preserves_reviewed_prediction_or_audit_only_scope(monkeypatch, tmp_path, literal):
+    """Reviewed broad types preserve full qualified literals; unsupported claims remain only in audit."""
     transform = _transform(tmp_path)
     quarantine_source = _write_source(tmp_path, [{"LPSN_ID": "101", "FAPROTAX_Type_of_metabolism": literal}])
     bind_fixture_quarantine_policy(transform, quarantine_source)
@@ -33,8 +49,15 @@ def test_compound_group_keeps_full_literal_prediction_and_no_native_type(monkeyp
     bind_inactive_join_policy(transform, quarantine_source, monkeypatch)
     transform.run(data_file=quarantine_source)
     edges = _rows(transform.output_edge_file)
-    assert len(edges) == 1
-    row = edges[0]
+    audits = _rows(transform.output_dir / observation_audit.AUDIT_FILE)
+    assert len(audits) == 1
+    audit = audits[0]
+    row = json.loads(audit["original_claim_json"])
+    assert json.loads(audit["source_cell_json"]) == literal
+    assert audit["source_record"] == row["source_record"]
+    assert audit["source_column"] == row["source_column"]
+    assert "/issues/1847" in audit["evidence_uri"] and "/issues/1850" in audit["evidence_uri"]
+    assert audit["curation_rationale"]
     assert (row["predicate"], row["relation"]) == ("biolink:has_attribute", "SIO:000008")
     assert row["source_column"] == "FAPROTAX_Type_of_metabolism"
     assert row["value"] == literal
@@ -44,9 +67,20 @@ def test_compound_group_keeps_full_literal_prediction_and_no_native_type(monkeyp
         "prediction",
         "computational_model",
     )
-    node = next(node for node in _rows(transform.output_node_file) if node["id"] == row["object"])
-    assert node["category"] == "biolink:Attribute"
-    assert not node.get("has_attribute_type")
+    nodes = {node["id"]: node for node in _rows(transform.output_node_file)}
+    if literal in REVIEWED_TARGETS:
+        assert edges == [row] and json.loads(audit["emitted_claim_json"]) == row
+        assert audit["disposition"] == fap.PREDICTION_DISPOSITION
+        node = nodes[row["object"]]
+        assert node["category"] == "biolink:Attribute"
+        assert node["has_attribute_type"] == REVIEWED_TARGETS[literal]
+        assert node["attribute_type_evidence"] == audit["evidence_uri"]
+        assert node["attribute_type_rationale"] == audit["curation_rationale"]
+    else:
+        assert literal in {"phototrophy", "oil_bioremediation"}
+        assert not edges and row["object"] not in nodes
+        assert json.loads(audit["emitted_claim_json"]) is None
+        assert audit["disposition"] == fap.AUDIT_DISPOSITION
     assert _rows(transform.output_dir / "phenotype_normalizations.tsv") == []
 
 

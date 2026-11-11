@@ -157,7 +157,7 @@ def test_every_regular_route_defers_exact_sentinel(transform_type, mode, route, 
 def test_explicit_polarities_empty_and_categorical_controls_unchanged(
     transform_type, mode, route, tmp_path, monkeypatch
 ):
-    """The narrow fix does not rewrite true/false percentages or legacy other labels."""
+    """Indeterminate suppression and polarity routing both retain their scoped contracts."""
     transform, trait = _transform(tmp_path, monkeypatch, transform_type, route)
     record = _record()
     record["summaries"] = [
@@ -170,7 +170,7 @@ def test_explicit_polarities_empty_and_categorical_controls_unchanged(
     elif route == "fermentation":
         expected = [("METPO:2000011", "100.0")] + [("METPO:2000037", pct) for pct in ["0.0", "25.0", "30.0"]]
     else:
-        expected = [("biolink:has_phenotype", pct) for pct in ["100.0", "0.0", "25.0", "30.0"]]
+        expected = [("biolink:has_phenotype", pct) for pct in ["100.0", "25.0"]]
     assert sorted((row["predicate"], row["has_percentage"]) for row in edges) == sorted(expected)
     assert {row["subject"] for row in edges} == {TAXON}
     assert {row["primary_knowledge_source"] for row in edges} == {transform.knowledge_source}

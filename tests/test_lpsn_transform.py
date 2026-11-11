@@ -96,7 +96,7 @@ def test_curated_edge_metadata_is_present_in_output(lpsn_transform):
     assert {e["predicate"] for e in edges} == {
         "biolink:subclass_of",
         "biolink:same_as",
-        "biolink:close_match",
+        "biolink:in_taxon",
     }
     assert all(e["knowledge_level"] == "knowledge_assertion" for e in edges)
     assert all(e["agent_type"] == "manual_agent" for e in edges)
@@ -232,64 +232,42 @@ def test_missing_csv_does_not_trigger_ncbitaxon_build(tmp_path, monkeypatch):
     assert calls == [], "an absent CSV must fail before any ontology load starts"
 
 
-def test_species_gets_close_match_edges_for_each_type_strain_deposit(lpsn_transform):
-    """
-    Emit one close_match edge per culture-collection deposit for a species row.
-
-    E. coli (1002) has ``ATCC 11775 = DSM 30083 = JCM 1649`` and should emit
-    one edge per deposit to the shared strain CURIE that BacDive
-    also uses (``kgmicrobe.strain:<code>``).
-    """
+def test_species_gets_in_taxon_edges_from_each_type_strain_deposit(lpsn_transform):
+    """Keep every native culture deposit and assert its membership in the LPSN species."""
     lpsn_transform.run()
     edges = _read_tsv(lpsn_transform.output_edge_file)
-    close_matches = [
-        e for e in edges if e["subject"] == f"{LPSN_PREFIX}1002" and e["predicate"] == "biolink:close_match"
-    ]
-    objects = {e["object"] for e in close_matches}
-    assert objects == {
+    deposits = [e for e in edges if e["object"] == "lpsn:1002" and e["predicate"] == "biolink:in_taxon"]
+    assert {e["subject"] for e in deposits} == {
         "kgmicrobe.strain:ATCC-11775",
         "kgmicrobe.strain:DSM-30083",
         "kgmicrobe.strain:JCM-1649",
     }
-    for e in close_matches:
-        assert e["relation"] == "skos:closeMatch"
-        assert e["primary_knowledge_source"] == LPSN_KNOWLEDGE_SOURCE
+    assert len(deposits) == 3
+    for edge in deposits:
+        assert edge["relation"] == "RO:0002162"
+        assert edge["primary_knowledge_source"] == LPSN_KNOWLEDGE_SOURCE
+        assert edge["knowledge_level"] == "knowledge_assertion"
+        assert edge["agent_type"] == "manual_agent"
 
 
-def test_subspecies_gets_close_match_edge(lpsn_transform):
-    """Subspecies row (1003) with ``DSM 30083`` emits one close_match edge."""
+def test_subspecies_gets_in_taxon_edge_from_deposit(lpsn_transform):
+    """Subspecies row 1003 retains its DSM 30083 deposit membership."""
     lpsn_transform.run()
     edges = _read_tsv(lpsn_transform.output_edge_file)
-    close_matches = [
-        e for e in edges if e["subject"] == f"{LPSN_PREFIX}1003" and e["predicate"] == "biolink:close_match"
-    ]
-    assert len(close_matches) == 1
-    assert close_matches[0]["object"] == "kgmicrobe.strain:DSM-30083"
+    deposits = [e for e in edges if e["object"] == "lpsn:1003" and e["predicate"] == "biolink:in_taxon"]
+    assert len(deposits) == 1
+    assert deposits[0]["subject"] == "kgmicrobe.strain:DSM-30083"
 
 
-def test_genus_row_does_not_emit_close_match(lpsn_transform):
-    """
-    Genus rows must not emit close_match edges.
-
-    Their ``nomenclatural_type`` carries the type species name, not a
-    culture-collection deposit.
-    """
+@pytest.mark.parametrize("record_no", ["1001", "1099"])
+def test_genus_or_missing_type_does_not_invent_deposit(lpsn_transform, record_no):
+    """Genus type-species names and blank type fields cannot create strain assertions."""
     lpsn_transform.run()
-    edges = _read_tsv(lpsn_transform.output_edge_file)
-    close_matches = [
-        e for e in edges if e["subject"] == f"{LPSN_PREFIX}1001" and e["predicate"] == "biolink:close_match"
+    assert not [
+        edge
+        for edge in _read_tsv(lpsn_transform.output_edge_file)
+        if edge["object"] == f"lpsn:{record_no}" and edge["predicate"] == "biolink:in_taxon"
     ]
-    assert close_matches == []
-
-
-def test_row_with_no_nomenclatural_type_emits_no_close_match(lpsn_transform):
-    """The synonym row (1099) has blank ``nomenclatural_type`` → no edges."""
-    lpsn_transform.run()
-    edges = _read_tsv(lpsn_transform.output_edge_file)
-    close_matches = [
-        e for e in edges if e["subject"] == f"{LPSN_PREFIX}1099" and e["predicate"] == "biolink:close_match"
-    ]
-    assert close_matches == []
 
 
 # --------------------------------------------------------------------------
@@ -500,7 +478,7 @@ def test_gtdb_disabled_when_index_absent(lpsn_transform):
 
 def test_every_cited_deposit_gets_a_node_row(lpsn_transform):
     """
-    A close_match edge to a deposit nobody declares is a stub at merge time.
+    An in_taxon edge from an undeclared deposit would create a stub at merge time.
 
     KGX invents a bare ``biolink:NamedThing`` with no label for each
     undeclared endpoint -- 4,233 of them in the 20260815 graph, every one
@@ -510,7 +488,7 @@ def test_every_cited_deposit_gets_a_node_row(lpsn_transform):
     lpsn_transform.run()
     nodes = {n["id"]: n for n in _read_tsv(lpsn_transform.output_node_file)}
     edges = _read_tsv(lpsn_transform.output_edge_file)
-    cited = {e["object"] for e in edges if e["object"].startswith("kgmicrobe.strain:")}
+    cited = {e["subject"] for e in edges if e["subject"].startswith("kgmicrobe.strain:")}
     assert cited, "fixture should cite at least one deposit"
     missing = cited - set(nodes)
     assert not missing, f"deposits cited without a node row: {sorted(missing)}"

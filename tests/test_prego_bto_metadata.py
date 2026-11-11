@@ -73,7 +73,7 @@ def test_retired_class_keeps_own_name_id_and_retirement_flag(tmp_path):
     transform.run(show_status=False)
     node = next(row for row in _rows(transform.output_node_file) if row["id"] == "BTO:0000763")
     assert (node["name"], node["deprecated"]) == ("lung", "True")
-    assert _rows(transform.output_edge_file)[0]["subject"] == "BTO:0000763"
+    assert _rows(transform.output_edge_file)[0]["object"] == "BTO:0000763"
 
 
 def test_untyped_label_is_not_admitted(tmp_path):

@@ -1,4 +1,4 @@
-"""Finite native-evidence identity decisions for PREGO's retired ENVO subjects."""
+"""Finite native-evidence identity decisions for PREGO's retired ENVO environment terms."""
 
 import csv
 import hashlib
@@ -24,8 +24,8 @@ POLICY_COLUMNS = (
 )
 AUDIT_COLUMNS = (
     "source_assertion_id",
-    "original_subject",
-    "normalized_subject",
+    "original_object",
+    "normalized_object",
     "disposition",
     "archive",
     "archive_sha256",
@@ -34,7 +34,7 @@ AUDIT_COLUMNS = (
     "physical_line",
     "original_record_json",
     "emitted_edge_json",
-    "subject_node_json",
+    "object_node_json",
     "native_proof_json",
     "policy_sha256",
     "envo_sha256",

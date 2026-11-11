@@ -4,8 +4,9 @@ Enriches the GSS-based `lpsn` transform with the fields that only live
 in LPSN's authenticated JSON API (per-record):
 
 - **Publication provenance** — `publication_doi`, `publication_pmid`,
-  `ijsem_list_doi` become `biolink:close_match` edges to `doi:*` /
-  `PMID:*` CURIEs plus `biolink:Publication` nodes. Their labels use the
+  `ijsem_list_doi` supply `doi:*` / `PMID:*` publication subjects with
+  `biolink:mentions` / `IAO:0000142` edges to the LPSN taxon, plus
+  `biolink:Publication` nodes. Their labels use the
   corresponding `publication_text` or `ijsem_list_text` citation supplied by
   LPSN, with the source field recorded in the description. These are complete
   source citations, not separately verified paper titles. Repeated identifiers
@@ -22,14 +23,19 @@ in LPSN's authenticated JSON API (per-record):
   `nomenclatural_status` / `lpsn_taxonomic_status` prose folded into
   each node's `description`.
 
-- **16S rRNA sequence provenance** — `molecules[]` → one
-  `biolink:close_match` edge from each LPSN taxon to every INSDC
-  (GenBank / EMBL / DDBJ) accession its type strain has registered,
-  plus a `biolink:NucleicAcidEntity` stub node per accession. Serves
-  as the TYGS-adjacent bridge to NCBI's sequence records — an LPSN
-  taxon that failed the direct name-match against NCBITaxon can still
-  reach it via `lpsn → INSDC → (NCBI sequence organism) → NCBITaxon`
-  in a downstream query.
+- **16S rRNA sequence provenance** — `molecules[]` supplies INSDC
+  (GenBank / EMBL / DDBJ) accession subjects with `biolink:in_taxon` /
+  `RO:0002162` edges to the LPSN taxon, plus a `biolink:NucleicAcidEntity`
+  node per accession.
+- **Selected GSS overlap** — only exact hierarchy or basionym triples already
+  emitted in the selected sibling `edges.tsv` are suppressed. The presence of
+  a taxon ID alone does not suppress a link. Higher parents and other API-only
+  relationships remain, along with their linked-record evidence.
+
+Both selected GSS files are consumed and audited under native input contract
+version 2. Their bytes and selected locators remain mandatory during source
+finalization and downstream admission. A version-1 completion requires producer
+regeneration; it cannot be relabeled as having consumed the GSS edges.
 
 ## Prerequisites
 
@@ -39,8 +45,9 @@ in LPSN's authenticated JSON API (per-record):
    poetry run kg transform -s lpsn
    ```
 
-   This creates `data/transformed/lpsn/nodes.tsv`, which the API
-   transform reads to know which `record_no` values to enrich.
+   This creates `data/transformed/lpsn/nodes.tsv` and `edges.tsv`. The API
+   transform reads the former for record selection and the latter for exact
+   overlap suppression. Both files are required, including for a custom selection.
 
 2. **Register a free LPSN account** at <https://lpsn.dsmz.de/register>.
 

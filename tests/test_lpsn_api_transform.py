@@ -12,6 +12,7 @@ from kg_microbe.transform_utils.lpsn_api.lpsn_api import LPSNAPITransform
 from kg_microbe.transform_utils.lpsn_api.native_inputs import (
     AUDIT_COLUMNS,
     AUDIT_FILE,
+    GSS_EDGES_ROLE,
     GSS_ROLE,
     RECORD_ROLE_PREFIX,
     audit_rows,
@@ -80,6 +81,8 @@ def _write_gss_nodes(path: Path, record_nos):
         w.writerow(["id", "category"])  # minimal header the transform reads
         for n in record_nos:
             w.writerow([f"{LPSN_PREFIX}{n}", "biolink:OrganismTaxon"])
+    # This fixture declares no GSS hierarchy; tests adding one write exact triples here.
+    path.with_name("edges.tsv").write_text("subject\tpredicate\tobject\n")
 
 
 def _read_tsv(path):
@@ -163,11 +166,11 @@ def api_transform(tmp_path, api_records):
 
 
 def test_species_row_emits_publication_edges(api_transform):
-    """Record 1002's DOI, PMID, and IJSEM list DOI all become close_match edges."""
+    """Record 1002's DOI, PMID, and IJSEM list DOI mention the described LPSN taxon."""
     api_transform.run()
     edges = _read_tsv(api_transform.output_edge_file)
     targets = {
-        e["object"] for e in edges if e["subject"] == f"{LPSN_PREFIX}1002" and e["predicate"] == "biolink:close_match"
+        e["subject"] for e in edges if e["object"] == f"{LPSN_PREFIX}1002" and e["predicate"] == "biolink:mentions"
     }
     assert "doi:10.1099/00207713-19-1-1" in targets
     assert "doi:10.1099/ijsem.0.999999" in targets
@@ -181,11 +184,33 @@ def test_all_api_edge_families_restate_curated_metadata(api_transform):
     assert {e["predicate"] for e in edges} == {
         "biolink:subclass_of",
         "biolink:same_as",
-        "biolink:close_match",
+        "biolink:mentions",
+        "biolink:in_taxon",
     }
-    assert {e["object"].split(":", 1)[0] for e in edges} >= {"lpsn", "doi", "PMID", "INSDC"}
+    assert {e["subject"].split(":", 1)[0] for e in edges} >= {"lpsn", "doi", "PMID", "INSDC"}
+    assert all(e["object"].startswith("lpsn:") for e in edges)
+    assert {e["relation"] for e in edges if e["predicate"] == "biolink:mentions"} == {"IAO:0000142"}
+    assert {e["relation"] for e in edges if e["predicate"] == "biolink:in_taxon"} == {"RO:0002162"}
     assert all(e["knowledge_level"] == "knowledge_assertion" for e in edges)
     assert all(e["agent_type"] == "manual_agent" for e in edges)
+
+
+def test_mentions_relation_matches_pinned_biolink_excerpt(api_transform):
+    """Bind the emitted relation to independent pinned schema bytes, not the producer's literal (#1851)."""
+    import yaml
+
+    from kg_microbe.transform_utils.constants import IS_ABOUT_RELATION
+    from kg_microbe.transform_utils.lpsn_api.lpsn_api import MENTIONS_RELATION
+
+    fixture = Path(__file__).parent / "resources/lpsn/biolink-4.4.2-mentions.yaml"
+    origin = json.loads(fixture.with_suffix(".origin.json").read_text())
+    assert hashlib.sha256(fixture.read_bytes()).hexdigest() == origin["excerpt_sha256"]
+    exact = yaml.safe_load(fixture.read_text())["mentions"]["exact_mappings"]
+    assert exact == [MENTIONS_RELATION]
+    assert IS_ABOUT_RELATION not in exact
+    api_transform.run()
+    publications = [row for row in _read_tsv(api_transform.output_edge_file) if row["predicate"] == "biolink:mentions"]
+    assert publications and all(row["relation"] in exact for row in publications)
 
 
 def test_publication_stub_nodes_are_emitted(api_transform):
@@ -222,7 +247,7 @@ def test_missing_or_malformed_citations_do_not_create_synthetic_labels(api_trans
     for curie in ("doi:10.1099/00207713-19-1-1", "PMID:12345", "doi:10.1099/ijsem.0.999999"):
         assert nodes[curie]["name"] == ""
         assert "No usable LPSN source citation" in nodes[curie]["description"]
-    assert {row["object"] for row in _read_tsv(api_transform.output_edge_file)} >= {
+    assert {row["subject"] for row in _read_tsv(api_transform.output_edge_file)} >= {
         "doi:10.1099/00207713-19-1-1",
         "PMID:12345",
         "doi:10.1099/ijsem.0.999999",
@@ -322,7 +347,7 @@ def test_absent_fields_emit_no_edges(api_transform):
     pubs = [
         e
         for e in edges
-        if e["subject"] == f"{LPSN_PREFIX}1005" and (e["object"].startswith("doi:") or e["object"].startswith("PMID:"))
+        if e["object"] == f"{LPSN_PREFIX}1005" and (e["subject"].startswith("doi:") or e["subject"].startswith("PMID:"))
     ]
     assert pubs == []
 
@@ -396,22 +421,15 @@ def test_missing_gss_raises_file_not_found(tmp_path):
         xform.run()
 
 
-def test_molecules_emit_insdc_close_match_edges(api_transform):
-    """Each unique INSDC accession → biolink:close_match edge from lpsn: to INSDC:."""
+def test_molecules_emit_insdc_in_taxon_edges(api_transform):
+    """Each unique INSDC accession occurs in the LPSN taxon, preserving native multiplicity."""
     api_transform.run()
     edges = _read_tsv(api_transform.output_edge_file)
-    targets = {
-        e["object"]
-        for e in edges
-        if e["subject"] == f"{LPSN_PREFIX}1002"
-        and e["object"].startswith("INSDC:")
-        and e["predicate"] == "biolink:close_match"
-    }
-    assert targets == {"INSDC:M87049", "INSDC:AB030918"}
-    # Dedup guard: the duplicate M87049 in the fixture must appear
-    # exactly once, not twice.
-    m87049 = [e for e in edges if e["subject"] == f"{LPSN_PREFIX}1002" and e["object"] == "INSDC:M87049"]
-    assert len(m87049) == 1
+    sequences = [e for e in edges if e["object"] == "lpsn:1002" and e["predicate"] == "biolink:in_taxon"]
+    assert {e["subject"] for e in sequences} == {"INSDC:M87049", "INSDC:AB030918"}
+    assert len(sequences) == 2
+    assert all(e["relation"] == "RO:0002162" for e in sequences)
+    assert not any(e["predicate"] == "biolink:close_match" for e in edges)
 
 
 def test_molecules_emit_nucleic_acid_stub_nodes(api_transform):
@@ -427,7 +445,7 @@ def test_empty_molecules_emit_no_insdc_edges(api_transform):
     """Record 1005 with molecules=[] emits no INSDC edges (or stub nodes)."""
     api_transform.run()
     edges = _read_tsv(api_transform.output_edge_file)
-    hits = [e for e in edges if e["subject"] == f"{LPSN_PREFIX}1005" and e["object"].startswith("INSDC:")]
+    hits = [e for e in edges if e["object"] == f"{LPSN_PREFIX}1005" and e["subject"].startswith("INSDC:")]
     assert hits == []
 
 
@@ -598,11 +616,11 @@ def test_cold_cache_records_are_consumed_and_audited_after_persistence(api_trans
     api_transform.run()
     api_transform.verify_consumed_inputs()
     snapshots = api_transform.consumed_input_snapshots
-    assert set(snapshots) == {GSS_ROLE, *(RECORD_ROLE_PREFIX + key for key in ("1001", "1002", "1005"))}
+    assert set(snapshots) == {GSS_ROLE, GSS_EDGES_ROLE, *(RECORD_ROLE_PREFIX + key for key in ("1001", "1002", "1005"))}
     for snapshot in snapshots.values():
         assert hashlib.sha256(Path(snapshot["path"]).read_bytes()).hexdigest() == snapshot["sha256"]
     rows = _read_tsv(api_transform.output_dir / AUDIT_FILE)
-    assert len(rows) == 6  # GSS selection, three API records, two absent API cache paths.
+    assert len(rows) == 7  # GSS nodes and edges, three API records, two absent API cache paths.
     assert {row["record_no"] for row in rows if row["state"] == "absent"} == {"999", "1004"}
     assert set(api_transform.producer_audit_snapshots) == {AUDIT_FILE}
 
@@ -820,3 +838,132 @@ def test_independent_inventory_preserves_depth_boundary_and_predeclared_roots(tm
     transform = _run_selection_fixture(tmp_path, ["1", "15"] if second_root else ["1"], records)
     expected = {str(number) for number in range(1, 18 if second_root else 15)}
     assert set(transform.producer_native_inputs["records"]) == expected
+
+
+def _write_gss_edges(transform, triples):
+    """Give the selected GSS bundle explicit triples rather than inferring its hierarchy from IDs."""
+    path = transform._find_gss_nodes().with_name("edges.tsv")
+    with path.open("w", newline="") as handle:
+        writer = tsv_writer(handle)
+        writer.writerow(["subject", "predicate", "object"])
+        writer.writerows(triples)
+    return path
+
+
+def test_only_actual_selected_gss_triples_suppress_api_links(api_transform):
+    """Remove actual overlaps while retaining API-only higher parents and distinct basionyms."""
+    selected = {
+        ("lpsn:1002", "biolink:subclass_of", "lpsn:1001"),
+        ("lpsn:1005", "biolink:same_as", "lpsn:1004"),
+    }
+    _write_gss_edges(api_transform, sorted(selected))
+    api_transform.run()
+    triples = {(row["subject"], row["predicate"], row["object"]) for row in _read_tsv(api_transform.output_edge_file)}
+    assert not triples & selected
+    assert ("lpsn:1001", "biolink:subclass_of", "lpsn:999") in triples
+    assert ("lpsn:1005", "biolink:subclass_of", "lpsn:1002") in triples
+    assert set(api_transform.producer_native_inputs["records"]) == {"1001", "1002", "1004", "1005", "999"}
+    assert "lpsn:1004" in {row["id"] for row in _read_tsv(api_transform.output_node_file)}
+
+
+def test_same_gss_ids_or_predicates_do_not_suppress_different_api_assertions(api_transform):
+    """Keep a different native parent and basionym instead of blanket suppression by subject or predicate."""
+    _write_gss_edges(
+        api_transform,
+        [
+            ("lpsn:1002", "biolink:subclass_of", "lpsn:1005"),
+            ("lpsn:1005", "biolink:same_as", "lpsn:1002"),
+        ],
+    )
+    api_transform.run()
+    triples = {(row["subject"], row["predicate"], row["object"]) for row in _read_tsv(api_transform.output_edge_file)}
+    assert ("lpsn:1002", "biolink:subclass_of", "lpsn:1001") in triples
+    assert ("lpsn:1005", "biolink:same_as", "lpsn:1004") in triples
+
+
+def test_explicit_gss_selection_uses_its_own_edges(api_transform, tmp_path):
+    """A selected bundle cannot borrow suppression facts from the default output directory."""
+    _write_gss_edges(api_transform, [("lpsn:1002", "biolink:subclass_of", "lpsn:1001")])
+    selection = tmp_path / "selected" / "nodes.tsv"
+    _write_gss_nodes(selection, ["1002", "1005"])
+    api_transform.run(data_file=selection)
+    edges = _read_tsv(api_transform.output_edge_file)
+    assert any(row["subject"] == "lpsn:1002" and row["object"] == "lpsn:1001" for row in edges)
+    snapshot = api_transform.consumed_input_snapshots[GSS_EDGES_ROLE]
+    assert snapshot["path"] == str(selection.with_name("edges.tsv").resolve())
+
+
+@pytest.mark.parametrize("damage", ["missing", "malformed", "duplicate_header", "empty_object"])
+def test_unusable_gss_edges_abort_before_graph_publication(api_transform, damage):
+    """Missing or malformed source edges are not evidence that no overlap exists."""
+    path = api_transform._find_gss_nodes().with_name("edges.tsv")
+    if damage == "missing":
+        path.unlink()
+    else:
+        path.write_text(
+            {
+                "malformed": "subject\tpredicate\tobject\nlpsn:1002\tbiolink:subclass_of\n",
+                "duplicate_header": "subject\tpredicate\tobject\tobject\n",
+                "empty_object": "subject\tpredicate\tobject\nlpsn:1002\tbiolink:subclass_of\t\n",
+            }[damage]
+        )
+    with pytest.raises((FileNotFoundError, SourceFinalizationRequired)):
+        api_transform.run()
+    assert not api_transform.output_node_file.exists()
+    assert not api_transform.output_edge_file.exists()
+
+
+@pytest.mark.parametrize("damage", ["change", "delete", "retarget", "omit_snapshot", "foreign_locator", "old_contract"])
+def test_gss_edge_evidence_remains_mandatory_during_saved_admission(api_transform, tmp_path, damage):
+    """A saved completion cannot omit, replace or redirect the evidence that suppressed an API triple."""
+    path = _write_gss_edges(api_transform, [("lpsn:1002", "biolink:subclass_of", "lpsn:1001")])
+    api_transform.run()
+    report = _native_report(api_transform)
+    if damage == "change":
+        path.write_text("subject\tpredicate\tobject\n")
+    elif damage == "delete":
+        path.unlink()
+    elif damage == "retarget":
+        other = tmp_path / "same-edges.tsv"
+        other.write_bytes(path.read_bytes())
+        path.unlink()
+        path.symlink_to(other)
+    elif damage == "omit_snapshot":
+        del report["consumed_inputs"][GSS_EDGES_ROLE]
+    elif damage == "foreign_locator":
+        other = tmp_path / "same-edges.tsv"
+        other.write_bytes(path.read_bytes())
+        report["producer_native_inputs"]["gss_edges"].update(locator=str(other), path=str(other))
+        report["consumed_inputs"][GSS_EDGES_ROLE]["path"] = str(other)
+    else:
+        report["producer_native_inputs"]["version"] = 1
+        del report["producer_native_inputs"]["gss_edges"]
+        del report["consumed_inputs"][GSS_EDGES_ROLE]
+    with pytest.raises(SourceFinalizationRequired):
+        LPSNAPITransform.verify_recorded_native_inputs(report, api_transform.output_dir / "source_finalization.json")
+
+
+def test_changed_gss_edges_abort_atomic_output_and_finalized_admission(api_transform, monkeypatch):
+    """The exact suppression input is guarded both during production and after finalized publication."""
+    path = _write_gss_edges(api_transform, [("lpsn:1002", "biolink:subclass_of", "lpsn:1001")])
+    original = api_transform._emit
+
+    def mutate_after_emission(*args):
+        """Change the selected file after the producer has consumed its original suppression set."""
+        original(*args)
+        path.write_text("subject\tpredicate\tobject\n")
+
+    monkeypatch.setattr(api_transform, "_emit", mutate_after_emission)
+    with pytest.raises(SourceFinalizationRequired, match="changed"):
+        api_transform.run()
+    assert not api_transform.output_node_file.exists()
+    assert not api_transform.output_edge_file.exists()
+    monkeypatch.setattr(api_transform, "_emit", original)
+    api_transform.run()
+    report = api_transform.finalize(fresh_run=True)
+    assert report["consumed_inputs"][GSS_EDGES_ROLE] in report["inputs"]
+    paths = [api_transform.output_node_file, api_transform.output_edge_file]
+    verify_finalized_source_files(paths)
+    path.write_text("subject\tpredicate\tobject\nlpsn:1002\tbiolink:subclass_of\tlpsn:1001\n")
+    with pytest.raises(SourceFinalizationRequired, match="changed"):
+        verify_finalized_source_files(paths)

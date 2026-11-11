@@ -37,8 +37,8 @@ Output lands in `data/transformed/lpsn/nodes.tsv` and `edges.tsv`.
   remain structured-name joins, not explicit native numeric-parent fields.
   Ambiguous tuples never use row order, nomenclatural status, synonym links
   or the separately cached API to choose a parent (#1292).
-- **`close_match` edges** — from each species / subspecies row to
-  every culture-collection deposit named in `nomenclatural_type`.
+- **`in_taxon` edges** (`RO:0002162`) — from each culture-collection
+  deposit named in `nomenclatural_type` to the species / subspecies LPSN taxon.
   Deposits are parsed from strings like
   `"ATCC 11775 = DSM 30083 = JCM 1649"` and normalized to
   `kgmicrobe.strain:<code>` CURIEs, matching the strain CURIEs BacDive
@@ -97,3 +97,12 @@ this.
 
 The GSS CSV itself is NOT redistributed inside this repository — each
 user must download their own copy via their LPSN account.
+
+The requested deposit `in_taxon` predicate is retained under
+[#1852](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1852), with a
+pinned-model qualification: existing deposit nodes are `biolink:OrganismTaxon`,
+which does not inherit Biolink 4.4.2's `ThingWithTaxon` domain. This is not a
+claim of strict domain conformance. The native type-strain association is
+preserved; no deposit or taxon was retyped to hide the mismatch. A different
+identity/modeling decision requires separate review. INSDC
+`NucleicAcidEntity` subjects satisfy this domain.

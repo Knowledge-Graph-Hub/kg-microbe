@@ -7,6 +7,13 @@
 **Category:** environmental
 **Ranking:** #5 in the current novel-transform recommendations (see [`NOVEL_TRANSFORMS.md`](./NOVEL_TRANSFORMS.md))
 
+**2026-11-10 implementation update (#1844/#1848):** the producer now normalizes
+habitat output to organism → `biolink:located_in` / `RO:0001025` → environment
+and defaults to a raw score floor of 3.0 for environmental-samples habitat rows.
+The original raw-row direction selector remains unchanged. The historical
+plan and measurements below describe their recorded versions; the current
+policy and its limits are in [PREGO_SCORE_VALIDATION.md](PREGO_SCORE_VALIDATION.md).
+
 ## Why ingest PREGO
 
 BacDive and `madin_etal` cover organism↔habitat associations partially and inconsistently — BacDive from strain-level isolation-source curation, `madin_etal` from a small compositional-habitat table. PREGO systematically closes that gap by text-mining the entire PubMed corpus for co-mentions of taxa with environments (ENVO), processes (GO), and diseases (DOID/BTO), and by consuming JGI IMG isolate metadata for direct experimental annotations. For the flagship taxa-media link-prediction use case, "grows in similar habitats" is a strong prior for "grows in similar media" — PREGO gives that signal at ~10⁸-edge scale across three channels (literature, environmental samples, JGI IMG isolates), uniformly across the tree of life rather than only for the ~250 K strains BacDive has curated.

@@ -20,7 +20,7 @@ and metagenome studies, so one (term, taxon) pair can appear twice.
 
 Usage:
 
-    python habitat_threshold_check.py [--shape {envo,bto}] [--edges PATH]
+    python habitat_threshold_check.py [--shape {envo,bto,foodon}] [--edges PATH]
 """
 
 import argparse
@@ -28,10 +28,15 @@ import statistics
 from collections import defaultdict
 from typing import Dict, List, Set, Tuple
 
-from channel_compat import assert_non_empty, continuous_predicate
+if __package__:
+    from .channel_compat import assert_non_empty, continuous_predicate
+    from .habitat_compat import habitat_pair
+else:
+    from channel_compat import assert_non_empty, continuous_predicate
+    from habitat_compat import habitat_pair
 
 THRESHOLDS = (0.0, 0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0)
-PREFIX = {"envo": "ENVO:", "bto": "BTO:"}
+PREFIX = {"envo": "ENVO:", "bto": "BTO:", "foodon": "FOODON:"}
 
 
 def parse_args() -> argparse.Namespace:
@@ -58,20 +63,22 @@ def load(path: str, prefix: str) -> Tuple[List[Tuple[str, str, float]], str]:
     with open(path) as handle:
         header = next(handle).rstrip("\n").split("\t")
         subject_i, object_i = header.index("subject"), header.index("object")
+        predicate_i = header.index("predicate")
         score_i = header.index("prego_score")
         is_continuous, layout = continuous_predicate(header)
         n_continuous = 0
         for line in handle:
             fields = line.rstrip("\n").split("\t")
-            if len(fields) <= score_i:
+            if len(fields) < len(header):
                 continue
-            if not (fields[subject_i].startswith(prefix) and fields[object_i].startswith("NCBITaxon:")):
+            pair = habitat_pair(fields[subject_i], fields[predicate_i], fields[object_i], (prefix,))
+            if pair is None:
                 continue
             if not is_continuous(fields):
                 continue
             n_continuous += 1
             try:
-                rows.append((fields[subject_i], fields[object_i], float(fields[score_i])))
+                rows.append((*pair, float(fields[score_i])))
             except ValueError:
                 continue
     assert_non_empty(n_continuous, layout)

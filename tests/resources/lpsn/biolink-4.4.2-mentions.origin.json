@@ -1,0 +1,13 @@
+{
+  "source_path": "data/raw/biolink-model.yaml",
+  "source_sha256": "b6a1320772a92d69e84b8c700cd6386dffe45ed635c8197d61e22b6a6fa3b35e",
+  "source_bytes": 512070,
+  "model_version": "4.4.2",
+  "byte_start_inclusive": 98356,
+  "byte_end_exclusive": 98631,
+  "line_start_one_based": 2835,
+  "line_end_inclusive": 2844,
+  "excerpt_sha256": "174596a50655d1f26f664b4a3f4bb655ebabd45e4fda60aaaa6ed51caea4c911",
+  "extraction": "Exact complete native mentions slot block; no synthetic schema values or relation inference.",
+  "issue": 1851
+}

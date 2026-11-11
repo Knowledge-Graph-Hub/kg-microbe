@@ -6,6 +6,7 @@ import argparse
 import hashlib
 import json
 import os
+import re
 import sys
 import time
 from pathlib import Path
@@ -113,9 +114,52 @@ def table_counts(path, kind, *, enforce_current=True):
     }
 
 
-def plan():
+def receipt_directory(attempt):
+    """Select only a numbered, separately retained attempt under the fixed owned evidence root."""
+    if not isinstance(attempt, str) or re.fullmatch(r"r[1-9][0-9]*", attempt) is None:
+        raise ValueError("Canary attempt must be r followed by a positive integer")
+    return RECEIPT_DIRECTORY.with_name("microbedecoder-run-" + attempt)
+
+
+def verify_go_prerequisite(raw, guard):
+    """Load the genuine prepared GO authority before production, refusing any preparation-time drift."""
+    from kg_microbe.transform_utils.ontologies_stubs.ncit_category_projection import SQLITE_SIDECARS
+    from kg_microbe.utils.go_authority import load_go_authority
+
+    semsql = os.environ.get("KG_SEMSQL_BUILD", "").strip().lower()
+    if semsql not in {"true", "on", "1", "yes"}:
+        raise ValueError("Canary GO validation requires KG_SEMSQL_BUILD explicitly enabled")
+    guard.capture_resolution(lambda: os.environ.get("KG_SEMSQL_BUILD", ""))
+    paths = [raw / name for name in ("go.db", "go.owl", "go.db.toolchain.json", "robot", "robot.jar")]
+    before = [identity(path) for path in paths]
+    for path in paths:
+        guard.capture(path)
+    compressed = raw / "go.owl.gz"
+    guard.capture(compressed, optional=True)
+    for suffix in SQLITE_SIDECARS:
+        path = raw / ("go.db" + suffix)
+        if path.exists() or path.is_symlink():
+            raise ValueError("Prepared GO database has a SQLite sidecar")
+        guard.capture(path, optional=True)
+    authority = load_go_authority(raw)
+    guard.verify()
+    if [identity(path) for path in paths] != before:
+        raise ValueError("GO prerequisite changed during production authority validation")
+    if authority.authority_path != str((raw / "go.db").resolve()) or authority.authority_sha256 != before[0]["sha256"]:
+        raise ValueError("GO loader returned another authority identity")
+    return {
+        "files": before,
+        "authority_path": authority.authority_path,
+        "authority_sha256": authority.authority_sha256,
+        "semsql_build": semsql,
+    }
+
+
+def plan(attempt="r1"):
     """Expose concrete immutable inputs and required owned authority without executing imports."""
+    receipt = receipt_directory(attempt)
     paths = [
+        *[RAW / name for name in ("go.db", "go.owl", "go.db.toolchain.json", "robot", "robot.jar")],
         RAW / "microbedecoder_database.zip",
         RAW / "lpsn_gss.csv",
         OUTPUT / "gold/source_finalization.json",
@@ -125,6 +169,8 @@ def plan():
     ]
     return {
         "scope": "complete native single-source canary; not a full graph rebuild",
+        "attempt": attempt,
+        "receipt_directory": str(receipt),
         "raw": str(RAW),
         "output": str(OUTPUT / "microbedecoder"),
         "inputs": [identity(path) if path.is_file() else {"path": str(path), "pending": True} for path in paths],
@@ -133,7 +179,7 @@ def plan():
     }
 
 
-def execute():
+def execute(attempt="r1"):
     """Invoke the real constructor, full run, finalization and retained native guards once."""
     if Path.cwd().resolve() != ROOT or Path(sys.prefix).resolve() != ROOT / ".venv":
         raise ValueError("Canary requires the owned Python and working directory")
@@ -143,13 +189,14 @@ def execute():
         raise ValueError("Dotenv loading must be disabled")
     if os.environ.get("MICROBEDECODER_INCLUDE_BACDIVE_SNAPSHOT", "false").lower() not in {"false", "0"}:
         raise ValueError("The selected canary is the default snapshot-off mode")
-    initial = plan()
+    receipt = receipt_directory(attempt)
+    initial = plan(attempt)
     if any(item.get("pending") for item in initial["inputs"]):
         raise ValueError("Native canary prerequisites remain pending")
     if (OUTPUT / "microbedecoder").exists():
         raise ValueError("Refusing to replace any earlier MicrobeDecoder canary output")
-    RECEIPT_DIRECTORY.mkdir()
-    write_json(RECEIPT_DIRECTORY / "before.json", initial)
+    receipt.mkdir()
+    write_json(receipt / "before.json", initial)
     started = time.monotonic()
     try:
         from kg_microbe.merge_utils.source_admission import SourceAdmission
@@ -162,6 +209,8 @@ def execute():
         guard.capture_tree(ROOT / "kg_microbe")
         for relative in MicrobeDecoderTransform.DATA_INPUTS:
             guard.capture(ROOT / relative)
+        go_preflight = verify_go_prerequisite(RAW, guard)
+        write_json(receipt / "go-preflight.json", go_preflight)
         transform = MicrobeDecoderTransform(RAW, OUTPUT)
         transform.run(data_file=RAW / "microbedecoder_database.zip", show_status=False)
         report = transform.finalize(fresh_run=True)
@@ -200,6 +249,8 @@ def execute():
             raise ValueError("Direct finalization unexpectedly wrote a dispatcher source marker")
         result = {
             "status": "PASS_COMPLETE_NATIVE_SINGLE_SOURCE_CANARY",
+            "attempt": attempt,
+            "go_preflight": go_preflight,
             "elapsed_seconds": time.monotonic() - started,
             "head_scope": "current owned working source; no whole graph or historical artifact regeneration claim",
             "actual_current": current,
@@ -215,10 +266,10 @@ def execute():
             "inputs_unchanged": True,
             "producer_origin": str(origins),
         }
-        write_json(RECEIPT_DIRECTORY / "result.json", result)
+        write_json(receipt / "result.json", result)
     except BaseException as error:
         write_json(
-            RECEIPT_DIRECTORY / "failure.json",
+            receipt / "failure.json",
             {
                 "status": "FAILED",
                 "exception_type": type(error).__name__,
@@ -233,11 +284,12 @@ def main():
     """Default to read-only prerequisite planning; execution requires an explicit flag."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--execute", action="store_true")
+    parser.add_argument("--attempt", default="r1", help="Fresh numbered receipt attempt, for example r2")
     args = parser.parse_args()
     if args.execute:
-        execute()
+        execute(args.attempt)
     else:
-        print(json.dumps(plan(), indent=2))
+        print(json.dumps(plan(args.attempt), indent=2))
 
 
 if __name__ == "__main__":

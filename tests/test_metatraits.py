@@ -254,8 +254,8 @@ class TestMetaTraitsTransform(unittest.TestCase):
             self.assertIn("value", edges[0])
             self.assertIn("unit", edges[0])
 
-            # Verify that a 0% pct_true trait (gram positive) is included in edges
-            # Parse TSV to check exact has_percentage value for gram positive trait
+            # Negative Gram-positive summaries have no declared negative predicate.
+            # Refuse the old false-positive assertion while preserving numeric output.
             header = edges[0].split("\t")
             pct_col_idx = header.index("has_percentage")
             obj_col_idx = header.index("object")
@@ -271,7 +271,9 @@ class TestMetaTraitsTransform(unittest.TestCase):
                 # Look for gram positive trait (METPO:1000698)
                 if "METPO:1000698" in cols[obj_col_idx]:
                     pct_value = cols[pct_col_idx]
-                    self.assertEqual(pct_value, "0.0", "Gram positive trait should have 0.0 percentage")
+                    self.assertNotEqual(
+                        pct_value, "0.0", "Negative Gram-positive evidence must not assert a positive phenotype"
+                    )
                     found_zero_pct = True
                 # Quantitative phenotype edge from the "temperature growth"
                 # fixture record (Median: 37.0 Celsius) → binned optimum class.
@@ -282,7 +284,7 @@ class TestMetaTraitsTransform(unittest.TestCase):
                     self.assertEqual(cols[value_col_idx], "37.0", "temperature growth edge value should equal 37.0")
                     found_quant_temp = True
 
-            self.assertTrue(found_zero_pct, "0% pct_true trait (gram positive) should be included in edges")
+            self.assertFalse(found_zero_pct, "False Gram-positive summary must not emit its positive class")
             self.assertTrue(
                 found_quant_temp,
                 "temperature-growth quantitative edge with value=37.0/unit=Celsius "

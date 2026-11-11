@@ -53,7 +53,6 @@ who want the API enrichment run both:
 The merge step then combines both nodes.tsv / edges.tsv files.
 """
 
-import csv
 import html
 import json
 import os
@@ -89,8 +88,11 @@ from kg_microbe.transform_utils.lpsn_api.native_inputs import (
     AUDIT_COLUMNS,
     AUDIT_FILE,
     GSS_ROLE,
+    MAX_LINK_DEPTH,
     RECORD_ROLE_PREFIX,
     audit_rows,
+    iter_gss_record_nos,
+    linked_record_nos,
     validate_record,
     validate_record_no,
     verify_native_contract,
@@ -352,7 +354,7 @@ class LPSNAPITransform(Transform):
                 for ref in self._linked_record_nos(record_no, record):
                     self._ensure_declared(client, ref, cache_dir, node_writer, edge_writer)
             self._emit_publication_nodes(node_writer)
-            audit_writer = csv.writer(audit_fh, delimiter="\t")
+            audit_writer = tsv_writer(audit_fh)
             audit_writer.writerow(AUDIT_COLUMNS)
             audit_writer.writerows(audit_rows(self._native_contract))
             # Abort atomic graph writes if any selected input drifted during the run.
@@ -471,13 +473,7 @@ class LPSNAPITransform(Transform):
         """Yield the record_no ('1002' etc.) for every LPSN node in the GSS output."""
         self._native_input_admission.bind_path(gss_nodes)
         with self.consume_input(GSS_ROLE, gss_nodes) as fh:
-            reader = csv.DictReader(fh, delimiter="\t")
-            for row in reader:
-                lpsn_curie = (row.get("id") or "").strip()
-                if lpsn_curie.startswith(LPSN_PREFIX):
-                    record_no = lpsn_curie[len(LPSN_PREFIX) :]
-                    validate_record_no(record_no)
-                    yield record_no
+            yield from iter_gss_record_nos(fh)
         self._native_contract["gss"].update(self._consumed_input_snapshots[GSS_ROLE])
 
     def _fetch(self, client: Any, record_no: str, cache_dir: Path) -> Optional[dict]:
@@ -554,7 +550,7 @@ class LPSNAPITransform(Transform):
 
     #: How far up `lpsn_parent_id` to walk. LPSN's ranks stop at domain; a
     #: cycle in the data would otherwise be an infinite fetch loop.
-    _MAX_LINK_DEPTH = 12
+    _MAX_LINK_DEPTH = MAX_LINK_DEPTH
 
     @staticmethod
     def _linked_record_nos(record_no: str, record: dict) -> list:
@@ -565,12 +561,7 @@ class LPSNAPITransform(Transform):
         :param record: Its JSON payload.
         :return: Parent and basonym record numbers, as strings, excluding self.
         """
-        refs = []
-        for key in (JSON_LPSN_PARENT_ID, JSON_BASONYM_ID):
-            value = str(record.get(key) or "").strip()
-            if value.isdigit() and value != record_no:
-                refs.append(value)
-        return refs
+        return linked_record_nos(record_no, record)
 
     def _ensure_declared(
         self, client: Any, record_no: str, cache_dir: Path, node_writer, edge_writer, depth: int = 0

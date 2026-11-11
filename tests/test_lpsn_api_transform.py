@@ -9,8 +9,15 @@ import pytest
 
 from kg_microbe.transform_utils.lpsn.lpsn import LPSN_KNOWLEDGE_SOURCE, LPSN_PREFIX
 from kg_microbe.transform_utils.lpsn_api.lpsn_api import LPSNAPITransform
-from kg_microbe.transform_utils.lpsn_api.native_inputs import AUDIT_FILE, GSS_ROLE, RECORD_ROLE_PREFIX
+from kg_microbe.transform_utils.lpsn_api.native_inputs import (
+    AUDIT_COLUMNS,
+    AUDIT_FILE,
+    GSS_ROLE,
+    RECORD_ROLE_PREFIX,
+    audit_rows,
+)
 from kg_microbe.utils.source_finalization import SourceFinalizationRequired, verify_finalized_source_files
+from kg_microbe.utils.tsv_io import tsv_writer
 
 
 class _FakeLpsnClient:
@@ -720,3 +727,92 @@ def test_finalized_lpsn_source_retains_record_evidence_and_rejects_stale_labels(
     (api_transform.output_dir / AUDIT_FILE).unlink()
     with pytest.raises(SourceFinalizationRequired, match="missing"):
         verify_finalized_source_files(paths)
+
+
+def _rewrite_native_record_audit(transform, report):
+    """Model coordinated metadata editing, including all recorded audit-byte identities."""
+    audit = transform.output_dir / AUDIT_FILE
+    with audit.open("w", newline="") as handle:
+        writer = tsv_writer(handle)
+        writer.writerow(AUDIT_COLUMNS)
+        writer.writerows(audit_rows(report["producer_native_inputs"]))
+    identity = {"bytes": audit.stat().st_size, "sha256": hashlib.sha256(audit.read_bytes()).hexdigest()}
+    report["producer_audit_members"][AUDIT_FILE] = identity
+    report["audit_members"][AUDIT_FILE] = identity
+    (transform.output_dir / "source_finalization.json").write_text(json.dumps(report))
+
+
+@pytest.mark.parametrize("record_no", ["1002", "1001", "999"])
+def test_coordinated_record_omission_cannot_override_verified_source_selection(api_transform, record_no):
+    """GSS roots, linked payloads and absent linked records remain mandatory after rehashed ledger edits."""
+    api_transform.run()
+    report = api_transform.finalize(fresh_run=True)
+    paths = [api_transform.output_node_file, api_transform.output_edge_file]
+    before = [path.read_bytes() for path in paths]
+    verify_finalized_source_files(paths)
+    del report["producer_native_inputs"]["records"][record_no]
+    snapshot = report["consumed_inputs"].pop(RECORD_ROLE_PREFIX + record_no, None)
+    if snapshot is not None:
+        report["inputs"] = [item for item in report["inputs"] if item["path"] != snapshot["path"]]
+    _rewrite_native_record_audit(api_transform, report)
+    assert [path.read_bytes() for path in paths] == before
+    with pytest.raises(SourceFinalizationRequired, match=f"required selected record omitted: {record_no}"):
+        verify_finalized_source_files(paths)
+
+
+def test_coordinated_extra_record_cannot_expand_verified_source_selection(api_transform):
+    """An unrelated cache payload cannot be inserted into the source's claimed request inventory."""
+    api_transform.run()
+    report = api_transform.finalize(fresh_run=True)
+    extra = api_transform.input_base_dir / "lpsn/api_cache/99999.json"
+    extra.write_text('{"id": 99999}')
+    snapshot = {"path": str(extra.resolve()), "sha256": hashlib.sha256(extra.read_bytes()).hexdigest()}
+    report["producer_native_inputs"]["records"]["99999"] = {
+        "state": "present",
+        "locator": str(extra.absolute()),
+        **snapshot,
+    }
+    report["consumed_inputs"][RECORD_ROLE_PREFIX + "99999"] = snapshot
+    report["inputs"].append(snapshot)
+    _rewrite_native_record_audit(api_transform, report)
+    with pytest.raises(SourceFinalizationRequired, match="outside the required selection"):
+        verify_finalized_source_files([api_transform.output_node_file, api_transform.output_edge_file])
+
+
+def _run_selection_fixture(tmp_path, roots, records):
+    """Run bounded topology fixtures through the same producer and saved admission rules."""
+    raw, output = tmp_path / "raw", tmp_path / "transformed"
+    raw.mkdir()
+    _write_gss_nodes(output / "lpsn/nodes.tsv", roots)
+    transform = LPSNAPITransform(
+        input_dir=raw, output_dir=output, client=_FakeLpsnClient(records), page_fetch=_FakePageFetch({})
+    )
+    transform.run()
+    LPSNAPITransform.verify_recorded_native_inputs(
+        _native_report(transform), transform.output_dir / "source_finalization.json"
+    )
+    return transform
+
+
+def test_independent_inventory_preserves_cycle_and_duplicate_link_semantics(tmp_path):
+    """Cycles, self links and repeated parent/basonym references request each linked record once."""
+    transform = _run_selection_fixture(
+        tmp_path,
+        ["1"],
+        {
+            "1": {"id": 1, "lpsn_parent_id": 2, "basonym_id": 2},
+            "2": {"id": 2, "lpsn_parent_id": 3, "basonym_id": 2},
+            "3": {"id": 3, "lpsn_parent_id": 1, "basonym_id": 2},
+        },
+    )
+    assert set(transform.producer_native_inputs["records"]) == {"1", "2", "3"}
+
+
+@pytest.mark.parametrize("second_root", [False, True])
+def test_independent_inventory_preserves_depth_boundary_and_predeclared_roots(tmp_path, second_root):
+    """Depth 12 is consumed, depth 13 is skipped, and a later GSS root starts its own traversal."""
+    records = {str(number): {"id": number, "lpsn_parent_id": number + 1} for number in range(1, 17)}
+    records["17"] = {"id": 17}
+    transform = _run_selection_fixture(tmp_path, ["1", "15"] if second_root else ["1"], records)
+    expected = {str(number) for number in range(1, 18 if second_root else 15)}
+    assert set(transform.producer_native_inputs["records"]) == expected

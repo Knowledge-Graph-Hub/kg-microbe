@@ -149,6 +149,26 @@ def test_matching_record_identity_preserves_citation_attribution(tmp_path, origi
     assert (transform.output_dir / AUDIT_FILE).stat().st_size > 0
 
 
+def test_persisted_record_audit_uses_lf_and_contains_required_rows(tmp_path):
+    """Keep the mandatory producer ledger usable by LF-only TSV consumers (#1839)."""
+    transform, client, cache = _transform(tmp_path, [_record()])
+
+    transform.run()
+
+    assert client.calls == ["1002"]
+    assert cache.stat().st_size > 0
+    audit_bytes = (transform.output_dir / AUDIT_FILE).read_bytes()
+    assert audit_bytes.endswith(b"\n")
+    assert b"\r" not in audit_bytes
+    rows = list(csv.DictReader(audit_bytes.decode("utf-8").splitlines(), delimiter="\t"))
+    assert len(rows) == 2
+    assert {(row["kind"], row["record_no"], row["state"]) for row in rows} == {
+        ("gss", "", "present"),
+        ("api", "1002", "present"),
+    }
+    assert all(row["locator"] and row["path"] and row["sha256"] for row in rows)
+
+
 def test_live_client_record_object_is_validated_and_persisted(tmp_path):
     """A client object exposing record fields through __dict__ remains supported."""
     payload = _record()

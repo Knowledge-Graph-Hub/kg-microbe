@@ -53,6 +53,18 @@ are a local replay constraint, not evidence of a remote API result. The earlier
 emitter-only artifacts remain retained but are superseded by this production-path
 receipt for validating the new record binding.
 
+The final review additionally filed #1839 and #1840. Audit/GSS TSV writers now
+use LF-only serialization. Saved admission reconstructs required records from
+verified GSS roots and API links using the producer's order, visited set and
+depth limit; it rejects coordinated omissions and extra inventory entries even
+when metadata and audit hashes are edited consistently. The new focused suites
+passed 59 transform/selection tests and 162 identity/TSV-contract tests (one
+existing test skipped because default-directory transformed outputs are absent).
+A fresh v3 canary preserved graph hashes and produced an LF-only audit.
+The final full replay uses `lpsn-production-full-v3/receipt.json`; its outcome
+and exact digest are reported on the PR. The v2 receipt below is retained
+historical evidence and predates the audit line-ending correction.
+
 | Retained artifact under `data/edge-metadata-20261110/` | SHA-256 |
 |---|---|
 | `lpsn-citation-label-full/receipt.json` | `86e9bb438bc8fa87348ba2fbf5e3bdbc58b1b933fab22f5d56eb35ba50cef918` |

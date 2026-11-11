@@ -81,6 +81,10 @@ run. The record audit also records requested cache paths that stayed absent;
 an absent cache file is not evidence of a remote API answer. Unrequested cache
 entries are outside the inventory. An initially empty cache remains supported
 because generated API records are recorded dynamically after persistence.
+Admission independently reconstructs the required inventory from the verified
+GSS selection and API parent/basonym links, using production's ordering, cycle
+and depth rules. Dropping a selected record from the ledger and rehashing its
+metadata cannot remove that record from the required input set (#1840).
 
 Records the API does not serve at all — every basonym that predates the
 Approved Lists (665 in the 2026-09-10 graph, #1004) — are labelled from

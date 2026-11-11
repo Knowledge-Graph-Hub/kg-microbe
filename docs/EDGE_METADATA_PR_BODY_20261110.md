@@ -16,8 +16,12 @@ identity before attribution and bind actual record bytes/selected cache locators
 through immutable snapshots and a required admission audit. Final repository gates
 and the follow-up review are reported with the exact candidate below.
 
+Further review findings #1839/#1840 were filed and fixed: LF-only audit serialization
+and an independent reconstruction of required records from verified GSS/API inputs.
+Coordinated-omission regressions and the fresh canary pass; graph hashes are unchanged.
+
 See docs/EDGE_METADATA_REPAIRS_20261110.md for provenance, artifact hashes and
 limits. Full producer/merged-release regeneration and absent IMG/INSDC names
 remain under https://github.com/CultureBotAI/EdgeMech/issues/36.
 
-Closes #1834. Closes #1835. Closes #1837. Closes #1838.
+Closes #1834. Closes #1835. Closes #1837. Closes #1838. Closes #1839. Closes #1840.

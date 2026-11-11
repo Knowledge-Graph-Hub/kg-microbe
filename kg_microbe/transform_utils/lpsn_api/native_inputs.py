@@ -6,6 +6,7 @@ import re
 from pathlib import Path
 
 from kg_microbe.merge_utils.source_admission import SourceAdmission
+from kg_microbe.transform_utils.lpsn.lpsn import LPSN_PREFIX
 from kg_microbe.utils.source_finalization import SourceFinalizationRequired
 
 AUDIT_FILE = "lpsn_api_records.tsv"
@@ -13,6 +14,7 @@ AUDIT_COLUMNS = ("kind", "record_no", "state", "locator", "path", "sha256")
 GSS_ROLE = "lpsn_api_gss_nodes"
 RECORD_ROLE_PREFIX = "lpsn_api_record_"
 CACHE_SUBDIR = "lpsn/api_cache"
+MAX_LINK_DEPTH = 12
 
 
 def validate_record_no(record_no):
@@ -27,6 +29,65 @@ def validate_record(record, record_no):
     if not isinstance(record, dict) or type(record.get("id")) not in (int, str) or str(record["id"]) != record_no:
         raise SourceFinalizationRequired(f"LPSN API payload identity does not match requested record {record_no}")
     return record
+
+
+def iter_gss_record_nos(handle):
+    """Read the exact root-selection rule shared by production and independent admission."""
+    for row in csv.DictReader(handle, delimiter="\t"):
+        curie = (row.get("id") or "").strip()
+        if curie.startswith(LPSN_PREFIX):
+            record_no = curie[len(LPSN_PREFIX) :]
+            validate_record_no(record_no)
+            yield record_no
+
+
+def linked_record_nos(record_no, record):
+    """Preserve production's ordered parent/basonym links, excluding nonnumeric and self links."""
+    refs = []
+    for key in ("lpsn_parent_id", "basonym_id"):
+        value = str(record.get(key) or "").strip()
+        if value.isdigit() and value != record_no:
+            refs.append(value)
+    return refs
+
+
+def verify_selection_inventory(contract, guard, raw):
+    """Derive all requested records from verified GSS roots and API links, never ledger membership."""
+    roots = set(
+        iter_gss_record_nos(io.StringIO(guard.capture(contract["gss"]["locator"], retain=True).decode("utf-8")))
+    )
+    declared, required = set(roots), set()
+
+    def request(record_no):
+        """Read a selected payload from admitted bytes and require its evidence entry."""
+        validate_record_no(record_no)
+        required.add(record_no)
+        if record_no not in contract["records"]:
+            raise SourceFinalizationRequired(f"LPSN API required selected record omitted: {record_no}")
+        path = raw / CACHE_SUBDIR / f"{record_no}.json"
+        if guard.capture(path, optional=True) is None:
+            return None
+        return validate_record(guard.read_json(path), record_no)
+
+    def visit(record_no, depth=0):
+        """Replay the producer's first-visit and depth semantics, including absent records."""
+        if record_no in declared or depth > MAX_LINK_DEPTH:
+            return
+        declared.add(record_no)
+        record = request(record_no)
+        if record is not None:
+            for ref in linked_record_nos(record_no, record):
+                visit(ref, depth + 1)
+
+    # All GSS roots are predeclared; a link to a later root must not consume its
+    # traversal depth or prevent that root's independent top-level request.
+    for record_no in sorted(roots):
+        record = request(record_no)
+        if record is not None:
+            for ref in linked_record_nos(record_no, record):
+                visit(ref)
+    if set(contract["records"]) != required:
+        raise SourceFinalizationRequired("LPSN API record inventory contains records outside the required selection")
 
 
 def audit_rows(contract):
@@ -99,6 +160,7 @@ def verify_native_contract(contract, snapshots, raw_dir, *, audit_path=None, adm
             "sha256": record["sha256"],
         }:
             raise SourceFinalizationRequired(f"LPSN API consumed record changed: {role}")
+    verify_selection_inventory(contract, guard, raw)
     if audit_path is not None:
         verify_record_audit(contract, audit_path, admission=guard)
     guard.verify(metadata_only=True)

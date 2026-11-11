@@ -19,6 +19,7 @@ import pyarrow.parquet as pq
 from kg_microbe.transform_utils.lpsn_api.lpsn_api import LPSNAPITransform
 from kg_microbe.transform_utils.lpsn_api.native_inputs import AUDIT_FILE
 from kg_microbe.utils.atomic_io import atomic_write
+from kg_microbe.utils.tsv_io import tsv_writer
 
 
 class OfflineMissingClient:
@@ -66,7 +67,7 @@ def main():
     args.output.mkdir(parents=True, exist_ok=False)
     selection = args.output / "selected_gss_nodes.tsv"
     with atomic_write(selection, newline="") as handle:
-        writer = csv.writer(handle, delimiter="\t")
+        writer = tsv_writer(handle)
         writer.writerow(["id", "category"])
         for path in paths:
             if path.is_symlink() or path.stat().st_size > 1024**2:

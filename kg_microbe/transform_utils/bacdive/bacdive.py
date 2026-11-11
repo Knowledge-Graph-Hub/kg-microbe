@@ -115,6 +115,7 @@ from kg_microbe.transform_utils.constants import (
     EC_PREFIX,
     ENZYME_TO_SUBSTRATE_EDGE,
     ENZYMES,
+    EXACT_MATCH,
     EXTERNAL_LINKS,
     EXTERNAL_LINKS_CULTURE_NUMBER,
     EXTERNAL_LINKS_CULTURE_NUMBER_COLUMN,
@@ -216,6 +217,7 @@ from kg_microbe.transform_utils.constants import (
     RISK_ASSESSMENT_COLUMN,
     SAFETY_INFO,
     SAME_AS_COLUMN,
+    SAME_AS_PREDICATE,
     SENSITIVITY_KEY,
     SPECIES,
     SPORE_FORMATION,
@@ -301,6 +303,7 @@ BACDIVE_PREDICATE_TO_RELATION: Dict[str, str] = {
     ENZYME_TO_SUBSTRATE_EDGE: HAS_INPUT_RELATION,
     IN_TAXON_PREDICATE: IN_TAXON_RELATION,
     CLOSE_MATCH_PREDICATE: CLOSE_MATCH_RELATION,
+    SAME_AS_PREDICATE: EXACT_MATCH,
     SUBCLASS_PREDICATE: RDFS_SUBCLASS_OF,
 }
 
@@ -3730,14 +3733,14 @@ class BacDiveTransform(Transform):
                     if strain_curie in unsafe_deposits:
                         continue
                     knowledge_level, agent_type = self._add_edge_metadata(
-                        CLOSE_MATCH_PREDICATE, CLOSE_MATCH_RELATION, strain_curie
+                        SAME_AS_PREDICATE, EXACT_MATCH, strain_curie
                     )
                     edge_writer.writerow(
                         [
                             organism_curie,
-                            CLOSE_MATCH_PREDICATE,
+                            SAME_AS_PREDICATE,
                             strain_curie,
-                            CLOSE_MATCH_RELATION,
+                            EXACT_MATCH,
                             self.knowledge_source,
                             knowledge_level,
                             agent_type,

@@ -221,14 +221,14 @@ def test_the_record_is_linked_to_the_deposits_it_safely_cites():
     block = source.split("for organism_curie, strain_curie in deposit_citations:")[1].split(
         "for strain_curie, deposit_parent_id in resolved_deposits:"
     )[0]
-    assert "CLOSE_MATCH_PREDICATE" in block
-    assert "CLOSE_MATCH_RELATION" in block
+    assert "SAME_AS_PREDICATE" in block
+    assert "EXACT_MATCH" in block
     # Subject is the record node and object the deposit node, not the reverse —
     # the record is the thing making the assertion.
     row = block.split("edge_writer.writerow(")[1].split("]")[0]
     assert [line.strip().rstrip(",") for line in row.splitlines() if line.strip() and "[" not in line][:3] == [
         "organism_curie",
-        "CLOSE_MATCH_PREDICATE",
+        "SAME_AS_PREDICATE",
         "strain_curie",
     ]
 
@@ -237,8 +237,8 @@ def test_bacdive_and_lpsn_land_on_the_same_deposit_curie():
     """
     Both transforms must mint one CURIE per deposit, or the link does not meet.
 
-    LPSN emits `lpsn:<record> close_match kgmicrobe.strain:<code>` and BacDive
-    now emits `kgmicrobe.strain:bacdive_<id> close_match kgmicrobe.strain:<code>`.
+    LPSN emits `kgmicrobe.strain:<code> in_taxon lpsn:<record>` and BacDive
+    emits `kgmicrobe.strain:bacdive_<id> same_as kgmicrobe.strain:<code>`.
     They reconcile at merge only while both normalise a deposit string the same
     way, so pin that rather than trusting two copies of the rule to stay equal.
     """

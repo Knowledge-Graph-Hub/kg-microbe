@@ -129,7 +129,7 @@ def verify_edges(gss_edges, api_edges, records):
     if actual != Counter(expected) or set(actual) & gss_triples or not overlapping:
         raise ValueError("Native API edge reconstruction or actual GSS overlap mismatch")
     relations = {
-        "biolink:mentions": "IAO:0000136",
+        "biolink:mentions": "IAO:0000142",
         "biolink:in_taxon": "RO:0002162",
         "biolink:subclass_of": "rdfs:subClassOf",
         "biolink:same_as": "skos:exactMatch",

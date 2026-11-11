@@ -5,7 +5,7 @@ in LPSN's authenticated JSON API (per-record):
 
 - **Publication provenance** — `publication_doi`, `publication_pmid`,
   `ijsem_list_doi` supply `doi:*` / `PMID:*` publication subjects with
-  `biolink:mentions` / `IAO:0000136` edges to the LPSN taxon, plus
+  `biolink:mentions` / `IAO:0000142` edges to the LPSN taxon, plus
   `biolink:Publication` nodes. Their labels use the
   corresponding `publication_text` or `ijsem_list_text` citation supplied by
   LPSN, with the source field recorded in the description. These are complete

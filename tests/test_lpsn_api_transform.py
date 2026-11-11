@@ -189,10 +189,28 @@ def test_all_api_edge_families_restate_curated_metadata(api_transform):
     }
     assert {e["subject"].split(":", 1)[0] for e in edges} >= {"lpsn", "doi", "PMID", "INSDC"}
     assert all(e["object"].startswith("lpsn:") for e in edges)
-    assert {e["relation"] for e in edges if e["predicate"] == "biolink:mentions"} == {"IAO:0000136"}
+    assert {e["relation"] for e in edges if e["predicate"] == "biolink:mentions"} == {"IAO:0000142"}
     assert {e["relation"] for e in edges if e["predicate"] == "biolink:in_taxon"} == {"RO:0002162"}
     assert all(e["knowledge_level"] == "knowledge_assertion" for e in edges)
     assert all(e["agent_type"] == "manual_agent" for e in edges)
+
+
+def test_mentions_relation_matches_pinned_biolink_excerpt(api_transform):
+    """Bind the emitted relation to independent pinned schema bytes, not the producer's literal (#1851)."""
+    import yaml
+
+    from kg_microbe.transform_utils.constants import IS_ABOUT_RELATION
+    from kg_microbe.transform_utils.lpsn_api.lpsn_api import MENTIONS_RELATION
+
+    fixture = Path(__file__).parent / "resources/lpsn/biolink-4.4.2-mentions.yaml"
+    origin = json.loads(fixture.with_suffix(".origin.json").read_text())
+    assert hashlib.sha256(fixture.read_bytes()).hexdigest() == origin["excerpt_sha256"]
+    exact = yaml.safe_load(fixture.read_text())["mentions"]["exact_mappings"]
+    assert exact == [MENTIONS_RELATION]
+    assert IS_ABOUT_RELATION not in exact
+    api_transform.run()
+    publications = [row for row in _read_tsv(api_transform.output_edge_file) if row["predicate"] == "biolink:mentions"]
+    assert publications and all(row["relation"] in exact for row in publications)
 
 
 def test_publication_stub_nodes_are_emitted(api_transform):

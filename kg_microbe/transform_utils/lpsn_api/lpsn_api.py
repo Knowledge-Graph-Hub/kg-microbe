@@ -6,7 +6,7 @@ in LPSN's authenticated JSON API and not in the bulk CSV:
 
 - Publication provenance: ``publication_doi``, ``publication_pmid``,
   ``ijsem_list_doi`` → ``doi:*`` / ``PMID:*`` publication subjects
-  mentioning the LPSN taxon (``biolink:mentions``, ``IAO:0000136``).
+  mentioning the LPSN taxon (``biolink:mentions``, ``IAO:0000142``).
 - Full above-genus taxonomy: ``lpsn_parent_id`` → additional
   ``biolink:subclass_of`` edges walking up to family / order / class /
   phylum / domain, which the GSS format doesn't expose.
@@ -71,7 +71,6 @@ from kg_microbe.transform_utils.constants import (
     ID_COLUMN,
     IN_TAXON_PREDICATE,
     IN_TAXON_RELATION,
-    IS_ABOUT_RELATION,
     KNOWLEDGE_ASSERTION,
     KNOWLEDGE_LEVEL_COLUMN,
     LPSN_API_SOURCE,
@@ -123,6 +122,9 @@ JSON_IS_LEGITIMATE = "is_legitimate"
 JSON_NOMENCLATURAL_STATUS = "nomenclatural_status"
 JSON_LPSN_TAXONOMIC_STATUS = "lpsn_taxonomic_status"
 JSON_MOLECULES = "molecules"
+
+# Exact mapping of biolink:mentions in the pinned local Biolink 4.4.2 schema (#1851).
+MENTIONS_RELATION = "IAO:0000142"
 
 # CURIE prefixes for publication + sequence cross-refs.
 DOI_PREFIX = "doi:"
@@ -638,13 +640,13 @@ class LPSNAPITransform(Transform):
                 # not an inferred paper title. Conflicts are resolved only
                 # after all source records have contributed their evidence.
                 edge_writer.writerow(
-                    self._edge(f"{DOI_PREFIX}{doi}", MENTIONS_PREDICATE, f"{LPSN_PREFIX}{record_no}", IS_ABOUT_RELATION)
+                    self._edge(f"{DOI_PREFIX}{doi}", MENTIONS_PREDICATE, f"{LPSN_PREFIX}{record_no}", MENTIONS_RELATION)
                 )
                 self._record_publication_citation(f"{DOI_PREFIX}{doi}", record_no, text_key, record.get(text_key))
         pmid = str(record.get(JSON_PUBLICATION_PMID) or "").strip()
         if pmid:
             edge_writer.writerow(
-                self._edge(f"{PMID_PREFIX}{pmid}", MENTIONS_PREDICATE, f"{LPSN_PREFIX}{record_no}", IS_ABOUT_RELATION)
+                self._edge(f"{PMID_PREFIX}{pmid}", MENTIONS_PREDICATE, f"{LPSN_PREFIX}{record_no}", MENTIONS_RELATION)
             )
             self._record_publication_citation(
                 f"{PMID_PREFIX}{pmid}", record_no, JSON_PUBLICATION_TEXT, record.get(JSON_PUBLICATION_TEXT)

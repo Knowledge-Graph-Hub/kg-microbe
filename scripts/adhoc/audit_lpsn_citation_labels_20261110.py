@@ -12,6 +12,7 @@ import csv
 import hashlib
 import inspect
 import json
+import shutil
 from pathlib import Path
 
 import pyarrow.parquet as pq
@@ -46,6 +47,7 @@ def main():
     """Emit and independently read back one canary or the complete local cache."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--cache", type=Path, required=True)
+    parser.add_argument("--gss-edges", type=Path, required=True)
     parser.add_argument("--missing-nodes", type=Path, required=True)
     parser.add_argument("--missing-sha256", required=True)
     parser.add_argument("--output", type=Path, required=True)
@@ -64,7 +66,12 @@ def main():
         raise ValueError("No cached source records selected")
     if args.cache.name != "api_cache" or args.cache.parent.name != "lpsn":
         raise ValueError("Expected the production raw/lpsn/api_cache directory")
+    gss_edges_sha256 = digest(args.gss_edges)
     args.output.mkdir(parents=True, exist_ok=False)
+    selected_edges = args.output / "edges.tsv"
+    shutil.copyfile(args.gss_edges, selected_edges)
+    if digest(selected_edges) != gss_edges_sha256:
+        raise ValueError("Selected GSS edge evidence changed while copying")
     selection = args.output / "selected_gss_nodes.tsv"
     with atomic_write(selection, newline="") as handle:
         writer = tsv_writer(handle)
@@ -81,6 +88,8 @@ def main():
     )
     transform.run(data_file=selection)
     transform.verify_consumed_inputs()
+    if digest(args.gss_edges) != gss_edges_sha256:
+        raise ValueError("Original GSS edge evidence changed during audit")
     contract = transform.producer_native_inputs
     ledger = [{"record_no": record_no, **item} for record_no, item in sorted(contract["records"].items())]
     nodes_path, edges_path = transform.output_node_file, transform.output_edge_file
@@ -123,6 +132,8 @@ def main():
         "source_record_ledger_sha256": digest(args.output / "source-records.json"),
         "producer_record_audit_sha256": digest(transform.output_dir / AUDIT_FILE),
         "gss_selection_sha256": digest(selection),
+        "gss_edges_source": str(args.gss_edges.absolute()),
+        "gss_edges_sha256": gss_edges_sha256,
         "nodes_sha256": digest(nodes_path),
         "edges_sha256": digest(edges_path),
         "limitations": [
@@ -132,7 +143,8 @@ def main():
             "no names are invented.",
             "This executes production run/_fetch using cached API records and canned empty responses for misses; "
             "it does not contact LPSN or rebuild/merge the full graph.",
-            "The record contract covers GSS selection and API cache bytes/locators; pre-existing web fallback "
+            "The record contract covers GSS node selection, actual selected edges and API cache bytes/locators; "
+            "pre-existing web fallback "
             "names are outside this new binding. API misses are local cache absence, not proof of a remote API answer.",
         ],
     }

@@ -55,6 +55,7 @@ def _transform(tmp_path, records):
     gss = transformed / "lpsn" / "nodes.tsv"
     gss.parent.mkdir(parents=True)
     gss.write_text("id\tcategory\nlpsn:1002\tbiolink:OrganismTaxon\n")
+    gss.with_name("edges.tsv").write_text("subject\tpredicate\tobject\n")
     client = _CannedClient(records)
     transform = LPSNAPITransform(
         input_dir=raw,
@@ -161,9 +162,10 @@ def test_persisted_record_audit_uses_lf_and_contains_required_rows(tmp_path):
     assert audit_bytes.endswith(b"\n")
     assert b"\r" not in audit_bytes
     rows = list(csv.DictReader(audit_bytes.decode("utf-8").splitlines(), delimiter="\t"))
-    assert len(rows) == 2
+    assert len(rows) == 3
     assert {(row["kind"], row["record_no"], row["state"]) for row in rows} == {
         ("gss", "", "present"),
+        ("gss_edges", "", "present"),
         ("api", "1002", "present"),
     }
     assert all(row["locator"] and row["path"] and row["sha256"] for row in rows)

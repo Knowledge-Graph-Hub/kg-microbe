@@ -12,6 +12,7 @@ from kg_microbe.utils.source_finalization import SourceFinalizationRequired
 AUDIT_FILE = "lpsn_api_records.tsv"
 AUDIT_COLUMNS = ("kind", "record_no", "state", "locator", "path", "sha256")
 GSS_ROLE = "lpsn_api_gss_nodes"
+GSS_EDGES_ROLE = "lpsn_api_gss_edges"
 RECORD_ROLE_PREFIX = "lpsn_api_record_"
 CACHE_SUBDIR = "lpsn/api_cache"
 MAX_LINK_DEPTH = 12
@@ -39,6 +40,21 @@ def iter_gss_record_nos(handle):
             record_no = curie[len(LPSN_PREFIX) :]
             validate_record_no(record_no)
             yield record_no
+
+
+def read_gss_edge_triples(handle):
+    """Read exact selected GSS triples; malformed TSV cannot silently suppress API evidence."""
+    reader = csv.DictReader(handle, delimiter="\t")
+    fields = reader.fieldnames
+    required = ("subject", "predicate", "object")
+    if not fields or len(fields) != len(set(fields)) or not set(required).issubset(fields):
+        raise SourceFinalizationRequired("LPSN API GSS edges require unique subject/predicate/object columns")
+    triples = set()
+    for row in reader:
+        if None in row or any(value is None for value in row.values()) or any(not row[key] for key in required):
+            raise SourceFinalizationRequired("Malformed LPSN API selected GSS edge")
+        triples.add(tuple(row[key] for key in required))
+    return triples
 
 
 def linked_record_nos(record_no, record):
@@ -93,6 +109,7 @@ def verify_selection_inventory(contract, guard, raw):
 def audit_rows(contract):
     """Serialize deterministic evidence for every selected API record, including absent cache entries."""
     yield ["gss", "", "present", *(contract["gss"][key] for key in ("locator", "path", "sha256"))]
+    yield ["gss_edges", "", "present", *(contract["gss_edges"][key] for key in ("locator", "path", "sha256"))]
     for record_no, item in sorted(contract["records"].items()):
         yield ["api", record_no, *(item[key] for key in ("state", "locator", "path", "sha256"))]
 
@@ -116,14 +133,17 @@ def verify_native_contract(contract, snapshots, raw_dir, *, audit_path=None, adm
     raw = Path(raw_dir).absolute()
     if (
         not isinstance(contract, dict)
-        or set(contract) != {"version", "raw_locator", "raw_directory", "cache_directory", "gss", "records"}
+        or set(contract)
+        != {"version", "raw_locator", "raw_directory", "cache_directory", "gss", "gss_edges", "records"}
         or type(contract["version"]) is not int
-        or contract["version"] != 1
+        or contract["version"] != 2
         or contract["raw_locator"] != str(raw)
         or contract["raw_directory"] != str(guard.bind_path(raw))
         or contract["cache_directory"] != str(guard.bind_path(raw / CACHE_SUBDIR))
         or not isinstance(contract["gss"], dict)
         or set(contract["gss"]) != {"locator", "path", "sha256"}
+        or not isinstance(contract["gss_edges"], dict)
+        or set(contract["gss_edges"]) != {"locator", "path", "sha256"}
         or not isinstance(contract["records"], dict)
         or not isinstance(snapshots, dict)
     ):
@@ -131,8 +151,11 @@ def verify_native_contract(contract, snapshots, raw_dir, *, audit_path=None, adm
     gss = contract["gss"]
     if not isinstance(gss["locator"], str) or not Path(gss["locator"]).is_absolute():
         raise SourceFinalizationRequired("LPSN API GSS selection locator is missing")
-    expected_roles = {GSS_ROLE}
-    selected = [(GSS_ROLE, gss, Path(gss["locator"]), "present")]
+    expected_roles = {GSS_ROLE, GSS_EDGES_ROLE}
+    selected = [
+        (GSS_ROLE, gss, Path(gss["locator"]), "present"),
+        (GSS_EDGES_ROLE, contract["gss_edges"], Path(gss["locator"]).with_name("edges.tsv"), "present"),
+    ]
     for record_no, record in contract["records"].items():
         validate_record_no(record_no)
         if (
@@ -145,7 +168,9 @@ def verify_native_contract(contract, snapshots, raw_dir, *, audit_path=None, adm
         if record["state"] == "present":
             expected_roles.add(role)
         selected.append((role, record, raw / CACHE_SUBDIR / f"{record_no}.json", record["state"]))
-    actual_roles = {role for role in snapshots if role == GSS_ROLE or role.startswith(RECORD_ROLE_PREFIX)}
+    actual_roles = {
+        role for role in snapshots if role in (GSS_ROLE, GSS_EDGES_ROLE) or role.startswith(RECORD_ROLE_PREFIX)
+    }
     if actual_roles != expected_roles:
         raise SourceFinalizationRequired("LPSN API consumed-record inventory disagrees with selected records")
     for role, record, locator, state in selected:

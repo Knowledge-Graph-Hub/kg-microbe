@@ -5,8 +5,8 @@ Enriches the GSS-based ``lpsn`` transform with the fields that only live
 in LPSN's authenticated JSON API and not in the bulk CSV:
 
 - Publication provenance: ``publication_doi``, ``publication_pmid``,
-  ``ijsem_list_doi`` → ``biolink:published_in`` edges to ``doi:*`` /
-  ``PMID:*`` CURIEs.
+  ``ijsem_list_doi`` → ``doi:*`` / ``PMID:*`` publication subjects
+  mentioning the LPSN taxon (``biolink:mentions``, ``IAO:0000136``).
 - Full above-genus taxonomy: ``lpsn_parent_id`` → additional
   ``biolink:subclass_of`` edges walking up to family / order / class /
   phylum / domain, which the GSS format doesn't expose.
@@ -14,14 +14,12 @@ in LPSN's authenticated JSON API and not in the bulk CSV:
   (relation ``skos:exactMatch``) from a comb. nov. name to its basonym.
 - Node-level detail: ``is_legitimate`` (boolean) and richer
   ``nomenclatural_status`` (free-text) rolled into the description.
-- 16S rRNA sequence provenance: ``molecules`` → one
-  ``biolink:close_match`` edge from each LPSN taxon to every INSDC
-  (GenBank/EMBL/DDBJ) accession its type strain has registered, plus
-  a ``biolink:NucleicAcidEntity`` stub node per accession. Serves as
-  the TYGS-adjacent bridge to NCBI's sequence records — an LPSN taxon
-  that failed the direct name-match against NCBITaxon can still be
-  connected via ``lpsn → INSDC → (NCBI sequence organism) →
-  NCBITaxon`` in a downstream query.
+- 16S rRNA sequence provenance: ``molecules`` → ``biolink:in_taxon``
+  (``RO:0002162``) from each INSDC accession to its LPSN taxon, plus
+  a ``biolink:NucleicAcidEntity`` node per accession.
+- Hierarchy and basionym triples already present in the selected sibling
+  GSS ``edges.tsv`` are omitted. Missing and API-only links remain.
+  Both selected GSS files are required native inputs for completion.
 
 Access model
 ------------
@@ -68,14 +66,17 @@ from kg_microbe.merge_utils.source_admission import SourceAdmission
 from kg_microbe.transform_utils.constants import (
     AGENT_TYPE_COLUMN,
     CATEGORY_COLUMN,
-    CLOSE_MATCH_PREDICATE,
     DESCRIPTION_COLUMN,
     EXACT_MATCH,
     ID_COLUMN,
+    IN_TAXON_PREDICATE,
+    IN_TAXON_RELATION,
+    IS_ABOUT_RELATION,
     KNOWLEDGE_ASSERTION,
     KNOWLEDGE_LEVEL_COLUMN,
     LPSN_API_SOURCE,
     MANUAL_AGENT,
+    MENTIONS_PREDICATE,
     NAME_COLUMN,
     NCBI_CATEGORY,
     PROVIDED_BY_COLUMN,
@@ -87,12 +88,14 @@ from kg_microbe.transform_utils.lpsn.lpsn import LPSN_KNOWLEDGE_SOURCE, LPSN_PRE
 from kg_microbe.transform_utils.lpsn_api.native_inputs import (
     AUDIT_COLUMNS,
     AUDIT_FILE,
+    GSS_EDGES_ROLE,
     GSS_ROLE,
     MAX_LINK_DEPTH,
     RECORD_ROLE_PREFIX,
     audit_rows,
     iter_gss_record_nos,
     linked_record_nos,
+    read_gss_edge_triples,
     validate_record,
     validate_record_no,
     verify_native_contract,
@@ -218,7 +221,7 @@ class LPSNAPITransform(Transform):
 
     #: Reads this transform's output; see Transform.TRANSFORM_INPUTS (#845).
     TRANSFORM_INPUTS = ("lpsn",)
-    REQUIRED_CONSUMED_INPUTS = (GSS_ROLE,)
+    REQUIRED_CONSUMED_INPUTS = (GSS_ROLE, GSS_EDGES_ROLE)
     REQUIRED_AUDIT_FILES = (AUDIT_FILE,)
 
     def __init__(
@@ -309,6 +312,9 @@ class LPSNAPITransform(Transform):
                 "transform."
             )
 
+        gss_edges = gss_nodes.with_name("edges.tsv")
+        if not gss_edges.is_file():
+            raise FileNotFoundError(f"LPSN GSS transform edges not found at {gss_edges}; rerun the GSS transform")
         client = self._client_override or self._make_authenticated_client()
 
         cache_dir = Path(self.input_base_dir) / API_CACHE_SUBDIR
@@ -320,13 +326,18 @@ class LPSNAPITransform(Transform):
         self._publication_citations = {}
         raw = Path(self.input_base_dir).absolute()
         self._native_contract = {
-            "version": 1,
+            "version": 2,
             "raw_locator": str(raw),
             "raw_directory": str(self._native_input_admission.bind_path(raw)),
             "cache_directory": str(self._native_input_admission.bind_path(cache_dir)),
             "gss": {"locator": str(gss_nodes.absolute())},
+            "gss_edges": {"locator": str(gss_edges.absolute())},
             "records": {},
         }
+        self._native_input_admission.bind_path(gss_edges)
+        with self.consume_input(GSS_EDGES_ROLE, gss_edges) as handle:
+            self._gss_edge_triples = read_gss_edge_triples(handle)
+        self._native_contract["gss_edges"].update(self._consumed_input_snapshots[GSS_EDGES_ROLE])
         # Atomic: a crash mid-run must leave no nodes.tsv/edges.tsv at all. A
         # truncated pair reads as complete to the merge, and the lpsn transform
         # already publishes this way (#820, #981, #985).
@@ -627,13 +638,13 @@ class LPSNAPITransform(Transform):
                 # not an inferred paper title. Conflicts are resolved only
                 # after all source records have contributed their evidence.
                 edge_writer.writerow(
-                    self._edge(record_no, CLOSE_MATCH_PREDICATE, f"{DOI_PREFIX}{doi}", "skos:closeMatch")
+                    self._edge(f"{DOI_PREFIX}{doi}", MENTIONS_PREDICATE, f"{LPSN_PREFIX}{record_no}", IS_ABOUT_RELATION)
                 )
                 self._record_publication_citation(f"{DOI_PREFIX}{doi}", record_no, text_key, record.get(text_key))
         pmid = str(record.get(JSON_PUBLICATION_PMID) or "").strip()
         if pmid:
             edge_writer.writerow(
-                self._edge(record_no, CLOSE_MATCH_PREDICATE, f"{PMID_PREFIX}{pmid}", "skos:closeMatch")
+                self._edge(f"{PMID_PREFIX}{pmid}", MENTIONS_PREDICATE, f"{LPSN_PREFIX}{record_no}", IS_ABOUT_RELATION)
             )
             self._record_publication_citation(
                 f"{PMID_PREFIX}{pmid}", record_no, JSON_PUBLICATION_TEXT, record.get(JSON_PUBLICATION_TEXT)
@@ -641,11 +652,12 @@ class LPSNAPITransform(Transform):
 
         # 16S rRNA sequence provenance — the TYGS-adjacent bridge to
         # NCBI. Every INSDC accession registered by this taxon's type
-        # strain becomes a close_match target so downstream queries can
-        # walk ``lpsn → INSDC → NCBI sequence organism → NCBITaxon``.
+        # strain is asserted to occur in this LPSN taxon, not to be a similar taxon.
         for accession in self._extract_insdc_accessions(record):
             edge_writer.writerow(
-                self._edge(record_no, CLOSE_MATCH_PREDICATE, f"{INSDC_PREFIX}{accession}", "skos:closeMatch")
+                self._edge(
+                    f"{INSDC_PREFIX}{accession}", IN_TAXON_PREDICATE, f"{LPSN_PREFIX}{record_no}", IN_TAXON_RELATION
+                )
             )
             node_writer.writerow(self._stub_sequence_node(f"{INSDC_PREFIX}{accession}"))
 
@@ -703,13 +715,19 @@ class LPSNAPITransform(Transform):
         # an int, so coerce before doing string operations.
         parent = str(record.get(JSON_LPSN_PARENT_ID) or "").strip()
         if parent.isdigit() and parent != record_no:
-            edge_writer.writerow(self._edge(record_no, SUBCLASS_PREDICATE, f"{LPSN_PREFIX}{parent}", RDFS_SUBCLASS_OF))
+            self._emit_unique_gss_link(record_no, SUBCLASS_PREDICATE, parent, RDFS_SUBCLASS_OF, edge_writer)
 
         # Basonym link (nomenclatural equivalence — a comb. nov. / new
         # combination points at its basonym, the original name).
         basonym = str(record.get(JSON_BASONYM_ID) or "").strip()
         if basonym.isdigit() and basonym != record_no:
-            edge_writer.writerow(self._edge(record_no, SAME_AS_PREDICATE, f"{LPSN_PREFIX}{basonym}", EXACT_MATCH))
+            self._emit_unique_gss_link(record_no, SAME_AS_PREDICATE, basonym, EXACT_MATCH, edge_writer)
+
+    def _emit_unique_gss_link(self, record_no, predicate, target_no, relation, writer):
+        """Emit native API links unless this exact triple exists in the selected GSS output."""
+        subject, target = f"{LPSN_PREFIX}{record_no}", f"{LPSN_PREFIX}{target_no}"
+        if (subject, predicate, target) not in self._gss_edge_triples:
+            writer.writerow(self._edge(subject, predicate, target, relation))
 
     def _make_linked_node(self, record_no: str, record: dict) -> list:
         """
@@ -869,7 +887,7 @@ class LPSNAPITransform(Transform):
                 row[headers.index(col)] = val
         return row
 
-    def _edge(self, subject_record_no: str, predicate: str, obj: str, relation: str) -> list:
+    def _edge(self, subject: str, predicate: str, obj: str, relation: str) -> list:
         """
         Restate a curated LPSN hierarchy, name, publication or sequence link.
 
@@ -880,7 +898,7 @@ class LPSNAPITransform(Transform):
         headers = self.edge_header
         row = [""] * len(headers)
         for col, val in {
-            "subject": f"{LPSN_PREFIX}{subject_record_no}",
+            "subject": subject,
             "predicate": predicate,
             "object": obj,
             "relation": relation,

@@ -37,8 +37,8 @@ Output lands in `data/transformed/lpsn/nodes.tsv` and `edges.tsv`.
   remain structured-name joins, not explicit native numeric-parent fields.
   Ambiguous tuples never use row order, nomenclatural status, synonym links
   or the separately cached API to choose a parent (#1292).
-- **`close_match` edges** — from each species / subspecies row to
-  every culture-collection deposit named in `nomenclatural_type`.
+- **`in_taxon` edges** (`RO:0002162`) — from each culture-collection
+  deposit named in `nomenclatural_type` to the species / subspecies LPSN taxon.
   Deposits are parsed from strings like
   `"ATCC 11775 = DSM 30083 = JCM 1649"` and normalized to
   `kgmicrobe.strain:<code>` CURIEs, matching the strain CURIEs BacDive

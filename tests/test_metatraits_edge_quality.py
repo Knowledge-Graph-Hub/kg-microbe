@@ -174,7 +174,10 @@ def test_distinct_quantitative_contexts_are_not_collapsed():
     rows = []
 
     class Writer:
+        """Collect emitted rows without interpreting their quantitative payloads."""
+
         def write_row(self, row):
+            """Retain each emitted row for full-context assertions."""
             rows.append(row)
 
     base = [

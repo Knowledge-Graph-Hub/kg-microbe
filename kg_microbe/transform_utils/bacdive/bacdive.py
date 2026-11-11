@@ -3732,9 +3732,7 @@ class BacDiveTransform(Transform):
                 for organism_curie, strain_curie in deposit_citations:
                     if strain_curie in unsafe_deposits:
                         continue
-                    knowledge_level, agent_type = self._add_edge_metadata(
-                        SAME_AS_PREDICATE, EXACT_MATCH, strain_curie
-                    )
+                    knowledge_level, agent_type = self._add_edge_metadata(SAME_AS_PREDICATE, EXACT_MATCH, strain_curie)
                     edge_writer.writerow(
                         [
                             organism_curie,

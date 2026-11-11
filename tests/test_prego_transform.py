@@ -1565,8 +1565,7 @@ def test_default_habitat_floor_filters_actual_output(prego_input_dir, prego_outp
     monkeypatch.delenv("PREGO_HABITAT_MIN_SCORE", raising=False)
     # Explicit offline boundary controls supplement the native-shape fixture.
     payload = "".join(
-        f"-27\tENVO:00002007\t-2\t562\tMGnify\tfixture habitat\t{score}\tTRUE\t\n"
-        for score in ("2.9", "3.0", "3.1")
+        f"-27\tENVO:00002007\t-2\t562\tMGnify\tfixture habitat\t{score}\tTRUE\t\n" for score in ("2.9", "3.0", "3.1")
     ).encode()
     with tarfile.open(prego_input_dir / "prego/environmental_samples.tar.gz", "w:gz") as archive:
         member = tarfile.TarInfo("database_pairs.tsv")

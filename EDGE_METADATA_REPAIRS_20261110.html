@@ -1,0 +1,225 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Source-backed metadata repairs for EdgeMech &mdash; kg-microbe 0.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=7026087e"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            kg-microbe
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="static/intro.html">Knowledge Graphs for Microbial data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">kg_microbe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sources/index.html">Bacteria-Archaea-Traits schema</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">kg-microbe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Source-backed metadata repairs for EdgeMech</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/EDGE_METADATA_REPAIRS_20261110.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="source-backed-metadata-repairs-for-edgemech">
+<h1>Source-backed metadata repairs for EdgeMech<a class="headerlink" href="#source-backed-metadata-repairs-for-edgemech" title="Link to this heading"></a></h1>
+<p>This change addresses #1834 and #1835, upstream follow-ups to
+<a class="reference external" href="https://github.com/CultureBotAI/EdgeMech/issues/36">EdgeMech #36</a>.
+The retained graph inventory has 79,573 distinct nodes with missing labels.
+These repairs preserve identifiers, categories and associations.</p>
+<p>LPSN publication nodes now use a unique nonempty <code class="docutils literal notranslate"><span class="pre">publication_text</span></code> or
+<code class="docutils literal notranslate"><span class="pre">ijsem_list_text</span></code> citation as their display name. The description records the
+source field and explicitly distinguishes a citation label from a verified
+article title. Conflicting citation strings remain unresolved; record order
+cannot select the winner. Blank or malformed values do not become labels.</p>
+<p>PREGO now consumes the existing BTO SemSQL download as a fingerprinted metadata
+input. It hydrates only emitted BTO identifiers with explicit class declarations
+and unambiguous labels, preserves obsolete status and emits a mandatory metadata
+audit. Missing classes/labels remain unresolved. Malformed authority, changed
+bytes, redirected input locators and altered audits fail validation.
+Dictionary synonyms are not treated as authoritative names.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Bounded validation</p></th>
+<th class="head"><p>Result</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>LPSN real record784756 production canary</p></td>
+<td><p>Eight API cache reads; persisted nodes, edges and required record audit; three source citation labels</p></td>
+</tr>
+<tr class="row-odd"><td><p>LPSN production run with 35,425 cached records</p></td>
+<td><p>Labels for 36,512 missing IDs: 19,209 DOI and 17,303 PMID; 21 conflicting DOI IDs unresolved</p></td>
+</tr>
+<tr class="row-even"><td><p>BTO one-ID canary, then all affected IDs</p></td>
+<td><p>367/367 labeled; zero unresolved or obsolete in selected authority</p></td>
+</tr>
+<tr class="row-odd"><td><p>Eight EC nodes through public merge</p></td>
+<td><p>Existing names recovered; current blank-name precedence fix confirmed</p></td>
+</tr>
+<tr class="row-even"><td><p>Focused LPSN identity, transform and admission tests</p></td>
+<td><p>88 passed</p></td>
+</tr>
+<tr class="row-odd"><td><p>Focused BTO/PREGO/freshness/dependency tests</p></td>
+<td><p>151 passed</p></td>
+</tr>
+</tbody>
+</table>
+<p>The BTO authority is the retained <strong>2021-10-26</strong> release, compressed SHA-256
+<code class="docutils literal notranslate"><span class="pre">3141e55d5cbec9ff36e7bdfe443ff28f1708ce124a9bdeaa022f3dcd0cbd07ab</span></code>.
+No current-release claim is made. Each real canary followed the same launcher,
+environment and output path conventions as its subsequent replay, and persisted
+outputs were checked. The BTO canary caught a relative-path SQLite URI error;
+it was fixed and re-canary-tested before the 367-ID run. The LPSN canary caught
+an import resolving to the old checkout; <code class="docutils literal notranslate"><span class="pre">PYTHONPATH=.</span></code> and the recorded producer
+module verified the corrected path before the full-cache replay.</p>
+<p>Read-only adversarial review found #1837 (unchecked API payload identity) and
+#1838 (API citation records absent from production freshness). Both were filed
+before correction. Cached/live payloads now require the requested ID. Production
+parses immutable record snapshots and records GSS selection plus every selected
+API cache locator in a mandatory <code class="docutils literal notranslate"><span class="pre">lpsn_api_records.tsv</span></code>. Finalization/admission
+reject changed or deleted consumed bytes, redirected selected locators and a
+missing or changed audit. Newly fetched responses are atomically cached before
+snapshot parsing; an initially empty cache remains supported.</p>
+<p>The final offline production replay exercised <code class="docutils literal notranslate"><span class="pre">run/_fetch</span></code>, not only emitters.
+It consumed 35,425 cached API records, recorded 665 absent selected API paths and
+made zero live fetches with zero errors. Cached web-fallback labels remain outside
+this API-specific provenance guarantee. Canned empty responses for cache misses
+are a local replay constraint, not evidence of a remote API result. The earlier
+emitter-only artifacts remain retained but are superseded by this production-path
+receipt for validating the new record binding.</p>
+<p>The final review additionally filed #1839 and #1840. Audit/GSS TSV writers now
+use LF-only serialization. Saved admission reconstructs required records from
+verified GSS roots and API links using the producer’s order, visited set and
+depth limit; it rejects coordinated omissions and extra inventory entries even
+when metadata and audit hashes are edited consistently. The new focused suites
+passed 59 transform/selection tests and 162 identity/TSV-contract tests (one
+existing test skipped because default-directory transformed outputs are absent).
+A fresh v3 canary preserved graph hashes and produced an LF-only audit.
+The final full replay uses <code class="docutils literal notranslate"><span class="pre">lpsn-production-full-v3/receipt.json</span></code>; its outcome
+and exact digest are reported on the PR. The v2 receipt below is retained
+historical evidence and predates the audit line-ending correction.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Retained artifact under <code class="docutils literal notranslate"><span class="pre">data/edge-metadata-20261110/</span></code></p></th>
+<th class="head"><p>SHA-256</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">lpsn-citation-label-full/receipt.json</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">86e9bb438bc8fa87348ba2fbf5e3bdbc58b1b933fab22f5d56eb35ba50cef918</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">lpsn-production-full-v2/receipt.json</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0bc40292a3b19f176c64771209240fb167147c5f8251261d0f875a1ec7588219</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">bto-367/receipt.json</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bc017d337a46f6e645913954c353689e9a8a9f2f4156eed4fc865e39e2f7d5e1</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">bto-367/prego_habitat/nodes.tsv</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">7fdd7952c7ca1126a0a7bb07ab1be4e8cd6843be0794dc65e5727d1ca533ebfa</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">bto-367/prego_habitat/prego_bto_metadata.tsv</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">1fc6747747eb748c22e5d334492c55e5e42243fa34f830dd5ad7b61d634b4f93</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">ec-eight/published/merged.tar.gz</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">c6486bc3d5c909bbe3f4931fc1cd390691c35bbbcda4ab7a35a6d5153fc15f1e</span></code></p></td>
+</tr>
+</tbody>
+</table>
+<p>Saved helpers under <code class="docutils literal notranslate"><span class="pre">scripts/adhoc/</span></code> reproduce the diagnosis and bounded replays.
+Bulk inputs/results remain local. The pinned incomplete-node Parquet SHA is
+<code class="docutils literal notranslate"><span class="pre">d8db0cbf103054bcc18ec37136b5dc77bca446a83c115b1f5e8b379e61a363d8</span></code>.</p>
+<p>These are component and source-cache coverage checks, not a complete LPSN/PREGO
+source-release selection, complete merged graph or release regeneration. The historical EdgeMech
+release remains unchanged. Current upstream code also contains explicit ENVO
+dispositions; it should be used during normal regeneration rather than duplicated.
+IMG and INSDC still lack owner-supplied record titles in these inputs. Partial and
+obsolete EC semantics remain tracked in #267/#268, and citation conflicts require
+source reconciliation. These gaps are not evidence that their biological edges
+are false.</p>
+<p>Final gates use an isolated Python3.12 Poetry environment installed from the
+lockfile. The initial focused tests used Python3.10 with an explicit checkout
+import path. Final validation uses <code class="docutils literal notranslate"><span class="pre">scripts/run_pr_gates.py</span></code> and records the exact
+candidate and per-command results under <code class="docutils literal notranslate"><span class="pre">data/validation/pr-gates/</span></code>; the GitHub
+PR carries the final gate outcome. No original checkout or environment was rewritten.</p>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Harshad Hegde &lt;hhegde@lbl.gov&gt;.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

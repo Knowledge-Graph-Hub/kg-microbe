@@ -4,6 +4,14 @@ kg\_microbe.transform\_utils.prego package
 Submodules
 ----------
 
+kg\_microbe.transform\_utils.prego.bto\_metadata module
+-------------------------------------------------------
+
+.. automodule:: kg_microbe.transform_utils.prego.bto_metadata
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 kg\_microbe.transform\_utils.prego.calibration module
 -----------------------------------------------------
 

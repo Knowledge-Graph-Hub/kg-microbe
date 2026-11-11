@@ -161,9 +161,28 @@ poetry run kg transform -s lpsn_api    # slow enrichment (hours)</p>
 <dd><p>Bases: <a class="reference internal" href="kg_microbe.transform_utils.html#kg_microbe.transform_utils.transform.Transform" title="kg_microbe.transform_utils.transform.Transform"><code class="xref py py-class docutils literal notranslate"><span class="pre">Transform</span></code></a></p>
 <p>Fetch per-record LPSN JSON, emit enrichment nodes + edges.</p>
 <dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.lpsn_api.lpsn_api.LPSNAPITransform.REQUIRED_AUDIT_FILES">
+<span class="sig-name descname"><span class="pre">REQUIRED_AUDIT_FILES</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('lpsn_api_records.tsv',)</span></em><a class="headerlink" href="#kg_microbe.transform_utils.lpsn_api.lpsn_api.LPSNAPITransform.REQUIRED_AUDIT_FILES" title="Link to this definition"></a></dt>
+<dd><p>Producer-owned disposition reports whose emitted bytes must survive finalization/merge.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.lpsn_api.lpsn_api.LPSNAPITransform.REQUIRED_CONSUMED_INPUTS">
+<span class="sig-name descname"><span class="pre">REQUIRED_CONSUMED_INPUTS</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('lpsn_api_gss_nodes',)</span></em><a class="headerlink" href="#kg_microbe.transform_utils.lpsn_api.lpsn_api.LPSNAPITransform.REQUIRED_CONSUMED_INPUTS" title="Link to this definition"></a></dt>
+<dd><p>Named generated inputs that must actually be read before fresh finalization.
+Unlike DATA_INPUTS, these are checked after upstream producers have run.</p>
+</dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="kg_microbe.transform_utils.lpsn_api.lpsn_api.LPSNAPITransform.TRANSFORM_INPUTS">
 <span class="sig-name descname"><span class="pre">TRANSFORM_INPUTS</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('lpsn',)</span></em><a class="headerlink" href="#kg_microbe.transform_utils.lpsn_api.lpsn_api.LPSNAPITransform.TRANSFORM_INPUTS" title="Link to this definition"></a></dt>
 <dd><p>Reads this transform’s output; see Transform.TRANSFORM_INPUTS (#845).</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.lpsn_api.lpsn_api.LPSNAPITransform.producer_native_inputs">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">producer_native_inputs</span></span><a class="headerlink" href="#kg_microbe.transform_utils.lpsn_api.lpsn_api.LPSNAPITransform.producer_native_inputs" title="Link to this definition"></a></dt>
+<dd><p>Return the selected API record inventory without exposing mutable producer state.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -186,6 +205,18 @@ Progress is printed in periodic batches regardless.</p>
 </dd>
 </dl>
 </section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.lpsn_api.lpsn_api.LPSNAPITransform.verify_native_inputs">
+<span class="sig-name descname"><span class="pre">verify_native_inputs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">byte_verified</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.lpsn_api.lpsn_api.LPSNAPITransform.verify_native_inputs" title="Link to this definition"></a></dt>
+<dd><p>Require selected API record bytes, locators and the mandatory producer audit.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.lpsn_api.lpsn_api.LPSNAPITransform.verify_recorded_native_inputs">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">verify_recorded_native_inputs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">report</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">report_path</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">admission</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.lpsn_api.lpsn_api.LPSNAPITransform.verify_recorded_native_inputs" title="Link to this definition"></a></dt>
+<dd><p>Bind saved API reads to their selected cache paths during read-only merge admission.</p>
 </dd></dl>
 
 </dd></dl>
@@ -225,6 +256,58 @@ it from an API record; it never carries ids to link to.</p>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>]</span></p>
 </dd>
 </dl>
+</dd></dl>
+
+</section>
+<section id="module-kg_microbe.transform_utils.lpsn_api.native_inputs">
+<span id="kg-microbe-transform-utils-lpsn-api-native-inputs-module"></span><h2>kg_microbe.transform_utils.lpsn_api.native_inputs module<a class="headerlink" href="#module-kg_microbe.transform_utils.lpsn_api.native_inputs" title="Link to this heading"></a></h2>
+<p>Bind LPSN API citation labels to consumed record bytes and selected locators (#1838).</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.lpsn_api.native_inputs.audit_rows">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.lpsn_api.native_inputs.</span></span><span class="sig-name descname"><span class="pre">audit_rows</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">contract</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.lpsn_api.native_inputs.audit_rows" title="Link to this definition"></a></dt>
+<dd><p>Serialize deterministic evidence for every selected API record, including absent cache entries.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.lpsn_api.native_inputs.iter_gss_record_nos">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.lpsn_api.native_inputs.</span></span><span class="sig-name descname"><span class="pre">iter_gss_record_nos</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">handle</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.lpsn_api.native_inputs.iter_gss_record_nos" title="Link to this definition"></a></dt>
+<dd><p>Read the exact root-selection rule shared by production and independent admission.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.lpsn_api.native_inputs.linked_record_nos">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.lpsn_api.native_inputs.</span></span><span class="sig-name descname"><span class="pre">linked_record_nos</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">record_no</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">record</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.lpsn_api.native_inputs.linked_record_nos" title="Link to this definition"></a></dt>
+<dd><p>Preserve production’s ordered parent/basonym links, excluding nonnumeric and self links.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.lpsn_api.native_inputs.validate_record">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.lpsn_api.native_inputs.</span></span><span class="sig-name descname"><span class="pre">validate_record</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">record</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">record_no</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.lpsn_api.native_inputs.validate_record" title="Link to this definition"></a></dt>
+<dd><p>Reject missing, malformed or unrelated API responses before attributing their fields.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.lpsn_api.native_inputs.validate_record_no">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.lpsn_api.native_inputs.</span></span><span class="sig-name descname"><span class="pre">validate_record_no</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">record_no</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.lpsn_api.native_inputs.validate_record_no" title="Link to this definition"></a></dt>
+<dd><p>Require a literal numeric record identifier before constructing a cache path.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.lpsn_api.native_inputs.verify_native_contract">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.lpsn_api.native_inputs.</span></span><span class="sig-name descname"><span class="pre">verify_native_contract</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">contract</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">snapshots</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">raw_dir</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">audit_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">admission</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.lpsn_api.native_inputs.verify_native_contract" title="Link to this definition"></a></dt>
+<dd><p>Revalidate selected lexical paths as well as bytes before completion and merge admission.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.lpsn_api.native_inputs.verify_record_audit">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.lpsn_api.native_inputs.</span></span><span class="sig-name descname"><span class="pre">verify_record_audit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">contract</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">audit_path</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">admission</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.lpsn_api.native_inputs.verify_record_audit" title="Link to this definition"></a></dt>
+<dd><p>Check required audit bytes, retaining them only for a read-only admission epoch.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.lpsn_api.native_inputs.verify_selection_inventory">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.lpsn_api.native_inputs.</span></span><span class="sig-name descname"><span class="pre">verify_selection_inventory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">contract</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guard</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">raw</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.lpsn_api.native_inputs.verify_selection_inventory" title="Link to this definition"></a></dt>
+<dd><p>Derive all requested records from verified GSS roots and API links, never ledger membership.</p>
 </dd></dl>
 
 </section>

@@ -373,3 +373,107 @@ def test_a_directory_that_is_not_a_checkout_records_unknown(tmp_path):
     from kg_microbe.merge_utils.stats_provenance import git_commit
 
     assert git_commit(tmp_path) == "unknown"
+
+
+def _root_contract_git(repo: Path, *args: str) -> str:
+    """Run real Git for the explicit checkout-root controls, requiring its availability."""
+    import shutil
+    import subprocess
+
+    git = shutil.which("git")
+    assert git is not None, "Git is required for the checkout-root contract controls"
+    result = subprocess.run(  # noqa: S603 - resolved executable and fixed test arguments
+        [git, *args], cwd=repo, capture_output=True, text=True, check=True, timeout=30
+    )
+    return result.stdout.removesuffix("\n")
+
+
+@pytest.fixture
+def root_contract_checkout(tmp_path):
+    """Require Git before constructing a committed synthetic checkout for issue #1832."""
+    _root_contract_git(tmp_path, "--version")
+    return _init_repo(tmp_path)
+
+
+def test_nested_noncheckout_does_not_inherit_the_enclosing_commit(root_contract_checkout):
+    """An explicit nested root cannot combine its markers with an enclosing checkout's HEAD."""
+    from kg_microbe.merge_utils.stats_provenance import git_commit
+
+    repo = root_contract_checkout
+    nested = repo / "nested" / "not-a-checkout"
+    nested.mkdir(parents=True)
+    discovered = Path(_root_contract_git(nested, "rev-parse", "--show-toplevel"))
+    expected = _root_contract_git(repo, "rev-parse", "--short", "HEAD")
+    assert discovered.samefile(repo), "the regression must exercise successful parent discovery"
+    assert not discovered.samefile(nested)
+    assert not (nested / ".git").exists()
+    assert git_commit(repo) == expected
+    assert git_commit(nested) == "unknown"
+
+    stats, edges, config = _write_fixture(nested)
+    result = annotate_graph_stats(stats, edges, config, nested)
+    assert result["provenance"]["commit"] == "unknown"
+    assert result["provenance"]["sources"]["bacdive"].startswith("code=c0de data=da7a schema=5c")
+    assert yaml.safe_load(stats.read_text(encoding="utf-8"))["provenance"] == result["provenance"]
+    assert git_commit(repo) == expected, "untracked nested fixtures do not dirty the enclosing checkout"
+
+
+def test_an_explicit_actual_checkout_keeps_its_commit(root_contract_checkout):
+    """The root check accepts an actual checkout and returns its exact current short HEAD."""
+    from kg_microbe.merge_utils.stats_provenance import git_commit
+
+    repo = root_contract_checkout
+    assert (repo / ".git").is_dir()
+    assert Path(_root_contract_git(repo, "rev-parse", "--show-toplevel")).samefile(repo)
+    assert git_commit(repo) == _root_contract_git(repo, "rev-parse", "--short", "HEAD")
+
+
+def test_a_linked_worktree_uses_its_own_checkout_commit(root_contract_checkout, tmp_path):
+    """A linked worktree's .git file is valid and its detached HEAD remains independent."""
+    from kg_microbe.merge_utils.stats_provenance import git_commit
+
+    repo = root_contract_checkout
+    original = _root_contract_git(repo, "rev-parse", "--short", "HEAD")
+    linked = tmp_path / "linked checkout"
+    _root_contract_git(repo, "worktree", "add", "--detach", str(linked), "HEAD")
+    assert (linked / ".git").is_file()
+    (linked / "other.txt").write_text("linked worktree change\n", encoding="utf-8")
+    _root_contract_git(
+        linked,
+        "-c",
+        "user.name=Root contract fixture",
+        "-c",
+        "user.email=root-contract@example.invalid",
+        "-c",
+        "commit.gpgsign=false",
+        "commit",
+        "-qam",
+        "Commit in the synthetic linked worktree",
+    )
+    linked_head = _root_contract_git(linked, "rev-parse", "--short", "HEAD")
+    assert linked_head != original
+    assert Path(_root_contract_git(linked, "rev-parse", "--show-toplevel")).samefile(linked)
+    assert git_commit(linked) == linked_head
+    assert git_commit(repo) == original
+
+
+def test_a_physical_checkout_alias_keeps_commit_and_dirty_ignore_behavior(root_contract_checkout, tmp_path):
+    """Symlink spelling of the same physical root must retain exact HEAD and #1038 behavior."""
+    from kg_microbe.merge_utils.stats_provenance import git_commit
+
+    repo = root_contract_checkout
+    alias = tmp_path / "physical checkout alias"
+    alias.symlink_to(repo, target_is_directory=True)
+    assert alias.is_symlink()
+    assert alias != repo
+    assert alias.samefile(repo)
+    assert Path(_root_contract_git(alias, "rev-parse", "--show-toplevel")).samefile(alias)
+    expected = _root_contract_git(repo, "rev-parse", "--short", "HEAD")
+    assert git_commit(alias) == expected
+
+    stats = alias / "stats.yaml"
+    stats.write_text("a: 2\n", encoding="utf-8")
+    assert git_commit(alias) == f"{expected}-dirty"
+    assert git_commit(alias, ignore=(stats,)) == expected
+    assert git_commit(alias, ignore=(repo / "stats.yaml",)) == expected
+    assert git_commit(repo, ignore=(stats,)) == expected

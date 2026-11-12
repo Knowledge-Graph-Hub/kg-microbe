@@ -9,6 +9,7 @@ Outputs: per-command logs and a JSON evidence ledger under data/validation/pr-ga
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
 import re
@@ -24,6 +25,52 @@ COMMANDS = (
     ("poetry", "run", "tox", "-e", "coverage-clean,format-check,lint,codespell,docstr-coverage"),
     ("poetry", "run", "--", "tox", "-e", "py", "--", "tests", "--durations=50"),
 )
+
+
+MIM_NATIVE_SELECTORS = ("MIM_STABLE_TEST_PRODUCTS", "MIM_STABLE_TEST_PRODUCER", "MIM_STABLE_TEST_PYTHON")
+
+
+def native_fixture_inputs(environment: dict[str, str], *, required: bool) -> dict:
+    """Record exact native fixture/code/runtime locators and bytes without claiming admission."""
+    selected = {name: environment.get(name) for name in MIM_NATIVE_SELECTORS}
+    if not required:
+        return {"acceptance": "NOT_REQUESTED", "selectors": selected}
+    missing = [name for name, value in selected.items() if not value]
+    if missing:
+        raise RuntimeError("Required native MIM prerequisites missing: " + ", ".join(missing))
+    products, producer, executable = (Path(selected[name]).absolute().resolve() for name in MIM_NATIVE_SELECTORS)
+    if not products.is_dir() or not producer.is_dir() or not executable.is_file():
+        raise RuntimeError("Required native MIM fixture, producer or executable path is unavailable")
+    paths = [
+        products / "candidate/manifest.json",
+        products / "companion-output/manifest.json",
+        products / "source-review.json",
+        products / "companion-review.json",
+        producer / "tests/test_source_bindings.py",
+        producer / "src/mediaingredientmech/export/source_bindings.py",
+        producer / "pyproject.toml",
+        producer / "uv.lock",
+        producer / ".python-version",
+        executable,
+    ]
+    return {
+        "acceptance": "REQUIRED_BY_PYTEST",
+        "selectors": selected,
+        "resolved": {
+            name: str(path)
+            for name, path in zip(MIM_NATIVE_SELECTORS, (products, producer, executable), strict=True)
+        },
+        "producer_commit": git_output(producer, "rev-parse", "HEAD"),
+        "input_sha256": {str(path): hashlib.sha256(path.read_bytes()).hexdigest() for path in paths},
+        "qualification": "Locator/byte evidence only; native validation and complete test outcomes remain required",
+    }
+
+
+def gate_commands(*, require_stable_mim: bool) -> tuple:
+    """Retain the ordinary full-suite route, adding only explicit native acceptance enforcement."""
+    if not require_stable_mim:
+        return COMMANDS
+    return (*COMMANDS[:-1], (*COMMANDS[-1], "--require-stable-mim"))
 
 
 def git_output(root: Path, *arguments: str) -> str:
@@ -69,11 +116,13 @@ def check_candidate(root: Path, commit: str) -> None:
         )
 
 
-def run_gates(root: Path, commit: str, label: str, output_dir: Path) -> int:
+def run_gates(root: Path, commit: str, label: str, output_dir: Path, *, require_stable_mim: bool = False) -> int:
     """Run cheap checks before tox, saving each result and stopping on any failure."""
     check_candidate(root, commit)
+    commands = gate_commands(require_stable_mim=require_stable_mim)
+    native_inputs = native_fixture_inputs(os.environ, required=require_stable_mim)
     report = output_dir / f"kgm-{label}-gates.json"
-    logs = [output_dir / f"kgm-{label}-{index}.log" for index in range(1, len(COMMANDS) + 1)]
+    logs = [output_dir / f"kgm-{label}-{index}.log" for index in range(1, len(commands) + 1)]
     if any(path.exists() for path in [report, *logs]):
         raise RuntimeError("Run label already has evidence; use a new label to preserve the earlier results")
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -88,7 +137,7 @@ def run_gates(root: Path, commit: str, label: str, output_dir: Path) -> int:
     # Tox's per-user defaults can also set no_test/package_only/skip_env (#1679).
     environment["TOX_USER_CONFIG_FILE"] = os.devnull
     results = []
-    for command, logfile in zip(COMMANDS, logs, strict=True):
+    for command, logfile in zip(commands, logs, strict=True):
         check_candidate(root, commit)
         started = time.monotonic()
         with logfile.open("w", encoding="utf-8") as log:
@@ -101,6 +150,7 @@ def run_gates(root: Path, commit: str, label: str, output_dir: Path) -> int:
                 code = 127
         item = {
             "command": list(command),
+            "native_mim": native_inputs,
             "commit": commit,
             "exit_code": code,
             "seconds": round(time.monotonic() - started, 2),
@@ -110,12 +160,17 @@ def run_gates(root: Path, commit: str, label: str, output_dir: Path) -> int:
             check_candidate(root, commit)
         except RuntimeError as error:
             item["candidate_error"] = str(error)
+        try:
+            if native_fixture_inputs(environment, required=require_stable_mim) != native_inputs:
+                raise RuntimeError("Selected native MIM fixture/code/runtime changed during validation")
+        except (OSError, RuntimeError, subprocess.CalledProcessError) as error:
+            item["native_input_error"] = str(error)
         results.append(item)
         pending_report = report.with_suffix(".json.tmp")
         pending_report.write_text(json.dumps(results, indent=2) + "\n", encoding="utf-8")
         pending_report.replace(report)
         print(json.dumps(item), flush=True)
-        if code or "candidate_error" in item:
+        if code or "candidate_error" in item or "native_input_error" in item:
             print(f"GATES_FAILED {commit}; see {report}", file=sys.stderr)
             return code if code > 0 else 1
     print(f"GATES_COMPLETE {commit}", flush=True)
@@ -127,6 +182,10 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("label", help="unique run label (letters, numbers, dots, underscores and hyphens)")
     parser.add_argument("--output-dir", type=Path, default=Path("data/validation/pr-gates"))
+    parser.add_argument(
+        "--require-stable-mim", action="store_true",
+        help="require native MIM prerequisites and every collected native control to pass",
+    )
     parser.add_argument("--dry-run", action="store_true", help="print the plan without running gates or writing files")
     args = parser.parse_args()
     if not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.-]{0,99}", args.label):
@@ -138,9 +197,14 @@ def main() -> int:
         commit = git_output(root, "rev-parse", "HEAD")
         output_dir = args.output_dir.resolve()
         if args.dry_run:
-            print(json.dumps({"commit": commit, "commands": COMMANDS, "output_dir": str(output_dir)}, indent=2))
+            print(json.dumps({
+                "commit": commit,
+                "commands": gate_commands(require_stable_mim=args.require_stable_mim),
+                "output_dir": str(output_dir),
+                "native_mim": native_fixture_inputs(os.environ, required=args.require_stable_mim),
+            }, indent=2))
             return 0
-        return run_gates(root, commit, args.label, output_dir)
+        return run_gates(root, commit, args.label, output_dir, require_stable_mim=args.require_stable_mim)
     except (OSError, RuntimeError, subprocess.CalledProcessError) as error:
         print(f"GATES_FAILED: {error}", file=sys.stderr)
         return 1

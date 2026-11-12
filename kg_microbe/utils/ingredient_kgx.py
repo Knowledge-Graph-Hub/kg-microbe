@@ -41,6 +41,10 @@ def validate_ingredient_fields(row, *, is_node):
     present = {key for key, value in row.items() if key.startswith("ingredient_") and value not in (None, "")}
     if not present:
         return
+    if row.get(INGREDIENT_PROFILE_COLUMN) == "mimprofile:stable-source-kgx/v1":
+        from kg_microbe.utils.stable_ingredient_kgx import validate_stable_ingredient_fields
+
+        return validate_stable_ingredient_fields(row, is_node=is_node)
     profile = ingredient_kgx_profile()
     if present - profile["columns"].keys() or row.get(INGREDIENT_PROFILE_COLUMN) != profile["profile_id"]:
         raise ValueError("Unknown or unversioned ingredient KGX extension")

@@ -141,7 +141,11 @@ def _refresh_external(fixture, rows, owner_paths, external, binding, *, disposit
             "schema_version": 1,
             "source_sssom": binding.EXTERNAL_SOURCE,
             "source_sha256": external.digest(root / binding.EXTERNAL_SOURCE),
-            "inputs": {"external-evidence.json": external.digest(root / "external-evidence.json")},
+            "inputs": {
+                "external-evidence.json": external.digest(root / "external-evidence.json"),
+                **{str(path): external.digest(root / path) for path in (binding.REGISTRY_PATH, binding.LIFECYCLE_PATH)},
+                **{path: external.digest(root / path) for path in fixture.records if path not in owners},
+            },
             "record_inputs": owners,
             "decisions": decisions,
         },
@@ -171,6 +175,14 @@ def _variant(fixture, variant, external, binding):
         fixture.review["record_inputs"].pop(old)
         fixture.review["record_inputs"][new] = external.digest(root / new)
         fixture.review["cases"][3]["owner_record"] = new
+        # #1860: the complete permanent-owner inventory includes unmapped
+        # owners too. Rebuild the synthetic review after the private rename.
+        _, _, rows = external.read_sssom(root / binding.EXTERNAL_SOURCE)
+        review = json.loads((root / "external-review.json").read_bytes())
+        if any(decision["disposition"] != "SUPPORTED" for decision in review["decisions"]):
+            raise ValueError("Rename fixture requires its original supported external decisions")
+        owner_paths = [decision["owner_record"] for decision in review["decisions"]]
+        _refresh_external(fixture, rows, owner_paths, external, binding)
     elif variant == "empty":
         _refresh_external(fixture, [], [], external, binding)
     elif variant in {"all-withheld", "multiline", "multiline-withheld"}:

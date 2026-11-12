@@ -731,3 +731,48 @@ def test_unknown_companion_capability_refused_before_native_child(native_selecti
     with pytest.raises(ValueError, match="unsupported companion capabilities"):
         StableSourceCandidate(path, selection_sha256=sha(path))
     assert executions == []
+
+
+@pytest.mark.parametrize(
+    "missing",
+    [
+        "data/ids/mim_id_registry.tsv",
+        "data/ids/mim_id_lifecycle.tsv",
+        "data/ingredients/unmapped/Ungrounded.yaml",
+        "data/ingredients/mapped/Shared.yaml",
+    ],
+)
+def test_native_external_identity_closure_missing_input_refused(native_selection, tmp_path, missing):
+    """#1860: native permanent identities require both ledgers and every current owner."""
+    root, _, selection = native_selection
+    review_path = root / "external-review.json"
+    review = json.loads(review_path.read_bytes())
+    assert missing in review["inputs"]
+    del review["inputs"][missing]
+    put(review_path, review)
+    output = tmp_path / "refused-native-external-output"
+    code = (
+        "import sys; from pathlib import Path; "
+        "sys.path.insert(0, str(Path(sys.argv[1]) / 'src')); "
+        "from mediaingredientmech.export import reviewed_sssom as external; "
+        "external.export_reviewed(Path(sys.argv[2]), Path('external-review.json'), Path(sys.argv[3]))"
+    )
+    argv = [
+        selection["python"]["path"],
+        "-I",
+        "-B",
+        "-c",
+        code,
+        selection["producer_root"],
+        str(root),
+        str(output),
+    ]
+    completed = subprocess.run(  # noqa: S603 - exact selected native runtime and private fixture only
+        argv, cwd=tmp_path, capture_output=True, check=False, timeout=120
+    )
+    (tmp_path / "identity-closure-stdout.txt").write_bytes(completed.stdout)
+    (tmp_path / "identity-closure-stderr.txt").write_bytes(completed.stderr)
+    put(tmp_path / "identity-closure-command.json", {"argv": argv, "exit_status": completed.returncode})
+    assert completed.returncode != 0
+    assert f"Permanent identity input missing or changed in review: {missing}" in completed.stderr.decode()
+    assert not output.exists()

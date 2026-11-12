@@ -76,6 +76,26 @@ selected reviews, manifests and original generation provenance. `legacy_identifi
 returns all explicitly retained alias owners. It never chooses among ambiguous
 aliases or collapses distinct owners sharing an external ID.
 
+The KG adapter passes its own explicit companion capability set to the selected
+native MIM validator (#1859); upgrading MIM cannot silently expand KG support.
+Unknown required capabilities fail before the native child runs. The optional
+`retained-companion-obligations-v1` capability transports the complete native
+`retained_obligations` ledger, including historical/current envelopes, current
+scientific decisions, cohort counts, partitions and blocking mapping claims.
+The native validator remains the scientific and lineage authority. The KG layer
+also checks that retained owner dependencies and emitted arrays agree.
+
+The graph carries a ledger header and ordered complete entry information
+assertions, linked by the complete native ledger digest, alongside the ordinary
+emitted companion observations. This keeps each complete claim in its own scalar
+cell without changing TSV limits. Entry indices preserve native ledger order
+even if graph rows are reordered. Its retained claims never enter source
+resolution or active identity, xref, product, occurrence or ontology-parent
+indexes. A retained source observation may remain scientifically SUPPORTED;
+retention does not rewrite that decision. `audit()` reports the emitted arrays
+and the full retained-ledger census separately. Persistence and native replay
+on reload preserve the ledger and its complete original native artifact.
+
 `graph_rows()` produces the separate profile `mimprofile:stable-source-kgx/v1`.
 Numeric `MIM:0000001` and `MIM.ingredient:0000001` expand to the same permanent URI:
 `https://culturebotai.github.io/MediaIngredientMech/ingredient/MIM_0000001`.
@@ -165,3 +185,11 @@ source products and supplies no companion claims. An all-external-withheld case
 retains its four original negative mapping rows while independently supported
 source identities remain usable. No test
 claims to establish current campaign scientific acceptance or KG release readiness.
+
+The retained variant uses the selected, commit-checked native MIM full 51-claim /
+20-owner test fixture, its authenticated mint history, and fresh explicitly
+synthetic source decisions. The 14 BSA obligations remain evidence, with a
+separate synthetic source hold. It checks native constructor admission, source
+refusal, exact ledger/graph transport, persisted reload and the existing native
+finalization/archive boundary. It does not reuse campaign scientific reports or
+establish that the pending real campaign export has completed.

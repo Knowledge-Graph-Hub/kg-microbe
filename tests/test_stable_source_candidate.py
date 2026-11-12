@@ -200,6 +200,18 @@ def finalize_and_reload(candidate, tmp_path):
 
     raw = tmp_path / "graph-raw"
     raw.mkdir()
+    if (candidate.payload()["companion"] or {}).get("retained_obligations") is not None:
+        # #1859 reuses native primary-source statements, not invented categories
+        # or a change to production authority inputs, policy or finalization.
+        native = Path(__file__).parent / "resources/ingredient_bundle/native"
+        foodon = json.loads((native / "foodon-origin.json").read_bytes())
+        origin = json.loads((native / "acceptance-native-origin.json").read_bytes())
+        for name, target, expected in (
+            ("foodon-authority.json", "foodon.json", foodon["fixture_sha256"]),
+            ("micro-authority.owl", "micro.owl", origin["members"]["micro-authority.owl"]["sha256"]),
+        ):
+            assert sha(native / name) == expected
+            shutil.copyfile(native / name, raw / target)
     transform = Transform("stable_mim_native_candidate_fixture", raw, tmp_path / "graph")
     transform.TSV_QUOTING = csv.QUOTE_NONE
     candidate.bind_to_transform(transform)
@@ -237,6 +249,34 @@ def finalize_and_reload(candidate, tmp_path):
             assert hashlib.sha256(content).hexdigest() == identities[name]["sha256"]
             reloaded.append(list(csv.DictReader(io.StringIO(content.decode()), delimiter="\t", quoting=csv.QUOTE_NONE)))
     candidate.verify_graph_rows(*reloaded)
+    retained = (candidate.payload()["companion"] or {}).get("retained_obligations")
+    if retained is not None:
+        from tests.test_stable_retained_companion import reconstruct_retained_ledger
+
+        assert reconstruct_retained_ledger(reloaded[1]) == retained
+        assert reconstruct_retained_ledger(list(reversed(reloaded[1]))) == retained
+        for control in ("missing", "duplicate", "wrong_index", "ledger_hash"):
+            altered = deepcopy(reloaded[1])
+            target = next(
+                i
+                for i, row in enumerate(altered)
+                if json.loads(row["ingredient_assertion_json"]).get("kind") == "retained_obligation"
+            )
+            if control == "missing":
+                altered.pop(target)
+            elif control == "duplicate":
+                altered.append(deepcopy(altered[target]))
+            else:
+                value = json.loads(altered[target]["ingredient_assertion_json"])
+                if control == "wrong_index":
+                    value["entry_position"] += 1
+                else:
+                    value["ledger_sha256"] = "0" * 64
+                altered[target]["ingredient_assertion_json"] = canonical_json(value).decode()
+            with pytest.raises((ValueError, AssertionError)):
+                reconstruct_retained_ledger(altered)
+            with pytest.raises(ValueError, match="graph rows"):
+                candidate.verify_graph_rows(reloaded[0], altered)
     for control in ("profile", "fingerprint", "lost", "endpoint"):
         altered_nodes, altered_edges = deepcopy(reloaded)
         if control == "profile":
@@ -324,6 +364,7 @@ def test_mutation_after_native_validation_refused(native_selection, monkeypatch)
         "all-withheld",
         "multiline",
         "multiline-withheld",
+        "retained",
     ],
 )
 def test_actual_native_variant_through_consumer(tmp_path, local_source_schema, variant):
@@ -437,6 +478,58 @@ def test_actual_native_variant_through_consumer(tmp_path, local_source_schema, v
         assert len(payload["claims"]) == 4
         assert payload["companion"] is None and payload["companion_mode"] == "absent/v1"
         assert candidate.audit()["external_withheld_rows"] == 4
+    elif variant == "retained":
+        from kg_microbe.utils.ingredient_bundle_contract import validate_bundle as legacy_validate_bundle
+        from kg_microbe.utils.stable_ingredient_kgx import stable_identifier_uri
+        from tests.test_stable_retained_companion import reconstruct_retained_ledger
+
+        # The unchanged older portable consumer must refuse the new capability.
+        with pytest.raises(ValueError, match="capabilities"):
+            legacy_validate_bundle(root / "companion-output")
+        ledger = payload["companion"]["retained_obligations"]
+        assert candidate.audit()["retained_companion_counts"] == {
+            "claim_count": 51,
+            "owner_count": 20,
+            "emitted_claim_count": 37,
+            "retained_claim_count": 14,
+        }
+        retained = [entry for entry in ledger["entries"] if entry["partition"] == "retained"]
+        assert len(retained) == 14
+        assert {entry["claim"]["owner_record"] for entry in retained} == {
+            "data/ingredients/mapped/Bovine_Serum_Albumin.yaml"
+        }
+        assert candidate.resolve_source("SOURCE:BSA") is None
+        assert candidate.resolve_source("SOURCE:retained-control").startswith("MIM.ingredient:")
+        assert candidate.resolve_source("NCIT:C85253") is None
+        assert any(entry["decision"]["disposition"] == "SUPPORTED" for entry in retained)
+        assert payload["companion"]["products"] == []
+        assert candidate.audit()["companion_counts"] == {
+            "mappings": 19,
+            "identifiers": 16,
+            "products": 0,
+            "occurrences": 2,
+        }
+        nodes, edges = candidate.graph_rows()
+        envelopes = [json.loads(edge["ingredient_assertion_json"]) for edge in edges]
+        assert reconstruct_retained_ledger(edges) == ledger
+        for claim in payload["claims"]:
+            assert stable_identifier_uri(claim["original_object_id"]) == stable_identifier_uri(claim["object_id"])
+            assert claim["original_object_id"].startswith("MIM:")
+            assert claim["object_id"].startswith("MIM.ingredient:")
+        assert all(edge["predicate"] != "biolink:subclass_of" for edge in edges)
+        assert not any(
+            entry.get("representation") == "active_mapping"
+            and (
+                entry["payload"].get("subject_id") in {"SOURCE:BSA", "MIM:0000522"}
+                or entry["payload"].get("object_id") == "MIM.ingredient:0000522"
+            )
+            for entry in envelopes
+        )
+        pin = candidate.export_candidate(tmp_path / "retained-persisted")
+        restored = StableSourceCandidate.reload(tmp_path / "retained-persisted", manifest_sha256=pin)
+        assert restored.payload() == payload
+        assert restored.payload()["companion"]["retained_obligations"] == ledger
+        assert restored.graph_rows() == (nodes, edges)
     finalize_and_reload(candidate, tmp_path)
     if variant in {"empty", "all-withheld", "multiline-withheld"}:
         output = tmp_path / "persisted-source-only"
@@ -614,3 +707,27 @@ def test_native_unicode_physical_output_alias_refused(native_selection, tmp_path
     assert restored.payload() == candidate.payload()
     assert not (destination / "FAILED.json").exists()
     assert {p.relative_to(directory).as_posix(): sha(p) for p in directory.rglob("*") if p.is_file()} == before
+
+
+def test_unknown_companion_capability_refused_before_native_child(native_selection, monkeypatch):
+    """#1859: a newer selected MIM validator cannot expand the KG consumer contract."""
+    root, path, selection = native_selection
+    manifest_path = root / "companion-output/manifest.json"
+    manifest = json.loads(manifest_path.read_bytes())
+    manifest["required_capabilities"].append("future-companion-authorization/v999")
+    put(manifest_path, manifest)
+    selection["companion_output"]["manifest_sha256"] = sha(manifest_path)
+    put(path, selection)
+    original = subprocess.run
+    executions = []
+
+    def observe(argv, **kwargs):
+        """Record whether unsupported capabilities reach the actual native child."""
+        if any(str(value).endswith("stable_source_native_bridge.py") for value in argv):
+            executions.append(argv)
+        return original(argv, **kwargs)
+
+    monkeypatch.setattr(subprocess, "run", observe)
+    with pytest.raises(ValueError, match="unsupported companion capabilities"):
+        StableSourceCandidate(path, selection_sha256=sha(path))
+    assert executions == []

@@ -31,6 +31,7 @@ VARIANTS = (
     "terminal-invalid",
     "multiline",
     "multiline-withheld",
+    "retained",
 )
 
 
@@ -328,7 +329,15 @@ def construct(*, mim_root, mim_head, fixture_sha256, python, python_sha256, outp
         "fixture_git_revision_is_synthetic": True,
     }
     try:
-        _variant(fixture, variant, external, binding)
+        if variant == "retained":
+            helper = Path(__file__).with_name("stable_mim_retained_fixture.py")
+            spec = importlib.util.spec_from_file_location("kg_native_retained_fixture", helper)
+            retained = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(retained)
+            retained.retained_fixture(fixture, mim_root, mim_head, snapshots, external, binding)
+            provenance["retained_fixture_helper_sha256"] = sha(helper)
+        else:
+            _variant(fixture, variant, external, binding)
     except ValueError as error:
         if variant != "terminal-invalid" or "unknown or retired MIM ID" not in str(error):
             raise
@@ -346,9 +355,10 @@ def construct(*, mim_root, mim_head, fixture_sha256, python, python_sha256, outp
         if absent_companion:
             if any((output / name).exists() for name in ("companion-review.json", "companion-output", "claims.json")):
                 raise ValueError("Explicit absent companion cannot hide supplied companion inputs")
-        else:
+        elif variant != "retained":
             _companion(fixture, variant, external, binding)
-        external_result = external.export_reviewed(output, Path("external-review.json"), output / "external-output")
+        external_review = fixture.review["external_review"]["path"]
+        external_result = external.export_reviewed(output, Path(external_review), output / "external-output")
         if not absent_companion:
             companion_result = export_bundle(output, Path("companion-review.json"), output / "companion-output")
             companion_pin = external.digest(output / "companion-output/manifest.json")
@@ -360,7 +370,7 @@ def construct(*, mim_root, mim_head, fixture_sha256, python, python_sha256, outp
             "source_output": "candidate",
             "source_pin": external.digest(output / "candidate/manifest.json"),
             "source_manifest": source_result,
-            "external_review": "external-review.json",
+            "external_review": external_review,
             "external_output": "external-output",
             "external_pin": external.digest(output / "external-output/manifest.json"),
             "external_manifest": external_result,

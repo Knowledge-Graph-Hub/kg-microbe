@@ -219,6 +219,9 @@ class StableSourceCandidate:
         self.companion_output = None
         if mode == "required/v1":
             self.companion_output, companion_manifest = self._product("companion_output", "members")
+            from kg_microbe.utils.stable_source_native_bridge import companion_capabilities
+
+            companion_capabilities(companion_manifest)
         for name, digest in source_manifest["inputs"].items():
             self._snapshots.add(_path(self.root, name), digest)
         source_review = read_json(self._snapshots.files[_path(self.root, selection["source_review"]["path"])][0])
@@ -397,7 +400,7 @@ class StableSourceCandidate:
                 result[key] += 1
             return result
 
-        return {
+        result = {
             "status": STATUS,
             "production_authorized": False,
             "selection_sha256": self.fingerprint,
@@ -414,11 +417,18 @@ class StableSourceCandidate:
             "lineage_limitation": payload["lineage"]["limitation"],
             "companion_mode": payload["companion_mode"],
             "companion_counts": (
-                {key: len(rows) for key, rows in payload["companion"].items()}
+                {key: len(payload["companion"][key]) for key in ("mappings", "identifiers", "products", "occurrences")}
                 if payload["companion"] is not None
                 else None
             ),
         }
+        if payload["companion"] is not None and "retained_obligations" in payload["companion"]:
+            ledger = payload["companion"]["retained_obligations"]
+            result["retained_companion_counts"] = {
+                key: ledger[key]
+                for key in ("claim_count", "owner_count", "emitted_claim_count", "retained_claim_count")
+            }
+        return result
 
     def bind_to_transform(self, transform):
         """Register actual validated bytes with native candidate finalization."""

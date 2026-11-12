@@ -33,6 +33,7 @@ from kg_microbe.transform_utils.constants import (
     SUBJECT_COLUMN,
 )
 from kg_microbe.utils.ingredient_bundle_contract import canonical_json, read_json
+from kg_microbe.utils.stable_source_native_bridge import retained_companion
 
 STABLE_PROFILE = "mimprofile:stable-source-kgx/v1"
 STABLE_PREFIX = "https://culturebotai.github.io/MediaIngredientMech/ingredient/MIM_"
@@ -155,6 +156,17 @@ def validate_stable_ingredient_fields(row, *, is_node):
             )
         ):
             raise ValueError("Candidate context must preserve its explicit mode, status and source provenance")
+    if envelope["lane"] == "companion" and envelope.get("kind") in {"retained_obligations", "retained_obligation"}:
+        if envelope.get("representation") != "information_assertion":
+            raise ValueError("Retained obligations are evidence only")
+        if not isinstance(envelope.get("ledger_sha256"), str) or not re.fullmatch(
+            "[a-f0-9]{64}", envelope["ledger_sha256"]
+        ):
+            raise ValueError("Retained obligation requires its complete ledger fingerprint")
+        if envelope["kind"] == "retained_obligation" and (
+            type(envelope.get("entry_position")) is not int or envelope["entry_position"] < 1
+        ):
+            raise ValueError("Retained obligation requires its original positive entry position")
     if envelope.get("representation") == "active_mapping":
         payload = envelope["payload"]
         if (
@@ -210,6 +222,7 @@ def project_stable_candidate(native_payload, *, manifest_sha256):
         not isinstance(companion.get(kind), list) for kind in ("mappings", "identifiers", "products", "occurrences")
     ):
         raise ValueError("Required companion mode requires every complete companion lane")
+    retained = retained_companion(companion) if mode == "required/v1" else None
     context = {
         "companion_mode": mode,
         "status": native_payload["status"],
@@ -376,6 +389,29 @@ def project_stable_candidate(native_payload, *, manifest_sha256):
         for kind in ("mappings", "identifiers", "products", "occurrences"):
             for payload in companion[kind]:
                 information({"lane": "companion", "kind": kind, "payload": payload})
+        if retained is not None:
+            # Preserve the complete native ledger without putting its entire
+            # cohort into one oversized TSV cell (#1859). Explicit indices keep
+            # native entry order independent of graph/archive row order.
+            ledger_sha = _digest(retained)
+            information(
+                {
+                    "lane": "companion",
+                    "kind": "retained_obligations",
+                    "ledger_sha256": ledger_sha,
+                    "payload": {key: value for key, value in retained.items() if key != "entries"},
+                }
+            )
+            for position, entry in enumerate(retained["entries"], 1):
+                information(
+                    {
+                        "lane": "companion",
+                        "kind": "retained_obligation",
+                        "ledger_sha256": ledger_sha,
+                        "entry_position": position,
+                        "payload": entry,
+                    }
+                )
     for hold in holds:
         information({"lane": "consumer_hold", "payload": hold})
     for value in nodes.values():

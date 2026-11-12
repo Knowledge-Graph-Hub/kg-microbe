@@ -18,6 +18,25 @@ import json
 import sys
 from pathlib import Path
 
+RETAINED_CAPABILITY = "retained-companion-obligations-v1"
+COMPANION_CAPABILITIES = frozenset(
+    {
+        "ingredient-scope-v1",
+        "owner-bound-review-v1",
+        "identifier-annotations-v1",
+        "ingredient-occurrences-v1",
+        "catalog-products-v1",
+        "identity-projection-v1",
+        RETAINED_CAPABILITY,
+    }
+)
+COMPANION_LANES = {
+    "mapping": "mappings",
+    "identifier": "identifiers",
+    "product": "products",
+    "occurrence": "occurrences",
+}
+
 
 def _require(value, message):
     if not value:
@@ -26,6 +45,128 @@ def _require(value, message):
 
 def _sha(raw):
     return hashlib.sha256(raw).hexdigest()
+
+
+def companion_capabilities(manifest):
+    """Negotiate KG-owned capabilities independently of the selected MIM version."""
+    required = manifest.get("required_capabilities")
+    _require(
+        isinstance(required, list)
+        and all(isinstance(value, str) for value in required)
+        and len(required) == len(set(required)),
+        "invalid companion capabilities",
+    )
+    _require(not set(required) - COMPANION_CAPABILITIES, "unsupported companion capabilities")
+    return set(required)
+
+
+def retained_companion(companion):
+    """Check complete evidence accounting without granting any retained claim authority."""
+    if "retained_obligations" not in companion:
+        return None
+    ledger = companion["retained_obligations"]
+    _require(
+        isinstance(ledger, dict)
+        and set(ledger)
+        == {
+            "schema_version",
+            "capability",
+            "historical_review",
+            "claim_count",
+            "owner_count",
+            "emitted_claim_count",
+            "retained_claim_count",
+            "entries",
+        }
+        and type(ledger["schema_version"]) is int
+        and ledger["schema_version"] == 1
+        and ledger["capability"] == RETAINED_CAPABILITY,
+        "invalid retained companion ledger",
+    )
+    entries = ledger["entries"]
+    _require(isinstance(entries, list) and entries, "missing retained companion entries")
+    current_ids, previous_ids, owners, held = set(), set(), set(), {}
+    emitted = {name: [] for name in COMPANION_LANES.values()}
+    retained_count = 0
+    for entry in entries:
+        _require(
+            isinstance(entry, dict)
+            and set(entry) == {"previous_claim", "claim", "decision", "partition", "blocked_by"},
+            "invalid retained companion entry",
+        )
+        claim, previous, decision = entry["claim"], entry["previous_claim"], entry["decision"]
+        for value in (claim, previous):
+            _require(
+                isinstance(value, dict)
+                and set(value) == {"claim_id", "kind", "owner_record", "payload"}
+                and value["kind"] in COMPANION_LANES
+                and isinstance(value["payload"], dict),
+                "invalid retained claim envelope",
+            )
+        _require(
+            claim["claim_id"] not in current_ids
+            and previous["claim_id"] not in previous_ids
+            and claim["owner_record"] == previous["owner_record"]
+            and claim["kind"] == previous["kind"],
+            "duplicate or differently owned retained claim",
+        )
+        current_ids.add(claim["claim_id"])
+        previous_ids.add(previous["claim_id"])
+        owners.add(claim["owner_record"])
+        _require(
+            isinstance(decision, dict)
+            and decision.get("claim_id") == claim["claim_id"]
+            and decision.get("disposition") in {"SUPPORTED", "WITHHOLD"},
+            "retained claim lacks its current scientific decision",
+        )
+        _require(entry["partition"] in {"emitted", "retained"}, "unknown retained partition")
+        if entry["partition"] == "emitted":
+            _require(entry["blocked_by"] == [], "emitted claim has a retained dependency")
+            emitted[COMPANION_LANES[claim["kind"]]].append(claim["payload"])
+        else:
+            retained_count += 1
+            if claim["kind"] == "mapping":
+                payload = claim["payload"]
+                _require(
+                    claim["owner_record"] not in held
+                    and decision["disposition"] == "WITHHOLD"
+                    and payload.get("ext_scope_review_status") == "WITHHOLD"
+                    and payload.get("ext_identity_authorized") == "false",
+                    "retained mapping cannot authorize identity",
+                )
+                held[claim["owner_record"]] = claim["claim_id"]
+    for entry in entries:
+        blocker = held.get(entry["claim"]["owner_record"])
+        _require(
+            entry["partition"] == ("retained" if blocker else "emitted")
+            and entry["blocked_by"] == ([blocker] if blocker else []),
+            "retained owner dependency closure differs",
+        )
+    _require(bool(held), "retained ledger has no held owner")
+    counts = {
+        "claim_count": len(entries),
+        "owner_count": len(owners),
+        "emitted_claim_count": len(entries) - retained_count,
+        "retained_claim_count": retained_count,
+    }
+    _require(
+        all(type(ledger[key]) is int and ledger[key] == value for key, value in counts.items()),
+        "retained companion census differs",
+    )
+
+    def encoded(value):
+        """Compare complete emitted payloads without depending on list ordering."""
+        return json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=False, allow_nan=False)
+
+    _require(
+        all(
+            isinstance(companion.get(key), list)
+            and sorted(map(encoded, companion[key])) == sorted(map(encoded, values))
+            for key, values in emitted.items()
+        ),
+        "retained claims differ from emitted companion lanes",
+    )
+    return ledger
 
 
 def _table(path):
@@ -205,9 +346,17 @@ def validate(request):
         )
     else:
         companion_root = root / selection["companion_output"]["path"]
+        required = companion_capabilities(json.loads((companion_root / "manifest.json").read_bytes()))
         companion = validate_bundle(
-            companion_root, expected_manifest_sha256=selection["companion_output"]["manifest_sha256"]
+            companion_root,
+            expected_manifest_sha256=selection["companion_output"]["manifest_sha256"],
+            capabilities=COMPANION_CAPABILITIES,
         )
+        _require(
+            ("retained_obligations" in companion) == (RETAINED_CAPABILITY in required),
+            "retained companion capability and validated ledger differ",
+        )
+        retained_companion(companion)
         for field, name in (
             ("exporter_sha256", "export/ingredient_bundle.py"),
             ("validator_sha256", "ingredient_bundle_contract.py"),
@@ -261,7 +410,13 @@ def validate(request):
         "external_dispositions": _table(output / "external-mapping-dispositions.tsv"),
         "companion_mode": mode,
         "companion": (
-            {key: companion[key] for key in ("mappings", "identifiers", "products", "occurrences")}
+            {
+                key: companion[key]
+                for key in (
+                    *COMPANION_LANES.values(),
+                    *(("retained_obligations",) if "retained_obligations" in companion else ()),
+                )
+            }
             if companion is not None
             else None
         ),

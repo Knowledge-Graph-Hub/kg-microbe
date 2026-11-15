@@ -1,0 +1,150 @@
+{
+  "issue": 1862,
+  "profiles": [
+    {
+      "functions": [
+        {
+          "cumulative_seconds": 1.762739292,
+          "file": "ast.py",
+          "function": "parse",
+          "line": 33,
+          "primitive_calls": 1277,
+          "self_seconds": 0.0006955980000000001,
+          "total_calls": 1277
+        },
+        {
+          "cumulative_seconds": 3.121538535,
+          "file": "ast.py",
+          "function": "dump",
+          "line": 113,
+          "primitive_calls": 1114,
+          "self_seconds": 0.0008910290000000001,
+          "total_calls": 1114
+        },
+        {
+          "cumulative_seconds": 4.982574235,
+          "file": "transform_fingerprint.py",
+          "function": "_behaviour_digest",
+          "line": 188,
+          "primitive_calls": 1114,
+          "self_seconds": 0.071597215,
+          "total_calls": 1114
+        },
+        {
+          "cumulative_seconds": 5.074851582,
+          "file": "transform_fingerprint.py",
+          "function": "_behaviour_tree_digest",
+          "line": 217,
+          "primitive_calls": 26,
+          "self_seconds": 0.001361643,
+          "total_calls": 26
+        }
+      ],
+      "name": "baseline-merge-missing-map.prof",
+      "primitive_calls": 24638292,
+      "sha256": "44f6f92b5d26a695367fc8780c8fae5a56ecf926767fc54a60bd306a53af153c",
+      "total_calls": 32714797,
+      "total_profile_seconds": 16.034339579999013
+    },
+    {
+      "functions": [
+        {
+          "cumulative_seconds": 0.19556941300000003,
+          "file": "ast.py",
+          "function": "parse",
+          "line": 33,
+          "primitive_calls": 233,
+          "self_seconds": 0.00010128800000000001,
+          "total_calls": 233
+        },
+        {
+          "cumulative_seconds": 0.32476562200000003,
+          "file": "ast.py",
+          "function": "dump",
+          "line": 113,
+          "primitive_calls": 108,
+          "self_seconds": 8.1957e-05,
+          "total_calls": 108
+        },
+        {
+          "cumulative_seconds": 0.55442024,
+          "file": "transform_fingerprint.py",
+          "function": "_behaviour_digest",
+          "line": 195,
+          "primitive_calls": 1114,
+          "self_seconds": 0.007279771000000001,
+          "total_calls": 1114
+        },
+        {
+          "cumulative_seconds": 0.529177334,
+          "file": "transform_fingerprint.py",
+          "function": "_source_behaviour_digest",
+          "line": 223,
+          "primitive_calls": 108,
+          "self_seconds": 0.006611078,
+          "total_calls": 108
+        },
+        {
+          "cumulative_seconds": 0.620071791,
+          "file": "transform_fingerprint.py",
+          "function": "_behaviour_tree_digest",
+          "line": 234,
+          "primitive_calls": 26,
+          "self_seconds": 0.000820272,
+          "total_calls": 26
+        }
+      ],
+      "name": "after-merge-missing-map.prof",
+      "primitive_calls": 10305996,
+      "sha256": "22a337dbef0d8db1a373b0d63e6e2b447a8345ca83661023c9225a5d1b9e9cee",
+      "total_calls": 11278028,
+      "total_profile_seconds": 3.472038765000096
+    }
+  ],
+  "pytest_logs": [
+    {
+      "name": "baseline-merge-missing-map.log",
+      "sha256": "2f7a3458da63f887d420f79cbc22f8dd78daceb9c60fd7ef1984f4b4c4933688",
+      "summary_lines": [
+        "1 passed, 3 warnings in 15.41s"
+      ]
+    },
+    {
+      "name": "after-merge-missing-map.log",
+      "sha256": "af0baa1bc2354a73970bfda0a7e367ae34d97033250bec83640a59edf53294f4",
+      "summary_lines": [
+        "1 passed, 3 warnings in 3.29s"
+      ]
+    },
+    {
+      "name": "baseline-admission-selection.log",
+      "sha256": "07d2fc08adc3f156a0e44d5a8d1d2ab662a3c9ba3e1edb9b3a43b661139b2753",
+      "summary_lines": [
+        "20 passed, 3 warnings in 79.37s (0:01:19)"
+      ]
+    },
+    {
+      "name": "after-admission-selection.log",
+      "sha256": "ec857baed92bbfdb1bd37c1606005cdd5d6b69fd4a0e20efcf53571ce0e64690",
+      "summary_lines": [
+        "20 passed, 3 warnings in 19.78s"
+      ]
+    },
+    {
+      "name": "cache-regressions.log",
+      "sha256": "ae6694e14f76c11925255303f6502e1c7e5fe459fd8ae5e4965f73a04c3cc693",
+      "summary_lines": [
+        "8 passed, 4 warnings in 1.67s"
+      ]
+    },
+    {
+      "name": "fingerprint-native-regressions.log",
+      "sha256": "5d344be301b8977e0e0407003da9c0aae2acb79a45bd62e339ca72aaae12b2bc",
+      "summary_lines": [
+        "41 passed, 4 warnings in 8.89s"
+      ]
+    }
+  ],
+  "selection_note": "Only AST parse/dump and transform_fingerprint behaviour/cache functions are listed. An absent function entry does not establish cache hit counts or coverage.",
+  "timing_note": "Profile time is not wall-clock time. Cumulative function times overlap; do not sum them."
+}

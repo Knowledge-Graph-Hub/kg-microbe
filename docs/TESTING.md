@@ -70,3 +70,8 @@ Use the final run's duration report to identify expensive tests before proposing
 fixture or test changes. Do not remove cases, weaken assertions, exclude markers
 or reduce coverage merely to shorten validation. Historical reports retain the
 commands and results actually used at the time.
+
+The [fingerprint AST reuse benchmark](benchmarks/fingerprint-ast-cache-20261115.md)
+shows a measured reduction in repeated source-fingerprint computation while
+preserving the same admission tests. Profile shared setup and repeated work before
+changing test coverage; keep baseline and optimized evidence separately.

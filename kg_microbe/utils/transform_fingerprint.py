@@ -25,6 +25,7 @@ import ast
 import hashlib
 import json
 import re
+from functools import lru_cache
 from pathlib import Path
 from typing import Callable, Dict, Iterable, Optional
 
@@ -89,6 +90,12 @@ SHARED_DATA_INPUTS = (
 FULL_HASH_LIMIT = 8 * 1024 * 1024
 SAMPLE_SIZE = 128 * 1024
 SAMPLE_COUNT = 8
+
+# Repeated admission checks reuse AST work, never filesystem observations (#1862).
+# Together these bounds retain at most 64 MiB of source bytes plus cache overhead;
+# unusually large Python files keep the same digest but bypass the cache.
+_BEHAVIOUR_CACHE_ENTRIES = 256
+_BEHAVIOUR_CACHE_SOURCE_LIMIT = 256 * 1024
 
 
 def bounded_file_fingerprint(path: Path) -> str:
@@ -208,10 +215,20 @@ def _behaviour_digest(path: Path) -> bytes:
         source = path.read_bytes()
     except OSError:
         return b"<absent>"
+    if len(source) <= _BEHAVIOUR_CACHE_SOURCE_LIMIT:
+        return _cached_source_behaviour_digest(source)
+    return _source_behaviour_digest(source)
+
+
+def _source_behaviour_digest(source: bytes) -> bytes:
+    """Preserve the AST digest and raw-byte fallback for an exact source snapshot."""
     try:
         return hashlib.sha256(ast.dump(ast.parse(source.decode("utf-8"))).encode("utf-8")).digest()
     except (SyntaxError, UnicodeDecodeError):
         return hashlib.sha256(source).digest()
+
+
+_cached_source_behaviour_digest = lru_cache(maxsize=_BEHAVIOUR_CACHE_ENTRIES)(_source_behaviour_digest)
 
 
 def _behaviour_tree_digest(paths: Iterable[Path], relative_to: Optional[Path]) -> str:

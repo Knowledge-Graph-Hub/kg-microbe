@@ -265,7 +265,8 @@ def main():
             "Five exact native GSS rows, not a full source rebuild.",
             "NCBI/GTDB enrichment explicitly disabled through existing injected lookup interfaces.",
             "Native run() methods and input guards exercised; dispatcher/finalization not claimed.",
-            "Strain subclass_of links use the documented #834 taxonomy convention, not strict Biolink domain conformance.",
+            "Strain subclass_of links use the documented #834 taxonomy convention, "
+            "not strict Biolink domain conformance.",
         ],
     }
     with (args.output / "receipt.json").open("x") as handle:

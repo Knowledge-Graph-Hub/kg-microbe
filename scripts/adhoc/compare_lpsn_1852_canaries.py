@@ -1,4 +1,5 @@
-"""Verify the bounded native LPSN delta approved in #1852 (2026-11-14).
+"""
+Verify the bounded native LPSN delta approved in #1852 (2026-11-14).
 
 Inputs: preserved before/after directories from audit_lpsn_domain_edges_20261110.
 Output: an exclusive JSON receipt proving only the four deposit predicate/relation

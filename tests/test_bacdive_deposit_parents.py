@@ -237,7 +237,7 @@ def test_bacdive_and_lpsn_land_on_the_same_deposit_curie():
     """
     Both transforms must mint one CURIE per deposit, or the link does not meet.
 
-    LPSN emits `kgmicrobe.strain:<code> in_taxon lpsn:<record>` and BacDive
+    LPSN emits `kgmicrobe.strain:<code> subclass_of lpsn:<record>` and BacDive
     emits `kgmicrobe.strain:bacdive_<id> same_as kgmicrobe.strain:<code>`.
     They reconcile at merge only while both normalise a deposit string the same
     way, so pin that rather than trusting two copies of the rule to stay equal.

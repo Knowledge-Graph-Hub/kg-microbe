@@ -96,7 +96,6 @@ def test_curated_edge_metadata_is_present_in_output(lpsn_transform):
     assert {e["predicate"] for e in edges} == {
         "biolink:subclass_of",
         "biolink:same_as",
-        "biolink:in_taxon",
     }
     assert all(e["knowledge_level"] == "knowledge_assertion" for e in edges)
     assert all(e["agent_type"] == "manual_agent" for e in edges)
@@ -232,11 +231,17 @@ def test_missing_csv_does_not_trigger_ncbitaxon_build(tmp_path, monkeypatch):
     assert calls == [], "an absent CSV must fail before any ontology load starts"
 
 
-def test_species_gets_in_taxon_edges_from_each_type_strain_deposit(lpsn_transform):
-    """Keep every native culture deposit and assert its membership in the LPSN species."""
+def test_species_gets_subclass_edges_from_each_type_strain_deposit(lpsn_transform):
+    """Keep every native culture deposit below the LPSN species under the KGM taxon convention."""
     lpsn_transform.run()
     edges = _read_tsv(lpsn_transform.output_edge_file)
-    deposits = [e for e in edges if e["object"] == "lpsn:1002" and e["predicate"] == "biolink:in_taxon"]
+    deposits = [
+        e
+        for e in edges
+        if e["subject"].startswith("kgmicrobe.strain:")
+        and e["object"] == "lpsn:1002"
+        and e["predicate"] == "biolink:subclass_of"
+    ]
     assert {e["subject"] for e in deposits} == {
         "kgmicrobe.strain:ATCC-11775",
         "kgmicrobe.strain:DSM-30083",
@@ -244,19 +249,26 @@ def test_species_gets_in_taxon_edges_from_each_type_strain_deposit(lpsn_transfor
     }
     assert len(deposits) == 3
     for edge in deposits:
-        assert edge["relation"] == "RO:0002162"
+        assert edge["relation"] == "rdfs:subClassOf"
         assert edge["primary_knowledge_source"] == LPSN_KNOWLEDGE_SOURCE
         assert edge["knowledge_level"] == "knowledge_assertion"
         assert edge["agent_type"] == "manual_agent"
 
 
-def test_subspecies_gets_in_taxon_edge_from_deposit(lpsn_transform):
-    """Subspecies row 1003 retains its DSM 30083 deposit membership."""
+def test_subspecies_gets_subclass_edge_from_deposit(lpsn_transform):
+    """Subspecies row 1003 retains DSM 30083 as a named taxon below it."""
     lpsn_transform.run()
     edges = _read_tsv(lpsn_transform.output_edge_file)
-    deposits = [e for e in edges if e["object"] == "lpsn:1003" and e["predicate"] == "biolink:in_taxon"]
+    deposits = [
+        e
+        for e in edges
+        if e["subject"].startswith("kgmicrobe.strain:")
+        and e["object"] == "lpsn:1003"
+        and e["predicate"] == "biolink:subclass_of"
+    ]
     assert len(deposits) == 1
     assert deposits[0]["subject"] == "kgmicrobe.strain:DSM-30083"
+    assert deposits[0]["relation"] == "rdfs:subClassOf"
 
 
 @pytest.mark.parametrize("record_no", ["1001", "1099"])
@@ -266,7 +278,9 @@ def test_genus_or_missing_type_does_not_invent_deposit(lpsn_transform, record_no
     assert not [
         edge
         for edge in _read_tsv(lpsn_transform.output_edge_file)
-        if edge["object"] == f"lpsn:{record_no}" and edge["predicate"] == "biolink:in_taxon"
+        if edge["subject"].startswith("kgmicrobe.strain:")
+        and edge["object"] == f"lpsn:{record_no}"
+        and edge["predicate"] == "biolink:subclass_of"
     ]
 
 
@@ -478,7 +492,7 @@ def test_gtdb_disabled_when_index_absent(lpsn_transform):
 
 def test_every_cited_deposit_gets_a_node_row(lpsn_transform):
     """
-    An in_taxon edge from an undeclared deposit would create a stub at merge time.
+    A subclass_of edge from an undeclared deposit would create a stub at merge time.
 
     KGX invents a bare ``biolink:NamedThing`` with no label for each
     undeclared endpoint -- 4,233 of them in the 20260815 graph, every one

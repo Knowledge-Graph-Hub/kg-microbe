@@ -20,7 +20,7 @@ Scope:
 - Nodes for every LPSN record (family / genus / species / subspecies).
 - subclass_of edges from subspecies → species → genus (only when the
   parent row is present in the same CSV — no LPSN API calls).
-- in_taxon edges from each `kgmicrobe.strain:*` culture-collection deposit
+- subclass_of edges from each `kgmicrobe.strain:*` culture-collection deposit
   named in ``nomenclatural_type`` to its LPSN taxon.
 - close_match edges to `NCBITaxon:*` for every row (genus / species /
   subspecies) whose scientific name resolves to exactly one NCBITaxon
@@ -55,8 +55,6 @@ from kg_microbe.transform_utils.constants import (
     CLOSE_MATCH_RELATION,
     EXACT_MATCH,
     ID_COLUMN,
-    IN_TAXON_PREDICATE,
-    IN_TAXON_RELATION,
     KNOWLEDGE_ASSERTION,
     KNOWLEDGE_LEVEL_COLUMN,
     LPSN_SOURCE,
@@ -964,12 +962,12 @@ class LPSNTransform(Transform):
         return row_out
 
     def _make_type_strain_edge(self, record_no: str, strain_curie: str) -> list:
-        """Restate a native type-deposit membership as strain in_taxon LPSN taxon."""
+        """Place a native type deposit below its LPSN taxon under the KGM strain convention (#1852)."""
         values = {
             "subject": strain_curie,
-            "predicate": IN_TAXON_PREDICATE,
+            "predicate": SUBCLASS_PREDICATE,
             "object": f"{LPSN_PREFIX}{record_no}",
-            "relation": IN_TAXON_RELATION,
+            "relation": RDFS_SUBCLASS_OF,
             "primary_knowledge_source": LPSN_KNOWLEDGE_SOURCE,
             KNOWLEDGE_LEVEL_COLUMN: KNOWLEDGE_ASSERTION,
             AGENT_TYPE_COLUMN: MANUAL_AGENT,

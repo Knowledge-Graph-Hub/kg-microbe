@@ -1,5 +1,5 @@
 """
-Run bounded offline native LPSN edge canaries for #1843 using preserved real records.
+Run bounded offline native LPSN edge canaries for #1843/#1852 using preserved real records.
 
 Default is a read-only plan. Explicit execution copies a five-row GSS selection
 and its complete cached API closure, then calls both production run() methods.
@@ -144,13 +144,13 @@ def verify_edges(gss_edges, api_edges, records):
             raise ValueError("Native edge predicate/relation/provenance mismatch")
     # Fixed source-native controls distinguish the old name, basionym and higher parent.
     required_gss = {
-        ("kgmicrobe.strain:JCM-33998", "biolink:in_taxon", "lpsn:18880"),
-        ("kgmicrobe.strain:KCTC-25006", "biolink:in_taxon", "lpsn:18880"),
+        ("kgmicrobe.strain:JCM-33998", "biolink:subclass_of", "lpsn:18880"),
+        ("kgmicrobe.strain:KCTC-25006", "biolink:subclass_of", "lpsn:18880"),
         ("lpsn:5244", "biolink:same_as", "lpsn:10674"),
     }
     expected_gss = required_gss | {
-        ("kgmicrobe.strain:LMG-31064", "biolink:in_taxon", "lpsn:10674"),
-        ("kgmicrobe.strain:LMG-31064", "biolink:in_taxon", "lpsn:5244"),
+        ("kgmicrobe.strain:LMG-31064", "biolink:subclass_of", "lpsn:10674"),
+        ("kgmicrobe.strain:LMG-31064", "biolink:subclass_of", "lpsn:5244"),
         ("lpsn:18880", "biolink:subclass_of", "lpsn:10543"),
         ("lpsn:10674", "biolink:subclass_of", "lpsn:10543"),
         ("lpsn:5244", "biolink:subclass_of", "lpsn:517058"),
@@ -265,6 +265,7 @@ def main():
             "Five exact native GSS rows, not a full source rebuild.",
             "NCBI/GTDB enrichment explicitly disabled through existing injected lookup interfaces.",
             "Native run() methods and input guards exercised; dispatcher/finalization not claimed.",
+            "Strain subclass_of links use the documented #834 taxonomy convention, not strict Biolink domain conformance.",
         ],
     }
     with (args.output / "receipt.json").open("x") as handle:

@@ -31,6 +31,18 @@ from tests.microbedecoder_quarantine_fixtures import (
 FIXTURE_DIR = Path(__file__).parent / "resources" / "microbedecoder"
 
 
+def _supply_microbedecoder_authorities(output_dir):
+    """Stage complete immutable authority fixtures before any dependent GOLD run/finalization."""
+    ontology_dir = output_dir / "ontologies"
+    ontology_dir.mkdir(parents=True, exist_ok=True)
+    shutil.copyfile(FIXTURE_DIR / "metpo_nodes.tsv", ontology_dir / "metpo_nodes.tsv")
+    # Retain the historical fixture and append only the separately sourced declaration (#1847).
+    with (ontology_dir / "metpo_nodes.tsv").open("a") as stream:
+        stream.write((FIXTURE_DIR / "faprotax_1847_metpo_nodes.tsv").read_text().split("\n", 1)[1])
+    shutil.copyfile(FIXTURE_DIR / "go_nodes.tsv", ontology_dir / "go_nodes.tsv")
+    shutil.copyfile(FIXTURE_DIR / "chebi_record_nodes.tsv", ontology_dir / "chebi_nodes.tsv")
+
+
 def _supply_gold_fold_report(output_dir):
     """Supply the explicit empty GOLD fold report for tests not exercising folds."""
     gold_dir = output_dir / "gold"
@@ -39,11 +51,7 @@ def _supply_gold_fold_report(output_dir):
     gtdb_dir = output_dir / "gtdb"
     gtdb_dir.mkdir(parents=True, exist_ok=True)
     shutil.copyfile(FIXTURE_DIR / "gtdb_nodes.tsv", gtdb_dir / "nodes.tsv")
-    ontology_dir = output_dir / "ontologies"
-    ontology_dir.mkdir(parents=True, exist_ok=True)
-    shutil.copyfile(FIXTURE_DIR / "metpo_nodes.tsv", ontology_dir / "metpo_nodes.tsv")
-    shutil.copyfile(FIXTURE_DIR / "go_nodes.tsv", ontology_dir / "go_nodes.tsv")
-    shutil.copyfile(FIXTURE_DIR / "chebi_record_nodes.tsv", ontology_dir / "chebi_nodes.tsv")
+    _supply_microbedecoder_authorities(output_dir)
     # Unknown synthetic crosswalk IDs are not positive GOLD identity fixtures.
     # Supply a genuinely empty, actually run/finalized GOLD authority so the
     # consumer must distinguish them from the reviewed unresolved native cohort.
@@ -87,6 +95,7 @@ def microbedecoder_transform(tmp_path, monkeypatch):
         input_dir=raw,
         output_dir=tmp_path,
         chemical_loader=_NoChebi(),
+        include_bacdive_snapshot=True,
         crosswalk_quarantine_policy=write_fixture_quarantine_policy(
             raw / "database.csv", tmp_path / "fixture-crosswalk-policy"
         ),
@@ -354,7 +363,7 @@ def test_crosswalk_targets_are_not_stubbed(microbedecoder_transform):
     No stub node for any cross-ref target the KG's own transforms own.
 
     Add-transform skill rule (Phase 6 anti-pattern): NCBITaxon, GTDB,
-    bacdive, GOLD, IMG all have their authoritative nodes elsewhere.
+    bacdive and GOLD have authoritative nodes elsewhere; IMG genomes are locally declared.
     MicrobeDecoder emits the edges to them but never a stub.
     """
     microbedecoder_transform.run()
@@ -370,7 +379,6 @@ def test_crosswalk_targets_are_not_stubbed(microbedecoder_transform):
         "bacdive:",
         "gold:",
         "GOLD:",
-        "IMG:",
         "CHEBI:",
     ):
         stubs = [n["id"] for n in nodes if n["id"].startswith(prefix)]
@@ -441,7 +449,7 @@ def test_crosswalk_uses_owner_namespaces(monkeypatch, tmp_path, column, raw, exp
         assert edges[0]["object"] == expected
     assert edges[0]["primary_knowledge_source"] == MICROBEDECODER_KNOWLEDGE_SOURCE
     nodes = {n["id"]: n for n in _read_tsv(transform.output_node_file)}
-    if expected.startswith("ncbi.assembly:") and "." in expected.split(":", 1)[1]:
+    if expected.startswith("IMG:") or (expected.startswith("ncbi.assembly:") and "." in expected.split(":", 1)[1]):
         # The fixture GTDB release is empty. Source-reported assemblies now
         # have explicit declarations, without asserting a GTDB identity.
         assert nodes[expected]["category"] == "biolink:Genome"

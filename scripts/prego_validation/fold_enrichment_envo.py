@@ -1,5 +1,8 @@
 """
-Fold enrichment of PREGO ``ENVO -location_of-> NCBITaxon`` vs a habitat gold standard.
+Fold enrichment of PREGO habitat/taxon pairs vs an ENVO habitat gold standard.
+
+Accepts legacy ``ENVO -location_of-> NCBITaxon`` and current
+``NCBITaxon -located_in-> ENVO`` PREGO edges without changing gold readers.
 
 Prints the threshold curve (overlap and retention at candidate cutoffs) and the
 within-ENVO-term stratified ratio, which is what controls for term degree — the
@@ -40,7 +43,12 @@ import bisect
 from collections import defaultdict
 from typing import Dict, List, Set, Tuple
 
-from channel_compat import continuous_predicate
+if __package__:
+    from .channel_compat import continuous_predicate
+    from .habitat_compat import habitat_pair
+else:
+    from channel_compat import continuous_predicate
+    from habitat_compat import habitat_pair
 
 THRESHOLDS = (0.0, 0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0)
 GOLD_SOURCES = {
@@ -132,27 +140,19 @@ def load_gold_madin(path: str) -> Set[Tuple[str, str]]:
     return gold
 
 
-def main() -> None:
-    """Measure fold enrichment and the within-term stratified ratio."""
-    args = parse_args()
-    gold_path = args.gold_edges or GOLD_SOURCES[args.gold]
-    loader = load_gold_bacdive if args.gold == "bacdive" else load_gold_madin
-    gold = loader(gold_path)
-    if not gold:
-        raise SystemExit(f"no ENVO->taxon pairs found in {gold_path}; refusing to report on an empty gold standard.")
-    gold_env = {e for e, _ in gold}
-    gold_tax = {t for _, t in gold}
-    print(f"  gold ({args.gold}): {len(gold):,} ENVO->taxon pairs ({len(gold_env):,} ENVO, {len(gold_tax):,} taxa)")
-    print(f"  prego channel filter: {args.channel}")
-
+def collect_prego(path, gold, channel="any"):
+    """Collect PREGO ENVO observations in one term/taxon view; leave gold orientation unchanged."""
+    gold_env = {term for term, _ in gold}
+    gold_tax = {taxon for _, taxon in gold}
     labelled: List[Tuple[float, bool]] = []
     all_scores: List[float] = []
     per_term: Dict[str, List[Tuple[float, bool]]] = defaultdict(list)
     shared_env: Set[str] = set()
     shared_tax: Set[str] = set()
-    with open(args.prego) as handle:
+    with open(path) as handle:
         header = next(handle).rstrip("\n").split("\t")
         si, oi = header.index("subject"), header.index("object")
+        pi = header.index("predicate")
         sci = header.index("prego_score")
         chi = header.index("prego_channel")
         # Layout-aware, via the shared helper. A hand-rolled `prego_channel ==
@@ -161,7 +161,7 @@ def main() -> None:
         # entirely comparable. That is the exact failure channel_compat exists to
         # prevent; three scripts had already been caught by it.
         is_continuous, layout = continuous_predicate(header)
-        if args.channel == "genome" and "prego_evidence" not in header:
+        if channel == "genome" and "prego_evidence" not in header:
             raise SystemExit(
                 f"--channel genome needs the post-#703 layout; this file is {layout}. "
                 "Re-run against a current edges.tsv, or use --channel any."
@@ -170,14 +170,15 @@ def main() -> None:
             "any": lambda f: True,
             "continuous": is_continuous,
             "genome": lambda f: f[chi] == "annotated_genomes_isolates",
-        }[args.channel]
+        }[channel]
         for line in handle:
             fields = line.rstrip("\n").split("\t")
-            if len(fields) <= max(sci, chi):
+            if len(fields) < len(header):
                 continue
-            subject, obj = fields[si], fields[oi]
-            if not (subject.startswith("ENVO:") and obj.startswith("NCBITaxon:")):
+            pair = habitat_pair(fields[si], fields[pi], fields[oi], ("ENVO:",))
+            if pair is None:
                 continue
+            subject, obj = pair
             if not keep(fields):
                 continue
             try:
@@ -193,6 +194,24 @@ def main() -> None:
                 hit = (subject, obj) in gold
                 labelled.append((score, hit))
                 per_term[subject].append((score, hit))
+
+    return labelled, all_scores, per_term, shared_env, shared_tax
+
+
+def main() -> None:
+    """Measure fold enrichment and the within-term stratified ratio."""
+    args = parse_args()
+    gold_path = args.gold_edges or GOLD_SOURCES[args.gold]
+    loader = load_gold_bacdive if args.gold == "bacdive" else load_gold_madin
+    gold = loader(gold_path)
+    if not gold:
+        raise SystemExit(f"no ENVO->taxon pairs found in {gold_path}; refusing to report on an empty gold standard.")
+    gold_env = {e for e, _ in gold}
+    gold_tax = {t for _, t in gold}
+    print(f"  gold ({args.gold}): {len(gold):,} ENVO->taxon pairs ({len(gold_env):,} ENVO, {len(gold_tax):,} taxa)")
+    print(f"  prego channel filter: {args.channel}")
+
+    labelled, all_scores, per_term, shared_env, shared_tax = collect_prego(args.prego, gold, args.channel)
 
     if not labelled:
         raise SystemExit("no PREGO edges are comparable to this gold standard; nothing to report.")

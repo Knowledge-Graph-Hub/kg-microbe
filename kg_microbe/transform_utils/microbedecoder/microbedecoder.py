@@ -34,11 +34,10 @@ Design decisions locked from the plan-mode Q&A:
    Six contradicted BacDive joins instead preserve nonempty snapshots on
    record-scoped InformationContentEntity nodes; independent metabolism and
    FAPROTAX observations retain their LPSN subject (#1363).
-2. **BacDive_* replay**: ingested with `primary_knowledge_source =
-   infores:microbedecoder` so the paper's 2024-11-07 BacDive snapshot
-   stays reproducible. The fresher `bacdive` transform is authoritative
-   in the merged KG; merge-time dedup keeps both edges around,
-   distinguishable by provenance.
+2. **BacDive_* replay**: graph emission is off by default. Complete original
+   observations remain in reported_observations.tsv. Explicit opt-in emits
+   source Attributes with infores:microbedecoder provenance; neither mode
+   converts raw snapshot values into universal organism phenotypes.
 
 License: CC BY 4.0 (matches the upstream repo).
 """
@@ -50,6 +49,7 @@ import csv
 import hashlib
 import json
 import logging
+import os
 import shutil
 import zipfile
 import zlib
@@ -125,7 +125,11 @@ from kg_microbe.transform_utils.constants import (
     VPI_KNOWLEDGE_SOURCE,
 )
 from kg_microbe.transform_utils.gold.taxon_dispositions import load_gold_declarations
-from kg_microbe.transform_utils.microbedecoder import bacdive_join_dispositions
+from kg_microbe.transform_utils.microbedecoder import (
+    bacdive_join_dispositions,
+    faprotax_dispositions,
+    observation_audit,
+)
 from kg_microbe.transform_utils.microbedecoder.chemical_curation import RecordChemicalCuration
 from kg_microbe.transform_utils.microbedecoder.crosswalk_quarantine import (
     DEFAULT_CROSSWALK_QUARANTINE_POLICY,
@@ -248,6 +252,7 @@ class MicrobeDecoderTransform(Transform):
         "mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz",
         "mappings/canonical/microbedecoder_process_mappings.tsv",
         "mappings/canonical/microbedecoder_phenotype_mappings.tsv",
+        "mappings/canonical/microbedecoder_faprotax_dispositions.tsv",
         "mappings/canonical/microbedecoder_process_scope_definitions.tsv",
         "mappings/canonical/microbedecoder_crosswalk_quarantine.json",
         "mappings/canonical/microbedecoder_crosswalk_quarantine.tsv",
@@ -260,6 +265,7 @@ class MicrobeDecoderTransform(Transform):
         "process_authority",
         "process_go_authority",
         "phenotype_mappings",
+        faprotax_dispositions.ROLE,
         "process_scope_definitions",
         "chemical_authority",
         "crosswalk_policy",
@@ -272,6 +278,7 @@ class MicrobeDecoderTransform(Transform):
         _PHENOTYPE_REPORT_FILENAME,
         "gold_crosswalk_dispositions.tsv",
         bacdive_join_dispositions.AUDIT_FILE,
+        observation_audit.AUDIT_FILE,
     )
 
     def __init__(
@@ -284,6 +291,7 @@ class MicrobeDecoderTransform(Transform):
         process_scopes: Optional[Union[str, Path]] = None,
         crosswalk_quarantine_policy: Optional[Union[str, Path]] = None,
         bacdive_join_policy: Optional[Union[str, Path]] = None,
+        include_bacdive_snapshot: Optional[bool] = None,
     ) -> None:
         """
         Instantiate.
@@ -318,12 +326,24 @@ class MicrobeDecoderTransform(Transform):
             Exact-snapshot reviewed crosswalk disposition policy. The default
             is mandatory in production; tests may inject a separately pinned
             fixture policy. No missing/changed policy silently disables review.
+        include_bacdive_snapshot:
+            Explicit snapshot graph opt-in; otherwise use the off-by-default
+            MICROBEDECODER_INCLUDE_BACDIVE_SNAPSHOT environment setting.
+            Suppressed observations remain in the mandatory native-replayed audit.
         bacdive_join_policy:
             Finite reviewed BacDive join policy. Its default is mandatory;
             tests may inject a separately pinned fixture policy. Actual policy,
             native source and LPSN reads remain bound through finalization.
 
         """
+        if include_bacdive_snapshot is None:
+            setting = os.environ.get("MICROBEDECODER_INCLUDE_BACDIVE_SNAPSHOT", "false").strip().lower()
+            if setting not in {"true", "false", "1", "0"}:
+                raise ValueError("MICROBEDECODER_INCLUDE_BACDIVE_SNAPSHOT must be true/false or 1/0")
+            include_bacdive_snapshot = setting in {"true", "1"}
+        if type(include_bacdive_snapshot) is not bool:
+            raise ValueError("include_bacdive_snapshot must be a boolean")
+        self.include_bacdive_snapshot = include_bacdive_snapshot
         super().__init__(MICROBEDECODER, input_dir, output_dir)
         self.node_header = list(
             dict.fromkeys(
@@ -360,10 +380,12 @@ class MicrobeDecoderTransform(Transform):
             Path(phenotype_mappings) if phenotype_mappings is not None else DEFAULT_PHENOTYPE_MAPPINGS
         )
         self._phenotype_curation: Optional[PhenotypeCuration] = None
+        self._faprotax_curation = None
         self.process_scopes = Path(process_scopes) if process_scopes is not None else DEFAULT_PROCESS_SCOPE_DEFINITIONS
         self._process_scopes: Optional[ProcessScopeCuration] = None
         self._record_chemical_curation: Optional[RecordChemicalCuration] = None
         self._phenotype_report_writer = None
+        self._observation_report_writer = None
         self.crosswalk_quarantine_policy = (
             Path(crosswalk_quarantine_policy)
             if crosswalk_quarantine_policy is not None
@@ -380,7 +402,7 @@ class MicrobeDecoderTransform(Transform):
         self._gold_crosswalk_writer = None
         self._gold_crosswalk_declarations = None
         # Track dedup state so unmatched-label placeholders are emitted
-        # once per run. Cross-ref targets (NCBITaxon/GTDB/bacdive/GOLD/IMG)
+        # once per run. Cross-ref targets (NCBITaxon/GTDB/bacdive/GOLD)
         # and successfully-resolved CHEBI CURIEs are never stubbed here —
         # their authoritative nodes come from other transforms.
         self._seen_nodes: set = set()
@@ -399,6 +421,7 @@ class MicrobeDecoderTransform(Transform):
             "lpsn_repointed": 0,
             "metabolism_edges": 0,
             "bacdive_snapshot_edges": 0,
+            "audit_only_observations": 0,
             "reviewed_phenotype_reports": 0,
             "unmatched_labels": 0,
             "lpsn_stubbed": 0,
@@ -424,9 +447,11 @@ class MicrobeDecoderTransform(Transform):
         self._source_record = ""
         self._process_curation = None
         self._phenotype_curation = None
+        self._faprotax_curation = None
         self._process_scopes = None
         self._record_chemical_curation = None
         self._phenotype_report_writer = None
+        self._observation_report_writer = None
         self._crosswalk_quarantine = None
         self._bacdive_join_guard = None
         self._bacdive_join_writer = None
@@ -444,12 +469,21 @@ class MicrobeDecoderTransform(Transform):
         from kg_microbe.transform_utils.microbedecoder.gold_crosswalk_dispositions import verify_recorded_inputs
 
         admission = verify_recorded_inputs(report, report_path, admission=admission)
-        return bacdive_join_dispositions.verify_recorded_inputs(report, report_path, admission=admission)
+        admission = bacdive_join_dispositions.verify_recorded_inputs(report, report_path, admission=admission)
+        fields = report["producer_native_inputs"][bacdive_join_dispositions.CONTRACT_KEY]["edge_fields"]
+        return faprotax_dispositions.verify_recorded(report, Path(report_path).parent, fields, admission=admission)
 
     def verify_native_inputs(self, *, byte_verified=False, output_dir=None):
         """Retain source-local six-link evidence through finalization and repeat."""
         del byte_verified
         bacdive_join_dispositions.verify_transform(self, output_dir=output_dir)
+        _, actual = faprotax_dispositions.verify_outputs(
+            self.consumed_input_snapshots, output_dir or self.output_dir, self.edge_header
+        )
+        if faprotax_dispositions.encoded(actual) != faprotax_dispositions.encoded(
+            self.producer_native_inputs.get(faprotax_dispositions.CONTRACT_KEY)
+        ):
+            raise ValueError("FAPROTAX native contract changed")
 
     def run(
         self,
@@ -538,6 +572,9 @@ class MicrobeDecoderTransform(Transform):
                 "process_go_authority", self.output_dir.parent / "ontologies" / "go_nodes.tsv"
             ) as go_authority,
             self.consume_input("phenotype_mappings", self.phenotype_mappings) as phenotype_mappings,
+            self.consume_input(
+                faprotax_dispositions.ROLE, faprotax_dispositions.DEFAULT_DISPOSITIONS
+            ) as faprotax_policy,
             self.consume_input("process_scope_definitions", self.process_scopes) as process_scopes,
             self.consume_input(
                 "chemical_authority", self.output_dir.parent / "ontologies" / "chebi_nodes.tsv"
@@ -546,6 +583,8 @@ class MicrobeDecoderTransform(Transform):
             self._process_curation = ProcessCuration(mappings, authority, go_authority)
             authority.seek(0)
             self._phenotype_curation = PhenotypeCuration(phenotype_mappings, authority)
+            authority.seek(0)
+            self._faprotax_curation = faprotax_dispositions.FaprotaxDispositions(faprotax_policy, authority)
             self._process_scopes = ProcessScopeCuration(process_scopes)
             process_keys = {column: key for key, column in _PROCESS_SOURCE_COLUMNS.items()}
             for scope in self._process_scopes.rules:
@@ -576,6 +615,9 @@ class MicrobeDecoderTransform(Transform):
             atomic_write(
                 self.output_dir / "gold_crosswalk_dispositions.tsv", "w", newline="", encoding="utf-8"
             ) as gold_fh,
+            atomic_write(
+                self.output_dir / observation_audit.AUDIT_FILE, "w", newline="", encoding="utf-8"
+            ) as observation_fh,
             atomic_write(
                 self.output_dir / bacdive_join_dispositions.AUDIT_FILE, "w", newline="", encoding="utf-8"
             ) as bacdive_join_fh,
@@ -622,6 +664,13 @@ class MicrobeDecoderTransform(Transform):
                 quotechar=None,
             )
             self._bacdive_join_writer.writeheader()
+            self._observation_report_writer = tsv_dict_writer(
+                observation_fh,
+                fieldnames=observation_audit.AUDIT_FIELDS,
+                quoting=csv.QUOTE_NONE,
+                quotechar=None,
+            )
+            self._observation_report_writer.writeheader()
 
             # CSV strings retain operators, zeros and leading zeros. Record
             # ordinals count CSV records, not physical lines (quoted cells
@@ -634,6 +683,7 @@ class MicrobeDecoderTransform(Transform):
             self._crosswalk_quarantine.require_complete()
             self._bacdive_join_guard.require_complete()
         self._phenotype_report_writer = None
+        self._observation_report_writer = None
         self._quarantine_report_writer = None
         self._gold_crosswalk_writer = None
         self.record_producer_audit(QUARANTINE_REPORT_FILENAME)
@@ -641,6 +691,7 @@ class MicrobeDecoderTransform(Transform):
         self.record_producer_audit("gold_crosswalk_dispositions.tsv")
         self._bacdive_join_writer = None
         self.record_producer_audit(bacdive_join_dispositions.AUDIT_FILE)
+        self.record_producer_audit(observation_audit.AUDIT_FILE)
 
         # Sorted dedup: keeps the output stable across runs and lets the
         # merged KG collapse duplicates cheaply.
@@ -651,6 +702,9 @@ class MicrobeDecoderTransform(Transform):
         self._write_unmapped_report()
         self._write_assembly_reference_report()
         self.producer_native_inputs[bacdive_join_dispositions.CONTRACT_KEY] = self._bacdive_join_guard.finish(self)
+        _, self.producer_native_inputs[faprotax_dispositions.CONTRACT_KEY] = faprotax_dispositions.verify_outputs(
+            self.consumed_input_snapshots, self.output_dir, self.edge_header
+        )
 
     @staticmethod
     def _deduplicate_literal_tsv(path: Path, sort_column: str) -> None:
@@ -984,6 +1038,16 @@ class MicrobeDecoderTransform(Transform):
                             continue
                     edge_writer.writerow(claim)
                 elif object_curie.startswith(NCBI_ASSEMBLY_PREFIX) or prefix == IMG_PREFIX:
+                    if prefix == IMG_PREFIX:
+                        self._ensure_terminal_node(
+                            object_curie,
+                            GENOME_CATEGORY,
+                            "IMG genome " + object_curie.removeprefix(IMG_PREFIX),
+                            node_writer,
+                            description=(
+                                "Genome identifier reported by MicrobeDecoder; taxon membership is not identity."
+                            ),
+                        )
                     # Genome assembly and IMG genome tokens are individual genomes
                     # placed in a taxon, not taxon identity equivalences (#1433).
                     edge_writer.writerow(
@@ -1044,7 +1108,55 @@ class MicrobeDecoderTransform(Transform):
             if not is_empty_cell(type_of_metabolism):
                 for label in split_multivalue(type_of_metabolism):
                     column = source_columns["type_of_metabolism"]
+                    if group_label == "bergey" and label == "Other":
+                        self._retain_observation(
+                            self._make_edge_row(
+                                subject,
+                                HAS_ATTRIBUTE_PREDICATE,
+                                observation_audit.source_attribute_curie(column, label),
+                                HAS_ATTRIBUTE_RELATION,
+                                provenance,
+                                publications=citation_curie,
+                                source_citation=citation_text,
+                                source_column=column,
+                                value=label,
+                            ),
+                            row,
+                            observation_audit.PLACEHOLDER_AUDIT_ONLY,
+                        )
+                        continue
                     mapping = self._phenotype_curation.resolve(column, label) if self._phenotype_curation else None
+                    disposition = self._faprotax_curation.resolve(column, label) if self._faprotax_curation else None
+                    if disposition is not None:
+                        values = self._make_edge_row(
+                            subject,
+                            HAS_ATTRIBUTE_PREDICATE,
+                            observation_audit.source_attribute_curie(column, label),
+                            HAS_ATTRIBUTE_RELATION,
+                            provenance,
+                            publications=citation_curie,
+                            source_citation=citation_text,
+                            source_column=column,
+                            value=label,
+                            knowledge_level=PREDICTION,
+                            agent_type=COMPUTATIONAL_MODEL,
+                        )
+                        original = dict(zip(self.edge_header, (value or "" for value in values), strict=True))
+                        emitted = faprotax_dispositions.projected_claim(original, disposition)
+                        self._observation_report_writer.writerow(
+                            faprotax_dispositions.observation(original, row, disposition)
+                        )
+                        if emitted is not None:
+                            self._resolve_source_attribute_curie(label, column, node_writer)
+                            edge_writer.writerow([emitted[field] for field in self.edge_header])
+                            self._stats["metabolism_edges"] += 1
+                        else:
+                            self._stats["audit_only_observations"] += 1
+                        if mapping is not None:
+                            self._write_phenotype_normalization(
+                                subject, column, label, mapping, provenance, PREDICTION, COMPUTATIONAL_MODEL
+                            )
+                        continue
                     annotation = is_reported_metabolism_annotation(column, label) or mapping is not None
                     obj = (
                         self._resolve_source_attribute_curie(label, column, node_writer)
@@ -1120,25 +1232,22 @@ class MicrobeDecoderTransform(Transform):
             # so merged-KG queries stay consistent.
             for label in split_multivalue(fields.get("substrates")):
                 if group_label == "bergey" and label == "Not reported":
-                    # This is missing-report metadata, not a consumed chemical
-                    # and not a negative utilization result (#650). Retain the
-                    # original observation and citation as a source attribute.
                     column = source_columns["substrates"]
-                    obj = self._resolve_source_attribute_curie(label, column, node_writer)
-                    edge_writer.writerow(
+                    self._retain_observation(
                         self._make_edge_row(
                             subject,
                             HAS_ATTRIBUTE_PREDICATE,
-                            obj,
+                            observation_audit.source_attribute_curie(column, label),
                             HAS_ATTRIBUTE_RELATION,
                             provenance,
                             publications=citation_curie,
                             source_citation=citation_text,
                             source_column=column,
                             value=label,
-                        )
+                        ),
+                        row,
+                        observation_audit.PLACEHOLDER_AUDIT_ONLY,
                     )
-                    self._stats["metabolism_edges"] += 1
                     continue
                 original_object = None
                 if group_label == "bergey" and reviewed_substrate is not None:
@@ -1193,30 +1302,45 @@ class MicrobeDecoderTransform(Transform):
         )
         if record_node is not None:
             subject = record_node[ID_COLUMN]
-            node_writer.writerow([record_node.get(key, "") for key in self.node_header])
-            self._seen_nodes.add(subject)
+            if self.include_bacdive_snapshot:
+                node_writer.writerow([record_node.get(key, "") for key in self.node_header])
+                self._seen_nodes.add(subject)
         for column in BACDIVE_SNAPSHOT_COLUMNS:
             raw = row.get(column)
             for label in split_snapshot_values(column, raw):
-                obj = self._resolve_source_attribute_curie(label, column, node_writer)
-                edge_writer.writerow(
-                    self._make_edge_row(
-                        subject,
-                        HAS_ATTRIBUTE_PREDICATE,
-                        obj,
-                        HAS_ATTRIBUTE_RELATION,
-                        self.knowledge_source,
-                        description=column.replace("BacDive_", "").replace("_", " "),
-                        source_column=column,
-                        value=label,
-                    )
+                obj = (
+                    self._resolve_source_attribute_curie(label, column, node_writer)
+                    if self.include_bacdive_snapshot
+                    else observation_audit.source_attribute_curie(column, label)
                 )
-                self._stats["bacdive_snapshot_edges"] += 1
+                claim = self._make_edge_row(
+                    subject,
+                    HAS_ATTRIBUTE_PREDICATE,
+                    obj,
+                    HAS_ATTRIBUTE_RELATION,
+                    self.knowledge_source,
+                    description=column.replace("BacDive_", "").replace("_", " "),
+                    source_column=column,
+                    value=label,
+                )
+                if self.include_bacdive_snapshot:
+                    edge_writer.writerow(claim)
+                    self._stats["bacdive_snapshot_edges"] += 1
+                else:
+                    self._retain_observation(claim, row, observation_audit.SNAPSHOT_AUDIT_ONLY)
                 mapping = self._phenotype_curation.resolve(column, label) if self._phenotype_curation else None
                 if mapping is not None:
                     self._write_phenotype_normalization(
                         subject, column, label, mapping, self.knowledge_source, KNOWLEDGE_ASSERTION, MANUAL_AGENT
                     )
+
+    def _retain_observation(self, values, native, disposition):
+        """Audit the original complete claim and unsplit cell without emitting graph assertions."""
+        if self._observation_report_writer is None:
+            raise RuntimeError("MicrobeDecoder observation audit is not open")
+        claim = dict(zip(self.edge_header, (value or "" for value in values), strict=True))
+        self._observation_report_writer.writerow(observation_audit.audit_row(claim, native, disposition))
+        self._stats["audit_only_observations"] += 1
 
     def _write_phenotype_normalization(
         self,
@@ -1425,9 +1549,7 @@ class MicrobeDecoderTransform(Transform):
             description = process_scope.description
         attribute_mapping = None
         if prefix == SOURCE_ATTRIBUTE_PREFIX:
-            identity = json.dumps([MICROBEDECODER, source_column, label], ensure_ascii=False, separators=(",", ":"))
-            digest = hashlib.sha256(identity.encode("utf-8", errors="surrogateescape")).hexdigest()
-            curie = f"{prefix}{MICROBEDECODER}_{slugify_label(source_column)}_{digest}"
+            curie = observation_audit.source_attribute_curie(source_column, label)
             dimension = source_column.removeprefix("BacDive_").replace("_", " ")
             name = f"reported {dimension}: {label} (source value)"
             description = (
@@ -1438,6 +1560,10 @@ class MicrobeDecoderTransform(Transform):
             attribute_mapping = (
                 self._phenotype_curation.resolve(source_column, label) if self._phenotype_curation else None
             )
+            if self._faprotax_curation is not None:
+                reviewed_prediction = self._faprotax_curation.authority.resolve(source_column, label)
+                if reviewed_prediction is not None:
+                    attribute_mapping = reviewed_prediction
             if attribute_mapping is not None:
                 description = (
                     f"Reported MicrobeDecoder {source_column} field value. "
@@ -1519,8 +1645,9 @@ class MicrobeDecoderTransform(Transform):
 
         Called for locally owned placeholder or mapped compound/ingredient
         CURIEs — never for an external cross-reference target (NCBITaxon, GTDB, CHEBI,
-        bacdive, GOLD, IMG) whose authoritative node is provided by
-        another transform. See the add-transform skill's Phase 6
+        bacdive, GOLD) whose authoritative node is provided by
+        another transform. IMG genome endpoints are declared here because no
+        upstream IMG transform owns their declarations. See the add-transform skill's Phase 6
         "anti-patterns" for the reasoning.
         """
         if curie in self._seen_nodes:

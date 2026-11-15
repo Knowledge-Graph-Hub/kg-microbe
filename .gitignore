@@ -34,6 +34,7 @@ __pypackages__/
 # Test, coverage, type-checker, and documentation output
 /data/validation/pr-gates/
 /data/edge-metadata-20261110/
+/data/edge-quality-20261110/
 htmlcov/
 .tox/
 .nox/

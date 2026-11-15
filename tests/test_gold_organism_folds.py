@@ -19,6 +19,7 @@ from kg_microbe.transform_utils.microbedecoder.microbedecoder import MicrobeDeco
 from kg_microbe.utils.transform_fingerprint import upstream_fingerprint, write_fingerprint
 from tests.microbedecoder_inactive_join_fixtures import bind_inactive_join_policy, write_empty_join_gss
 from tests.microbedecoder_quarantine_fixtures import write_fixture_quarantine_policy
+from tests.test_microbedecoder_transform import _supply_microbedecoder_authorities
 
 FIXTURES = Path(__file__).parent / "resources" / "gold_folds"
 
@@ -58,6 +59,7 @@ def transformed_gold(tmp_path, monkeypatch):
             info = tarfile.TarInfo(name)
             info.size = len(data)
             archive.addfile(info, io.BytesIO(data))
+    _supply_microbedecoder_authorities(out)
     transform = GOLDTransform(input_dir=raw, output_dir=out)
     transform.run()
     return transform
@@ -70,15 +72,10 @@ def _read(path):
 
 
 def _microbedecoder(gold, *, monkeypatch):
-    """Supply immutable GTDB/METPO authorities and build the consumer in the temporary output tree."""
+    """Add GTDB and finalize GOLD against the already staged immutable ontology authorities."""
     gtdb_dir = gold.output_base_dir / "gtdb"
     gtdb_dir.mkdir(parents=True, exist_ok=True)
     shutil.copyfile(FIXTURES.parent / "microbedecoder" / "gtdb_nodes.tsv", gtdb_dir / "nodes.tsv")
-    ontology_dir = gold.output_base_dir / "ontologies"
-    ontology_dir.mkdir(parents=True, exist_ok=True)
-    shutil.copyfile(FIXTURES.parent / "microbedecoder" / "metpo_nodes.tsv", ontology_dir / "metpo_nodes.tsv")
-    shutil.copyfile(FIXTURES.parent / "microbedecoder" / "go_nodes.tsv", ontology_dir / "go_nodes.tsv")
-    shutil.copyfile(FIXTURES.parent / "microbedecoder" / "chebi_record_nodes.tsv", ontology_dir / "chebi_nodes.tsv")
     gold.finalize(fresh_run=True)
     consumer = MicrobeDecoderTransform(
         input_dir=gold.input_base_dir,

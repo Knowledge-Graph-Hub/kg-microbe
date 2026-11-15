@@ -4,7 +4,7 @@ import pytest
 
 from kg_microbe.transform_utils.microbedecoder.curation import DEFAULT_PROCESS_MAPPINGS
 from kg_microbe.transform_utils.microbedecoder.material_dispositions import MaterialDispositionCuration
-from tests.test_microbedecoder_curation_inventory import AUTHORITY, inventory, write_tsv
+from tests.test_microbedecoder_curation_inventory import current_authority, inventory, write_tsv
 
 
 def _source(tmp_path, rules):
@@ -39,11 +39,13 @@ def _source(tmp_path, rules):
 
 def test_complete_material_inventory_keeps_unresolved_identity_and_all_original_bytes(tmp_path):
     """All 240 uses are reviewed as context, never reported as approved ontology identities."""
+    authority = current_authority(tmp_path)
     source, _ = _source(tmp_path, MaterialDispositionCuration().rules)
     before = {name: (source / name).read_bytes() for name in ("nodes.tsv", "edges.tsv")}
     result = inventory.review(
-        source, tmp_path / "review", DEFAULT_PROCESS_MAPPINGS, AUTHORITY, require_reviewed_material_cohort=True
+        source, tmp_path / "review", DEFAULT_PROCESS_MAPPINGS, authority, require_reviewed_material_cohort=True
     )
+    assert result["faprotax_scope"] == "current_finite_policy"
     assert result["material_review"]["matched_source_uses"] == 240
     assert result["material_review"]["cohort_complete"] is True
     assert result["material_review"]["chemical_identity_approved"] is False
@@ -56,6 +58,7 @@ def test_complete_material_inventory_keeps_unresolved_identity_and_all_original_
 @pytest.mark.parametrize("mutation", ["drop", "literal", "record", "citation", "target", "duplicate"])
 def test_explicit_cohort_acceptance_rejects_lost_or_changed_uses(tmp_path, mutation):
     """A strict rebuild check cannot pass by losing a record or changing the catalogue lookup key."""
+    authority = current_authority(tmp_path)
     source, edges = _source(tmp_path, MaterialDispositionCuration().rules)
     fields = list(edges[0])
     if mutation == "drop":
@@ -68,17 +71,26 @@ def test_explicit_cohort_acceptance_rejects_lost_or_changed_uses(tmp_path, mutat
         ]
         edges[0][field] = "changed"
     write_tsv(source / "edges.tsv", fields, edges)
-    with pytest.raises(ValueError):
+    expected_error = {
+        "drop": "Incomplete reviewed material cohort",
+        "literal": "Incomplete reviewed material cohort",
+        "record": "Incomplete reviewed material cohort",
+        "citation": "Reviewed material source-use evidence changed",
+        "target": "Reviewed material source-use evidence changed",
+        "duplicate": "Duplicate reviewed material use",
+    }[mutation]
+    with pytest.raises(ValueError, match=expected_error):
         inventory.review(
-            source, tmp_path / "review", DEFAULT_PROCESS_MAPPINGS, AUTHORITY, require_reviewed_material_cohort=True
+            source, tmp_path / "review", DEFAULT_PROCESS_MAPPINGS, authority, require_reviewed_material_cohort=True
         )
     assert not (tmp_path / "review").exists()
 
 
 def test_partial_diagnostic_does_not_claim_complete_cohort(tmp_path):
     """Non-production fixture or subset reviews can run without pretending all uses survived."""
+    authority = current_authority(tmp_path)
     source, _ = _source(tmp_path, MaterialDispositionCuration().rules[:1])
-    result = inventory.review(source, tmp_path / "review", DEFAULT_PROCESS_MAPPINGS, AUTHORITY)
+    result = inventory.review(source, tmp_path / "review", DEFAULT_PROCESS_MAPPINGS, authority)
     assert result["material_review"]["matched_source_uses"] == 1
     assert result["material_review"]["missing_reviewed_uses"] == 239
     assert result["material_review"]["cohort_complete"] is False

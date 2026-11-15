@@ -48,6 +48,7 @@ def _native_report(transform):
         },
         "producer_audit_members": {
             joins.AUDIT_FILE: identity(transform.output_dir / joins.AUDIT_FILE),
+            "reported_observations.tsv": identity(transform.output_dir / "reported_observations.tsv"),
             "phenotype_normalizations.tsv": identity(transform.output_dir / "phenotype_normalizations.tsv"),
         },
     }
@@ -267,6 +268,7 @@ def test_selector_catch_restore_retry_requires_a_genuine_new_run(
             chemical_loader=_NoChebi(),
             crosswalk_quarantine_policy=transform.crosswalk_quarantine_policy,
             bacdive_join_policy=policy,
+            include_bacdive_snapshot=True,
         )
         assert transform.finalize() == report
     original_guard = transform._bacdive_join_guard
@@ -406,7 +408,11 @@ def test_public_finalization_repeat_and_composed_gold_admission(tmp_path, monkey
     after = Counter(json.dumps(row, sort_keys=True) for row in _rows(transform.output_edge_file))
     assert before == after
     fresh = MicrobeDecoderTransform(
-        transform.input_base_dir, transform.output_base_dir, chemical_loader=_NoChebi(), bacdive_join_policy=policy
+        transform.input_base_dir,
+        transform.output_base_dir,
+        chemical_loader=_NoChebi(),
+        bacdive_join_policy=policy,
+        include_bacdive_snapshot=True,
     )
     repeated = fresh.finalize()
     assert repeated == report

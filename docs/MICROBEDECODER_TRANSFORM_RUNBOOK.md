@@ -130,7 +130,7 @@ the add-transform skill mandates for every transform:
 |---|---|---|
 | Chemical (end-products, substrates) | Reviewed full-record corrections, then `ChemicalMappingLoader.find_chebi_by_name()`; the two unresolved sugar records remain protected | `kgmicrobe.compound:<slug>` |
 | Pathway (`Type_of_metabolism` from Bergey/VPI/Literature/FAPROTAX) | Exact process rules require active native declarations; finite source-local definitions use field/literal-hashed IDs and retain the old locator as `original_object` | `kgmicrobe.pathway:<slug>` for unreviewed fallback |
-| BacDive snapshot | Column/literal-scoped `biolink:Attribute`; reviewed `has_attribute_type` node property requires field-specific evidence | `kgmicrobe.source_attribute:microbedecoder_<column>_<sha256>` |
+| BacDive snapshot | Complete audit by default; explicit opt-in emits column/literal-scoped `biolink:Attribute` with reviewed native type metadata | `kgmicrobe.source_attribute:microbedecoder_<column>_<sha256>` |
 
 The `unmapped_labels.tsv` report shows where each facet is landing. Recompute
 coverage from a fresh build; historical mapping rates predate the current
@@ -143,19 +143,23 @@ METPO rules and eleven GO catabolic/respiratory rules. Forty-five further exact
 FAPROTAX pairs have reviewed source-local definitions, not external ontology
 identity mappings. Their source-scoped IDs prevent definition leakage into
 same-spelled labels from other sources.
-Twenty-seven separate non-process/unspecified source labels are retained as
-field-scoped reporting attributes instead of process objects. None of these
-rules interprets unrelated assay codes or narrower/negative process terms. See the
+The finite non-process/unspecified labels follow the current
+[edge-quality dispositions](MICROBEDECODER_EDGE_QUALITY_1846.md): twenty reviewed
+FAPROTAX labels retain typed source Attributes, ten unsupported labels and exact
+Bergey missing reports remain audit-only. These rules do not interpret unrelated
+assay codes or narrower/negative process terms. See the
 [curation evidence and limitations](microbedecoder_process_curation.md).
 FAPROTAX assignments remain predictions, not newly established experiments.
 
 The exact `Not reported` token in `Bergey_Substrates_for_end_products` is retained
-as `has_attribute` reporting metadata with its source record and citation. It
+in the complete observation audit with its source record and citation. It
 is not a consumed chemical and does not assert an inability to use substrates.
 
-Thirty-five exact source-column/literal rules add native METPO types to Attribute
-nodes: 22 Gram-stain/oxygen-tolerance/cell-shape values, nine evidence-backed
-numeric/sign codes, and four FAPROTAX trait labels. Original record-qualified
+The historical phenotype table retains its thirty-five exact rules: 22
+Gram-stain/oxygen-tolerance/cell-shape values, nine evidence-backed numeric/sign
+codes, and four FAPROTAX labels. The separate current thirty-label FAPROTAX policy
+supports twenty exact native type classifications (including those four), with
+ten unsupported interpretations retained only in the audit. Original record-qualified
 assertions and contradictory/multivalued observations remain intact; FAPROTAX
 traits use `has_attribute` rather than a process relation. Other codes, units,
 measurements and isolation contexts are not automatically decoded. Read the

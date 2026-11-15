@@ -21,7 +21,7 @@ def _hash(value):
     return hashlib.sha256(value).hexdigest()
 
 
-def prepare(tmp_path, monkeypatch, *, selected=(1,), empty=False, native_cases=None):
+def prepare(tmp_path, monkeypatch, *, selected=(1,), empty=False, native_cases=None, include_bacdive_snapshot=True):
     """Use an actual producer, immutable snapshot readers and isolated literal native rows."""
     raw, output = tmp_path / "raw", tmp_path / "transformed"
     raw.mkdir(parents=True)
@@ -131,7 +131,13 @@ def prepare(tmp_path, monkeypatch, *, selected=(1,), empty=False, native_cases=N
     monkeypatch.setattr(joins, "POLICY_SHA256", _hash(policy_path.read_bytes()))
     monkeypatch.setattr(joins, "EVIDENCE_SHA256", _hash(evidence_path.read_bytes()))
     monkeypatch.setattr(joins, "DECISIONS_SHA256", _hash(_json(decisions).encode()))
-    transform = MicrobeDecoderTransform(raw, output, chemical_loader=_NoChebi(), bacdive_join_policy=policy_path)
+    transform = MicrobeDecoderTransform(
+        raw,
+        output,
+        chemical_loader=_NoChebi(),
+        bacdive_join_policy=policy_path,
+        include_bacdive_snapshot=include_bacdive_snapshot,
+    )
     bind_fixture_quarantine_policy(transform, source, selected=())
     return transform, source, gss, policy_path, rows
 

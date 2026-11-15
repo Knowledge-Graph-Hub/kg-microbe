@@ -7,8 +7,10 @@ maps trait names to METPO/ontology terms, and outputs KGX nodes.tsv and edges.ts
 
 import csv
 import json
+import math
 import multiprocessing
 import os
+import re
 import shutil
 import warnings
 
@@ -25,9 +27,12 @@ from tqdm import tqdm  # noqa: E402
 
 from kg_microbe.transform_utils.constants import (  # noqa: E402
     AUTOMATED_AGENT,
+    CAPABLE_OF_PREDICATE,
     CURIE_COLUMN,
     CUSTOM_CURIES_YAML_FILE,
+    HAS_ATTRIBUTE_PREDICATE,
     HAS_PHENOTYPE,
+    HAS_PHENOTYPE_PREDICATE,
     ID_COLUMN,
     INFERRED_SUBCLASS_RELATION,
     METATRAITS,
@@ -2235,6 +2240,84 @@ class MetaTraitsTransform(Transform):
             return neg_pred
         return None  # no negative form — caller should skip
 
+    _CATEGORICAL_HEADERS = frozenset(
+        {"cell shape", "oxygen preference", "temperature preference", "biosafety level", "ph preference"}
+    )
+    _CONTINUOUS_HEADERS = frozenset({"gc content", "cell width", "cell length"})
+
+    def _resolve_summary_header(self, summary: dict) -> Optional[dict]:
+        """Resolve a header's observed value, never assert the bare categorical class."""
+        name = summary.get("name", "").strip().lower()
+        if name not in self._CATEGORICAL_HEADERS | self._CONTINUOUS_HEADERS:
+            return None
+        label = summary.get("majority_label") or ""
+        if name in self._CONTINUOUS_HEADERS:
+            mapping = self.trait_mapping.get(name)
+            # Keep the source unit literally; a percentage of true is undefined for a median.
+            match = re.fullmatch(r"Median:\s*([-+]?\d+(?:\.\d+)?(?:[eE][-+]?\d+)?)(?:\s+(.+))?\s*", label)
+            if not mapping or not match:
+                return {"deferred": True}
+            value = float(match.group(1))
+            if not math.isfinite(value):
+                return {"deferred": True}
+            return {**mapping, "percentage": "", "value": value, "unit": (match.group(2) or "").strip()}
+
+        winner = re.sub(r":\s*\([^()]*%\)\s*$", "", label).strip()
+        percentages = summary.get("percentages") or {}
+        percentage = percentages.get(winner)
+        if not winner or percentage is None or isinstance(percentage, bool):
+            return {"deferred": True}
+        percentage = float(percentage)
+        if not math.isfinite(percentage) or not 0 < percentage <= 100:
+            return {"deferred": True}
+        # A numeric biosafety value must retain its field context, not match an unrelated synonym.
+        keys = [f"{name}: {winner}", f"{name} {winner}"]
+        if name == "biosafety level" and re.fullmatch(r"level [1-5]", winner):
+            keys.insert(0, f"biosafety {winner}")
+        if name != "biosafety level":
+            keys.append(winner)
+        mapping = None
+        for key in keys:
+            key = key.lower()
+            mapping = (
+                self.trait_mapping.get(key)
+                or self.metpo_label_to_class.get(key)
+                or self.metpo_synonym_to_class.get(key)
+            )
+            if mapping:
+                break
+        if mapping is None and name == "ph preference":
+            mapping = self._resolve_ph_preference_trait(name, label)
+        parent = self.trait_mapping.get(name)
+        if not mapping or mapping.get("deferred") or (parent and mapping["curie"] == parent["curie"]):
+            return {"deferred": True}
+        return {**mapping, "percentage": percentage, "value": "", "unit": ""}
+
+    @staticmethod
+    def _write_record_trait_edges(writer, observations: list) -> None:
+        """Coalesce synonymous summaries only within one record and equal evidence context."""
+        groups = {}
+        for row, summary in observations:
+            evidence = {
+                key: value for key, value in summary.items() if key not in {"name", "majority_label", "percentages"}
+            }
+            majority = (summary.get("majority_label") or "").split(":", 1)[0].lower()
+            polarity = majority if majority in {"true", "false", ""} else "nonboolean"
+            key = (tuple(row[:7] + row[8:]), polarity, json.dumps(evidence, sort_keys=True, allow_nan=False))
+            entries = groups.setdefault(key, [])
+            name = summary["name"]
+            # Repeated summaries of the same name are not evidence of a synonym collision.
+            for previous, names in entries:
+                if name not in names and row[7] != "" and previous[7] != "":
+                    previous[7] = max(previous[7], row[7])
+                    names.add(name)
+                    break
+            else:
+                entries.append((row, {name}))
+        for entries in groups.values():
+            for row, _ in entries:
+                writer.write_row(row)
+
     @property
     def indeterminate_traits_file(self) -> Path:
         """Return the shared serial/worker diagnostic path, including for GTDB."""
@@ -2812,6 +2895,7 @@ class MetaTraitsTransform(Transform):
                         )
 
                     # Second pass: process regular traits
+                    record_trait_edges = []
                     for s in summaries:
                         trait_name = s.get("name", "").strip()
                         if not trait_name:
@@ -2843,12 +2927,27 @@ class MetaTraitsTransform(Transform):
                         # Tier 2: Curated external ontology mappings (ChEBI, GO, EC only)
                         # Tier 3: Pattern-based resolvers (chemical, metabolic, growth, trophic, enzyme, phenotype)
 
-                        # Tier 1: METPO ontology mappings (FIRST)
-                        mapping = self.trait_mapping.get(trait_name) or self.trait_mapping.get(trait_name.lower())
+                        header_mapping = self._resolve_summary_header(s)
+                        value, unit = "", ""
+                        if header_mapping is not None:
+                            if header_mapping.get("deferred"):
+                                continue
+                            pct_true = header_mapping["percentage"]
+                            value, unit = header_mapping["value"], header_mapping["unit"]
+                            mapping = header_mapping
+                        else:
+                            mapping = self.trait_mapping.get(trait_name) or self.trait_mapping.get(trait_name.lower())
                         if mapping:
+                            resolved_pred = (
+                                mapping["predicate"]
+                                if header_mapping is not None
+                                else self._apply_majority_label_to_predicate(mapping, majority_label)
+                            )
+                            if resolved_pred is None:
+                                continue
                             curie = mapping["curie"]
                             category = mapping["category"]
-                            pred = mapping["predicate"]
+                            pred = resolved_pred
                             label = mapping["name"]
                         else:
                             # Tier 2: Manual mappings (external ontologies + METPO terms not in synonyms)
@@ -2942,9 +3041,12 @@ class MetaTraitsTransform(Transform):
                                 label = growth_mapping["name"]
                             elif trophic_mapping := self._resolve_trophic_mode(trait_name):
                                 # Tier 3.4: Trophic modes (phototrophy, chemoheterotrophy, aerobic/anaerobic)
+                                resolved_pred = self._apply_majority_label_to_predicate(trophic_mapping, majority_label)
+                                if resolved_pred is None:
+                                    continue
                                 curie = trophic_mapping["curie"]
                                 category = trophic_mapping["category"]
-                                pred = trophic_mapping["predicate"]
+                                pred = resolved_pred
                                 label = trophic_mapping["name"]
                             elif enzyme_mapping := self._resolve_enzyme_activity(trait_name):
                                 # Tier 3.5: Enzyme activities with EC numbers or GO mappings
@@ -2968,9 +3070,14 @@ class MetaTraitsTransform(Transform):
                                 label = required_mapping["name"]
                             elif phenotype_mapping := self._resolve_phenotype_trait(trait_name):
                                 # Tier 3.6: Simple phenotypes (aerotolerant, facultative, acidophilic)
+                                resolved_pred = self._apply_majority_label_to_predicate(
+                                    phenotype_mapping, majority_label
+                                )
+                                if resolved_pred is None:
+                                    continue
                                 curie = phenotype_mapping["curie"]
                                 category = phenotype_mapping["category"]
-                                pred = phenotype_mapping["predicate"]
+                                pred = resolved_pred
                                 label = phenotype_mapping["name"]
                             elif energy_mapping := self._resolve_energy_source(trait_name):
                                 # Tier 3.7: Energy sources (energy source: glucose)
@@ -3025,6 +3132,14 @@ class MetaTraitsTransform(Transform):
                                     )
                                 continue
 
+                        if (
+                            pred in {HAS_PHENOTYPE_PREDICATE, CAPABLE_OF_PREDICATE, HAS_ATTRIBUTE_PREDICATE}
+                            and pct_true == 0
+                            and value == ""
+                        ):
+                            # No positive assertion is supported by zero positive observations.
+                            continue
+
                         emit_taxon_if_needed(tax_id, tax_name)
 
                         if curie not in seen_trait_nodes:
@@ -3045,18 +3160,24 @@ class MetaTraitsTransform(Transform):
                             )
 
                         relation = self._get_relation_for_predicate(pred)
-                        edge_writer.write_row(
-                            [
-                                tax_id,
-                                pred,
-                                curie,
-                                relation,
-                                self.knowledge_source,
-                                OBSERVATION,
-                                AUTOMATED_AGENT,
-                                pct_true,
-                            ]
+                        record_trait_edges.append(
+                            (
+                                [
+                                    tax_id,
+                                    pred,
+                                    curie,
+                                    relation,
+                                    self.knowledge_source,
+                                    OBSERVATION,
+                                    AUTOMATED_AGENT,
+                                    pct_true,
+                                    value,
+                                    unit,
+                                ],
+                                s,
+                            )
                         )
+                    self._write_record_trait_edges(edge_writer, record_trait_edges)
 
         return {
             "nodes_file": temp_nodes_file,
@@ -3495,6 +3616,7 @@ class MetaTraitsTransform(Transform):
                                 continue
 
                         summaries = obj.get("summaries", [])
+                        record_trait_edges = []
                         for s in summaries:
                             trait_name = s.get("name", "").strip()
                             if not trait_name:
@@ -3508,12 +3630,29 @@ class MetaTraitsTransform(Transform):
                             pct_true = float(percentages.get("true") if percentages.get("true") is not None else 0)
 
                             # Lookup order (METPO-first priority):
-                            # Tier 1: METPO ontology mappings (FIRST)
-                            mapping = self.trait_mapping.get(trait_name) or self.trait_mapping.get(trait_name.lower())
+                            header_mapping = self._resolve_summary_header(s)
+                            value, unit = "", ""
+                            if header_mapping is not None:
+                                if header_mapping.get("deferred"):
+                                    continue
+                                pct_true = header_mapping["percentage"]
+                                value, unit = header_mapping["value"], header_mapping["unit"]
+                                mapping = header_mapping
+                            else:
+                                mapping = self.trait_mapping.get(trait_name) or self.trait_mapping.get(
+                                    trait_name.lower()
+                                )
                             if mapping:
+                                resolved_pred = (
+                                    mapping["predicate"]
+                                    if header_mapping is not None
+                                    else self._apply_majority_label_to_predicate(mapping, majority_label)
+                                )
+                                if resolved_pred is None:
+                                    continue
                                 curie = mapping["curie"]
                                 category = mapping["category"]
-                                pred = mapping["predicate"]
+                                pred = resolved_pred
                                 label = mapping["name"]
                             else:
                                 # Tier 2: Manual mappings (external ontologies + METPO terms not in synonyms)
@@ -3531,6 +3670,8 @@ class MetaTraitsTransform(Transform):
                                     label = micro_mapping["object_label"]
                                 elif pigmentation := self._resolve_pigmentation_trait(trait_name, majority_label):
                                     # Tier 3.0b: Pigmentation
+                                    if pigmentation.get("deferred"):
+                                        continue
                                     curie = pigmentation["curie"]
                                     category = pigmentation["category"]
                                     pred = pigmentation["predicate"]
@@ -3581,9 +3722,14 @@ class MetaTraitsTransform(Transform):
                                     pred = resolved_pred
                                     label = growth_mapping["name"]
                                 elif trophic_mapping := self._resolve_trophic_mode(trait_name):
+                                    resolved_pred = self._apply_majority_label_to_predicate(
+                                        trophic_mapping, majority_label
+                                    )
+                                    if resolved_pred is None:
+                                        continue
                                     curie = trophic_mapping["curie"]
                                     category = trophic_mapping["category"]
-                                    pred = trophic_mapping["predicate"]
+                                    pred = resolved_pred
                                     label = trophic_mapping["name"]
                                 elif enzyme_mapping := self._resolve_enzyme_activity(trait_name):
                                     resolved_pred = self._apply_majority_label_to_predicate(
@@ -3606,9 +3752,14 @@ class MetaTraitsTransform(Transform):
                                     pred = resolved_pred
                                     label = required_mapping["name"]
                                 elif phenotype_mapping := self._resolve_phenotype_trait(trait_name):
+                                    resolved_pred = self._apply_majority_label_to_predicate(
+                                        phenotype_mapping, majority_label
+                                    )
+                                    if resolved_pred is None:
+                                        continue
                                     curie = phenotype_mapping["curie"]
                                     category = phenotype_mapping["category"]
-                                    pred = phenotype_mapping["predicate"]
+                                    pred = resolved_pred
                                     label = phenotype_mapping["name"]
                                 elif energy_mapping := self._resolve_energy_source(trait_name):
                                     resolved_pred = self._apply_majority_label_to_predicate(
@@ -3664,6 +3815,14 @@ class MetaTraitsTransform(Transform):
                                         )
                                     continue
 
+                            if (
+                                pred in {HAS_PHENOTYPE_PREDICATE, CAPABLE_OF_PREDICATE, HAS_ATTRIBUTE_PREDICATE}
+                                and pct_true == 0
+                                and value == ""
+                            ):
+                                # No positive assertion is supported by zero positive observations.
+                                continue
+
                             if tax_id not in seen_taxon_nodes:
                                 seen_taxon_nodes.add(tax_id)
                                 node_writer.write_row(
@@ -3692,18 +3851,24 @@ class MetaTraitsTransform(Transform):
                                 )
 
                             relation = self._get_relation_for_predicate(pred)
-                            edge_writer.write_row(
-                                [
-                                    tax_id,
-                                    pred,
-                                    curie,
-                                    relation,
-                                    self.knowledge_source,
-                                    OBSERVATION,
-                                    AUTOMATED_AGENT,
-                                    pct_true,
-                                ]
+                            record_trait_edges.append(
+                                (
+                                    [
+                                        tax_id,
+                                        pred,
+                                        curie,
+                                        relation,
+                                        self.knowledge_source,
+                                        OBSERVATION,
+                                        AUTOMATED_AGENT,
+                                        pct_true,
+                                        value,
+                                        unit,
+                                    ],
+                                    s,
+                                )
                             )
+                        self._write_record_trait_edges(edge_writer, record_trait_edges)
 
         # Streaming writers close when exiting context manager
         # Run deduplication on the output files

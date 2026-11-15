@@ -48,7 +48,7 @@ def run_fixture(tmp_path, fixture="snapshot_context.csv", *, monkeypatch):
 
     _supply_gold_fold_report(tmp_path)
     raw = write_empty_join_gss(tmp_path / "raw").parent
-    transform = MicrobeDecoderTransform(raw, tmp_path, chemical_loader=NoChemicals())
+    transform = MicrobeDecoderTransform(raw, tmp_path, chemical_loader=NoChemicals(), include_bacdive_snapshot=True)
     bind_fixture_quarantine_policy(transform, input_path)
     write_empty_join_gss(transform.input_base_dir)
     bind_inactive_join_policy(transform, input_path, monkeypatch)

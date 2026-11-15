@@ -12,6 +12,7 @@ import argparse
 import csv
 import hashlib
 import json
+import re
 from collections import Counter
 from pathlib import Path
 
@@ -29,6 +30,7 @@ from kg_microbe.transform_utils.constants import (
     COMPOUND_PREFIX,
     COMPUTATIONAL_MODEL,
     FAPROTAX_KNOWLEDGE_SOURCE,
+    GENOME_CATEGORY,
     GOLD_PREFIX,
     GTDB_PREFIX,
     HAS_ATTRIBUTE_PREDICATE,
@@ -36,6 +38,8 @@ from kg_microbe.transform_utils.constants import (
     HAS_ATTRIBUTE_TYPE_COLUMN,
     HAS_OUTPUT_RELATION,
     IMG_PREFIX,
+    IN_TAXON_PREDICATE,
+    IN_TAXON_RELATION,
     KNOWLEDGE_ASSERTION,
     LITERATURE_KNOWLEDGE_SOURCE,
     LPSN_PREFIX,
@@ -53,17 +57,20 @@ from kg_microbe.transform_utils.constants import (
     PRODUCES_PREDICATE,
     PROVIDED_BY_COLUMN,
     RDFS_SUBCLASS_OF,
+    RELATED_TO_PREDICATE,
     SOURCE_ATTRIBUTE_PREFIX,
     STRAIN_PREFIX,
     SUBCLASS_PREDICATE,
     TROPHICALLY_INTERACTS_WITH,
     VPI_KNOWLEDGE_SOURCE,
 )
+from kg_microbe.transform_utils.microbedecoder import faprotax_dispositions as faprotax
 from kg_microbe.transform_utils.microbedecoder.curation import DEFAULT_PROCESS_MAPPINGS, ProcessCuration
 from kg_microbe.transform_utils.microbedecoder.material_dispositions import (
     DEFAULT_MATERIAL_DISPOSITIONS,
     MaterialDispositionCuration,
 )
+from kg_microbe.transform_utils.microbedecoder.observation_audit import source_attribute_curie
 from kg_microbe.transform_utils.microbedecoder.phenotype_curation import (
     ATTRIBUTE_TYPE_CURATION_SOURCE,
     DEFAULT_PHENOTYPE_MAPPINGS,
@@ -74,8 +81,14 @@ from kg_microbe.transform_utils.microbedecoder.process_scopes import (
     ProcessScopeCuration,
 )
 from kg_microbe.transform_utils.microbedecoder.source_annotations import is_reported_metabolism_annotation
-from kg_microbe.transform_utils.microbedecoder.utils import BACDIVE_SNAPSHOT_COLUMNS, METABOLISM_GROUPS, slugify_label
+from kg_microbe.transform_utils.microbedecoder.utils import (
+    BACDIVE_SNAPSHOT_COLUMNS,
+    METABOLISM_GROUPS,
+    crosswalk_curie,
+    slugify_label,
+)
 from kg_microbe.utils.atomic_io import atomic_write
+from kg_microbe.utils.external_identifiers import ASSEMBLY_ACCESSION
 from kg_microbe.utils.tsv_io import tsv_dict_writer
 
 # This classifies source field roles, NOT the biological meaning of their values.
@@ -212,6 +225,124 @@ def _rows(path: Path, required: set):
             yield row
 
 
+_GOLD_NATIVE_FIELDS = frozenset(
+    {
+        "subject",
+        "predicate",
+        "object",
+        "relation",
+        "primary_knowledge_source",
+        "knowledge_level",
+        "agent_type",
+        "description",
+        "original_object",
+        "publications",
+        "source_citation",
+        "source_citation_base64",
+        "source_column",
+        "source_record",
+        "value",
+        "value_encoding",
+    }
+)
+
+
+def _gold_claim_key(row: dict) -> str:
+    """Preserve every native claim cell; only the finalizer's blank extension is permitted."""
+    row = dict(row)
+    if "original_subject" in row:
+        if row.pop("original_subject") != "":
+            raise ValueError("Unexpected GOLD association provenance extension")
+    if set(row) != _GOLD_NATIVE_FIELDS or any(type(value) is not str for value in row.values()):
+        raise ValueError("Incomplete or changed GOLD association claim fields")
+    return json.dumps(row, sort_keys=True, separators=(",", ":"), ensure_ascii=True)
+
+
+def _gold_audit_claims(path: Path, nodes: dict) -> Counter:
+    """Bind observed GOLD associations to complete retained disposition claims, not identity."""
+    required = {
+        "source_record",
+        "source_column",
+        "source_cell_json",
+        "source_token_json",
+        "native_record_json",
+        "original_claim_json",
+        "emitted_claim_json",
+        "gold_declaration_json",
+        "gold_native_node_json",
+        "gold_evidence_sha256",
+    }
+    claims = Counter()
+    for item in _rows(path, required):
+        original = json.loads(item["original_claim_json"])
+        emitted = json.loads(item["emitted_claim_json"])
+        native = json.loads(item["native_record_json"])
+        token = json.loads(item["source_token_json"])
+        declaration = json.loads(item["gold_declaration_json"])
+        _gold_claim_key(original)
+        key = _gold_claim_key(emitted)
+        if (
+            item["source_column"] != "GOLD_Organism_ID"
+            or item["source_record"] != original["source_record"]
+            or not item["source_record"].strip()
+            or type(token) is not str
+            or not token
+            or native.get("GOLD_Organism_ID") != json.loads(item["source_cell_json"])
+            or type(native.get("GOLD_Organism_ID")) is not str
+            or token not in [value.strip() for value in native["GOLD_Organism_ID"].split(",")]
+            or original["object"] != crosswalk_curie(token, GOLD_PREFIX)
+            or not original["subject"].startswith(LPSN_PREFIX)
+            or original["subject"] == LPSN_PREFIX
+            or (original["predicate"], original["relation"]) != (CLOSE_MATCH_PREDICATE, CLOSE_MATCH_RELATION)
+            or (original["primary_knowledge_source"], original["knowledge_level"], original["agent_type"])
+            != (MICROBEDECODER_KNOWLEDGE_SOURCE, KNOWLEDGE_ASSERTION, MANUAL_AGENT)
+            or any(
+                original[field]
+                for field in (
+                    "source_column",
+                    "value",
+                    "value_encoding",
+                    "description",
+                    "publications",
+                    "source_citation",
+                    "source_citation_base64",
+                    "original_object",
+                )
+            )
+            or declaration.get("id") != original["object"]
+            or declaration.get("category") != nodes.get(original["object"])
+            or not re.fullmatch(r"[0-9a-f]{64}", item["gold_evidence_sha256"])
+            or emitted
+            != {
+                **original,
+                "predicate": RELATED_TO_PREDICATE,
+                "relation": RELATED_TO_PREDICATE,
+                "source_column": "GOLD_Organism_ID",
+                "value": token,
+                "value_encoding": "backslash",
+            }
+        ):
+            raise ValueError("GOLD association disposition audit changed its complete native claim")
+        claims[key] += 1
+    return claims
+
+
+def _declared_lpsn_taxon(identifier: str, local: dict, upstream: dict) -> bool:
+    """Require an explicit local or selected sibling taxon, with no conflicting category."""
+    categories = [source[identifier] for source in (local, upstream) if identifier in source]
+    return bool(categories) and all(category == NCBI_CATEGORY for category in categories)
+
+
+def _declared_assembly_genome(identifier: str, local: dict, upstream: dict) -> bool:
+    """Use a version-exact assembly's explicit local or selected GTDB Genome declaration."""
+    categories = [source[identifier] for source in (local, upstream) if identifier in source]
+    return (
+        bool(ASSEMBLY_ACCESSION.fullmatch(identifier))
+        and bool(categories)
+        and all(category == GENOME_CATEGORY for category in categories)
+    )
+
+
 def classify(
     edge: dict,
     nodes: dict,
@@ -221,32 +352,54 @@ def classify(
     attribute_metadata: dict | None = None,
     process_scopes: ProcessScopeCuration | None = None,
     scope_nodes: dict | None = None,
+    faprotax_rules: faprotax.FaprotaxDispositions | None = None,
+    gold_claims: Counter | None = None,
+    protected_faprotax: dict | None = None,
+    lpsn_declarations: dict | None = None,
+    gtdb_declarations: dict | None = None,
 ) -> tuple[str, str]:
     """Classify representation, never decode a source token or infer a negative phenotype."""
     column, target = edge["source_column"], edge["object"]
+    protected = protected_faprotax or {}
+    if edge["subject"] in protected or (
+        target in protected and (column, edge["value"]) != (faprotax.COLUMN, protected[target])
+    ):
+        raise ValueError("Current FAPROTAX Attribute used outside its exact source assertion")
     local_scope = process_scopes.resolve(column, edge["value"]) if process_scopes is not None else None
     if target in (scope_nodes or {}) and (local_scope is None or target != local_scope.curie):
         raise ValueError(f"Source-defined process used outside its exact field/literal: {column}, {target}")
     literal_mapping = phenotypes.resolve(column, edge["value"]) if phenotypes is not None else None
+    current_rule = faprotax_rules.resolve(column, edge["value"]) if faprotax_rules is not None else None
+    current_mapping = (
+        faprotax_rules.authority.resolve(column, edge["value"])
+        if current_rule is not None and current_rule["disposition"] == "prediction"
+        else None
+    )
+    candidates = [current_mapping] if current_rule is not None else [literal_mapping]
+    candidates = [mapping for mapping in candidates if mapping is not None]
     attribute_type = (attribute_types or {}).get(target, "")
+    matching_types = [mapping for mapping in candidates if mapping.target_curie == attribute_type]
     if attribute_type and (
-        literal_mapping is None
-        or attribute_type != literal_mapping.target_curie
-        or not target.startswith(SOURCE_ATTRIBUTE_PREFIX)
-        or nodes.get(target) != ATTRIBUTE_CATEGORY
+        not matching_types or not target.startswith(SOURCE_ATTRIBUTE_PREFIX) or nodes.get(target) != ATTRIBUTE_CATEGORY
     ):
         raise ValueError(f"Unsupported reported attribute type: {column}, {target}, {attribute_type}")
     if attribute_type:
-        expected_metadata = {
-            ATTRIBUTE_TYPE_SOURCE_COLUMN: ATTRIBUTE_TYPE_CURATION_SOURCE,
-            ATTRIBUTE_TYPE_EVIDENCE_COLUMN: literal_mapping.evidence_uri,
-            ATTRIBUTE_TYPE_RATIONALE_COLUMN: literal_mapping.curation_rationale.replace("\\", "\\\\")
-            .replace("\t", "\\t")
-            .replace("\r", "\\r")
-            .replace("\n", "\\n"),
-        }
-        if (attribute_metadata or {}).get(target) != expected_metadata:
+        expected_metadata = [
+            {
+                ATTRIBUTE_TYPE_SOURCE_COLUMN: ATTRIBUTE_TYPE_CURATION_SOURCE,
+                ATTRIBUTE_TYPE_EVIDENCE_COLUMN: mapping.evidence_uri,
+                ATTRIBUTE_TYPE_RATIONALE_COLUMN: mapping.curation_rationale.replace("\\", "\\\\")
+                .replace("\t", "\\t")
+                .replace("\r", "\\r")
+                .replace("\n", "\\n"),
+            }
+            for mapping in matching_types
+        ]
+        if (attribute_metadata or {}).get(target) not in expected_metadata:
             raise ValueError(f"Reported attribute type lost its curation evidence: {column}, {target}")
+    # Current finite mappings extend the reported Attribute vocabulary; they
+    # never turn a source assertion into an independent taxon phenotype.
+    literal_mapping = current_mapping or literal_mapping
     if column and (not edge["subject"].strip() or not target.strip()):
         raise ValueError(f"Missing scientific endpoint: {column}, {edge['subject']!r}, {target!r}")
     if column and not edge["source_record"].strip():
@@ -256,6 +409,11 @@ def classify(
         actual_provenance = (edge["primary_knowledge_source"], edge["knowledge_level"], edge["agent_type"])
         if actual_provenance != expected_provenance:
             raise ValueError(f"Scientific source provenance changed: {column}, {target}")
+    if current_rule is not None:
+        if current_rule["disposition"] == "audit_only":
+            raise ValueError(f"Current audit-only FAPROTAX observation appears in graph: {column}, {edge['value']}")
+        if target != source_attribute_curie(column, edge["value"]) or not edge["subject"].startswith(LPSN_PREFIX):
+            raise ValueError("Current FAPROTAX Attribute identity or source subject changed")
     if column == "Bergey_Substrates_for_end_products" and edge["value"] == "Not reported":
         if (
             edge["predicate"] == HAS_ATTRIBUTE_PREDICATE
@@ -372,6 +530,10 @@ def classify(
             if categories & _NONMATERIAL_CATEGORIES:
                 raise ValueError(f"Nonmaterial external declaration in chemical role: {column}, {target}")
         return "chemical", "existing_chemical_mapping"
+    if column == "GOLD_Organism_ID":
+        if gold_claims is None or _gold_claim_key(edge) not in gold_claims:
+            raise ValueError("GOLD association lacks its exact disposition audit claim")
+        return "crosswalk", "audited_unresolved_gold_association"
     if not column:
         # Empty field context is reserved for the producer's identity crosswalks.
         # A scientific assertion with a lost source column must not disappear
@@ -379,7 +541,24 @@ def classify(
         close_match = (
             (edge["predicate"], edge["relation"]) == (CLOSE_MATCH_PREDICATE, CLOSE_MATCH_RELATION)
             and edge["subject"].startswith(LPSN_PREFIX)
-            and target.startswith((NCBITAXON_PREFIX, GTDB_PREFIX, NCBI_ASSEMBLY_PREFIX, GOLD_PREFIX, IMG_PREFIX))
+            and target.startswith(
+                (NCBITAXON_PREFIX, GTDB_PREFIX, GOLD_PREFIX)
+                + ((NCBI_ASSEMBLY_PREFIX, IMG_PREFIX) if faprotax_rules is None else ())
+            )
+        )
+        genome_membership = (
+            (edge["predicate"], edge["relation"]) == (IN_TAXON_PREDICATE, IN_TAXON_RELATION)
+            and (
+                (
+                    edge["subject"].startswith(IMG_PREFIX)
+                    and edge["subject"] != IMG_PREFIX
+                    and nodes.get(edge["subject"]) == GENOME_CATEGORY
+                )
+                or _declared_assembly_genome(edge["subject"], nodes, gtdb_declarations or {})
+            )
+            and target.startswith(LPSN_PREFIX)
+            and target != LPSN_PREFIX
+            and _declared_lpsn_taxon(target, nodes, lpsn_declarations or {})
         )
         strain_subclass = (
             (edge["predicate"], edge["relation"]) == (SUBCLASS_PREDICATE, RDFS_SUBCLASS_OF)
@@ -400,12 +579,15 @@ def classify(
         expected_provenance = (MICROBEDECODER_KNOWLEDGE_SOURCE, KNOWLEDGE_ASSERTION, MANUAL_AGENT)
         actual_provenance = (edge["primary_knowledge_source"], edge["knowledge_level"], edge["agent_type"])
         if (
-            not (close_match or strain_subclass)
+            not (close_match or strain_subclass or genome_membership)
             or has_scientific_context
             or not edge["source_record"].strip()
             or actual_provenance != expected_provenance
         ):
-            raise ValueError(f"Missing source column or invalid native crosswalk: {edge['predicate']}, {target}")
+            raise ValueError(
+                "Missing source column or invalid native crosswalk: "
+                f"{edge['subject']} {edge['predicate']} {target}; source_record={edge['source_record']}"
+            )
         return "crosswalk", "existing_crosswalk"
     raise ValueError(f"Unclassified source column: {column}")
 
@@ -421,6 +603,7 @@ def review(
     material_dispositions: Path = DEFAULT_MATERIAL_DISPOSITIONS,
     require_reviewed_material_cohort: bool = False,
     reviewed_material_raw: Path | None = None,
+    faprotax_dispositions: Path | None = faprotax.DEFAULT_DISPOSITIONS,
 ) -> dict:
     """Account for every source edge and publish a byte-bound, complete role-aware inventory."""
     if set(ATTRIBUTE_ROLES) != set(BACDIVE_SNAPSHOT_COLUMNS):
@@ -439,9 +622,59 @@ def review(
     }
     if reviewed_material_raw is not None:
         paths["reviewed_material_raw"] = reviewed_material_raw
+    if faprotax_dispositions is not None:
+        paths["faprotax_dispositions"] = faprotax_dispositions
+    finalization_path = source_dir / "source_finalization.json"
+    gold_audit = source_dir / "gold_crosswalk_dispositions.tsv"
+    # MicrobeDecoder deliberately delegates already supplied LPSN taxa to
+    # this exact sibling. Capture it here; it is not a finalizer consumed role.
+    lpsn_path = source_dir.parent / "lpsn" / "nodes.tsv"
+    gtdb_path = source_dir.parent / "gtdb" / "nodes.tsv"
+    optional_paths = {
+        "source_finalization": finalization_path,
+        "gold_crosswalk_dispositions": gold_audit,
+        "lpsn_declarations": lpsn_path,
+        "gtdb_declarations": gtdb_path,
+    }
+    optional_presence = {}
+    for role, path in optional_paths.items():
+        if path.is_symlink():
+            raise ValueError("Linked optional inventory input: " + str(path))
+        optional_presence[role] = path.exists()
+        if optional_presence[role]:
+            paths[role] = path
     before = {name: fingerprint(path) for name, path in paths.items()}
     curation = ProcessCuration(mappings, authority, paths["process_go_authority"])
     phenotypes = PhenotypeCuration(phenotype_mappings, authority)
+    faprotax_rules = None
+    if faprotax_dispositions is not None:
+        with (
+            faprotax_dispositions.open(encoding="utf-8", newline="") as policy,
+            authority.open(encoding="utf-8", newline="") as native,
+        ):
+            faprotax_rules = faprotax.FaprotaxDispositions(policy, native)
+    if "source_finalization" in paths:
+        finalization = json.loads(paths["source_finalization"].read_bytes())
+        contracts = finalization.get("producer_native_inputs", {})
+        consumed = finalization.get("consumed_inputs", {})
+        if faprotax.CONTRACT_KEY in contracts or faprotax.ROLE in consumed:
+            if faprotax_rules is None:
+                raise ValueError("Legacy inventory cannot review a current FAPROTAX native contract")
+            contract = contracts.get(faprotax.CONTRACT_KEY)
+            if not isinstance(contract, dict):
+                raise ValueError("Current FAPROTAX native contract is missing or malformed")
+            for role, input_name in (
+                (faprotax.ROLE, "faprotax_dispositions"),
+                ("process_authority", "process_authority"),
+            ):
+                if consumed.get(role, {}).get("sha256") != before[input_name]["sha256"]:
+                    raise ValueError("Current FAPROTAX inventory input differs from recorded consumption: " + role)
+            if contract.get("policy_sha256") != before["faprotax_dispositions"]["sha256"]:
+                raise ValueError("Current FAPROTAX inventory policy differs from native contract")
+        if "gold_crosswalk_dispositions" in paths:
+            recorded_audit = finalization.get("producer_audit_members", {}).get(gold_audit.name, {})
+            if recorded_audit.get("sha256") != before["gold_crosswalk_dispositions"]["sha256"]:
+                raise ValueError("GOLD inventory audit differs from recorded producer member")
     scopes = ProcessScopeCuration(process_scopes)
     materials = MaterialDispositionCuration(material_dispositions)
     material_raw_receipt = materials.validate_raw(reviewed_material_raw) if reviewed_material_raw is not None else None
@@ -452,6 +685,11 @@ def review(
             scope.source_column, scope.source_literal
         ):
             raise ValueError(f"Conflicting process scope disposition for {scope.source_literal!r}")
+    protected_faprotax = (
+        {source_attribute_curie(faprotax.COLUMN, literal): literal for literal in faprotax_rules.rules}
+        if faprotax_rules is not None
+        else {}
+    )
     nodes, attribute_types, attribute_metadata = {}, {}, {}
     scope_nodes = {}
     metadata_fields = (ATTRIBUTE_TYPE_SOURCE_COLUMN, ATTRIBUTE_TYPE_EVIDENCE_COLUMN, ATTRIBUTE_TYPE_RATIONALE_COLUMN)
@@ -459,6 +697,9 @@ def review(
         if not row["id"] or row["id"] in nodes:
             raise ValueError(f"Empty or duplicate source node id: {row['id']}")
         nodes[row["id"]] = row["category"]
+        literal = protected_faprotax.get(row["id"])
+        if literal is not None and faprotax_rules.rules[literal]["disposition"] == "audit_only":
+            raise ValueError("Current audit-only FAPROTAX observation has an Attribute node")
         if row["id"] in scoped_ids:
             scope = scoped_ids[row["id"]]
             if (
@@ -477,6 +718,22 @@ def review(
             attribute_metadata[row["id"]] = metadata
         elif any(metadata.values()):
             raise ValueError(f"Curation metadata without an attribute type: {row['id']}")
+    lpsn_declarations = {}
+    if "lpsn_declarations" in paths:
+        for row in _rows(paths["lpsn_declarations"], {"id", "category"}):
+            if row["id"].startswith(LPSN_PREFIX):
+                if row["id"] == LPSN_PREFIX or row["id"] in lpsn_declarations:
+                    raise ValueError("Empty or duplicate sibling LPSN declaration: " + row["id"])
+                lpsn_declarations[row["id"]] = row["category"]
+    gtdb_declarations = {}
+    if "gtdb_declarations" in paths:
+        for row in _rows(paths["gtdb_declarations"], {"id", "category"}):
+            if row["id"].startswith(NCBI_ASSEMBLY_PREFIX):
+                if not ASSEMBLY_ACCESSION.fullmatch(row["id"]) or row["id"] in gtdb_declarations:
+                    raise ValueError("Invalid or duplicate sibling GTDB assembly declaration: " + row["id"])
+                gtdb_declarations[row["id"]] = row["category"]
+    gold_claims = _gold_audit_claims(gold_audit, nodes) if "gold_crosswalk_dispositions" in paths else None
+    observed_gold = Counter()
     inventory, facets, dispositions = Counter(), Counter(), Counter()
     required = (set(INVENTORY_FIELDS) - _DERIVED_INVENTORY_FIELDS) | {
         "subject",
@@ -488,8 +745,22 @@ def review(
     validated_materials, material_counts = set(), Counter()
     for edge in _rows(paths["edges"], required):
         facet, disposition = classify(
-            edge, nodes, curation, phenotypes, attribute_types, attribute_metadata, scopes, scope_nodes
+            edge,
+            nodes,
+            curation,
+            phenotypes,
+            attribute_types,
+            attribute_metadata,
+            scopes,
+            scope_nodes,
+            faprotax_rules,
+            gold_claims,
+            protected_faprotax,
+            lpsn_declarations,
+            gtdb_declarations,
         )
+        if edge["source_column"] == "GOLD_Organism_ID":
+            observed_gold[_gold_claim_key(edge)] += 1
         material = materials.resolve_edge(edge)
         if material is not None:
             if facet != "chemical" or disposition != "retained_local_material":
@@ -519,6 +790,8 @@ def review(
             "material_review_rationale": material.curation_rationale if material else "",
         }
         inventory[tuple(row[name] for name in INVENTORY_FIELDS)] += 1
+    if gold_claims is not None and observed_gold != Counter(dict.fromkeys(gold_claims, 1)):
+        raise ValueError("GOLD inventory graph/audit complete claims are not conserved")
     if set(attribute_types) != validated_types:
         raise ValueError("Typed attribute nodes lack validating source-field observations")
     if set(scope_nodes) != validated_scopes:
@@ -526,6 +799,9 @@ def review(
     missing_materials = {rule.key for rule in materials.rules} - validated_materials
     if require_reviewed_material_cohort and missing_materials:
         raise ValueError(f"Incomplete reviewed material cohort: {len(missing_materials)} source uses missing")
+    for role, path in optional_paths.items():
+        if path.is_symlink() or path.exists() != optional_presence[role]:
+            raise ValueError("Optional inventory input presence changed: " + role)
     after = {name: fingerprint(path) for name, path in paths.items()}
     if before != after:
         raise ValueError("Inputs changed during the curation inventory; no report published")
@@ -537,7 +813,22 @@ def review(
         for key, count in sorted(inventory.items()):
             writer.writerow({**dict(zip(INVENTORY_FIELDS, key, strict=True)), "edge_rows": count})
     summary = {
-        "report_version": 3,
+        "report_version": 4,
+        "faprotax_scope": "current_finite_policy" if faprotax_rules is not None else "historical_diagnostics_only",
+        "source_admission_claimed": False,
+        "lpsn_declaration_scope": {
+            "selector": str(lpsn_path.absolute()),
+            "present": optional_presence["lpsn_declarations"],
+            "binding": "direct_inventory_dependency_capture",
+            "finalizer_consumed_role_claimed": False,
+        },
+        "gtdb_declaration_scope": {
+            "selector": str(gtdb_path.absolute()),
+            "present": optional_presence["gtdb_declarations"],
+            "binding": "direct_inventory_dependency_capture",
+            "finalizer_consumed_role_claimed": False,
+            "aliases_inferred": False,
+        },
         "inputs": before,
         "inputs_unchanged": True,
         "nodes": len(nodes),
@@ -587,6 +878,12 @@ def main() -> None:
     parser.add_argument("--material-dispositions", type=Path, default=DEFAULT_MATERIAL_DISPOSITIONS)
     parser.add_argument("--require-reviewed-material-cohort", action="store_true")
     parser.add_argument("--reviewed-material-raw", type=Path)
+    parser.add_argument("--faprotax-dispositions", type=Path, default=faprotax.DEFAULT_DISPOSITIONS)
+    parser.add_argument(
+        "--legacy-faprotax-inventory",
+        action="store_true",
+        help="Historical diagnostics only; refused for outputs carrying a current FAPROTAX native contract.",
+    )
     args = parser.parse_args()
     summary = review(
         args.source_dir,
@@ -599,6 +896,7 @@ def main() -> None:
         args.material_dispositions,
         args.require_reviewed_material_cohort,
         args.reviewed_material_raw,
+        None if args.legacy_faprotax_inventory else args.faprotax_dispositions,
     )
     print(json.dumps({key: summary[key] for key in ("edges", "inventory_rows", "edge_rows_by_disposition")}, indent=2))
 

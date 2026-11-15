@@ -37,8 +37,8 @@ Output lands in `data/transformed/lpsn/nodes.tsv` and `edges.tsv`.
   remain structured-name joins, not explicit native numeric-parent fields.
   Ambiguous tuples never use row order, nomenclatural status, synonym links
   or the separately cached API to choose a parent (#1292).
-- **`close_match` edges** — from each species / subspecies row to
-  every culture-collection deposit named in `nomenclatural_type`.
+- **Strain `subclass_of` edges** (`rdfs:subClassOf`) — from each culture-collection
+  deposit named in `nomenclatural_type` to the species / subspecies LPSN taxon.
   Deposits are parsed from strings like
   `"ATCC 11775 = DSM 30083 = JCM 1649"` and normalized to
   `kgmicrobe.strain:<code>` CURIEs, matching the strain CURIEs BacDive
@@ -97,3 +97,19 @@ this.
 
 The GSS CSV itself is NOT redistributed inside this repository — each
 user must download their own copy via their LPSN account.
+
+The owner-approved decision in
+[#1852](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1852) retains
+deposit identifiers as `biolink:OrganismTaxon` and uses `subclass_of` for their
+placement under an LPSN species or subspecies. This follows the shared strain
+convention in [#834](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/834)
+and preserves taxonomy traversal through BacDive's shared deposit identities.
+Native `nomenclatural_type` source evidence and edge provenance remain unchanged.
+Actual culture samples or aliquots require a separate identity/modeling decision.
+
+This remains a deliberate strict Biolink 4.4.2 domain/range exception:
+`OrganismTaxon` does not inherit the `OntologyClass` domain/range of
+`subclass_of`. No category or validator is changed to hide that limitation;
+see [the pinned-model revalidation](../../../docs/BIOLINK_4_4_2_REVALIDATION.md).
+LPSN API INSDC `NucleicAcidEntity` subjects retain their valid `in_taxon`
+membership edges, and publication `mentions` edges are unchanged.

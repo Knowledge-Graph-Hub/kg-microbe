@@ -17,6 +17,7 @@ from kg_microbe.transform_utils.constants import (
     ASSOCIATED_WITH,
     CAPABLE_OF,
     CLOSE_MATCH_RELATION,
+    EXACT_MATCH,
     HAS_ATTRIBUTE_RELATION,
     HAS_INPUT_RELATION,
     HAS_PHENOTYPE,
@@ -66,6 +67,7 @@ def test_relation_for_predicate_lookup_and_metpo_self_mapping():
     assert relation_for_predicate("biolink:has_input") == HAS_INPUT_RELATION
     assert relation_for_predicate("biolink:in_taxon") == IN_TAXON_RELATION
     assert relation_for_predicate("biolink:close_match") == CLOSE_MATCH_RELATION
+    assert relation_for_predicate("biolink:same_as") == EXACT_MATCH
     assert relation_for_predicate("biolink:subclass_of") == RDFS_SUBCLASS_OF
 
     for invalid in ("", None, "biolink:unknown_predicate"):

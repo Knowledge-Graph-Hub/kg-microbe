@@ -60,18 +60,12 @@ def _child_bound(monkeypatch, root):
         writer = csv.DictWriter(stream, fieldnames=list(records[0]))
         writer.writeheader()
         writer.writerows(records)
-    _supply_gold_fold_report(output)
 
     # Fixed synthetic dependency declarations, not inferred from emitted rows.
     # These preserve the fixture's unrelated literal cross-references; they do
     # not assert that its NCBI/GOLD crosswalks are scientifically correct.
     authority = output / "ontologies/fixture_nodes.tsv"
-    authority.parent.mkdir(exist_ok=True)
-    shutil.copyfile(root / "tests/resources/microbedecoder/metpo_nodes.tsv", authority.parent / "metpo_nodes.tsv")
-    shutil.copyfile(root / "tests/resources/microbedecoder/go_nodes.tsv", authority.parent / "go_nodes.tsv")
-    shutil.copyfile(
-        root / "tests/resources/microbedecoder/chebi_record_nodes.tsv", authority.parent / "chebi_nodes.tsv"
-    )
+    authority.parent.mkdir(parents=True, exist_ok=True)
     authority.write_text(
         "id\tcategory\tname\n"
         "NCBITaxon:38284\tbiolink:OrganismTaxon\tsynthetic declared taxon A\n"
@@ -97,6 +91,8 @@ def _child_bound(monkeypatch, root):
                 ("GO:0045493", "oio:hasOBONamespace", None, "biological_process"),
             ],
         )
+    # Finalize GOLD only after every fixture declaration has been staged; never rewrite its inputs afterward.
+    _supply_gold_fold_report(output)
     lookup = ChemicalMappingLoader(mapping)
     transform = MicrobeDecoderTransform(raw, output, chemical_loader=lookup)
     write_fixture_quarantine_policy(source, root / "mappings/canonical", canonical_names=True)
@@ -219,6 +215,8 @@ def test_registered_sugar_finalization_preserves_full_observations(tmp_path):
     shutil.copyfile(ROOT / process_table, root / process_table)
     phenotype_table = Path("mappings/canonical/microbedecoder_phenotype_mappings.tsv")
     shutil.copyfile(ROOT / phenotype_table, root / phenotype_table)
+    faprotax_table = Path("mappings/canonical/microbedecoder_faprotax_dispositions.tsv")
+    shutil.copyfile(ROOT / faprotax_table, root / faprotax_table)
     scope_table = Path("mappings/canonical/microbedecoder_process_scope_definitions.tsv")
     shutil.copyfile(ROOT / scope_table, root / scope_table)
     evidence = json.loads((root / "tests/resources/microbedecoder/bergey_unresolved_sugar.json").read_bytes())

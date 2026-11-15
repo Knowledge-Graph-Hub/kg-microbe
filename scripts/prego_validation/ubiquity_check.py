@@ -8,15 +8,16 @@ specific one. If true, thresholding up selects generic annotations.
 Prediction: within the continuous channel, a term's taxon degree should
 correlate POSITIVELY with its mean score.
 
-Runs over any of the three continuous-channel edge shapes. The GO shape was
+Runs over GO, ENVO, BTO, or FOODON continuous-channel edge shapes. The GO shape was
 measured first and its numbers are published; ``--shape go --degree edges``
 reproduces them exactly.
 
 Two things differ by shape and are easy to get silently wrong:
 
 * **Orientation.** For GO the taxon is the *subject* and the term the object
-  (``NCBITaxon -capable_of-> GO``); for the habitat shapes the term is the
-  *subject* (``ENVO -location_of-> NCBITaxon``). Reading the wrong column
+  (``NCBITaxon -capable_of-> GO``). Habitat terms are the subject in legacy
+  ``location_of`` edges and the object in current ``located_in`` edges; both
+  are read as the same term/taxon pair. Reading the wrong column
   measures taxon degree instead of term degree — a different quantity that
   answers a different question, with no error to notice.
 * **Degree.** The original run approximated distinct taxa by edge count. That
@@ -26,7 +27,7 @@ Two things differ by shape and are easy to get silently wrong:
 
 Usage:
 
-    python ubiquity_check.py [--shape {go,envo,bto}] [--degree {taxa,edges}]
+    python ubiquity_check.py [--shape {go,envo,bto,foodon}] [--degree {taxa,edges}]
                              [--min-edges N] [--edges PATH]
 """
 
@@ -34,13 +35,19 @@ import argparse
 from collections import defaultdict
 from typing import Callable, Dict, List, Set, Tuple
 
-from channel_compat import assert_non_empty, continuous_predicate
+if __package__:
+    from .channel_compat import assert_non_empty, continuous_predicate
+    from .habitat_compat import habitat_pair
+else:
+    from channel_compat import assert_non_empty, continuous_predicate
+    from habitat_compat import habitat_pair
 
-# shape -> (term prefix, taxon prefix, which column holds the term)
+# shape -> (term prefix, taxon prefix, legacy term column); habitat views accept both directions
 SHAPES = {
     "go": ("GO:", "NCBITaxon:", "object"),
     "envo": ("ENVO:", "NCBITaxon:", "subject"),
     "bto": ("BTO:", "NCBITaxon:", "subject"),
+    "foodon": ("FOODON:", "NCBITaxon:", "subject"),
 }
 
 
@@ -86,16 +93,24 @@ def accumulate(path: str, shape: str) -> Tuple[Dict[str, Set[str]], Dict[str, in
     with open(path) as handle:
         header = next(handle).rstrip("\n").split("\t")
         subject_i, object_i = header.index("subject"), header.index("object")
+        predicate_i = header.index("predicate")
         score_i = header.index("prego_score")
         is_continuous, layout = continuous_predicate(header)
         term_i, taxon_i = (subject_i, object_i) if term_col == "subject" else (object_i, subject_i)
         n_continuous = 0
         for line in handle:
             fields = line.rstrip("\n").split("\t")
-            if len(fields) <= score_i:
+            if len(fields) < len(header):
                 continue
-            if not (fields[term_i].startswith(term_prefix) and fields[taxon_i].startswith(taxon_prefix)):
-                continue
+            if shape == "go":
+                term, taxon = fields[term_i], fields[taxon_i]
+                if not (term.startswith(term_prefix) and taxon.startswith(taxon_prefix)):
+                    continue
+            else:
+                pair = habitat_pair(fields[subject_i], fields[predicate_i], fields[object_i], (term_prefix,))
+                if pair is None:
+                    continue
+                term, taxon = pair
             if not is_continuous(fields):
                 continue
             n_continuous += 1
@@ -103,9 +118,9 @@ def accumulate(path: str, shape: str) -> Tuple[Dict[str, Set[str]], Dict[str, in
                 score = float(fields[score_i])
             except ValueError:
                 continue
-            taxa[fields[term_i]].add(fields[taxon_i])
-            edges[fields[term_i]] += 1
-            total[fields[term_i]] += score
+            taxa[term].add(taxon)
+            edges[term] += 1
+            total[term] += score
     assert_non_empty(n_continuous, layout)
     return taxa, edges, total, layout
 

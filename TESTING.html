@@ -133,6 +133,10 @@ requirements; a green code test suite does not establish graph-release readiness
 fixture or test changes. Do not remove cases, weaken assertions, exclude markers
 or reduce coverage merely to shorten validation. Historical reports retain the
 commands and results actually used at the time.</p>
+<p>The <a class="reference internal" href="benchmarks/fingerprint-ast-cache-20261115.html"><span class="std std-doc">fingerprint AST reuse benchmark</span></a>
+shows a measured reduction in repeated source-fingerprint computation while
+preserving the same admission tests. Profile shared setup and repeated work before
+changing test coverage; keep baseline and optimized evidence separately.</p>
 </section>
 </section>
 

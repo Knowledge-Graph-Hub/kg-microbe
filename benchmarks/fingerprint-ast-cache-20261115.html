@@ -1,0 +1,216 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fingerprint AST reuse: measured test performance &mdash; kg-microbe 0.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=7026087e"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            kg-microbe
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../static/intro.html">Knowledge Graphs for Microbial data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">kg_microbe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sources/index.html">Bacteria-Archaea-Traits schema</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">kg-microbe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Fingerprint AST reuse: measured test performance</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/benchmarks/fingerprint-ast-cache-20261115.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="fingerprint-ast-reuse-measured-test-performance">
+<h1>Fingerprint AST reuse: measured test performance<a class="headerlink" href="#fingerprint-ast-reuse-measured-test-performance" title="Link to this heading"></a></h1>
+<p>Repeated source-fingerprint work was a concrete cost behind slow local development
+and CI (#1862). The two admission modules measured here passed the same 20 cases
+in 79.37 seconds before the change and 19.78 seconds afterward. No existing test,
+assertion, marker, or CI environment was removed.</p>
+<section id="what-changed">
+<h2>What changed<a class="headerlink" href="#what-changed" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">_behaviour_digest</span></code> still reads each requested Python file on every call. A bounded
+process-local LRU now reuses only the pure calculation from <strong>exact source bytes</strong>
+to the existing AST digest (or raw-byte fallback for invalid Python/UTF-8).
+Directory enumeration and repo-relative filename folding remain uncached.</p>
+<p>The cache retains at most 256 entries, each with at most 256 KiB of source bytes:
+64 MiB of source payload plus cache/key/digest overhead. Larger files take the
+original uncached calculation. Missing files are checked on each read and are not
+cached. Cache eviction and concurrent duplicate misses affect cost, not identity.</p>
+<p>The digest algorithm and fingerprint version remain unchanged for identical
+inputs. This source edit itself still changes the checkout’s shared-code
+fingerprint, as any shared implementation edit does; normal source freshness and
+release checks continue to apply.</p>
+</section>
+<section id="evidence-and-comparison-limits">
+<h2>Evidence and comparison limits<a class="headerlink" href="#evidence-and-comparison-limits" title="Link to this heading"></a></h2>
+<p>Measurements used the same isolated M5 checkout, Python 3.10.11, locked Poetry
+environment and test selectors. Baseline master was
+<code class="docutils literal notranslate"><span class="pre">e3d1213a8bf7a4408204ebd48c19e42ec2e14b5e</span></code>. No dependency changed.</p>
+<ul class="simple">
+<li><p>Lock SHA256: <code class="docutils literal notranslate"><span class="pre">a9e8336e172faef6449ed79a2dde8df7932a5cfb9ba368e7a93a7c7ab83d7f6f</span></code>.</p></li>
+<li><p>Baseline fingerprint-module SHA256: <code class="docutils literal notranslate"><span class="pre">90272b22dfa0f4b0c690b28a3ef7591ac88f2b52a05925da1061eb5190937e9c</span></code>.</p></li>
+<li><p>Optimized module SHA256: <code class="docutils literal notranslate"><span class="pre">c122c85fdd738207ec0d836536f125573daa69dc30f0a15bb65903f05659ff65</span></code>.</p></li>
+</ul>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Measurement</p></th>
+<th class="head text-right"><p>Before</p></th>
+<th class="head text-right"><p>After</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Admission selection</p></td>
+<td class="text-right"><p>20 passed, 79.37 s</p></td>
+<td class="text-right"><p>20 passed, 19.78 s</p></td>
+</tr>
+<tr class="row-odd"><td><p>Admission command wall time (<code class="docutils literal notranslate"><span class="pre">time</span> <span class="pre">-p</span></code>)</p></td>
+<td class="text-right"><p>79.81 s</p></td>
+<td class="text-right"><p>20.15 s</p></td>
+</tr>
+<tr class="row-even"><td><p>Profiled canary test-call phase</p></td>
+<td class="text-right"><p>6.15 s</p></td>
+<td class="text-right"><p>1.53 s</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">_behaviour_digest</span></code> calls</p></td>
+<td class="text-right"><p>1,114</p></td>
+<td class="text-right"><p>1,114</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">_behaviour_digest</span></code> cumulative profile time</p></td>
+<td class="text-right"><p>4.9826 s</p></td>
+<td class="text-right"><p>0.5544 s</p></td>
+</tr>
+<tr class="row-odd"><td><p>AST dumps in the canary profile</p></td>
+<td class="text-right"><p>1,114</p></td>
+<td class="text-right"><p>108</p></td>
+</tr>
+</tbody>
+</table>
+<p>These are single before/after runs, not a statistical performance guarantee.
+The canary’s whole-process times include collection/import startup and different
+filesystem/bytecode-cache warmth, so those totals are retained as evidence but
+are not attributed wholly to AST reuse. Cumulative profile times overlap and
+must not be summed. The unprofiled admission selection provides the end-to-end
+comparison for unchanged tests.</p>
+<p>The earlier full run at <code class="docutils literal notranslate"><span class="pre">dff4f9ddedbd72febacbb0ba197342c9a7658370</span></code> reported
+9,959 passed and 20 skipped in 2,147.61 seconds. That feature branch has a different
+test population from this master-based change. Its duration report identified
+hotspots; it is not a matched full-suite benchmark. Final full-gate results belong
+to the exact committed candidate recorded in the PR and gate ledger.</p>
+<p>The <a class="reference download internal" download="" href="../_downloads/f1ec8308fb44e570d68f866bb6995477/fingerprint-ast-cache-20261115.json"><span class="xref download myst">machine-readable evidence</span></a> retains
+profile/log digests and individual measurements. Raw profiles and logs remain in
+<code class="docutils literal notranslate"><span class="pre">data/validation/test-workflow/</span></code> in the retained benchmark checkout. The
+<a class="reference download internal" download="" href="../_downloads/7b99302830ba140d95e8ed55c0b7ce7c/summarize_test_profile.py"><span class="xref download myst">summary helper</span></a> is committed so
+those inputs can be summarized again without exposing machine directory paths.</p>
+</section>
+<section id="reproduction">
+<h2>Reproduction<a class="headerlink" href="#reproduction" title="Link to this heading"></a></h2>
+<p>Use a supported locked environment and an isolated checkout. Preserve each
+version’s output under a distinct filename. The before command must run on the
+baseline code; the after command runs on the optimized code.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>mkdir<span class="w"> </span>-p<span class="w"> </span>data/validation/test-workflow
+.venv/bin/python<span class="w"> </span>-m<span class="w"> </span>cProfile<span class="w"> </span>-o<span class="w"> </span>data/validation/test-workflow/baseline-merge-missing-map.prof<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-m<span class="w"> </span>pytest<span class="w"> </span><span class="s1">&#39;tests/test_merge_consumed_input_review.py::test_required_snapshot_cannot_be_omitted_from_current_metadata[missing_map]&#39;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-q<span class="w"> </span>--durations<span class="o">=</span><span class="m">0</span><span class="w"> </span>&gt;<span class="w"> </span>data/validation/test-workflow/baseline-merge-missing-map.log<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span>
+/usr/bin/time<span class="w"> </span>-p<span class="w"> </span>.venv/bin/python<span class="w"> </span>-m<span class="w"> </span>pytest<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>tests/test_merge_consumed_input_review.py<span class="w"> </span>tests/test_merge_upstream_review.py<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-q<span class="w"> </span>--durations<span class="o">=</span><span class="m">25</span><span class="w"> </span>&gt;<span class="w"> </span>data/validation/test-workflow/baseline-admission-selection.log<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span>
+</pre></div>
+</div>
+<p>Repeat with distinct <code class="docutils literal notranslate"><span class="pre">after-*</span></code> output paths, then run:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>.venv/bin/python<span class="w"> </span>scripts/adhoc/summarize_test_profile.py<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>data/validation/test-workflow/baseline-merge-missing-map.prof<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>data/validation/test-workflow/after-merge-missing-map.prof<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--pytest-log<span class="w"> </span>data/validation/test-workflow/baseline-admission-selection.log<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--pytest-log<span class="w"> </span>data/validation/test-workflow/after-admission-selection.log<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--output<span class="w"> </span>data/validation/test-workflow/comparison-new.json
+</pre></div>
+</div>
+<p>Eight focused regression cases cover repeated reads with parse reuse, same-size
+changes with restored mtimes, deletion/reappearance, directory membership and
+renames, original digest semantics, invalid syntax/encoding, the source-size
+boundary, and LRU eviction. Existing fingerprint, admission and real native
+lifecycle tests remain the downstream checks; a benchmark pass alone is not full
+validation or graph-release acceptance.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Harshad Hegde &lt;hhegde@lbl.gov&gt;.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

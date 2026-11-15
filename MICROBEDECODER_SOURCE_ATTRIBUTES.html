@@ -76,6 +76,11 @@
 <p>Decision for <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1104">#1104</a>,
 scoped to the 27 <code class="docutils literal notranslate"><span class="pre">BacDive_*</span></code> snapshot columns. This does not change the broader
 taxon/phenotype convention tracked in #643 or the taxonomic backbone in #834.</p>
+<p>The current <a class="reference internal" href="MICROBEDECODER_EDGE_QUALITY_1846.html"><span class="std std-doc">edge-quality policy</span></a> keeps
+these snapshots in <code class="docutils literal notranslate"><span class="pre">reported_observations.tsv</span></code> by default. Explicit
+<code class="docutils literal notranslate"><span class="pre">MICROBEDECODER_INCLUDE_BACDIVE_SNAPSHOT=true</span></code> enables the graph representation
+below; native join refusals and complete observation conservation apply in both
+modes. Historical counts below describe the original modeling review.</p>
 <section id="evidence-and-model">
 <h2>Evidence and model<a class="headerlink" href="#evidence-and-model" title="Link to this heading"></a></h2>
 <p>The reviewed transform emits 362,361 <code class="docutils literal notranslate"><span class="pre">has_phenotype</span></code> edges from these columns.
@@ -151,7 +156,8 @@ and the SIO mapping; the same signature was also checked with BMT against the
 complete local pinned model during the review.</p>
 <p>Rerun <code class="docutils literal notranslate"><span class="pre">microbedecoder</span></code>, then merge with the new source output. Consumers that
 previously read these raw snapshot observations through <code class="docutils literal notranslate"><span class="pre">has_phenotype</span></code> should
-query <code class="docutils literal notranslate"><span class="pre">has_attribute</span></code>, scoped by MicrobeDecoder provenance and <code class="docutils literal notranslate"><span class="pre">source_column</span></code>.
+read the complete observation audit by default, or query <code class="docutils literal notranslate"><span class="pre">has_attribute</span></code> for
+an explicitly opted-in snapshot run, scoped by provenance and <code class="docutils literal notranslate"><span class="pre">source_column</span></code>.
 The live BacDive transform, curated phenotype assertions from other sources,
 LPSN identities, and strain/taxon <code class="docutils literal notranslate"><span class="pre">subclass_of</span></code> edges are unchanged.</p>
 </section>

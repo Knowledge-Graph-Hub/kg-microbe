@@ -76,6 +76,12 @@
 <p><strong>Date:</strong> 2026-08-06 · <strong>Branch:</strong> <code class="docutils literal notranslate"><span class="pre">feat/prego-confidence-calibration</span></code> · <strong>PR:</strong> #697
 <strong>Issues:</strong> #693 (merge RAM), #694 (<code class="docutils literal notranslate"><span class="pre">prego_channel</span></code>), #695 (edge metadata), #696 (calibration design), #698 (statistical review), #702 (validation coverage)</p>
 <p>Companion to <a class="reference internal" href="PREGO_INGEST_PLAN.html"><span class="std std-doc"><code class="docutils literal notranslate"><span class="pre">PREGO_INGEST_PLAN.md</span></code></span></a>, which covers acquisition and schema. This document covers <strong>whether PREGO’s <code class="docutils literal notranslate"><span class="pre">prego_score</span></code> means anything</strong>, measured against four independent gold standards.</p>
+<p><strong>Current emission policy (#1844, 2026-11-10):</strong> the default habitat transform uses
+<code class="docutils literal notranslate"><span class="pre">PREGO_HABITAT_MIN_SCORE=3.0</span></code> for the environmental-samples channel and emits
+<code class="docutils literal notranslate"><span class="pre">NCBITaxon</span> <span class="pre">→</span> <span class="pre">biolink:located_in</span></code> (<code class="docutils literal notranslate"><span class="pre">RO:0001025</span></code>) <code class="docutils literal notranslate"><span class="pre">→</span> <span class="pre">ENVO/BTO/FOODON</span></code>. The genome
+channel remains intact. This is a conservative inclusion choice; it does not
+establish that the score predicts biological correctness. The historical
+measurements and their qualification below are unchanged.</p>
 <hr class="docutils" />
 <section id="verdict">
 <h2>Verdict<a class="headerlink" href="#verdict" title="Link to this heading"></a></h2>

@@ -1,0 +1,122 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MicrobeDecoder source observations and edge quality &mdash; kg-microbe 0.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=7026087e"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            kg-microbe
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="static/intro.html">Knowledge Graphs for Microbial data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">kg_microbe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sources/index.html">Bacteria-Archaea-Traits schema</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">kg-microbe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">MicrobeDecoder source observations and edge quality</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/MICROBEDECODER_EDGE_QUALITY_1846.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="microbedecoder-source-observations-and-edge-quality">
+<h1>MicrobeDecoder source observations and edge quality<a class="headerlink" href="#microbedecoder-source-observations-and-edge-quality" title="Link to this heading"></a></h1>
+<p>Issues <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1846">#1846</a> and <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1827">#1827</a> distinguish unsupported graph assertions from the source’s original observations. A hash in a source Attribute ID is not itself an error: the readable label, source field, complete literal, record identity and evidence tier make the observation interpretable.</p>
+<p>The BacDive snapshot is audit-only by default. <code class="docutils literal notranslate"><span class="pre">MICROBEDECODER_INCLUDE_BACDIVE_SNAPSHOT=true</span></code> explicitly enables the historical graph representation; both modes retain the native finite join refusals and original observations. The selected Boolean mode is bound in the native producer contract. An admitted run cannot change mode during finalization or replay.</p>
+<p>Exact Bergey <code class="docutils literal notranslate"><span class="pre">Other</span></code> metabolism and <code class="docutils literal notranslate"><span class="pre">Not</span> <span class="pre">reported</span></code> substrate values are retained in <code class="docutils literal notranslate"><span class="pre">reported_observations.tsv</span></code>; they do not assert biology or negative growth. Every emitted <code class="docutils literal notranslate"><span class="pre">IMG:*</span></code> genome endpoint is declared as <code class="docutils literal notranslate"><span class="pre">biolink:Genome</span></code> with MicrobeDecoder provenance. Genome membership remains <code class="docutils literal notranslate"><span class="pre">biolink:in_taxon</span></code>, not taxonomic identity.</p>
+<section id="thirty-reviewed-faprotax-labels">
+<h2>Thirty reviewed FAPROTAX labels<a class="headerlink" href="#thirty-reviewed-faprotax-labels" title="Link to this heading"></a></h2>
+<p>The finite policy is <code class="docutils literal notranslate"><span class="pre">mappings/canonical/microbedecoder_faprotax_dispositions.tsv</span></code>. Twenty exact source-column/literal combinations retain their original <code class="docutils literal notranslate"><span class="pre">biolink:has_attribute</span></code> assertions and receive one of six native METPO <code class="docutils literal notranslate"><span class="pre">has_attribute_type</span></code> classifications. The original assertions remain <code class="docutils literal notranslate"><span class="pre">prediction</span></code> / <code class="docutils literal notranslate"><span class="pre">computational_model</span></code> with <code class="docutils literal notranslate"><span class="pre">infores:faprotax</span></code> provenance. Oxygen, host and other qualifiers stay in the literal; broader classification does not replace them or establish independent experiments. Ten unsupported combinations are audit-only, with their complete original claims preserved.</p>
+<p>The six classifications are chemoheterotrophic (<code class="docutils literal notranslate"><span class="pre">METPO:1000636</span></code>), methylotrophic (<code class="docutils literal notranslate"><span class="pre">METPO:1000651</span></code>), photoautotrophic (<code class="docutils literal notranslate"><span class="pre">METPO:1000656</span></code>), photoheterotrophic (<code class="docutils literal notranslate"><span class="pre">METPO:1000657</span></code>), plant pathogen (<code class="docutils literal notranslate"><span class="pre">METPO:1004003</span></code>) and human pathogen (<code class="docutils literal notranslate"><span class="pre">METPO:1004004</span></code>). Exact labels, categories and active status must match the consumed ontology-owned export. No global synonyms or ontology stubs are added.</p>
+<p>The review corrected wrong identifiers and unsupported implications in the requested table (<a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1847">#1847</a>): for example, the proposed symbiont and parasite IDs actually mean spore shaped and spiral shaped; the proposed gut ID means circulatory system. Human association does not entail symbiosis, and anoxygenic photoautotrophy does not establish the Calvin cycle or a dark reaction. Human-pathogen subgroups do not establish a disease event in a patient.</p>
+<p>The pinned Biolink 4.4.2 <code class="docutils literal notranslate"><span class="pre">has</span> <span class="pre">phenotype</span></code> domain/range do not match taxonomic classes and the ontology-owned class declarations. <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1850">#1850</a> therefore preserves the existing reported-Attribute model: <code class="docutils literal notranslate"><span class="pre">has</span> <span class="pre">attribute</span></code> relates the taxon to its reported Attribute, and <code class="docutils literal notranslate"><span class="pre">has</span> <span class="pre">attribute</span> <span class="pre">type</span></code> is a node property classifying that value. Neither the taxon nor the ontology class is retyped.</p>
+</section>
+<section id="evidence-and-validation">
+<h2>Evidence and validation<a class="headerlink" href="#evidence-and-validation" title="Link to this heading"></a></h2>
+<p>The official FAPROTAX1.2.12 ZIP is <code class="docutils literal notranslate"><span class="pre">https://pages.uoregon.edu/slouca/LoucaLab/archive/FAPROTAX/SECTION_Download/MODULE_Downloads/CLASS_Latest%20release/UNIT_FAPROTAX_1.2.12/FAPROTAX_1.2.12.zip</span></code>, SHA256 <code class="docutils literal notranslate"><span class="pre">87e229e5201c23f8286aeb5f092f50a95bfe6281c7746d89a50c0aac11a5923c</span></code>. Its <code class="docutils literal notranslate"><span class="pre">FAPROTAX.txt</span></code> member is SHA256 <code class="docutils literal notranslate"><span class="pre">e5b9eead9f936316410c1a3d58aaa5fe4c2fafb8e859d250796ac70486c12963</span></code>. This supplies group semantics; it does not prove which version generated the pinned MicrobeDecoder CSV.</p>
+<p>The audit retains every original occurrence, unsplit source cell, complete original/emitted claim and finite disposition/evidence. Independent native replay requires the full source CSV, policy and ontology identity, exact ordered audit occurrences, complete emitted edge multiplicity and native Attribute declaration/type. Graph deduplication remains distinct from audit occurrence conservation. Finalization and merge admission retain these guards.</p>
+<p>The issue’s thirty row counts sum to <strong>42,487</strong>, while its stated subtotal is <strong>42,483</strong>. These historical reported numbers are not a current regeneration result. Full original and changed run evidence belongs under <code class="docutils literal notranslate"><span class="pre">data/edge-quality-20261110</span></code>; no historical graph is claimed regenerated without a genuine recorded producer execution.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Harshad Hegde &lt;hhegde@lbl.gov&gt;.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

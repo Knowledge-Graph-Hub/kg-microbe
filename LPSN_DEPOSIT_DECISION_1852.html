@@ -1,0 +1,139 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LPSN deposit placement decision — 2026-11-14 PST &mdash; kg-microbe 0.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=7026087e"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            kg-microbe
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="static/intro.html">Knowledge Graphs for Microbial data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">kg_microbe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sources/index.html">Bacteria-Archaea-Traits schema</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">kg-microbe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">LPSN deposit placement decision — 2026-11-14 PST</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/LPSN_DEPOSIT_DECISION_1852.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="lpsn-deposit-placement-decision-2026-11-14-pst">
+<h1>LPSN deposit placement decision — 2026-11-14 PST<a class="headerlink" href="#lpsn-deposit-placement-decision-2026-11-14-pst" title="Link to this heading"></a></h1>
+<p>The owner approved the narrow correction in <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1852">#1852</a>, implemented in <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/pull/1849">PR #1849</a>. Existing <code class="docutils literal notranslate"><span class="pre">kgmicrobe.strain:*</span></code> deposit identities remain <code class="docutils literal notranslate"><span class="pre">biolink:OrganismTaxon</span></code>. Only their LPSN deposit-to-taxon edges change from <code class="docutils literal notranslate"><span class="pre">biolink:in_taxon</span></code> / <code class="docutils literal notranslate"><span class="pre">RO:0002162</span></code> to <code class="docutils literal notranslate"><span class="pre">biolink:subclass_of</span></code> / <code class="docutils literal notranslate"><span class="pre">rdfs:subClassOf</span></code>.</p>
+<p>This follows the named-strain taxonomy convention in <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/834">#834</a>, preserving shared BacDive identities, native type-deposit evidence, direction and provenance. INSDC sequence membership remains <code class="docutils literal notranslate"><span class="pre">in_taxon</span></code>; publication references remain <code class="docutils literal notranslate"><span class="pre">mentions</span></code> / <code class="docutils literal notranslate"><span class="pre">IAO:0000142</span></code>. BacDive’s safe identity links and conflicting-deposit suppression are unchanged. Individual culture-material or aliquot modeling would require a separate identity migration and is outside this correction.</p>
+<p>This decision does <strong>not</strong> establish strict Biolink 4.4.2 domain/range conformance: <code class="docutils literal notranslate"><span class="pre">subclass_of</span></code> still declares <code class="docutils literal notranslate"><span class="pre">OntologyClass</span></code> endpoints, while these nodes retain <code class="docutils literal notranslate"><span class="pre">OrganismTaxon</span></code>. The repository’s documented exception remains visible; no global category change or validator relaxation is introduced. The original #1852 finding remains valid historical evidence.</p>
+<section id="reproduction-and-evidence">
+<h2>Reproduction and evidence<a class="headerlink" href="#reproduction-and-evidence" title="Link to this heading"></a></h2>
+<p>Run the existing bounded native helper in plan mode first, then repeat with <code class="docutils literal notranslate"><span class="pre">--execute</span></code>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>poetry<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>-B<span class="w"> </span>-m<span class="w"> </span>scripts.adhoc.audit_lpsn_domain_edges_20261110<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--gss<span class="w"> </span>data/raw/lpsn_gss.csv<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--cache<span class="w"> </span>data/edge-quality-20261110/lpsn-native-canary-r2/raw/lpsn/api_cache<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--output<span class="w"> </span>data/edge-quality-20261110/lpsn-1852-native-r2
+</pre></div>
+</div>
+<p>The M5 run used its existing isolated Poetry environment, disabled dotenv loading and bytecode writes, unset LPSN credentials, and selected the local pinned Biolink schema/predicate map. It succeeded with five native GSS rows and eleven preserved cached API records, producing GSS <strong>8 nodes / 8 edges</strong> and API <strong>24 node rows / 24 edges</strong>, with zero network requests. Receipt SHA256: <code class="docutils literal notranslate"><span class="pre">f77360c9774408103e243d692020b17cf5de2f8fc0ffb8a4ed456353c0390095</span></code>.</p>
+<p>The helper calls both real production <code class="docutils literal notranslate"><span class="pre">run()</span></code> methods and exercises native input guards. It deliberately disables NCBI/GTDB enrichment and does not run source finalization. This establishes bounded source behavior, not a full rebuild, source admission, merged-graph validation or release readiness.</p>
+<p>Compare the preserved original and new canaries with:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>poetry<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>scripts/adhoc/compare_lpsn_1852_canaries.py<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--before<span class="w"> </span>data/edge-quality-20261110/lpsn-native-canary-r2<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--after<span class="w"> </span>data/edge-quality-20261110/lpsn-1852-native-r2<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--output<span class="w"> </span>data/edge-quality-20261110/lpsn-1852-delta-r2.json
+</pre></div>
+</div>
+<p>The expected change is exactly four deposit predicate/relation pairs: JCM-33998 and KCTC-25006 to <code class="docutils literal notranslate"><span class="pre">lpsn:18880</span></code>, plus LMG-31064 to the historical/current-name controls <code class="docutils literal notranslate"><span class="pre">lpsn:10674</span></code> and <code class="docutils literal notranslate"><span class="pre">lpsn:5244</span></code>. Every other GSS edge cell, node, selected source record and API edge must remain unchanged. The selected GSS sibling edge digest is regenerated rather than restamped. Current GSS edge SHA256 is <code class="docutils literal notranslate"><span class="pre">abb6dbeac939f62e6d272161c200e7d783b1a5b7154adab032d6af5b51e57e52</span></code>; unchanged API edges are <code class="docutils literal notranslate"><span class="pre">09ab628ea2d07a5ebdda23183a7a38a6c69f4aeff7da063a2fd4dfd784b8e7c3</span></code>.</p>
+<p>Independent adversarial review found and resolved an evidence-helper gap (<a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1861">#1861</a>): comparing mutually identical artifacts without checking their original receipt hashes could accept identical later alterations. The repaired comparison validates each run’s recorded input/output bindings before checking the scientific delta and rechecks for drift afterward. All <strong>39 comparison regression tests passed</strong> (4 warnings, 2.51 seconds), including identical altered copies, missing bindings, unexpected records and changes beyond the four approved pairs. Independent read-only re-review found no further material issue. Historical receipts are preserved; the helper does not claim externally authenticated receipts.</p>
+<p>The real before/after comparison passed with exactly four changed deposit edges. Delta receipt SHA256: <code class="docutils literal notranslate"><span class="pre">4f0b0043d17b8343cd3b4257cdb03edb76682addc71700aeede9f6707fc03f55</span></code>. Its input/output verification binds both native receipts and selections; API input reports retain their legitimate run-location and sibling-digest differences. The formatting/spelling preparation passed without changing source files.</p>
+<p>The new cross-source regression runs both real offline LPSN and BacDive producers. It checks shared node identity/category, identity-plus-hierarchy traversal and preservation of suppressed conflicting BacDive claims after graph union. It does not add cross-source parent reconciliation or claim that synthetic test taxa identify a real deposit. The affected nine-module selection passed <strong>329 tests</strong> (125 warnings, 66.43 seconds), recorded in <code class="docutils literal notranslate"><span class="pre">data/edge-quality-20261110/lpsn-1852-focused-r1.log</span></code>; it includes LPSN parent/API identity, sibling-binding and BacDive cross-reference/taxonomy controls.</p>
+<p>Prepare formatting/spelling, review and commit the candidate, then run the required repository gate once:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>poetry<span class="w"> </span>run<span class="w"> </span>tox<span class="w"> </span>-e<span class="w"> </span>format,codespell-write
+poetry<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>scripts/run_pr_gates.py<span class="w"> </span>lpsn-1852-20261115-r2
+</pre></div>
+</div>
+<p>Gate r1 on <code class="docutils literal notranslate"><span class="pre">33fa2b8e1abba2b3769f9beba3627818de9ba8a6</span></code> stopped before the full suite on two helper-only lint errors (a 123-character string and module docstring layout). The corrections preserve runtime behavior and passed independent read-only review. Native canary/comparison r1 evidence remains preserved; r2 regenerated it using the corrected helper hashes. Formatting, spelling and all-source lint then passed.</p>
+<p>The replacement gate ledger belongs at <code class="docutils literal notranslate"><span class="pre">data/validation/pr-gates/kgm-lpsn-1852-20261115-r2-gates.json</span></code>; its outcome and exact commit will be recorded on the PR without editing the validated candidate. Earlier gate/CI receipts remain evidence for their original commits. Fresh CI is required for the pushed correction. Merge is not authorized by this decision.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Harshad Hegde &lt;hhegde@lbl.gov&gt;.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

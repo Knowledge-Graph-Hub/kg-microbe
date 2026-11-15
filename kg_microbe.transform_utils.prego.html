@@ -442,7 +442,7 @@ what a caller means; refusing is better than silently emitting nothing.</p>
 </section>
 <section id="module-kg_microbe.transform_utils.prego.envo_identity">
 <span id="kg-microbe-transform-utils-prego-envo-identity-module"></span><h2>kg_microbe.transform_utils.prego.envo_identity module<a class="headerlink" href="#module-kg_microbe.transform_utils.prego.envo_identity" title="Link to this heading"></a></h2>
-<p>Finite native-evidence identity decisions for PREGO’s retired ENVO subjects.</p>
+<p>Finite native-evidence identity decisions for PREGO’s retired ENVO environment terms.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="kg_microbe.transform_utils.prego.envo_identity.IdentityDecision">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.prego.envo_identity.</span></span><span class="sig-name descname"><span class="pre">IdentityDecision</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">original_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disposition</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deprecated</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">proof_json</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.prego.envo_identity.IdentityDecision" title="Link to this definition"></a></dt>
@@ -531,7 +531,7 @@ follow-up per the plan’s own ship-6a-first guidance.</p>
 <cite>utils.classify_row</cite>):</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">NCBITaxon:X</span> <span class="pre">→</span> <span class="pre">biolink:capable_of</span> <span class="pre">→</span> <span class="pre">GO:Y</span></code>  (all 3 GO namespaces)</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">ENVO:Y</span> <span class="pre">→</span> <span class="pre">biolink:location_of</span> <span class="pre">→</span> <span class="pre">NCBITaxon:X</span></code>  (matches bacdive)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">NCBITaxon:X</span> <span class="pre">→</span> <span class="pre">biolink:located_in</span> <span class="pre">→</span> <span class="pre">ENVO:Y</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">NCBITaxon:X</span> <span class="pre">→</span> <span class="pre">biolink:associated_with</span> <span class="pre">→</span> <span class="pre">MONDO:Y</span></code>  (DOID routed via xref)</p></li>
 </ul>
 <p>Each edge carries per-row PREGO metadata (<code class="docutils literal notranslate"><span class="pre">score</span></code>, <code class="docutils literal notranslate"><span class="pre">channel</span></code>,

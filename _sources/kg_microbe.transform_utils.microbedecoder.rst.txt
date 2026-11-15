@@ -44,6 +44,14 @@ kg\_microbe.transform\_utils.microbedecoder.curation module
    :undoc-members:
    :show-inheritance:
 
+kg\_microbe.transform\_utils.microbedecoder.faprotax\_dispositions module
+-------------------------------------------------------------------------
+
+.. automodule:: kg_microbe.transform_utils.microbedecoder.faprotax_dispositions
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 kg\_microbe.transform\_utils.microbedecoder.gold\_crosswalk\_dispositions module
 --------------------------------------------------------------------------------
 
@@ -64,6 +72,14 @@ kg\_microbe.transform\_utils.microbedecoder.microbedecoder module
 -----------------------------------------------------------------
 
 .. automodule:: kg_microbe.transform_utils.microbedecoder.microbedecoder
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+kg\_microbe.transform\_utils.microbedecoder.observation\_audit module
+---------------------------------------------------------------------
+
+.. automodule:: kg_microbe.transform_utils.microbedecoder.observation_audit
    :members:
    :undoc-members:
    :show-inheritance:

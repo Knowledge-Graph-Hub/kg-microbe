@@ -124,8 +124,8 @@ download procedure.</p>
 <div><p>parent row is present in the same CSV — no LPSN API calls).</p>
 </div></blockquote>
 <ul class="simple">
-<li><p>close_match edges to <cite>kgmicrobe.strain:*</cite> for every culture-collection
-deposit named in <code class="docutils literal notranslate"><span class="pre">nomenclatural_type</span></code>.</p></li>
+<li><p>subclass_of edges from each <cite>kgmicrobe.strain:*</cite> culture-collection deposit
+named in <code class="docutils literal notranslate"><span class="pre">nomenclatural_type</span></code> to its LPSN taxon.</p></li>
 <li><p>close_match edges to <cite>NCBITaxon:*</cite> for every row (genus / species /
 subspecies) whose scientific name resolves to exactly one NCBITaxon
 via the local NCBI index. The index is pre-filtered to the bacterial

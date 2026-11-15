@@ -1,0 +1,191 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Transform edge-quality repairs — 2026-11-10 &mdash; kg-microbe 0.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=7026087e"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            kg-microbe
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="static/intro.html">Knowledge Graphs for Microbial data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">kg_microbe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sources/index.html">Bacteria-Archaea-Traits schema</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">kg-microbe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Transform edge-quality repairs — 2026-11-10</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/TRANSFORM_EDGE_QUALITY_20261110.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="transform-edge-quality-repairs-2026-11-10">
+<h1>Transform edge-quality repairs — 2026-11-10<a class="headerlink" href="#transform-edge-quality-repairs-2026-11-10" title="Link to this heading"></a></h1>
+<p><a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/pull/1849">PR #1849</a> implements the five requested transform repair families on <code class="docutils literal notranslate"><span class="pre">fix/transform-edge-quality-1842-1846</span></code>, created before edits from default <code class="docutils literal notranslate"><span class="pre">master</span></code> at <code class="docutils literal notranslate"><span class="pre">e3d1213a8bf7a4408204ebd48c19e42ec2e14b5e</span></code>. The task uses an isolated worktree and its own Poetry environment, with actual module origins checked. Original inputs, checkouts and earlier rebuild evidence are preserved; the old backlog goal remains paused. No complete graph rebuild or release admission is claimed.</p>
+<p>The supplied EdgeMech report is retained unchanged under <code class="docutils literal notranslate"><span class="pre">data/edge-quality-20261110/upstream-transform-vs-postmerge-report-20261110.md</span></code>, SHA256 <code class="docutils literal notranslate"><span class="pre">eada78d9a7eb91b753f05be4bf110eca28daf735023ba7429cef0cebff8cd5bd</span></code>. Its counts describe the earlier audited artifacts. They are not projected counts from the small canaries below.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Issue</p></th>
+<th class="head"><p>Implemented behavior</p></th>
+<th class="head"><p>Validation</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>#1842</p></td>
+<td><p>Apply majority polarity uniformly across direct, trophic and phenotype mapping paths; route categorical summaries by winning label; retain continuous values/units; omit unsupported bare positive zero-percent headers. Aggregate record-local synonym support only with identical remaining context; preserve distinct records and evidence.</p></td>
+<td><p>316 focused tests; real NCBI and GTDB source canaries.</p></td>
+</tr>
+<tr class="row-odd"><td><p>#1843</p></td>
+<td><p>Publication → mentions / IAO:0000142 → LPSN; sequence → in_taxon → LPSN; strain deposit → subclass_of / rdfs:subClassOf → LPSN under the owner-approved #1852 decision. Suppress only exact selected GSS hierarchy/name duplicates, binding the real sibling edge file under native contract v2.</p></td>
+<td><p>168 original focused tests and 111 scoped tests after the exact relation correction; historical GSS/API canaries, cache-only with no credentials or requests. The #1852 correction requires fresh evidence; earlier receipts retain their original candidate.</p></td>
+</tr>
+<tr class="row-even"><td><p>#1844</p></td>
+<td><p>Default environmental habitat score floor 3.0; taxon → located_in / RO:0001025 → environment. Preserve native score/selector evidence and move ENVO identity normalization/audit to the object. Update five validation readers to accept exact historical and current direction/predicate pairs.</p></td>
+<td><p>168 focused producer tests; 32 compatibility/lint cases; native canary and actual reader check.</p></td>
+</tr>
+<tr class="row-odd"><td><p>#1845</p></td>
+<td><p>Safe strain-to-deposit equivalences use same_as / skos:exactMatch. Conflicting-deposit suppression remains intact.</p></td>
+<td><p>Affected deposit/taxonomy/finalization tests and real two-record native canary.</p></td>
+</tr>
+<tr class="row-even"><td><p>#1846 / #1827</p></td>
+<td><p>BacDive snapshot graph mode defaults off; exact Bergey missing/unspecified values remain audit-only; emitted IMG genomes receive declarations. All thirty FAPROTAX labels have finite reviewed dispositions, retaining complete observations and provenance.</p></td>
+<td><p>Focused producer, schema, replay and helper tests; real tiny KGX archive regression; complete native single-source canary passed with actual waited exit 0 in 664.026 seconds.</p></td>
+</tr>
+</tbody>
+</table>
+<p>The FAPROTAX proposal required scientific correction (<a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1847">#1847</a>). Proposed identifiers included spore/spiral morphology for symbiont/parasite, methyl-red assays for pathogens, and circulatory-system UBERON for gut. Human association does not establish symbiosis, nor does a pathogen subgroup establish a disease event. Twenty supported exact literals retain source-qualified prediction Attributes and receive one of six verified METPO <code class="docutils literal notranslate"><span class="pre">has_attribute_type</span></code> classifications. Ten unsupported assertions remain complete audit observations. The thirty reported row counts sum to 42,487, rather than the stated 42,483; the native comparison below uses actual artifacts and count units.</p>
+<p>Pinned Biolink 4.4.2 does not support the provisional direct taxon-to-phenotype signature (<a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1850">#1850</a>). The repaired model keeps original <code class="docutils literal notranslate"><span class="pre">has_attribute</span></code> prediction/computational-model edges, readable source values and provenance, and classifies the Attribute through its node property. Stable hashed IDs remain legitimate; no taxon/ontology retyping or invented biology is introduced. See <a class="reference internal" href="MICROBEDECODER_EDGE_QUALITY_1846.html"><span class="std std-doc">the finite disposition rationale</span></a>.</p>
+<p>For <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1852">#1852</a>, the owner approved retaining existing OrganismTaxon strain identities and changing only LPSN deposit placement to <code class="docutils literal notranslate"><span class="pre">subclass_of</span></code> / <code class="docutils literal notranslate"><span class="pre">rdfs:subClassOf</span></code> on 2026-11-14 PST. This follows the shared taxonomy convention in #834 and preserves BacDive identity joins, source evidence and provenance; sequence <code class="docutils literal notranslate"><span class="pre">in_taxon</span></code> and publication <code class="docutils literal notranslate"><span class="pre">mentions</span></code> remain unchanged. This is not strict Biolink domain/range conformance: the generic <code class="docutils literal notranslate"><span class="pre">subclass_of</span></code> predicate still declares <code class="docutils literal notranslate"><span class="pre">OntologyClass</span></code> endpoints. No validator relaxation, global category change, or culture-material identity migration is part of this correction. Earlier #1852 schema findings and native receipts remain historical evidence; new validation must bind the corrected producer and regenerated sibling edge digest.</p>
+<p>The <a class="reference internal" href="LPSN_DEPOSIT_DECISION_1852.html"><span class="std std-doc">#1852 decision and reproduction record</span></a> records the fresh bounded native canary, source/graph hashes, shared-producer regression, receipt-binding review #1861 and new final-gate command. Its evidence supplements the historical index below.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Native canary</p></th>
+<th class="head text-right"><p>Nodes / edges</p></th>
+<th class="head"><p>Checks on actual written TSVs</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>MetaTraits NCBI</p></td>
+<td class="text-right"><p>85 / 103</p></td>
+<td><p>Numeric values/units, categorical examples, zero-parent suppression and endpoint checks; collision guarantees are covered by focused fixtures and source review.</p></td>
+</tr>
+<tr class="row-odd"><td><p>MetaTraits GTDB</p></td>
+<td class="text-right"><p>110 / 194</p></td>
+<td><p>Shared numeric/category/endpoint checks plus the historical-bridge audit; cross-record separation is covered by focused fixtures and source review.</p></td>
+</tr>
+<tr class="row-even"><td><p>LPSN GSS / API</p></td>
+<td class="text-right"><p>8 / 8; 24 node rows / 24 edges</p></td>
+<td><p>Three exact duplicated GSS triples omitted; API-only assertions retained. Relation repair changed exactly thirteen publication relation cells in a fresh run.</p></td>
+</tr>
+<tr class="row-odd"><td><p>PREGO</p></td>
+<td class="text-right"><p>17 / 12</p></td>
+<td><p>Ten native observations below 3 omitted, including four in [1,3); four identity-audit rows. Validation readers recovered all twelve habitat edges with ENVO/BTO/FOODON kept separate.</p></td>
+</tr>
+<tr class="row-even"><td><p>BacDive</p></td>
+<td class="text-right"><p>722 / 1,335</p></td>
+<td><p>Eight exact safe links; all five conflicting deposits suppressed and audited. Full 99,392-record scan established completeness of the selected thirteen-deposit cohort.</p></td>
+</tr>
+<tr class="row-odd"><td><p>MicrobeDecoder</p></td>
+<td class="text-right"><p>34,915 / 131,247</p></td>
+<td><p>Zero snapshot and exact Bergey-placeholder graph assertions; 18,374 IMG Genome declarations and matching membership endpoints; complete native observation replay and unchanged source/input guards</p></td>
+</tr>
+</tbody>
+</table>
+<p>The historical and new MicrobeDecoder runs consume the same raw CSV SHA256, <code class="docutils literal notranslate"><span class="pre">0c6ff730a108720a5d6972400f2bccf2eca8621713b62736abdf5df0fb188c95</span></code>. Historical nodes/edges are 23,130/511,145; current nodes/edges are 34,915/131,247. The 379,898-edge decrease equals 367,050 snapshot edges, 5,651 exact Bergey placeholders, and 7,197 unsupported FAPROTAX assertions. Of the thirty reviewed FAPROTAX labels, 42,483 native observations comprise 35,286 retained prediction assertions on twenty typed Attributes and 7,197 audit-only observations. The total FAPROTAX edge family also contains 10,688 preexisting assertions outside that thirty-literal repair scope. Twenty-four per-label counts in the issue table differ from the actual retained historical TSV; the public evidence index records all thirty actual before/after counts and the issue-table values. Counts alone are not used to infer source versions.</p>
+<p>The complete observation audit has 415,190 occurrences: 367,056 snapshot observations, 5,651 Bergey placeholders, 35,286 retained reviewed predictions, and 7,197 unsupported predictions. Occurrence counts and deduplicated graph-row counts are different units. Exact full-payload comparison identifies six repeated <code class="docutils literal notranslate"><span class="pre">BacDive_Flagellum_arrangement=polar</span></code> claims at native records 5104, 5251, 15094, 16313, 16323 and 20304: 367,056 audited occurrences contain 367,050 distinct claim payloads. All repetitions remain preserved. Every one of the 18,374 distinct IMG subjects now has a Genome declaration, compared with zero IMG declarations historically; all 18,374 membership edges remain.</p>
+<p>The bounded conditional authority inventory has 111 named declarations among 113 IDs. <code class="docutils literal notranslate"><span class="pre">MICRO:0000178</span></code> (peptone, three observations) and <code class="docutils literal notranslate"><span class="pre">MICRO:0000182</span></code> (tryptone, two) retain exactly the five historical <code class="docutils literal notranslate"><span class="pre">unresolved_no_exact_local_authority</span></code> claims/dispositions in the actual finalizer audit. These are explicit preexisting qualifications, not complete graph declaration closure or invented replacements.</p>
+<p>Canaries invoke real production readers/writers on independent inputs. The LPSN canaries are cache-only with enrichment disabled and stop after source production; they do not establish production finalization or full admission. PREGO copies were checked against full original archive/payload digests. BacDive’s private GO authority was genuinely rebuilt when a copied toolchain record correctly refused the new location; no digest restamping occurred. MetaTraits executed source SHA256 <code class="docutils literal notranslate"><span class="pre">be8e41a770be5d102d9fe2fe3718197b9ffe9b08202edaf9d2a28e65238b2db2</span></code>; BacDive executed <code class="docutils literal notranslate"><span class="pre">3500de11e83b87acda4dd1ce7abec4067d1e1c3f2156b047e63a6c0dd718139f</span></code>. Later BacDive formatting changed only call layout and is not relabeled as a new whole-source admission.</p>
+<p>MicrobeDecoder’s genuine GOLD prerequisite produced 637,297 nodes and 765,987 edges with fresh finalization and closing native/input guards. Copied upstream ontology tables are inputs, not new upstream completion claims. The first MicrobeDecoder canary failed at missing private GO authority after its producer stage. <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1855">#1855</a> adds early production GO validation and exclusive retry receipts. The failed output’s nine files (726,320,558 bytes) were preserved with exact hashes, inodes and a path map. A genuine private GO build and production loader verified 51,975 records before retry. The authoritative corrected preparation record explicitly reports native GOLD contract replay and no repeated GOLD producer; its original incorrect replay flag remains preserved and qualified. Attempt r2 passed real source production, fresh finalization, native replay, persisted TSV recount, historical comparison and actual process exit. All 83 recorded KG-Microbe module origins belong to the isolated checkout. The failed run, preserved output path map and all original receipts remain available; no failed result is counted as a pass.</p>
+<p>Independent adversarial review produced and repaired #1848 (PREGO readers), #1850 (reported-Attribute schema representation), #1851 (exact mentions relation), #1853 (foreign-column and inverse FAPROTAX additions), and #1854 (audit-only snapshot/Bergey reinjection). The repaired replay guards compare complete native-derived occurrences and reject added assertions while retaining every legitimate graph row and audit byte. Separate edge-only and node-only controls prevent one refusal masking another. Independent replay confirmed eighteen #1854 refusals and the #1853 inverse refusal. Focused selections of 83, 21, 26 and 29 tests passed at their recorded stages; these overlapping selections are not summed as unique coverage.</p>
+<p>A real tiny KGX ingestion/export test preserves both IMG Genome nodes, both membership edges and provenance in the archive. It uses explicit diagnostic configuration after genuine tiny-source finalization; it is not production dispatcher or release admission. The complete merged-artifact quality comparison required by #1827 remains separate. PREGO’s historical score-discrimination verdict remains <strong>NOT ESTABLISHED</strong>: raising its inclusion floor supplies no new evidence of biological accuracy.</p>
+<p>The first final gate on <code class="docutils literal notranslate"><span class="pre">e6d9c9398e49f0ff6919c526ceea4396723ea7cb</span></code> exposed six BacDive tests still selecting the old deposit predicate. Read-only follow-up also found a negative assertion that could miss a wrongly emitted new equivalence (<a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1856">#1856</a>). The known-failed run was interrupted after 1,410 passes, six failures and two skips, with actual gate exit 2; its complete partial-run logs and interruption receipt are retained. The repair updates safe-link predicate/relation assertions and checks unsafe-deposit exclusion independently of predicate, without changing production code. All 224 affected disposition, deposit-parent, taxonomy-evidence, occurrence and provenance tests passed; independent repair review found no blocker. A new final gate validates the repaired candidate.</p>
+<p>Older Python 3.12 CI on <code class="docutils literal notranslate"><span class="pre">66e63cb5bf79c23d243cf0f9c95c04c8c5a6f2eb</span></code> completed with 28 failures, 9,686 passes and 56 skips. Six failures were repaired by #1856; twenty-two additional downstream cases exposed incomplete or overwritten fixture authorities, stale FAPROTAX expectations, and an inventory-reader incompatibility (#1857, #1858). The local r2 gate also contained the ten GOLD fixture failures. Initial tail-only progress reports missed that earlier line; the original log and an append-only status correction are retained. The run was interrupted near 41%, with actual exit 1 after pytest interruption teardown; no complete aggregate count or pass is claimed. The replacement progress helper scans the complete log and correctly detects both prior failure cohorts.</p>
+<p>The #1857 repairs stage complete immutable authority fixtures before GOLD production/finalization, preserve all original taxonomy/audit assertions, and align the ten compound-scope controls with eight typed predictions and two audit-only observations. The #1858 inventory reader now validates exact current FAPROTAX evidence, preserves guarded historical diagnostics without claiming admission, and recognizes the precise current genome-membership and audited GOLD-association contracts. Its rejection controls cover stale proof, changed policy, audit-only reinjection, category conflicts, altered claims and dependency presence/byte changes. The final affected selection passed <strong>1,634 tests across 38 modules in 236.38 seconds</strong>. Earlier fixture failures and overlapping focused selections remain retained and are not summed as unique coverage.</p>
+<p>Two real native inventory attempts failed closed: the first incorrectly required upstream LPSN targets to be repeated locally; the second omitted the existing NCBI assembly membership route. The source producer intentionally delegates supplied declarations. A complete streaming census establishes 63,617 empty-column crosswalk rows in four predicate/prefix families and six full context signatures. All <strong>33,958 genome-membership rows</strong> exactly match the historical baseline. For IMG, 44 edges use 41 local LPSN targets and 18,330 use 15,016 selected upstream targets. For the 15,584 assembly rows, 48 Genome declarations are local and 15,536 are supplied by the selected GTDB table. Every relevant Genome/taxon category is explicitly declared; none is missing from both scopes. Both sibling tables are independently copied and byte-bound; this is direct captured dependency evidence, not an invented finalizer consumed-role entry.</p>
+<p>The other two crosswalk replacements are <code class="docutils literal notranslate"><span class="pre">NCBITaxon:317018</span> <span class="pre">→</span> <span class="pre">NCBITaxon:272918</span></code> and <code class="docutils literal notranslate"><span class="pre">NCBITaxon:388051</span> <span class="pre">→</span> <span class="pre">NCBITaxon:2821359</span></code>, supported by exact selected taxdump lines and finalizer audit witnesses, with original IDs retained. All 15,584 assembly-reference rows, including twelve explicit <code class="docutils literal notranslate"><span class="pre">same_as</span></code> routes, reconcile to the retained declaration evidence. No blanket parity or biological equivalence claim is made for the entire crosswalk cohort. A supplemental review stopped on an assertion after the reader changed; its failure is retained, and a separate closing proof binds unchanged scientific inputs while recording the intentional reader change. The original review remains unchanged.</p>
+<p>Native inventory attempt r3 <strong>passed</strong>, with actual waited exit 0 in 4.302 seconds: <strong>34,915 source nodes, 131,247 edges and 444 inventory rows</strong>, including twenty typed Attributes and 35,286 qualifying prediction edges. All 46 loaded KG-Microbe modules belonged to the isolated checkout. The report uses version 4 and current finite policy, binds thirteen report inputs including both selected sibling tables, and explicitly sets <code class="docutils literal notranslate"><span class="pre">source_admission_claimed=false</span></code>. All original inputs, failed-attempt evidence, driver/reader bytes and tracked state remained unchanged. Its 240 matched material uses do not approve chemical identity or constitute fresh raw-record validation. This descriptive inventory is separate from the earlier genuine producer/finalizer canary and from merged-graph or release admission.</p>
+<p>Repository preparation uses <code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">run</span> <span class="pre">tox</span> <span class="pre">-e</span> <span class="pre">format,codespell-write</span></code>. The validation command for the final clean committed candidate is <code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">run</span> <span class="pre">python</span> <span class="pre">scripts/run_pr_gates.py</span> <span class="pre">edge-quality-1842-1846-20261111-r3</span></code>, with no separate full pytest/tox duplication. Its exact candidate, commands and outcomes will be recorded in <code class="docutils literal notranslate"><span class="pre">data/validation/pr-gates/kgm-edge-quality-1842-1846-20261111-r3-gates.json</span></code> and PR #1849. This report is committed before that gate so validation does not require changing the candidate to report its result.</p>
+<p><a class="reference download internal" download="" href="_downloads/308cb00ce35971abc938a7474595151d/TRANSFORM_EDGE_QUALITY_20261110.evidence.json"><span class="xref download myst">The compact evidence index</span></a> binds the retained receipts and independent reviews. Full raw inputs, outputs, test logs, failed attempts and executed helpers remain under the isolated checkout’s gitignored <code class="docutils literal notranslate"><span class="pre">data/edge-quality-20261110/</span></code>. No merge or release publication is authorized by this report.</p>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Harshad Hegde &lt;hhegde@lbl.gov&gt;.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

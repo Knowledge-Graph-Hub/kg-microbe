@@ -79,6 +79,12 @@
 <strong>Estimated scale:</strong> ~10⁵–10⁶ nodes, ~10⁸ edges, ~10⁷ synonym enrichments (see <a class="reference internal" href="#data-volumes"><span class="xref myst">Data volumes</span></a>)
 <strong>Category:</strong> environmental
 <strong>Ranking:</strong> #5 in the current novel-transform recommendations (see <a class="reference internal" href="NOVEL_TRANSFORMS.html"><span class="std std-doc"><code class="docutils literal notranslate"><span class="pre">NOVEL_TRANSFORMS.md</span></code></span></a>)</p>
+<p><strong>2026-11-10 implementation update (#1844/#1848):</strong> the producer now normalizes
+habitat output to organism → <code class="docutils literal notranslate"><span class="pre">biolink:located_in</span></code> / <code class="docutils literal notranslate"><span class="pre">RO:0001025</span></code> → environment
+and defaults to a raw score floor of 3.0 for environmental-samples habitat rows.
+The original raw-row direction selector remains unchanged. The historical
+plan and measurements below describe their recorded versions; the current
+policy and its limits are in <a class="reference internal" href="PREGO_SCORE_VALIDATION.html"><span class="std std-doc">PREGO_SCORE_VALIDATION.md</span></a>.</p>
 <section id="why-ingest-prego">
 <h2>Why ingest PREGO<a class="headerlink" href="#why-ingest-prego" title="Link to this heading"></a></h2>
 <p>BacDive and <code class="docutils literal notranslate"><span class="pre">madin_etal</span></code> cover organism↔habitat associations partially and inconsistently — BacDive from strain-level isolation-source curation, <code class="docutils literal notranslate"><span class="pre">madin_etal</span></code> from a small compositional-habitat table. PREGO systematically closes that gap by text-mining the entire PubMed corpus for co-mentions of taxa with environments (ENVO), processes (GO), and diseases (DOID/BTO), and by consuming JGI IMG isolate metadata for direct experimental annotations. For the flagship taxa-media link-prediction use case, “grows in similar habitats” is a strong prior for “grows in similar media” — PREGO gives that signal at ~10⁸-edge scale across three channels (literature, environmental samples, JGI IMG isolates), uniformly across the tree of life rather than only for the ~250 K strains BacDive has curated.</p>

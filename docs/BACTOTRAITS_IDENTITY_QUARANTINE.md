@@ -73,7 +73,7 @@ ontology database, fabricate a label, or hash the entire 14 GB database. The
 receipt pins its metadata and exact queried statements, source subsets, METPO
 templates, mappings, implementation files and Python/package versions.
 
-| Saved output | Baseline `ef27b97a` | Candidate `e24d58bf2` |
+| Saved output | Baseline `ef27b97a` | Candidate `9c1fb3633` |
 | --- | ---: | ---: |
 | Assertions contributed by the mixed row | 21 | 0 |
 | Nodes emitted by this one-row slice | 22 | 0 |
@@ -86,21 +86,32 @@ original mapped taxon, disposition and policy/source hashes. Its graph TSVs are
 header-only. There were no unaffected real rows in this slice; unaffected-row
 retention is covered by the separate synthetic control test, not this replay.
 
-Private stages are `data/validation-bactotraits-130/baseline-v2-20261116/` and
-`candidate-v2-20261116/`. Receipt SHA256 values are, respectively,
-`588f3e50352232036ce517616add423e0a7c08b760894f8edb05ac854f697633` and
-`d96f5b004961df31b91a82971122b15a6d969b8c2570edb1faabde4fde885dac`.
+Private stages are `data/validation-bactotraits-130/baseline-v3-20261116/` and
+`candidate-v3-20261116/`. Receipt SHA256 values are, respectively,
+`0000d1fd631d4bbfddf1d4d378824485911435c7a0fa162c939cbfb55ce2556d` and
+`f33f8387be6518514ebcde34b56687947d64897484db8abc3c72f889745c6599`.
 Both runs used launcher SHA256
-`d058e94408498c047a4d086c8f363b8c5bdbc7b98ce083a7bd5712f333c69c86`.
+`060d7e4dbb6189051f989a4a9efbf55336408e4224ecba5a4975e710538ea90e`.
 Persisted output hashes and receipt readback were checked before proceeding.
 
 The first baseline stopped on an import-time cache write outside the stage,
 recorded as [#1866](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1866).
 Its partial stage and log remain preserved. The launcher now redirects dependency
 caches into the private stage without changing `HOME` or weakening its write and
-network guards. A fresh-process import regression passed before the fresh v2
+network guards. A fresh-process import regression passed before the fresh
 baseline and candidate runs. All replay files use mode 0600 inside private
 directories. Both successful runs made zero provider calls.
+
+Separate adversarial review then found that the v2 receipts omitted the consumed
+prefix registry ([#1868](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1868)).
+The v3 launcher retains and hashes `prefixmap.json`, binds baseline/candidate
+equality, directs URI conversion to that staged copy before producer construction,
+and rejects original or staged input drift. Both registries have SHA256
+`a11f11fc43db2d3d0ffd74aca08fbc1da08033074b355ef2e0a1d6d547c29762`.
+Five focused launcher regressions passed before the fresh v3 replays. The v2
+stages remain unchanged as superseded evidence. The obsolete full gate at
+`df6bc8d58` was deliberately interrupted with exit 2 after this finding; its
+partial test count is not a full-suite pass. Final validation uses a new run label.
 
 These are actual producer outputs before source finalization, graph merge or
 release publication. They establish this bounded quarantine behavior, not

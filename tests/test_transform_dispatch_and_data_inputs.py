@@ -190,7 +190,10 @@ class FreshnessDataStalenessTest(TestCase):
         declaration is indistinguishable from a fresh one.
         """
         self.assertIn(ISO, self.mod._declared_data_inputs("bacdive"))
-        self.assertEqual(self.mod._declared_data_inputs("bactotraits"), ())
+        self.assertEqual(
+            self.mod._declared_data_inputs("bactotraits"),
+            ("mappings/canonical/bactotraits_identity_quarantine.json",),
+        )
 
     def test_an_output_older_than_its_data_input_is_stale(self):
         """

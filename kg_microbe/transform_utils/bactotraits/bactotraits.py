@@ -2,12 +2,22 @@
 
 import ast
 import csv
+import io
 from pathlib import Path
 from typing import Optional, Union
 
 import yaml
 from tqdm import tqdm
 
+from kg_microbe.transform_utils.bactotraits.identity_quarantine import (
+    AUDIT_FILE,
+    DEFAULT_POLICY,
+    MAX_SOURCE_BYTES,
+    POLICY_PATH,
+    POLICY_ROLE,
+    SOURCE_ROLE,
+    IdentityQuarantine,
+)
 from kg_microbe.transform_utils.constants import (
     ASSOCIATED_WITH,
     BACDIVE,
@@ -45,6 +55,7 @@ from kg_microbe.utils.mapping_file_utils import load_metpo_mappings, uri_to_curi
 from kg_microbe.utils.oak_utils import get_label
 from kg_microbe.utils.ontology_utils import get_ncbitaxon_adapter, resolve_adapter
 from kg_microbe.utils.pandas_utils import drop_duplicates
+from kg_microbe.utils.source_finalization import snapshot_consumed_input
 from kg_microbe.utils.tsv_io import tsv_writer
 
 
@@ -166,7 +177,10 @@ class BactoTraitsTransform(Transform):
 
     #: The BacDive-produced intermediate TSV supplies strain-taxid mappings (#1091).
     TRANSFORM_INPUTS = (BACDIVE,)
-    REQUIRED_CONSUMED_INPUTS = ("bacdive_taxon_lookup",)
+    DATA_INPUTS = (POLICY_PATH,)
+    REQUIRED_CONSUMED_INPUTS = ("bacdive_taxon_lookup", POLICY_ROLE, SOURCE_ROLE)
+    REQUIRED_AUDIT_FILES = (AUDIT_FILE,)
+    IDENTITY_QUARANTINE_POLICY = DEFAULT_POLICY
 
     def __init__(self, input_dir: Optional[Union[str, Path]], output_dir: Optional[Union[str, Path]]):
         """Initialize BactoTraitsTransform."""
@@ -225,6 +239,11 @@ class BactoTraitsTransform(Transform):
         if data_file is None:
             data_file = "BactoTraits_databaseV2_Jun2022.csv"
         input_file = self.input_base_dir / data_file
+        with self.consume_input(POLICY_ROLE, self.IDENTITY_QUARANTINE_POLICY) as policy_input:
+            quarantine = IdentityQuarantine(policy_input.read())
+        with snapshot_consumed_input(self, SOURCE_ROLE, input_file, binary=True) as source_input:
+            source_bytes = source_input.read(MAX_SOURCE_BYTES + 1)
+            quarantine.preflight(source_bytes)
         # Clean the raw file
         # - the file is a CSV file with delimiter as ";"
         # - many rows have empty values
@@ -255,12 +274,17 @@ class BactoTraitsTransform(Transform):
             mapping_writer = tsv_writer(mapping_handle)
             mapping_writer.writerow(["Bacdive_ID", BACDIVE_CULTURE_COLLECTION_NUMBER_COLUMN, NCBITAXON_ID_COLUMN])
             for row in bacdive_reader:
+                if row[BACDIVE_ID_COLUMN].removeprefix(BACDIVE_PREFIX) in quarantine.decisions:
+                    if row[BACDIVE_ID_COLUMN] in bacdive_ncbitaxon_dict:
+                        raise ValueError("BactoTraits identity quarantine: duplicate reviewed BacDive mapping")
                 collection_number_list = row[BACDIVE_CULTURE_COLLECTION_NUMBER_COLUMN]
                 second_column_value = (
                     self._clean_row(ast.literal_eval(collection_number_list)) if collection_number_list else ""
                 )
                 mapping_writer.writerow([row[BACDIVE_ID_COLUMN], second_column_value, row[NCBITAXON_ID_COLUMN]])
                 bacdive_ncbitaxon_dict[row[BACDIVE_ID_COLUMN]] = row[NCBITAXON_ID_COLUMN]
+
+        quarantine.verify_lookup(bacdive_ncbitaxon_dict)
 
         pruned_file = BACTOTRAITS_TMP_DIR / f"{self.source_name}.tsv"
 
@@ -286,7 +310,7 @@ class BactoTraitsTransform(Transform):
             unified_mapping[synonym.lower()] = unified_mapping[synonym]
 
         with (
-            open(input_file, "r", encoding="ISO-8859-1") as infile,
+            io.StringIO(source_bytes.decode("ISO-8859-1"), newline="") as infile,
             open(pruned_file, "w") as outfile,
             open(CUSTOM_CURIES_YAML_FILE, "r") as cc_file,
             open(self.output_node_file, "w") as node,
@@ -343,6 +367,8 @@ class BactoTraitsTransform(Transform):
             progress_class = tqdm if show_status else DummyTqdm
             with progress_class() as progress:
                 for i, row in enumerate(reader):
+                    if i > 2 and i - 2 in quarantine.rows:
+                        continue
                     if i > 1 and len(row) > 3:
                         row = ["" if value == "NA" else value for value in row]
                         if row[1] == "":
@@ -430,3 +456,7 @@ class BactoTraitsTransform(Transform):
                 edge_writer.writerows(combo_edge_data)
         drop_duplicates(self.output_node_file, sort_by_column=ID_COLUMN)
         drop_duplicates(self.output_edge_file)
+        self.verify_consumed_inputs()
+        with atomic_write(self.output_dir / AUDIT_FILE, encoding="utf-8", newline="") as audit:
+            quarantine.write_audit(audit)
+        self.record_producer_audit(AUDIT_FILE)

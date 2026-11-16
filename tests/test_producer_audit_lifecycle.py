@@ -20,6 +20,7 @@ from kg_microbe.utils.source_finalization import (
     SourceFinalizationRequired,
     verify_finalized_source_files,
 )
+from tests.bactotraits_identity_fixtures import consume_empty_identity_fixture
 
 FIXTURES = Path(__file__).parent / "resources/source_finalization_review"
 AUDIT = "crosswalk_quarantine.tsv"
@@ -29,9 +30,10 @@ CONTENT = b'source_record\tclaim_json\nrecord:1\t{"value":"literal\\tquote\\""}\
 def _read_lookup(producer):
     """Consume the registered producer's unrelated mandatory immutable fixture normally."""
     path = producer.input_base_dir / "lookup.tsv"
-    assert type(producer).REQUIRED_CONSUMED_INPUTS == ("bacdive_taxon_lookup",)
+    assert "bacdive_taxon_lookup" in type(producer).REQUIRED_CONSUMED_INPUTS
     with producer.consume_input("bacdive_taxon_lookup", path) as reader:
         assert reader.read()
+    consume_empty_identity_fixture(producer)
 
 
 @pytest.fixture

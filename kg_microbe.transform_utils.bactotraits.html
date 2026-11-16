@@ -218,8 +218,41 @@
 - Pigment_green
 - Pigment_carotenoid</p>
 <dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bactotraits.bactotraits.BactoTraitsTransform.DATA_INPUTS">
+<span class="sig-name descname"><span class="pre">DATA_INPUTS</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('mappings/canonical/bactotraits_identity_quarantine.json',)</span></em><a class="headerlink" href="#kg_microbe.transform_utils.bactotraits.bactotraits.BactoTraitsTransform.DATA_INPUTS" title="Link to this definition"></a></dt>
+<dd><p>Repo-relative curation files this transform reads, beyond its own
+<code class="docutils literal notranslate"><span class="pre">data/raw/</span></code> download.</p>
+<p>Declared so freshness tooling can tell that an output is stale against
+its <em>data</em> rather than only its code. Without it a mapping correction
+lands, every consumer keeps reporting FRESH, and a re-merge silently
+ships the old groundings: #778 corrected 16 isolation-source ids and
+#786 rewrote the unified chemical SSSOM, and the merged KG built
+afterwards still asserted 75 organisms isolated from a “Cell Line”,
+because nothing re-ran the transforms that read those files (#812).</p>
+<p>Paths are relative to the repo root. Keep them tracked in git — the
+freshness check uses commit time, not mtime, because <cite>git checkout</cite>
+rewrites mtimes without changing content (#797).</p>
+<p>List <strong>every</strong> curation file read, not a representative one. A partial
+declaration fails silently and looks identical to a complete one:
+ontologies_stubs declared 1 of the 11 files it read and was reported
+fresh after changes to the other ten (#839). Where the set comes from a
+constant, derive this from it rather than restating it.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bactotraits.bactotraits.BactoTraitsTransform.IDENTITY_QUARANTINE_POLICY">
+<span class="sig-name descname"><span class="pre">IDENTITY_QUARANTINE_POLICY</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PosixPath('/home/runner/work/kg-microbe/kg-microbe/mappings/canonical/bactotraits_identity_quarantine.json')</span></em><a class="headerlink" href="#kg_microbe.transform_utils.bactotraits.bactotraits.BactoTraitsTransform.IDENTITY_QUARANTINE_POLICY" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bactotraits.bactotraits.BactoTraitsTransform.REQUIRED_AUDIT_FILES">
+<span class="sig-name descname"><span class="pre">REQUIRED_AUDIT_FILES</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('bactotraits_identity_quarantine.tsv',)</span></em><a class="headerlink" href="#kg_microbe.transform_utils.bactotraits.bactotraits.BactoTraitsTransform.REQUIRED_AUDIT_FILES" title="Link to this definition"></a></dt>
+<dd><p>Producer-owned disposition reports whose emitted bytes must survive finalization/merge.</p>
+</dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="kg_microbe.transform_utils.bactotraits.bactotraits.BactoTraitsTransform.REQUIRED_CONSUMED_INPUTS">
-<span class="sig-name descname"><span class="pre">REQUIRED_CONSUMED_INPUTS</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('bacdive_taxon_lookup',)</span></em><a class="headerlink" href="#kg_microbe.transform_utils.bactotraits.bactotraits.BactoTraitsTransform.REQUIRED_CONSUMED_INPUTS" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">REQUIRED_CONSUMED_INPUTS</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('bacdive_taxon_lookup',</span> <span class="pre">'bactotraits_identity_policy',</span> <span class="pre">'bactotraits_source')</span></em><a class="headerlink" href="#kg_microbe.transform_utils.bactotraits.bactotraits.BactoTraitsTransform.REQUIRED_CONSUMED_INPUTS" title="Link to this definition"></a></dt>
 <dd><p>Named generated inputs that must actually be read before fresh finalization.
 Unlike DATA_INPUTS, these are checked after upstream producers have run.</p>
 </dd></dl>
@@ -241,6 +274,41 @@ Unlike DATA_INPUTS, these are checked after upstream producers have run.</p>
 </dl>
 </dd></dl>
 
+</dd></dl>
+
+</section>
+<section id="module-kg_microbe.transform_utils.bactotraits.identity_quarantine">
+<span id="kg-microbe-transform-utils-bactotraits-identity-quarantine-module"></span><h2>kg_microbe.transform_utils.bactotraits.identity_quarantine module<a class="headerlink" href="#module-kg_microbe.transform_utils.bactotraits.identity_quarantine" title="Link to this heading"></a></h2>
+<p>Withhold only reviewed BactoTraits rows with incompatible strain identities.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bactotraits.identity_quarantine.IdentityQuarantine">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.bactotraits.identity_quarantine.</span></span><span class="sig-name descname"><span class="pre">IdentityQuarantine</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">policy_text</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bactotraits.identity_quarantine.IdentityQuarantine" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Validate a finite policy and identify its exact rows before graph emission.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bactotraits.identity_quarantine.IdentityQuarantine.preflight">
+<span class="sig-name descname"><span class="pre">preflight</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">raw</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bactotraits.identity_quarantine.IdentityQuarantine.preflight" title="Link to this definition"></a></dt>
+<dd><p>Find each reviewed row exactly once; an altered or absent row needs new review.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bactotraits.identity_quarantine.IdentityQuarantine.verify_lookup">
+<span class="sig-name descname"><span class="pre">verify_lookup</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lookup</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bactotraits.identity_quarantine.IdentityQuarantine.verify_lookup" title="Link to this definition"></a></dt>
+<dd><p>Do not silently reinterpret the reviewed row after its mapped taxon changes.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bactotraits.identity_quarantine.IdentityQuarantine.write_audit">
+<span class="sig-name descname"><span class="pre">write_audit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stream</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bactotraits.identity_quarantine.IdentityQuarantine.write_audit" title="Link to this definition"></a></dt>
+<dd><p>Preserve original source identities and raw rows, including an empty audit header.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bactotraits.identity_quarantine.raw_row_sha256">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.bactotraits.identity_quarantine.</span></span><span class="sig-name descname"><span class="pre">raw_row_sha256</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">row</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bactotraits.identity_quarantine.raw_row_sha256" title="Link to this definition"></a></dt>
+<dd><p>Replay EdgeMech’s complete Latin-1-decoded source-record-json-canonical/v1 row.</p>
 </dd></dl>
 
 </section>
@@ -361,8 +429,41 @@ Unlike DATA_INPUTS, these are checked after upstream producers have run.</p>
 - Pigment_green
 - Pigment_carotenoid</p>
 <dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bactotraits.BactoTraitsTransform.DATA_INPUTS">
+<span class="sig-name descname"><span class="pre">DATA_INPUTS</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('mappings/canonical/bactotraits_identity_quarantine.json',)</span></em><a class="headerlink" href="#kg_microbe.transform_utils.bactotraits.BactoTraitsTransform.DATA_INPUTS" title="Link to this definition"></a></dt>
+<dd><p>Repo-relative curation files this transform reads, beyond its own
+<code class="docutils literal notranslate"><span class="pre">data/raw/</span></code> download.</p>
+<p>Declared so freshness tooling can tell that an output is stale against
+its <em>data</em> rather than only its code. Without it a mapping correction
+lands, every consumer keeps reporting FRESH, and a re-merge silently
+ships the old groundings: #778 corrected 16 isolation-source ids and
+#786 rewrote the unified chemical SSSOM, and the merged KG built
+afterwards still asserted 75 organisms isolated from a “Cell Line”,
+because nothing re-ran the transforms that read those files (#812).</p>
+<p>Paths are relative to the repo root. Keep them tracked in git — the
+freshness check uses commit time, not mtime, because <cite>git checkout</cite>
+rewrites mtimes without changing content (#797).</p>
+<p>List <strong>every</strong> curation file read, not a representative one. A partial
+declaration fails silently and looks identical to a complete one:
+ontologies_stubs declared 1 of the 11 files it read and was reported
+fresh after changes to the other ten (#839). Where the set comes from a
+constant, derive this from it rather than restating it.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bactotraits.BactoTraitsTransform.IDENTITY_QUARANTINE_POLICY">
+<span class="sig-name descname"><span class="pre">IDENTITY_QUARANTINE_POLICY</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PosixPath('/home/runner/work/kg-microbe/kg-microbe/mappings/canonical/bactotraits_identity_quarantine.json')</span></em><a class="headerlink" href="#kg_microbe.transform_utils.bactotraits.BactoTraitsTransform.IDENTITY_QUARANTINE_POLICY" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bactotraits.BactoTraitsTransform.REQUIRED_AUDIT_FILES">
+<span class="sig-name descname"><span class="pre">REQUIRED_AUDIT_FILES</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('bactotraits_identity_quarantine.tsv',)</span></em><a class="headerlink" href="#kg_microbe.transform_utils.bactotraits.BactoTraitsTransform.REQUIRED_AUDIT_FILES" title="Link to this definition"></a></dt>
+<dd><p>Producer-owned disposition reports whose emitted bytes must survive finalization/merge.</p>
+</dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="kg_microbe.transform_utils.bactotraits.BactoTraitsTransform.REQUIRED_CONSUMED_INPUTS">
-<span class="sig-name descname"><span class="pre">REQUIRED_CONSUMED_INPUTS</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('bacdive_taxon_lookup',)</span></em><a class="headerlink" href="#kg_microbe.transform_utils.bactotraits.BactoTraitsTransform.REQUIRED_CONSUMED_INPUTS" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">REQUIRED_CONSUMED_INPUTS</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('bacdive_taxon_lookup',</span> <span class="pre">'bactotraits_identity_policy',</span> <span class="pre">'bactotraits_source')</span></em><a class="headerlink" href="#kg_microbe.transform_utils.bactotraits.BactoTraitsTransform.REQUIRED_CONSUMED_INPUTS" title="Link to this definition"></a></dt>
 <dd><p>Named generated inputs that must actually be read before fresh finalization.
 Unlike DATA_INPUTS, these are checked after upstream producers have run.</p>
 </dd></dl>

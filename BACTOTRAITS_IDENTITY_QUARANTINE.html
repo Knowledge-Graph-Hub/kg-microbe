@@ -1,0 +1,228 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BactoTraits mixed-strain row quarantine &mdash; kg-microbe 0.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=7026087e"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            kg-microbe
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="static/intro.html">Knowledge Graphs for Microbial data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">kg_microbe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sources/index.html">Bacteria-Archaea-Traits schema</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">kg-microbe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">BactoTraits mixed-strain row quarantine</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/BACTOTRAITS_IDENTITY_QUARANTINE.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="bactotraits-mixed-strain-row-quarantine">
+<h1>BactoTraits mixed-strain row quarantine<a class="headerlink" href="#bactotraits-mixed-strain-row-quarantine" title="Link to this heading"></a></h1>
+<p>The Jun-2022 BactoTraits table’s data row 8521 identifies BacDive 17851 and
+<em>Rubritalea squalenifaciens</em>, but gives the culture accessions DSM 19353 and
+JCM 14586. Those accessions identify <em>Thioprofundum lithotrophicum</em> strain 106.
+BacDive 17851 instead maps to the nominal DSM 18772 strain. The discrepancy is
+tracked in <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1865">#1865</a>
+and <a class="reference external" href="https://github.com/CultureBotAI/EdgeMech/issues/130">EdgeMech #130</a>.</p>
+<p>Primary identity checks use <a class="reference external" href="https://www.dsmz.de/collection/catalogue/details/culture/DSM-19353">DSMZ DSM 19353</a>,
+<a class="reference external" href="https://www.jcm.riken.jp/cgi-bin/jcm/jcm_number?JCM=14586">JCM 14586</a>,
+<a class="reference external" href="https://www.dsmz.de/collection/catalogue/details/culture/DSM-18772">DSMZ DSM 18772</a>
+and <a class="reference external" href="https://bacdive.dsmz.de/strain/17851">BacDive 17851</a>.</p>
+<p>The maintained transform previously used the BacDive ID without testing this
+reviewed conflict. It now withholds the entire exact mixed row. It does not
+replace the row’s name, accession numbers, taxon or trait values: the conflict
+does not establish which source fields were displaced. Other rows retain their
+existing behavior, including rows that have not received identity review.</p>
+<section id="maintained-inputs">
+<h2>Maintained inputs<a class="headerlink" href="#maintained-inputs" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">mappings/canonical/bactotraits_identity_quarantine.json</span></code> is a finite reviewed
+policy. Each decision binds one BacDive selector, the complete raw row’s SHA256,
+the original mapped taxon, identity fields, rationale and evidence URLs. The row
+digest uses the same <code class="docutils literal notranslate"><span class="pre">source-record-json-canonical/v1</span></code> representation as the
+retained EdgeMech source packet: Latin-1-decoded CSV fields serialized with
+<code class="docutils literal notranslate"><span class="pre">json.dumps(row,</span> <span class="pre">ensure_ascii=False,</span> <span class="pre">indent=2,</span> <span class="pre">sort_keys=True)</span></code> and hashed as UTF-8.</p>
+<p>The reviewed whole-source hash and ordinal are historical provenance, not a
+whole-file acceptance condition. Each run records its actual consumed source
+hash and actual data-row ordinal. A source slice or later export can retain the
+same reviewed row, but an absent, duplicated or altered selected row fails
+preflight before existing graph outputs are opened. An altered or ambiguous
+BacDive-to-taxon mapping also fails before graph emission. These cases need a
+new source review; they cannot silently discard the disposition.</p>
+<p>The policy is a declared <code class="docutils literal notranslate"><span class="pre">DATA_INPUTS</span></code> dependency. The exact policy, raw CSV and
+BacDive taxon lookup are mandatory consumed inputs. Preflight and emission read
+the immutable raw snapshot, and subsequent input changes prevent finalization.
+The policy is curation: editing it requires review and regeneration, not merely
+relabeling an old output’s fingerprint.</p>
+</section>
+<section id="output-and-validation">
+<h2>Output and validation<a class="headerlink" href="#output-and-validation" title="Link to this heading"></a></h2>
+<p>Every successful run writes <code class="docutils literal notranslate"><span class="pre">bactotraits_identity_quarantine.tsv</span></code>, including a
+header for an explicitly empty decision cohort. It records the original raw row
+as JSON, original mapped taxon, reviewed/actual source identities, row/policy
+hashes, disposition and evidence. The report is a mandatory producer audit, so
+its omission or modification prevents finalized-source and merge admission.</p>
+<p>Synthetic offline fixtures exercise both a withheld mixed row and an emitted
+control, source/policy/lookup drift, duplicate selectors, bounded slices and the
+required consumption/audit contracts. They do not copy the source phenotype
+table. The unchanged private source row is used separately for the retained
+production-path canary.</p>
+<p>The quarantine is a source-integrity correction. It is not evidence that the
+nominal strain’s phenotype is false, a completed graph-wide identity review, or
+proof that any published graph release has been regenerated.</p>
+<p>Another neighboring mismatch is tracked in
+<a class="reference external" href="https://github.com/CultureBotAI/EdgeMech/issues/132">EdgeMech #132</a>. It requires
+independent source review and does not broaden this finite disposition.</p>
+</section>
+<section id="retained-single-row-replay-2026-11-16-utc">
+<h2>Retained single-row replay, 2026-11-16 UTC<a class="headerlink" href="#retained-single-row-replay-2026-11-16-utc" title="Link to this heading"></a></h2>
+<p>The <a class="reference download internal" download="" href="_downloads/cc819af8823e1825f2d1465ab1c44217/replay_bactotraits_identity_130_20261115.py"><span class="xref download myst">replay launcher</span></a>
+ran the actual transform on the original row and actual BacDive lookup slice.
+It used existing NCBITaxon database statements through a read-only label adapter;
+the queried label and DB/OWL release (<code class="docutils literal notranslate"><span class="pre">2026-07-12</span></code>) agreed. It did not rebuild the
+ontology database, fabricate a label, or hash the entire 14 GB database. The
+receipt pins its metadata and exact queried statements, source subsets, METPO
+templates, mappings, implementation files and Python/package versions.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Saved output</p></th>
+<th class="head text-right"><p>Baseline <code class="docutils literal notranslate"><span class="pre">ef27b97a</span></code></p></th>
+<th class="head text-right"><p>Candidate <code class="docutils literal notranslate"><span class="pre">9c1fb3633</span></code></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Assertions contributed by the mixed row</p></td>
+<td class="text-right"><p>21</p></td>
+<td class="text-right"><p>0</p></td>
+</tr>
+<tr class="row-odd"><td><p>Nodes emitted by this one-row slice</p></td>
+<td class="text-right"><p>22</p></td>
+<td class="text-right"><p>0</p></td>
+</tr>
+<tr class="row-even"><td><p>Quarantine audit records</p></td>
+<td class="text-right"><p>0</p></td>
+<td class="text-right"><p>1</p></td>
+</tr>
+</tbody>
+</table>
+<p>The baseline includes the exact reviewed <code class="docutils literal notranslate"><span class="pre">NCBITaxon:1123071</span></code>
+<code class="docutils literal notranslate"><span class="pre">biolink:has_phenotype</span></code> <code class="docutils literal notranslate"><span class="pre">METPO:1000703</span></code> assertion. The candidate’s audit preserves
+the complete original row, actual slice ordinal 1, reviewed ordinal 8521,
+original mapped taxon, disposition and policy/source hashes. Its graph TSVs are
+header-only. There were no unaffected real rows in this slice; unaffected-row
+retention is covered by the separate synthetic control test, not this replay.</p>
+<p>Private stages are <code class="docutils literal notranslate"><span class="pre">data/validation-bactotraits-130/baseline-v3-20261116/</span></code> and
+<code class="docutils literal notranslate"><span class="pre">candidate-v3-20261116/</span></code>. Receipt SHA256 values are, respectively,
+<code class="docutils literal notranslate"><span class="pre">0000d1fd631d4bbfddf1d4d378824485911435c7a0fa162c939cbfb55ce2556d</span></code> and
+<code class="docutils literal notranslate"><span class="pre">f33f8387be6518514ebcde34b56687947d64897484db8abc3c72f889745c6599</span></code>.
+Both runs used launcher SHA256
+<code class="docutils literal notranslate"><span class="pre">060d7e4dbb6189051f989a4a9efbf55336408e4224ecba5a4975e710538ea90e</span></code>.
+Persisted output hashes and receipt readback were checked before proceeding.</p>
+<p>The first baseline stopped on an import-time cache write outside the stage,
+recorded as <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1866">#1866</a>.
+Its partial stage and log remain preserved. The launcher now redirects dependency
+caches into the private stage without changing <code class="docutils literal notranslate"><span class="pre">HOME</span></code> or weakening its write and
+network guards. A fresh-process import regression passed before the fresh
+baseline and candidate runs. All replay files use mode 0600 inside private
+directories. Both successful runs made zero provider calls.</p>
+<p>Separate adversarial review then found that the v2 receipts omitted the consumed
+prefix registry (<a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1868">#1868</a>).
+The v3 launcher retains and hashes <code class="docutils literal notranslate"><span class="pre">prefixmap.json</span></code>, binds baseline/candidate
+equality, directs URI conversion to that staged copy before producer construction,
+and rejects original or staged input drift. Both registries have SHA256
+<code class="docutils literal notranslate"><span class="pre">a11f11fc43db2d3d0ffd74aca08fbc1da08033074b355ef2e0a1d6d547c29762</span></code>.
+Five focused launcher regressions passed before the fresh v3 replays. The v2
+stages remain unchanged as superseded evidence. The obsolete full gate at
+<code class="docutils literal notranslate"><span class="pre">df6bc8d58</span></code> was deliberately interrupted with exit 2 after this finding; its
+partial test count is not a full-suite pass. Final validation uses a new run label.</p>
+<p>These are actual producer outputs before source finalization, graph merge or
+release publication. They establish this bounded quarantine behavior, not
+biological falsity, model correctness, a complete source review or release
+readiness. The original occurrence and source files remain unchanged. The
+companion evidence record is <a class="reference external" href="https://github.com/CultureBotAI/EdgeMech/pull/135">EdgeMech PR #135</a>.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Harshad Hegde &lt;hhegde@lbl.gov&gt;.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

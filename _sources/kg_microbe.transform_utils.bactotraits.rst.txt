@@ -12,6 +12,14 @@ kg\_microbe.transform\_utils.bactotraits.bactotraits module
    :undoc-members:
    :show-inheritance:
 
+kg\_microbe.transform\_utils.bactotraits.identity\_quarantine module
+--------------------------------------------------------------------
+
+.. automodule:: kg_microbe.transform_utils.bactotraits.identity_quarantine
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 Module contents
 ---------------
 

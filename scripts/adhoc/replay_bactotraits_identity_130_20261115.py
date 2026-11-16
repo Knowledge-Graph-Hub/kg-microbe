@@ -9,6 +9,7 @@ Run --plan first, then one --run baseline, then a separately planned candidate.
 This is a pre-finalization transform comparison, not a published graph release
 or an independent scientific/model assessment. No provider calls are permitted.
 2026-11-16, KG-Microbe #1866: confine import-time PyStow/OAK caches to the stage.
+2026-11-16, KG-Microbe #1868: pin and consume the staged URI prefix registry.
 """
 
 from __future__ import annotations
@@ -209,6 +210,7 @@ def prepare(args):
         ("templates/metpo_sheet.tsv", raw_root / "metpo_sheet.tsv"),
         ("templates/metpo-properties.tsv", raw_root / "metpo-properties.tsv"),
         ("mappings/custom_curies.yaml", code_root / "kg_microbe/transform_utils/custom_curies.yaml"),
+        ("mappings/prefixmap.json", code_root / "kg_microbe/transform_utils/prefixmap.json"),
         ("mappings/metpo_alias_mappings.tsv", code_root / "mappings/canonical/metpo_alias_mappings.tsv"),
     ):
         raw = bytes_at(path)
@@ -358,6 +360,22 @@ def configure_private_environment(stage):
     return temporary
 
 
+def bind_staged_prefix_registry(stage):
+    """Make actual URI conversion consume staged bytes before producer construction."""
+    from kg_microbe.utils import graph_canonicalization
+
+    graph_canonicalization.PREFIXMAP_JSON_FILEPATH = stage / "mappings/prefixmap.json"
+    graph_canonicalization._uri_prefixes.cache_clear()
+
+
+def verify_runtime_inputs(plan):
+    """Reject original or staged input drift before use and before issuing a receipt."""
+    for source in plan["sources"]:
+        require(digest(bytes_at(Path(source["path"]))) == source["sha256"], "Original runtime input changed")
+    for name, expected in plan["shared"]["staged_inputs"].items():
+        require(digest(bytes_at(plan["stage"] / name)) == expected, "Staged runtime input changed")
+
+
 def run(args, plan):
     """Run exactly one real producer and verify its emitted evidence and graph difference."""
     stage, code_root = plan["stage"], plan["code_root"]
@@ -368,6 +386,7 @@ def run(args, plan):
     for name, raw in plan["staged"].items():
         write_new(stage / name, raw)
     write_new(stage / "input-plan.json", json_bytes({key: plan[key] for key in ("sources", "authority", "shared")}))
+    verify_runtime_inputs(plan)
     temporary = configure_private_environment(stage)
     sys.path.insert(0, str(code_root))
     install_guards(stage)
@@ -382,6 +401,7 @@ def run(args, plan):
             module.BACDIVE_TMP_DIR = stage / "lookup"
             module.CUSTOM_CURIES_YAML_FILE = stage / "mappings/custom_curies.yaml"
             mapping_file_utils.LOCAL_METPO_ALIAS_OVERRIDES_PATH = stage / "mappings/metpo_alias_mappings.tsv"
+            bind_staged_prefix_registry(stage)
             producer = module.BactoTraitsTransform(stage / "raw", stage / "transformed")
             authority = ReadOnlyNCBILabels(
                 Path(plan["authority"]["database_metadata"]["path"]), plan["authority"]["queried_statements"]
@@ -422,8 +442,7 @@ def run(args, plan):
             other_edges == Counter(json.dumps(row, sort_keys=True) for row in baseline[2] if row["subject"] != SUBJECT),
             "Unrelated/global combo edges changed",
         )
-    for source in plan["sources"]:
-        require(digest(bytes_at(Path(source["path"]))) == source["sha256"], "Original runtime input changed")
+    verify_runtime_inputs(plan)
     if plan["policy"]:
         require(digest(bytes_at(Path(plan["policy"]["path"]))) == plan["policy"]["sha256"], "Policy changed")
     require(database_stat(Path(args.ncbi_db)) == plan["authority"]["database_metadata"], "NCBI DB metadata changed")

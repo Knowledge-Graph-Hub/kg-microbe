@@ -16,6 +16,7 @@ from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils import source_finalization as finalizer
 from kg_microbe.utils.atomic_io import atomic_write, cache_is_complete
 from kg_microbe.utils.transform_fingerprint import finalization_inputs_current, write_fingerprint
+from tests.bactotraits_identity_fixtures import write_fixture_policy
 from tests.test_provenance_serialization import _media_raw_inputs
 
 FIXTURES = Path(__file__).parent / "resources" / "consumed_inputs"
@@ -87,6 +88,9 @@ def _bacto(tmp_path, monkeypatch):
     result.knowledge_source = "infores:bactotraits"
     result.ncbi_impl = object()
     result.bactotraits_metpo_mappings = {}
+    result.IDENTITY_QUARANTINE_POLICY = write_fixture_policy(
+        FIXTURES / "bactotraits.csv", tmp_path / "fixture-identity-policy.json", reviewed=False
+    )
     return result
 
 
@@ -208,7 +212,7 @@ def test_clean_preflight_allows_upstream_to_create_lookup_then_real_media_reads_
     # Seed every curated input except the separately tested reviewed catalogue.
     # New mandatory source policies are not optional fixture exemptions.
     root = Path(__file__).resolve().parents[1]
-    for declaration in media.MediaDiveTransform.DATA_INPUTS:
+    for declaration in (*media.MediaDiveTransform.DATA_INPUTS, *bacto.BactoTraitsTransform.DATA_INPUTS):
         if declaration == media.REVIEWED_PATH:
             continue
         curated = tmp_path / declaration

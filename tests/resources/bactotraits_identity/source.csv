@@ -1,0 +1,5 @@
+Synthetic identity regression; not a copy of the BactoTraits phenotype table
+Only identity and one placeholder trait are represented
+Index;Bacdive_ID;culture collection codes;Full_name;Trait
+1;17851;DSM 19353, JCM 14586;Rubritalea squalenifaciens Kasai et al. 2007;1
+2;160227;DSM 1;Unreviewed control organism;1

@@ -1,0 +1,24 @@
+{
+  "format": "kg-microbe-bactotraits-quarantine/v1",
+  "reviewed_source_sha256": "18316d7a0b6c2bef6fcb96a7659c2e3f3734c14786f383c2a93fefe2ae226a4b",
+  "decisions": [
+    {
+      "rule_id": "bactotraits-17851-mixed-strain",
+      "reviewed_source_data_row": 8521,
+      "bacdive_id": "17851",
+      "ncbitaxon_id": "NCBITaxon:1123071",
+      "full_name": "Rubritalea squalenifaciens Kasai et al. 2007",
+      "culture_collection_codes": "DSM 19353, JCM 14586",
+      "disposition": "quarantine_mixed_strain_row",
+      "row_sha256": "345fd2d00ee93334d975085716692dd4d4c530d5529f04c5b07af0766d5a512a",
+      "evidence_urls": [
+        "https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1865",
+        "https://github.com/CultureBotAI/EdgeMech/issues/130",
+        "https://www.dsmz.de/collection/catalogue/details/culture/DSM-19353",
+        "https://www.jcm.riken.jp/cgi-bin/jcm/jcm_number?JCM=14586",
+        "https://www.dsmz.de/collection/catalogue/details/culture/DSM-18772"
+      ],
+      "rationale": "The source name and BacDive 17851 identify Rubritalea squalenifaciens DSM 18772, but DSM 19353 and JCM 14586 identify Thioprofundum lithotrophicum strain 106. Withhold this complete mixed row pending source reconciliation; do not infer a replacement strain or transfer its phenotype values. Other source rows are outside this finite disposition."
+    }
+  ]
+}

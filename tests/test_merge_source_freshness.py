@@ -284,6 +284,12 @@ def prepare_source(tmp_path, source, *, prefix="", marker=True, output_name=None
     ontology_roles = prepare_empty_native_ro_contract(transform) if source == "ontologies" else ()
     gold_roles = prepare_empty_gold_crosswalk_inputs(transform) if source == "gold" else ()
     rhea_roles = prepare_rhea_native_inputs(transform) if source == "rhea_mappings" else ()
+    if source == "bactotraits":
+        from tests.bactotraits_identity_fixtures import consume_empty_identity_fixture
+
+        bacto_roles = consume_empty_identity_fixture(transform)
+    else:
+        bacto_roles = ()
     for role in getattr(cls, "REQUIRED_CONSUMED_INPUTS", ()):
         if role in (
             *bulk_roles,
@@ -293,6 +299,7 @@ def prepare_source(tmp_path, source, *, prefix="", marker=True, output_name=None
             *ontology_roles,
             *gold_roles,
             *rhea_roles,
+            *bacto_roles,
         ):
             continue
         assert role == "bacdive_taxon_lookup", f"Fixture needs an explicit immutable input for {role}"

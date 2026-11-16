@@ -62,3 +62,48 @@ proof that any published graph release has been regenerated.
 Another neighboring mismatch is tracked in
 [EdgeMech #132](https://github.com/CultureBotAI/EdgeMech/issues/132). It requires
 independent source review and does not broaden this finite disposition.
+
+## Retained single-row replay, 2026-11-16 UTC
+
+The [replay launcher](../scripts/adhoc/replay_bactotraits_identity_130_20261115.py)
+ran the actual transform on the original row and actual BacDive lookup slice.
+It used existing NCBITaxon database statements through a read-only label adapter;
+the queried label and DB/OWL release (`2026-07-12`) agreed. It did not rebuild the
+ontology database, fabricate a label, or hash the entire 14 GB database. The
+receipt pins its metadata and exact queried statements, source subsets, METPO
+templates, mappings, implementation files and Python/package versions.
+
+| Saved output | Baseline `ef27b97a` | Candidate `e24d58bf2` |
+| --- | ---: | ---: |
+| Assertions contributed by the mixed row | 21 | 0 |
+| Nodes emitted by this one-row slice | 22 | 0 |
+| Quarantine audit records | 0 | 1 |
+
+The baseline includes the exact reviewed `NCBITaxon:1123071`
+`biolink:has_phenotype` `METPO:1000703` assertion. The candidate's audit preserves
+the complete original row, actual slice ordinal 1, reviewed ordinal 8521,
+original mapped taxon, disposition and policy/source hashes. Its graph TSVs are
+header-only. There were no unaffected real rows in this slice; unaffected-row
+retention is covered by the separate synthetic control test, not this replay.
+
+Private stages are `data/validation-bactotraits-130/baseline-v2-20261116/` and
+`candidate-v2-20261116/`. Receipt SHA256 values are, respectively,
+`588f3e50352232036ce517616add423e0a7c08b760894f8edb05ac854f697633` and
+`d96f5b004961df31b91a82971122b15a6d969b8c2570edb1faabde4fde885dac`.
+Both runs used launcher SHA256
+`d058e94408498c047a4d086c8f363b8c5bdbc7b98ce083a7bd5712f333c69c86`.
+Persisted output hashes and receipt readback were checked before proceeding.
+
+The first baseline stopped on an import-time cache write outside the stage,
+recorded as [#1866](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1866).
+Its partial stage and log remain preserved. The launcher now redirects dependency
+caches into the private stage without changing `HOME` or weakening its write and
+network guards. A fresh-process import regression passed before the fresh v2
+baseline and candidate runs. All replay files use mode 0600 inside private
+directories. Both successful runs made zero provider calls.
+
+These are actual producer outputs before source finalization, graph merge or
+release publication. They establish this bounded quarantine behavior, not
+biological falsity, model correctness, a complete source review or release
+readiness. The original occurrence and source files remain unchanged. The
+companion evidence record is [EdgeMech PR #135](https://github.com/CultureBotAI/EdgeMech/pull/135).

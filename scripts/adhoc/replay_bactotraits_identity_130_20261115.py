@@ -8,6 +8,7 @@ Outputs: fresh ignored private subsets, actual transform outputs and a receipt.
 Run --plan first, then one --run baseline, then a separately planned candidate.
 This is a pre-finalization transform comparison, not a published graph release
 or an independent scientific/model assessment. No provider calls are permitted.
+2026-11-16, KG-Microbe #1866: confine import-time PyStow/OAK caches to the stage.
 """
 
 from __future__ import annotations
@@ -333,6 +334,30 @@ def install_guards(stage):
     socket.setdefaulttimeout(10)
 
 
+def configure_private_environment(stage):
+    """Place dependency caches inside the stage before importing the real producer."""
+    temporary = stage / "tmp"
+    temporary.mkdir(mode=0o700)
+    tempfile.tempdir = str(temporary)
+    # PyStow writes README.md during import. OAK and Bioregistry also create
+    # module directories, whose specific overrides take precedence over its home.
+    # Disable appdirs mode so its platform-specific defaults cannot bypass this root.
+    cache = stage / "cache/pystow"
+    os.environ.update(
+        {
+            "PYSTOW_HOME": str(cache),
+            "PYSTOW_CONFIG_HOME": str(stage / "cache/pystow-config"),
+            "PYSTOW_USE_APPDIRS": "false",
+            "OAKLIB_HOME": str(cache / "oaklib"),
+            "BIOREGISTRY_HOME": str(cache / "bioregistry"),
+            "KG_MICROBE_METPO_TEMPLATE_DIR": str(stage / "templates"),
+            "KG_SEMSQL_BUILD": "off",
+            "PYTHONDONTWRITEBYTECODE": "1",
+        }
+    )
+    return temporary
+
+
 def run(args, plan):
     """Run exactly one real producer and verify its emitted evidence and graph difference."""
     stage, code_root = plan["stage"], plan["code_root"]
@@ -343,12 +368,7 @@ def run(args, plan):
     for name, raw in plan["staged"].items():
         write_new(stage / name, raw)
     write_new(stage / "input-plan.json", json_bytes({key: plan[key] for key in ("sources", "authority", "shared")}))
-    temporary = stage / "tmp"
-    temporary.mkdir(mode=0o700)
-    tempfile.tempdir = str(temporary)
-    os.environ["KG_MICROBE_METPO_TEMPLATE_DIR"] = str(stage / "templates")
-    os.environ["KG_SEMSQL_BUILD"] = "off"
-    os.environ["PYTHONDONTWRITEBYTECODE"] = "1"
+    temporary = configure_private_environment(stage)
     sys.path.insert(0, str(code_root))
     install_guards(stage)
     with (stage / "transform.stdout.txt").open("x") as stdout, (stage / "transform.stderr.txt").open("x") as stderr:

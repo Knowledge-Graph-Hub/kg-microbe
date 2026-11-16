@@ -2,6 +2,7 @@
 
 import importlib.util
 import json
+import os
 import sys
 from pathlib import Path
 from types import SimpleNamespace
@@ -40,7 +41,12 @@ def unit(tmp_path, monkeypatch):
         },
         "task_raw_before": {"original.json": helper.identity(raw / "original.json")},
     }
-    return helper, plan, root, raw, prefixmap, profile
+    previous_umask = os.umask(0o077)
+    os.umask(previous_umask)
+    try:
+        yield helper, plan, root, raw, prefixmap, profile
+    finally:
+        os.umask(previous_umask)
 
 
 @pytest.mark.parametrize("changed", ["prefixmap", "profile"])

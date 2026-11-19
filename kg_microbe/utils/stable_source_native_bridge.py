@@ -15,8 +15,15 @@ import hashlib
 import importlib.machinery
 import io
 import json
+import re
 import sys
 from pathlib import Path
+
+SOURCE_CAPABILITY = "reviewed-source-bindings-v1"
+CM_REPLAY_CAPABILITY = "culturemech-intake-v3-replay-v1"
+SOURCE_CAPABILITIES = frozenset({SOURCE_CAPABILITY, CM_REPLAY_CAPABILITY})
+CM_REPLAY_INPUTS = frozenset({"source_manifest", "prepared_intake", "reviewed_intake", "binding_review"})
+CM_REPLAY_COUNTS = frozenset({"positive_inventory", "context_only", "held", "supported_bindings", "withheld_bindings"})
 
 RETAINED_CAPABILITY = "retained-companion-obligations-v1"
 COMPANION_CAPABILITIES = frozenset(
@@ -45,6 +52,62 @@ def _require(value, message):
 
 def _sha(raw):
     return hashlib.sha256(raw).hexdigest()
+
+
+def source_capabilities(manifest):
+    """Require a KG-owned capability set and native-reconstructed CM replay proof."""
+    required = manifest.get("required_capabilities")
+    _require(
+        isinstance(required, list)
+        and all(isinstance(value, str) for value in required)
+        and len(required) == len(set(required)),
+        "invalid source capabilities",
+    )
+    _require(not set(required) - SOURCE_CAPABILITIES, "unsupported source capabilities")
+    _require(SOURCE_CAPABILITY in required, "missing native source capability")
+    _require(
+        (CM_REPLAY_CAPABILITY in required) == ("culturemech_intake_replay" in manifest),
+        "CM replay capability and proof differ",
+    )
+    if CM_REPLAY_CAPABILITY in required:
+        proof = manifest["culturemech_intake_replay"]
+        _require(isinstance(proof, dict) and set(proof) == CM_REPLAY_INPUTS | {"counts"}, "invalid CM replay proof")
+        inputs = manifest.get("inputs")
+        _require(isinstance(inputs, dict), "missing CM replay input closure")
+        for name in CM_REPLAY_INPUTS:
+            declaration = proof[name]
+            _require(
+                isinstance(declaration, dict)
+                and set(declaration) == {"path", "sha256"}
+                and isinstance(declaration["path"], str)
+                and declaration["path"]
+                and isinstance(declaration["sha256"], str)
+                and re.fullmatch("[a-f0-9]{64}", declaration["sha256"]),
+                "invalid CM replay input declaration",
+            )
+            _require(inputs.get(declaration["path"]) == declaration["sha256"], "CM replay input closure differs")
+        counts = proof["counts"]
+        _require(
+            isinstance(counts, dict)
+            and set(counts) == CM_REPLAY_COUNTS
+            and all(type(value) is int and value >= 0 for value in counts.values()),
+            "invalid CM replay counts",
+        )
+    return set(required)
+
+
+def require_cm_replay(manifest, selection):
+    """Bind integration selection to a proof reconstructed by the native validator."""
+    _require(
+        CM_REPLAY_CAPABILITY in source_capabilities(manifest),
+        "native CM source/prepare/review replay capability required; upstream integration prerequisite unresolved",
+    )
+    proof = manifest["culturemech_intake_replay"]
+    _require(
+        {name: proof[name] for name in CM_REPLAY_INPUTS} == selection["culturemech"],
+        "selected CM replay inputs differ",
+    )
+    _require(proof["counts"] == selection["expected_counts"], "selected CM replay counts differ")
 
 
 def companion_capabilities(manifest):
@@ -326,8 +389,13 @@ def validate(request):
     review_path = Path(selection["source_review"]["path"])
     # This native entry point performs complete reconstruction, source review
     # admission, all occurrences/owners, producer capture and strict SSSOM checks.
-    claims = native.consumer_claims(root, review_path, output, capabilities={native.CAPABILITY})
+    source_capabilities(json.loads((output / "manifest.json").read_bytes()))
+    claims = native.consumer_claims(root, review_path, output, capabilities=SOURCE_CAPABILITIES)
+    # The producer must reconstruct the proof during validate_candidate. A
+    # locally added flag or proof fails native byte comparison, including on
+    # historical producers that do not implement the CM replay capability.
     manifest = json.loads((output / "manifest.json").read_bytes())
+    source_capabilities(manifest)
     _require(
         manifest["production_authorized"] is False and manifest["semantic_status"] == "REVIEWED_CANDIDATE_ONLY",
         "native source is not a candidate",

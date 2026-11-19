@@ -193,3 +193,15 @@ separate synthetic source hold. It checks native constructor admission, source
 refusal, exact ledger/graph transport, persisted reload and the existing native
 finalization/archive boundary. It does not reuse campaign scientific reports or
 establish that the pending real campaign export has completed.
+
+## Explicit CultureMech/KGM integration selection
+
+The separate accepted CultureMech v3 intake is not automatically selected by this
+native source consumer. The optional `verify_integration` method additionally
+requires native `culturemech-intake-v3-replay-v1` reconstruction, exact current
+KGM receipt/pin closure and complete positive/context/held occurrence accounting.
+Historical native candidates without that capability fail this additional gate.
+See the [integration checkpoint](CM_MIM_KGM_INTEGRATION_687_20261119.md) for the
+proof contract, upstream prerequisites, actual separate-intake canary and pending
+final combined-artifact acceptance. This does not change production authority or
+replace explicit required/absent companion selection and downstream identity holds.

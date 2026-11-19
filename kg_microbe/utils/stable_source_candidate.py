@@ -335,6 +335,14 @@ class StableSourceCandidate:
             producer_members(self.producer) == sorted(self.selection["producer_files"]),
             "native producer membership changed",
         )
+        for guard in getattr(self, "_integration_current_checks", ()):
+            guard.verify()
+
+    def verify_integration(self, selection_path, *, selection_sha256):
+        """Reconcile an explicitly selected CM/KGM intake without granting production authority."""
+        from kg_microbe.utils.stable_source_integration import verify_integration
+
+        return verify_integration(self, selection_path, selection_sha256=selection_sha256)
 
     def payload(self):
         """Return isolated full assertions, including all withheld rows and provenance."""

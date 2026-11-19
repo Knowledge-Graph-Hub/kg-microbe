@@ -776,3 +776,53 @@ def test_native_external_identity_closure_missing_input_refused(native_selection
     assert completed.returncode != 0
     assert f"Permanent identity input missing or changed in review: {missing}" in completed.stderr.decode()
     assert not output.exists()
+
+
+def test_native_candidate_requires_cm_replay_for_integration(native_selection, tmp_path):
+    """Historical native acceptance cannot imply the separate CM integration gate."""
+    _, path, _ = native_selection
+    candidate = StableSourceCandidate(path, selection_sha256=sha(path))
+    assert candidate.native_execution["exit_status"] == 0
+    integration = tmp_path / "integration.json"
+    put(
+        integration,
+        {
+            "contract": "kg-microbe-stable-source-integration/v1",
+            "mode": "diagnostic_only",
+            "culturemech": {},
+            "kgm_source_receipt": {},
+            "current_kgm": {},
+            "reconciliation": {},
+            "expected_counts": {
+                "positive_inventory": 209784,
+                "context_only": 163,
+                "held": 138,
+                "supported_bindings": 623,
+                "withheld_bindings": 4384,
+            },
+            "native_occurrence_payload_column": "cm_occurrence_json",
+        },
+    )
+    with pytest.raises(ValueError, match="native CM source/prepare/review replay capability required"):
+        candidate.verify_integration(integration, selection_sha256=sha(integration))
+    assert candidate.payload()["production_authorized"] is False
+
+
+def test_native_reconstruction_rejects_added_cm_replay_proof(native_selection):
+    """A syntactically valid proof cannot be pasted onto older genuine native output."""
+    from kg_microbe.utils.stable_source_native_bridge import CM_REPLAY_CAPABILITY, CM_REPLAY_COUNTS, CM_REPLAY_INPUTS
+
+    root, path, selection = native_selection
+    manifest_path = root / "candidate/manifest.json"
+    manifest = json.loads(manifest_path.read_bytes())
+    name, digest = next(iter(manifest["inputs"].items()))
+    manifest["required_capabilities"].append(CM_REPLAY_CAPABILITY)
+    manifest["culturemech_intake_replay"] = {
+        **{key: {"path": name, "sha256": digest} for key in CM_REPLAY_INPUTS},
+        "counts": dict.fromkeys(CM_REPLAY_COUNTS, 0),
+    }
+    put(manifest_path, manifest)
+    selection["source_output"]["manifest_sha256"] = sha(manifest_path)
+    put(path, selection)
+    with pytest.raises(ValueError, match=r"(?s)native validation failed:.*candidate bytes differ: manifest\.json"):
+        StableSourceCandidate(path, selection_sha256=sha(path))

@@ -756,6 +756,7 @@ def test_every_integration_git_read_uses_same_private_environment(integration, m
     calls = []
 
     def observe(command, **kwargs):
+        """Observe actual isolated Git calls while preserving their real execution."""
         calls.append((list(command), dict(kwargs["env"])))
         return real_check_output(command, **kwargs)
 

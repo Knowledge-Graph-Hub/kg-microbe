@@ -29,12 +29,28 @@ def paired_receipt(tmp_path, helper):
     (source / "edges.tsv").write_bytes(b"subject\tpredicate\tobject\n")
     (source / helper.replay.AUDIT).write_bytes(b"row_sha256\noriginal\n")
     baseline = (tmp_path / "baseline.json", "a" * 64, [])
-    plan = {"revision": "corrected", "shared": {"python": "pinned"}}
+    plan = {
+        "revision": "corrected",
+        "shared": {"python": "pinned"},
+        "code_inputs": {
+            "kg_microbe/transform_utils/bactotraits/bactotraits.py": "c" * 64,
+            "kg_microbe/utils/source_finalization.py": "d" * 64,
+        },
+        "policy": {
+            "path": str(tmp_path / "mappings/canonical/bactotraits_identity_quarantine.json"),
+            "sha256": "e" * 64,
+            "bytes": 42,
+        },
+    }
     receipt = {
         "profile": helper.replay.PROFILE,
         "mode": "candidate",
         "git_revision": plan["revision"],
         "shared_inputs": plan["shared"],
+        "code_inputs": dict(plan["code_inputs"]),
+        "consumed_inputs": {
+            "bactotraits_identity_policy": {key: plan["policy"][key] for key in ("path", "sha256")},
+        },
         "baseline_receipt": {"path": str(baseline[0]), "sha256": baseline[1]},
         "finalization_run": False,
         "all_edge_count": 0,
@@ -68,6 +84,75 @@ def test_changed_prior_pair_is_rejected(helper, paired_receipt, damage):
         receipt["finalization_run"] = True
     path.write_text(json.dumps(receipt))
     with pytest.raises(ValueError):
+        helper.checked_receipt(path, plan, baseline)
+
+
+@pytest.mark.parametrize("damage", ["changed_file", "missing_file", "extra_file"])
+def test_same_head_candidate_code_drift_is_rejected(helper, paired_receipt, damage):
+    """#1876: a shared Git HEAD does not make differing dirty source inventories equivalent."""
+    path, plan, baseline, receipt, _ = paired_receipt
+    assert helper.checked_receipt(path, plan, baseline)["sha256"] == helper.replay.digest(path.read_bytes())
+    source = "kg_microbe/transform_utils/bactotraits/bactotraits.py"
+    if damage == "changed_file":
+        receipt["code_inputs"][source] = "f" * 64
+    elif damage == "missing_file":
+        del receipt["code_inputs"][source]
+    else:
+        receipt["code_inputs"]["kg_microbe/extra.py"] = "f" * 64
+    path.write_text(json.dumps(receipt))
+    assert receipt["git_revision"] == plan["revision"]
+    with pytest.raises(ValueError, match="Candidate pair implementation inputs differ"):
+        helper.checked_receipt(path, plan, baseline)
+
+
+@pytest.mark.parametrize("field", ["path", "sha256"])
+def test_same_head_candidate_policy_drift_is_rejected(helper, paired_receipt, field):
+    """#1876: compare the actual consumed policy, independently of unchanged code and Git HEAD."""
+    path, plan, baseline, receipt, _ = paired_receipt
+    receipt["consumed_inputs"]["bactotraits_identity_policy"][field] = (
+        str(path.parent / "different-policy.json") if field == "path" else "f" * 64
+    )
+    path.write_text(json.dumps(receipt))
+    with pytest.raises(ValueError, match="Candidate pair consumed policy differs"):
+        helper.checked_receipt(path, plan, baseline)
+
+
+@pytest.mark.parametrize("value", [None, [], {}, {"kg_microbe/producer.py": "not-a-sha256"}])
+def test_malformed_candidate_code_identity_is_rejected(helper, paired_receipt, value):
+    """Missing or malformed code inventories receive an explicit provenance failure."""
+    path, plan, baseline, receipt, _ = paired_receipt
+    receipt["code_inputs"] = value
+    path.write_text(json.dumps(receipt))
+    with pytest.raises(ValueError, match="Candidate receipt code inputs missing or malformed"):
+        helper.checked_receipt(path, plan, baseline)
+
+
+@pytest.mark.parametrize("field", ["code_inputs", "consumed_inputs", "policy", "path", "sha256"])
+def test_missing_candidate_identity_is_rejected(helper, paired_receipt, field):
+    """A historical receipt must carry both exact implementation and consumed-policy identities."""
+    path, plan, baseline, receipt, _ = paired_receipt
+    if field in {"code_inputs", "consumed_inputs"}:
+        del receipt[field]
+    elif field == "policy":
+        del receipt["consumed_inputs"]["bactotraits_identity_policy"]
+    else:
+        del receipt["consumed_inputs"]["bactotraits_identity_policy"][field]
+    path.write_text(json.dumps(receipt))
+    expected = "code inputs" if field == "code_inputs" else "consumed policy"
+    with pytest.raises(ValueError, match=f"Candidate receipt {expected} missing or malformed"):
+        helper.checked_receipt(path, plan, baseline)
+
+
+@pytest.mark.parametrize(
+    "value",
+    [None, [], {}, {"path": "/policy.json", "sha256": "not-a-sha256"}, {"path": None, "sha256": "e" * 64}],
+)
+def test_malformed_candidate_policy_identity_is_rejected(helper, paired_receipt, value):
+    """An incomplete or mistyped policy snapshot cannot certify a preceding candidate."""
+    path, plan, baseline, receipt, _ = paired_receipt
+    receipt["consumed_inputs"]["bactotraits_identity_policy"] = value
+    path.write_text(json.dumps(receipt))
+    with pytest.raises(ValueError, match="Candidate receipt consumed policy missing or malformed"):
         helper.checked_receipt(path, plan, baseline)
 
 

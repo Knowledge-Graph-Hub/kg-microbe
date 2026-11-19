@@ -20,6 +20,7 @@ import csv
 import importlib.util
 import json
 import os
+import re
 import socket
 import stat
 import sys
@@ -49,6 +50,35 @@ def checked_receipt(path, plan, baseline):
         "Expected an unchanged pre-finalization candidate receipt",
     )
     replay.require(receipt["shared_inputs"] == plan["shared"], "Candidate pair inputs/runtime differ")
+    code_inputs = receipt.get("code_inputs")
+    replay.require(
+        isinstance(code_inputs, dict)
+        and bool(code_inputs)
+        and all(
+            isinstance(name, str)
+            and bool(name)
+            and isinstance(sha256, str)
+            and re.fullmatch(r"[0-9a-f]{64}", sha256)
+            for name, sha256 in code_inputs.items()
+        ),
+        "Candidate receipt code inputs missing or malformed",
+    )
+    replay.require(code_inputs == plan["code_inputs"], "Candidate pair implementation inputs differ")
+    consumed_inputs = receipt.get("consumed_inputs")
+    policy = consumed_inputs.get("bactotraits_identity_policy") if isinstance(consumed_inputs, dict) else None
+    replay.require(
+        isinstance(policy, dict)
+        and set(policy) == {"path", "sha256"}
+        and isinstance(policy["path"], str)
+        and bool(policy["path"])
+        and isinstance(policy["sha256"], str)
+        and re.fullmatch(r"[0-9a-f]{64}", policy["sha256"]),
+        "Candidate receipt consumed policy missing or malformed",
+    )
+    replay.require(
+        policy == {key: plan["policy"][key] for key in ("path", "sha256")},
+        "Candidate pair consumed policy differs",
+    )
     replay.require(
         receipt["baseline_receipt"] == {"path": str(baseline[0]), "sha256": baseline[1]},
         "Candidate receipt belongs to a different baseline pair",

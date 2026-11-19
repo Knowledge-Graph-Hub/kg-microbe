@@ -44,10 +44,12 @@ ontologies → BacDive → BactoTraits chain; October fingerprints do not satisf
 `run_bactotraits_production_unit_20261116.py` launches one actual CLI source
 with exclusive unit-relative output, private caches/temp and one process. Its
 plan binds all shared non-Python inputs, and its receipt inventories task raw
-side effects as well as unit outputs. These checks address
+side effects as well as unit outputs. The original checks addressed
 [#1869](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1869) and
+the inventory portion of
 [#1870](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1870), found
-and fixed during separate read-only review before the first unit ran.
+during separate read-only review before the first unit ran. The later review
+below completed the permitted-write enforcement required by #1870.
 
 The first two RO probes each persisted 880 nodes/85 edges, then correctly
 failed finalization on missing isolated-stage ENVO and FOODON authorities,
@@ -72,3 +74,60 @@ neighboring-row quarantine, or graph-wide scientific validation. Six focused
 finalization tests and four production-launcher regression tests passed before
 the final repository gate. Final gate results are recorded separately against
 the committed candidate; a source canary is not a release.
+
+## Adversarial guard follow-up, 2026-11-19
+
+The subsequent independent review recorded three additional defects in
+[#1874](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1874),
+[#1875](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1875) and
+[#1876](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1876), and
+identified the remaining permitted-write requirement in
+[#1870](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1870).
+
+The production launcher now binds the child package and CLI module to its
+selected checkout instead of accepting ambient Python import routing. It copies
+retained inputs privately, verifies their complete identities, then publishes
+them without overwriting a competing target. An interrupted copy retains private
+failure evidence without publishing a truncated canonical input.
+
+New production plans and receipts use `bactotraits-production-unit-v2`. Declare
+each permitted raw derivative using repeatable `--allow-raw-write PATH` options;
+paths are exact and relative to the isolated task's raw directory. The launcher
+inventories nested raw entries and records additions, changes and deletions.
+An undeclared effect fails the unit and retains a failure diagnostic. A permitted
+raw effect does not establish producer finalization, scientific acceptance or
+release readiness.
+
+The bounded finalizer also checks the preceding candidate's complete code
+inventory and consumed identity-policy path and SHA256 against the current
+plan. Matching Git revisions alone do not establish matching code or policy
+when a candidate replay permits local changes.
+
+The original M5 plans, receipts, graph counts and hashes above describe their
+original executions. They remain historical evidence and are not relabeled as
+runs of these new guards. Validate the new helper on one actual unit before a
+larger production run. Source freshness, downstream completion and publication
+gates remain in force.
+
+## Preserving the verification checkout before removal
+
+`scripts/adhoc/preserve_pr1871_worktree_artifacts_20261119.py` prepares a
+read-only plan, moves one canary, then preserves the remaining untracked and
+ignored artifacts using exclusive same-volume renames. It does not delete
+artifacts or remove Git worktrees. Before applying it, the caller must quiesce
+writers and verify there are no active or outside consumers of the selected
+paths. Preserve the tracked source separately with `git archive` and retain a
+Git bundle for recovery.
+
+The archive must be durable and outside registered worktrees. Plans bind exact
+HEAD, branch and recursive metadata; symlinks are retained as opaque objects.
+Each move has an intent and verification receipt. Completion reconciles the
+remaining source paths and every retained inventory, including resumed runs,
+as required by the independent cleanup review
+[#1877](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1877).
+Recheck the checkout and consumers immediately before normal Git removal.
+
+Relocated virtual environments and historical receipts retain their original
+bytes, including absolute paths. Reconstruct and requalify a runtime before
+using it again. Preservation does not reclaim the retained data's disk space
+or validate old graph outputs against new code.

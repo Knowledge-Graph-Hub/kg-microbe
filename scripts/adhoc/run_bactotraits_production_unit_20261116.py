@@ -8,6 +8,11 @@ Run the ordinary CLI with freshness on, one process, private caches and no HTTP
 route. Each unit retains independent outputs/logs; prior units are never replaced.
 This launcher does not declare source finalization or release success from exit
 status: its receipt inventories actual persisted files for separate inspection.
+
+2026-11-19, #1870/#1874/#1875: v2 receipts bind the actual isolated CLI import,
+publish verified retained inputs without clobbering competitors, and enforce
+explicit --allow-raw-write paths for producer additions, modifications or deletions.
+Failures preserve private evidence; historical receipts are not reinterpreted.
 """
 
 from __future__ import annotations
@@ -16,11 +21,14 @@ import argparse
 import ast
 import hashlib
 import importlib.metadata
+import importlib.util
 import json
 import os
 import re
+import runpy
 import shutil
 import socket
+import stat
 import subprocess
 import sys
 from datetime import datetime, timezone
@@ -28,6 +36,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 STAGES = ROOT / "data/validation-bactotraits-130"
+PROFILE = "bactotraits-production-unit-v2"
 
 
 def identity(path):
@@ -60,6 +69,115 @@ def write_new(path, value):
         stream.write("\n")
 
 
+def tree_inventory(directory):
+    """Record every nested entry, including unsafe links, without following directory links."""
+    result = {}
+
+    def visit(parent):
+        for path in sorted(parent.iterdir()):
+            name = path.relative_to(directory).as_posix()
+            mode = path.lstat().st_mode
+            if stat.S_ISLNK(mode):
+                result[name] = {"kind": "symlink", "target": os.readlink(path)}
+            elif stat.S_ISDIR(mode):
+                result[name] = {"kind": "directory"}
+                visit(path)
+            elif stat.S_ISREG(mode):
+                result[name] = identity(path)
+            else:
+                result[name] = {"kind": "special", "mode": stat.S_IFMT(mode)}
+
+    visit(directory)
+    return result
+
+
+def allowed_raw_paths(names):
+    """Accept exact relative file paths, never patterns, traversal or existing symlinks."""
+    for name in names:
+        require(
+            bool(name)
+            and not any(character in name for character in "*?[]\\")
+            and all(part not in {"", ".", ".."} for part in name.split("/")),
+            "Allowed raw write must be an exact relative file path without globs or traversal",
+        )
+        path = safe_path(ROOT / "data/raw" / name)
+        require(not path.exists() or path.is_file(), "Allowed raw write must identify a regular file")
+    return sorted(set(names))
+
+
+def raw_side_effects(before, after, allowed):
+    """Account for all recursive changes; only declared files and their directories may change."""
+    added = sorted(after.keys() - before.keys())
+    deleted = sorted(before.keys() - after.keys())
+    changed = sorted(name for name in before.keys() & after.keys() if before[name] != after[name])
+    parents = {parent.as_posix() for name in allowed for parent in Path(name).parents if parent != Path(".")}
+    unexpected = []
+    for name in (*added, *changed, *deleted):
+        kinds = {entries[name].get("kind", "file") for entries in (before, after) if name in entries}
+        permitted = (kinds == {"file"} and name in allowed) or (kinds == {"directory"} and name in parents)
+        if not permitted:
+            unexpected.append(name)
+    return {"added": added, "changed": changed, "deleted": deleted, "unexpected": sorted(unexpected)}
+
+
+def run_bound_cli(origin_path, arguments):
+    """Verify the bound package and CLI origins before running the ordinary module entry point."""
+    require(sys.flags.isolated == 1, "Bound CLI bootstrap requires Python isolated mode")
+    sys.path.insert(0, str(ROOT))
+    package_path = safe_path(ROOT / "kg_microbe/__init__.py")
+    cli_path = safe_path(ROOT / "kg_microbe/run.py")
+    package_spec = importlib.util.find_spec("kg_microbe")
+    require(
+        package_spec is not None
+        and package_spec.origin == str(package_path)
+        and list(package_spec.submodule_search_locations or []) == [str(package_path.parent)],
+        "kg_microbe package origin is outside the bound checkout",
+    )
+    package = importlib.import_module("kg_microbe")
+    require(
+        package.__file__ == str(package_path) and list(package.__path__) == [str(package_path.parent)],
+        "Imported kg_microbe package origin is outside the bound checkout",
+    )
+    cli_spec = importlib.util.find_spec("kg_microbe.run")
+    require(cli_spec is not None and cli_spec.origin == str(cli_path), "CLI origin is outside the bound checkout")
+    write_new(
+        safe_path(origin_path),
+        {
+            "profile": PROFILE,
+            "root": str(ROOT),
+            "package_origin": str(package_path),
+            "package_identity": identity(package_path),
+            "cli_origin": str(cli_path),
+            "cli_identity": identity(cli_path),
+            "isolated": sys.flags.isolated,
+            "arguments": arguments,
+        },
+    )
+    sys.argv = [str(cli_path), *arguments]
+    runpy.run_module("kg_microbe.run", run_name="__main__", alter_sys=True)
+
+
+def stage_input(record, stage):
+    """Verify a private exclusive copy, then publish with atomic no-clobber hard-link creation."""
+    source, target = safe_path(Path(record["source"])), safe_path(Path(record["target"]))
+    expected = {key: record[key] for key in ("bytes", "sha256")}
+    require(source.is_file() and identity(source) == expected, "Original changed before staging")
+    if not target.exists():
+        private = stage / "input-staging"
+        private.mkdir(mode=0o700, exist_ok=True)
+        temporary = private / target.name
+        with source.open("rb") as reader, temporary.open("xb") as writer:
+            shutil.copyfileobj(reader, writer, 1024 * 1024)
+            writer.flush()
+            os.fsync(writer.fileno())
+        require(identity(source) == identity(temporary) == expected, "Private input readback differs")
+        safe_path(target)
+        # Same-filesystem publication is required. EXDEV fails safely; never fall back to overwrite/copy.
+        os.link(temporary, target)
+        temporary.unlink()
+    require(target.is_file() and identity(source) == identity(safe_path(target)) == expected, "Staged input differs")
+
+
 def prepare(args):
     """Inspect named retained bytes and the exact CLI/environment before any mutation."""
     require(re.fullmatch(r"[a-z0-9-]+", args.unit) is not None, "Invalid unit name")
@@ -72,14 +190,17 @@ def prepare(args):
         require(source.is_file() and not source.is_symlink(), f"Retained regular input unavailable: {source}")
         expected = identity(source)
         if target.exists():
-            require(not target.is_symlink() and identity(target) == expected, f"Existing task input differs: {target}")
+            require(target.is_file() and identity(target) == expected, f"Existing task input differs: {target}")
         originals.append({"source": str(source), "target": str(target), **expected})
     interpreter = str(Path(sys.executable).absolute())
     command = [
         interpreter,
+        "-I",
         "-B",
-        "-m",
-        "kg_microbe.run",
+        str(Path(__file__).absolute()),
+        "--_run-bound-cli",
+        str(stage / "cli-origin.json"),
+        "--",
         "transform",
         "-i",
         str(ROOT / "data/raw"),
@@ -147,17 +268,23 @@ def prepare(args):
     git = shutil.which("git")
     require(git is not None, "Git is unavailable")
     revision = subprocess.check_output([git, "-C", str(ROOT), "rev-parse", "HEAD"], text=True).strip()  # noqa: S603
+    raw_before = tree_inventory(safe_path(ROOT / "data/raw"))
+    require(
+        all(entry.get("kind", "file") in {"file", "directory"} for entry in raw_before.values()),
+        "Raw tree contains a symlink or nonregular entry",
+    )
     return {
+        "profile": PROFILE,
         "stage": str(stage),
         "source": args.source,
         "command": command,
+        "cli_origin_required": True,
         "environment": environment,
         "processes": 1,
         "originals": originals,
         "implementation_and_policy_inputs": pins,
-        "task_raw_before": {
-            path.name: identity(safe_path(path)) for path in (ROOT / "data/raw").iterdir() if path.is_file()
-        },
+        "task_raw_before": raw_before,
+        "allowed_raw_writes": allowed_raw_paths(getattr(args, "allow_raw_write", [])),
         "git_revision": revision,
         "python": sys.version,
         "interpreter": {"executable": interpreter, "resolved": str(Path(interpreter).resolve())},
@@ -176,51 +303,104 @@ def run(plan):
     stage.mkdir(mode=0o700)
     (stage / "tmp").mkdir(mode=0o700)
     write_new(stage / "plan.json", plan)
-    for record in plan["originals"]:
-        source, target = Path(record["source"]), Path(record["target"])
-        expected = {key: record[key] for key in ("bytes", "sha256")}
-        require(identity(source) == expected, "Original changed before staging")
-        if not target.exists():
-            with source.open("rb") as reader, target.open("xb") as writer:
-                shutil.copyfileobj(reader, writer, 1024 * 1024)
-        require(identity(source) == identity(target) == expected, "Staged input readback differs")
-    environment = {**os.environ, **plan["environment"]}
     started = datetime.now(timezone.utc).isoformat()
-    with (stage / "stdout.log").open("x") as stdout, (stage / "stderr.log").open("x") as stderr:
-        child = subprocess.Popen(plan["command"], cwd=ROOT, env=environment, stdout=stdout, stderr=stderr)  # noqa: S603
-        write_new(
-            stage / "process.json",
-            {
-                "pid": child.pid,
-                "parent_pid": os.getpid(),
-                "host": socket.gethostname(),
-                "started_at": started,
-                "command": plan["command"],
-            },
-        )
-        code = child.wait()
-    for record in plan["originals"]:
+    before_child = plan["task_raw_before"]
+    phase = "preflight"
+    try:
+        allowed = allowed_raw_paths(plan.get("allowed_raw_writes", []))
+        require(tree_inventory(safe_path(ROOT / "data/raw")) == before_child, "Raw tree changed after planning")
         require(
-            identity(Path(record["source"])) == {key: record[key] for key in ("bytes", "sha256")},
-            "Original retained input changed during execution",
+            all(entry.get("kind", "file") in {"file", "directory"} for entry in before_child.values()),
+            "Raw tree contains a symlink or nonregular entry",
         )
-    for name, expected in plan["implementation_and_policy_inputs"].items():
-        require(identity(ROOT / name) == expected, "Implementation or policy changed during execution")
-    artifacts = {str(path.relative_to(stage)): identity(path) for path in stage.rglob("*") if path.is_file()}
-    raw_after = {path.name: identity(safe_path(path)) for path in (ROOT / "data/raw").iterdir() if path.is_file()}
+        phase = "input-staging"
+        for record in plan["originals"]:
+            stage_input(record, stage)
+        staged = tree_inventory(ROOT / "data/raw")
+        staged_paths = [
+            Path(record["target"]).relative_to(ROOT / "data/raw").as_posix() for record in plan["originals"]
+        ]
+        staging_effects = raw_side_effects(before_child, staged, staged_paths)
+        require(not staging_effects["unexpected"], "Raw tree changed unexpectedly during input staging")
+        before_child = staged
+        phase = "child"
+        environment = {**os.environ, **plan["environment"]}
+        with (stage / "stdout.log").open("x") as stdout, (stage / "stderr.log").open("x") as stderr:
+            child = subprocess.Popen(plan["command"], cwd=ROOT, env=environment, stdout=stdout, stderr=stderr)  # noqa: S603
+            write_new(
+                stage / "process.json",
+                {
+                    "pid": child.pid,
+                    "parent_pid": os.getpid(),
+                    "host": socket.gethostname(),
+                    "started_at": started,
+                    "command": plan["command"],
+                },
+            )
+            code = child.wait()
+        phase = "postflight"
+        if plan.get("cli_origin_required"):
+            origin_path = stage / "cli-origin.json"
+            require(origin_path.is_file(), "Bound CLI origin evidence is missing")
+            origin = json.loads(safe_path(origin_path).read_text())
+            require(
+                origin["root"] == str(ROOT)
+                and origin["isolated"] == 1
+                and origin["package_origin"] == str(ROOT / "kg_microbe/__init__.py")
+                and origin["cli_origin"] == str(ROOT / "kg_microbe/run.py")
+                and origin["package_identity"] == plan["implementation_and_policy_inputs"]["kg_microbe/__init__.py"]
+                and origin["cli_identity"] == plan["implementation_and_policy_inputs"]["kg_microbe/run.py"],
+                "Bound CLI origin evidence differs from the planned checkout",
+            )
+        raw_after = tree_inventory(safe_path(ROOT / "data/raw"))
+        effects = raw_side_effects(before_child, raw_after, allowed)
+        require(not effects["unexpected"], "Undeclared or unsafe raw side effects: " + ", ".join(effects["unexpected"]))
+        for record in plan["originals"]:
+            require(
+                identity(safe_path(Path(record["source"]))) == {key: record[key] for key in ("bytes", "sha256")},
+                "Original retained input changed during execution",
+            )
+        for name, expected in plan["implementation_and_policy_inputs"].items():
+            require(identity(safe_path(ROOT / name)) == expected, "Implementation or policy changed during execution")
+    except BaseException as error:
+        failure = {
+            **plan,
+            "profile": PROFILE,
+            "status": "FAILED",
+            "phase": phase,
+            "started_at": started,
+            "completed_at": datetime.now(timezone.utc).isoformat(),
+            "error_type": type(error).__name__,
+            "error": str(error),
+            "task_raw_before_child": before_child,
+            "published_release_verified": False,
+        }
+        try:
+            failure["task_raw_after"] = tree_inventory(safe_path(ROOT / "data/raw"))
+            failure["raw_side_effects"] = raw_side_effects(
+                before_child, failure["task_raw_after"], plan.get("allowed_raw_writes", [])
+            )
+            failure["artifacts"] = tree_inventory(stage)
+        except (OSError, ValueError) as inspection_error:
+            failure["inspection_error"] = str(inspection_error)
+        write_new(stage / "failure.json", failure)
+        raise
+    artifacts = tree_inventory(stage)
+    total_effects = raw_side_effects(plan["task_raw_before"], raw_after, allowed)
     receipt = {
         **plan,
+        "profile": PROFILE,
+        "status": "COMPLETED" if code == 0 else "CHILD_FAILED",
         "started_at": started,
         "completed_at": datetime.now(timezone.utc).isoformat(),
         "returncode": code,
         "artifacts": artifacts,
         "task_raw_after": raw_after,
-        "task_raw_new_files": sorted(raw_after.keys() - plan["task_raw_before"].keys()),
-        "task_raw_changed_files": sorted(
-            name
-            for name in raw_after.keys() & plan["task_raw_before"].keys()
-            if raw_after[name] != plan["task_raw_before"][name]
-        ),
+        "task_raw_before_child": before_child,
+        "raw_side_effects": effects,
+        "task_raw_new_files": total_effects["added"],
+        "task_raw_changed_files": total_effects["changed"],
+        "task_raw_deleted_files": total_effects["deleted"],
         "published_release_verified": False,
         "scope": "One actual CLI unit; inspect persisted graph/audits/finalization before accepting it.",
     }
@@ -239,6 +419,13 @@ def main():
     parser.add_argument("--unit", required=True)
     parser.add_argument("--input-root", type=Path, required=True)
     parser.add_argument("--raw-input", action="append", required=True)
+    parser.add_argument(
+        "--allow-raw-write",
+        action="append",
+        default=[],
+        metavar="PATH",
+        help="Allow this exact raw-relative file to be added, modified or deleted by the child; repeat as needed",
+    )
     args = parser.parse_args()
     plan = prepare(args)
     if args.plan:
@@ -248,4 +435,7 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    if len(sys.argv) >= 4 and sys.argv[1] == "--_run-bound-cli" and sys.argv[3] == "--":
+        run_bound_cli(Path(sys.argv[2]), sys.argv[4:])
+    else:
+        main()

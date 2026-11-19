@@ -136,6 +136,7 @@ def test_resume_after_rename_before_verified_receipt(checkout, monkeypatch):
     original = preserve.save_new
 
     def interrupted(path, value):
+        """Interrupt the acknowledgement after the actual artifact move."""
         if path.name.endswith("-verified.json"):
             raise OSError("simulated interrupted acknowledgement")
         original(path, value)
@@ -168,6 +169,7 @@ def test_source_recreated_after_real_rename_refuses_success(checkout, monkeypatc
     original = preserve.rename_exclusive
 
     def recreate(source, target):
+        """Recreate ignored source evidence immediately after a real rename."""
         original(source, target)
         source.mkdir()
         (source / "new").write_text("new writer bytes")
@@ -191,6 +193,7 @@ def test_final_reconciliation_refuses_late_changes(checkout, monkeypatch, change
     archive = Path(prepared["destination"])
 
     def change_after_verification(path, value):
+        """Inject drift after per-item verification but before completion."""
         original(path, value)
         if not path.name.endswith("-verified.json"):
             return
@@ -222,6 +225,7 @@ def test_noop_resume_reconciles_again_before_success(checkout, monkeypatch):
     original = preserve.reconcile
 
     def change_after_preflight(*args):
+        """Add ignored evidence between the two reconciliation passes."""
         result = original(*args)
         (checkout / "data").mkdir()
         (checkout / "data/new").write_text("late ignored bytes")

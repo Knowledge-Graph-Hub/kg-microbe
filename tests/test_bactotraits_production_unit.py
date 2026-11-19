@@ -230,6 +230,7 @@ def test_partial_copy_never_publishes_canonical_input(unit, monkeypatch):
     source, target = _retained_input(helper, plan, root, raw)
 
     def interrupted(reader, writer, _length):
+        """Fail after persisting a partial private copy."""
         writer.write(reader.read(7))
         raise OSError("injected copy failure")
 
@@ -256,6 +257,7 @@ def test_competing_input_is_never_overwritten(unit, monkeypatch, competitor):
     copy = shutil.copyfileobj
 
     def racing_copy(reader, writer, length):
+        """Create a competing canonical target after copying private bytes."""
         copy(reader, writer, length)
         if competitor == "symlink":
             target.symlink_to(unrelated)

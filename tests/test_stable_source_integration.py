@@ -4,13 +4,16 @@ import csv
 import hashlib
 import io
 import json
+import os
 import shutil
 import subprocess
 from copy import deepcopy
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 
+from kg_microbe.utils import stable_source_candidate
 from kg_microbe.utils.ingredient_bundle_contract import canonical_json
 from kg_microbe.utils.stable_source_integration import CONTRACT, LEDGER_FIELDS, _digest, verify_integration
 from kg_microbe.utils.stable_source_native_bridge import CM_REPLAY_CAPABILITY, SOURCE_CAPABILITY
@@ -569,7 +572,7 @@ def test_nested_noncheckout_cannot_inherit_matching_parent_revision(integration)
     shutil.copytree(integration["kg"] / "export", nested / "export")
     integration["selection"]["current_kgm"]["root"] = str(nested)
     _reselect(integration)
-    with pytest.raises(ValueError, match="physical Git top-level"):
+    with pytest.raises(ValueError, match="physical Git top-level|own nonsymlink .git locator"):
         _run(integration)
 
 
@@ -644,3 +647,135 @@ def test_current_release_record_remains_live_after_reconciliation(integration):
     (integration["kg"] / "mappings/mim_reviewed_release.json").write_text("{}\n")
     with pytest.raises(ValueError, match="input changed|input pin differs"):
         integration["candidate"].payload()
+
+
+def _private_git_environment(monkeypatch, selectors):
+    """Give this module a private ambient environment without mutating os.environ."""
+    environment = {**os.environ, **selectors}
+    monkeypatch.setattr(stable_source_candidate, "os", SimpleNamespace(**{**vars(os), "environ": environment}))
+    return environment
+
+
+def test_nested_root_cannot_borrow_environment_selected_checkout(integration, monkeypatch):
+    """An absent local Git locator cannot be hidden by a real borrowed Git directory."""
+    nested = integration["kg"] / "nested"
+    shutil.copytree(integration["kg"] / "export", nested / "export")
+    shutil.copytree(integration["kg"] / "mappings", nested / "mappings")
+    integration["selection"]["current_kgm"]["root"] = str(nested)
+    _reselect(integration)
+    _private_git_environment(monkeypatch, {"GIT_DIR": str(integration["kg"] / ".git"), "GIT_WORK_TREE": str(nested)})
+    with pytest.raises(ValueError, match="own nonsymlink .git locator"):
+        _run(integration)
+
+
+@pytest.mark.parametrize("locator", ["directory", "file"])
+def test_symlinked_git_locator_is_not_owned(integration, tmp_path, locator):
+    """Neither a directory nor a linked-worktree Git-file alias establishes ownership."""
+    gitdir = integration["kg"] / ".git"
+    saved = tmp_path / "saved-git"
+    gitdir.rename(saved)
+    if locator == "file":
+        target = tmp_path / "git-locator"
+        target.write_text("gitdir: " + str(saved) + "\n")
+    else:
+        target = saved
+    gitdir.symlink_to(target, target_is_directory=locator == "directory")
+    with pytest.raises(ValueError, match="own nonsymlink .git locator"):
+        _run(integration)
+
+
+@pytest.mark.parametrize(
+    "redirect",
+    ["directory", "common", "objects", "alternates", "namespace", "replacement", "config", "global_config"],
+)
+def test_git_environment_cannot_redirect_selected_head_or_pin(integration, monkeypatch, tmp_path, redirect):
+    """Actual head and committed-blob reads share one selector-free subprocess context."""
+    foreign = tmp_path / "foreign-git"
+    foreign.mkdir()
+    selectors = {
+        "directory": {"GIT_DIR": str(foreign), "GIT_WORK_TREE": str(tmp_path)},
+        "common": {"GIT_COMMON_DIR": str(foreign)},
+        "objects": {"GIT_OBJECT_DIRECTORY": str(foreign)},
+        "alternates": {"GIT_ALTERNATE_OBJECT_DIRECTORIES": str(foreign)},
+        "namespace": {"GIT_NAMESPACE": "unselected-ref-namespace"},
+        "replacement": {"GIT_REPLACE_REF_BASE": "refs/foreign-replacements"},
+        "config": {
+            "GIT_CONFIG_COUNT": "1",
+            "GIT_CONFIG_KEY_0": "core.worktree",
+            "GIT_CONFIG_VALUE_0": str(tmp_path),
+        },
+        "global_config": {"GIT_CONFIG_GLOBAL": str(tmp_path / "foreign.config"), "GIT_CONFIG_NOSYSTEM": "0"},
+    }[redirect]
+    (tmp_path / "foreign.config").write_text("[core]\n  worktree = " + str(tmp_path) + "\n")
+    environment = _private_git_environment(monkeypatch, selectors)
+    before = dict(os.environ)
+    result = _run(integration)
+    assert result["kgm_source"]["revision"] == integration["selection"]["current_kgm"]["revision"]
+    assert dict(os.environ) == before
+    assert all(environment[name] == value for name, value in selectors.items())
+
+
+def test_late_git_environment_drift_does_not_replace_actual_checkout(integration, monkeypatch, tmp_path):
+    """A valid live checkout stays authoritative when callers later change Git selectors."""
+    _run(integration)
+    _private_git_environment(
+        monkeypatch,
+        {
+            "GIT_DIR": str(tmp_path / "missing-git"),
+            "GIT_WORK_TREE": str(tmp_path),
+            "GIT_COMMON_DIR": str(tmp_path / "missing-common"),
+            "GIT_OBJECT_DIRECTORY": str(tmp_path / "missing-objects"),
+            "GIT_CONFIG_COUNT": "1",
+            "GIT_CONFIG_KEY_0": "core.worktree",
+            "GIT_CONFIG_VALUE_0": str(tmp_path),
+        },
+    )
+    assert integration["candidate"].payload()["status"] == "PRIVATE_NOT_KG_ACCEPTED"
+
+
+def test_linked_checkout_ignores_ambient_git_selectors(integration, monkeypatch, tmp_path):
+    """A genuine linked root remains supported without borrowing ambient repository state."""
+    linked = tmp_path / "linked-with-selectors"
+    subprocess.run(  # noqa: S603
+        ["git", "-C", str(integration["kg"]), "worktree", "add", "--detach", str(linked), "HEAD"],  # noqa: S607
+        check=True,
+        capture_output=True,
+    )
+    shutil.copytree(integration["kg"] / "export", linked / "export")
+    integration["selection"]["current_kgm"]["root"] = str(linked)
+    _reselect(integration)
+    _private_git_environment(
+        monkeypatch, {"GIT_DIR": str(tmp_path / "missing-git"), "GIT_WORK_TREE": str(integration["kg"])}
+    )
+    assert _run(integration)["kgm_source"]["current_snapshot_files"] == 5
+
+
+def test_every_integration_git_read_uses_same_private_environment(integration, monkeypatch, tmp_path):
+    """Even unrecognized Git variables cannot leak into head or committed-pin reads."""
+    real_check_output = subprocess.check_output
+    calls = []
+
+    def observe(command, **kwargs):
+        calls.append((list(command), dict(kwargs["env"])))
+        return real_check_output(command, **kwargs)
+
+    monkeypatch.setattr(stable_source_candidate, "subprocess", SimpleNamespace(check_output=observe))
+    _private_git_environment(
+        monkeypatch,
+        {
+            "GIT_FUTURE_SELECTOR": "must-not-be-inherited",
+            "GIT_CONFIG_PARAMETERS": "'core.worktree=unselected'",
+            "GIT_CONFIG_SYSTEM": str(tmp_path / "foreign-system-config"),
+            "GIT_TRACE": str(tmp_path / "unwanted-git-trace"),
+        },
+    )
+    _run(integration)
+    assert any(command[3] == "show" for command, _ in calls)
+    assert any(command[3:] == ["rev-parse", "HEAD"] for command, _ in calls)
+    for command, environment in calls:
+        assert command[:3] == ["git", "--no-optional-locks", "--no-replace-objects"]
+        assert {key: value for key, value in environment.items() if key.startswith("GIT_")} == {
+            "GIT_CONFIG_NOSYSTEM": "1",
+            "GIT_CONFIG_GLOBAL": os.devnull,
+        }
+    assert not (tmp_path / "unwanted-git-trace").exists()

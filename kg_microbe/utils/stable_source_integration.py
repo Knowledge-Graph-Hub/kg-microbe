@@ -12,14 +12,13 @@ import csv
 import hashlib
 import io
 import re
-import subprocess
 from collections import Counter
 from pathlib import Path
 
 from kg_microbe.transform_utils.constants import PREDICATE_COLUMN, RELATED_TO_PREDICATE
 from kg_microbe.utils.ingredient_bundle_contract import canonical_json, read_json
 from kg_microbe.utils.stable_ingredient_kgx import PREDICATES
-from kg_microbe.utils.stable_source_candidate import STATUS, _head, _keys, _path, _require, _root, _Snapshots
+from kg_microbe.utils.stable_source_candidate import STATUS, _git, _head, _keys, _path, _require, _root, _Snapshots
 from kg_microbe.utils.stable_source_native_bridge import require_cm_replay
 
 CONTRACT = "kg-microbe-stable-source-integration/v1"
@@ -39,21 +38,6 @@ LEDGER_FIELDS = (
 def _digest(value):
     """Hash a complete parsed row without discarding its context columns."""
     return hashlib.sha256(canonical_json(value)).hexdigest()
-
-
-def _kg_head(root):
-    """Require the selected physical directory to be its own Git checkout root."""
-    top = (
-        subprocess.check_output(  # noqa: S603,S607 - fixed read-only Git operation
-            ["git", "--no-optional-locks", "rev-parse", "--show-toplevel"],  # noqa: S607
-            cwd=root,
-            timeout=30,
-        )
-        .decode()
-        .strip()
-    )
-    _require(Path(top).resolve(strict=True) == root, "current KG root is not its physical Git top-level")
-    return _head(root)
 
 
 def _rows(raw):
@@ -103,7 +87,7 @@ class _IntegrationGuard:
             _root(str(self.kg_root))
             state = self.kg_root.stat()
             _require((state.st_dev, state.st_ino) == self.kg_identity, "current KG root identity changed")
-            _require(_kg_head(self.kg_root) == self.kg_revision, "current KG revision changed")
+            _require(_head(self.kg_root) == self.kg_revision, "current KG revision changed")
         self.snapshots.verify()
 
 
@@ -112,17 +96,7 @@ def _consumed_release(guard, declaration, receipt, consumed):
     name = "snapshots/mappings/mim_reviewed_release.json"
     _require(name in receipt["files"], "KG receipt lacks the current reviewed-release record")
     raw = guard.member(declaration, name, receipt["files"][name])
-    committed = subprocess.check_output(  # noqa: S603 - revision is a validated full SHA
-        [  # noqa: S607 - fixed read-only Git operation
-            "git",
-            "--no-optional-locks",
-            "--no-replace-objects",
-            "show",
-            guard.kg_revision + ":mappings/mim_reviewed_release.json",
-        ],
-        cwd=guard.kg_root,
-        timeout=30,
-    )
+    committed = _git(guard.kg_root, "show", guard.kg_revision + ":mappings/mim_reviewed_release.json")
     _require(committed == raw, "KG reviewed-release record differs from the selected KG revision")
     pin = read_json(raw)
     _keys(
@@ -191,7 +165,7 @@ def _kg_source(guard, selection):
     guard.kg_revision = current["revision"]
     state = guard.kg_root.stat()
     guard.kg_identity = state.st_dev, state.st_ino
-    _require(_kg_head(guard.kg_root) == guard.kg_revision, "current KG revision differs")
+    _require(_head(guard.kg_root) == guard.kg_revision, "current KG revision differs")
     declaration = selection["kgm_source_receipt"]
     receipt = read_json(guard.read(declaration))
     _require(

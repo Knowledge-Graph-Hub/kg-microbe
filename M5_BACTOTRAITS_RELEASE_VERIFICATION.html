@@ -1,0 +1,237 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>M5 bounded release verification, 2026-11-16 &mdash; kg-microbe 0.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=7026087e"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            kg-microbe
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="static/intro.html">Knowledge Graphs for Microbial data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">kg_microbe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sources/index.html">Bacteria-Archaea-Traits schema</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">kg-microbe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">M5 bounded release verification, 2026-11-16</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/M5_BACTOTRAITS_RELEASE_VERIFICATION.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="m5-bounded-release-verification-2026-11-16">
+<h1>M5 bounded release verification, 2026-11-16<a class="headerlink" href="#m5-bounded-release-verification-2026-11-16" title="Link to this heading"></a></h1>
+<p>The merged correction at <code class="docutils literal notranslate"><span class="pre">2d94ed094167d94402f21400a9ad7dc4f7f20438</span></code> was
+replayed on M5 with a new baseline at <code class="docutils literal notranslate"><span class="pre">ef27b97a0b450767da54235c6105b5250c178adc</span></code>.
+Both executions used the same pinned Python 3.10.11 environment and shared
+inputs. The baseline emitted 21 edges and 22 nodes. The candidate emitted no
+edges or nodes and one complete quarantine audit for original row8521/BacDive17851.</p>
+<p>The new <code class="docutils literal notranslate"><span class="pre">scripts/adhoc/finalize_bactotraits_identity_130_20261116.py</span></code> performs
+another actual producer run and calls <code class="docutils literal notranslate"><span class="pre">finalize(fresh_run=True)</span></code> on that same
+object. It binds current implementation, policies, schema, configuration,
+original/staged inputs and the preceding fresh pair. The persisted finalized
+candidate still has zero rows and its complete quarantine audit is unchanged.
+It then calls strict <code class="docutils literal notranslate"><span class="pre">load_and_merge(processes=1)</span></code>, which refuses the missing
+completed BacDive upstream. No graph is merged and no release is verified.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>New M5 receipt</p></th>
+<th class="head"><p>SHA256</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Baseline</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">8d2a780d27670106456450fb4c8d1063424570b7bf9277387c8abcb09a389eb0</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Candidate before finalization</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">03446ab15dbe56bf277d25c810b5b0a612a73fe5850d73447d112ab74e611477</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Separate finalized candidate</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0c832333ac93018e95e81d2ba53e9e587b58c4838840859ba823f8f7fd441996</span></code></p></td>
+</tr>
+</tbody>
+</table>
+<p>The stages are named <code class="docutils literal notranslate"><span class="pre">baseline-m5-20261116-r1</span></code>, <code class="docutils literal notranslate"><span class="pre">candidate-m5-20261116-r1</span></code>
+and <code class="docutils literal notranslate"><span class="pre">candidate-finalized-m5-20261116-r1</span></code> under <code class="docutils literal notranslate"><span class="pre">data/validation-bactotraits-130/</span></code>
+in the isolated release task checkout. Copies and independent review live under
+the EdgeMech invocation’s <code class="docutils literal notranslate"><span class="pre">.temp/m5-worker-run-20261116/</span></code>. All original v3
+receipts and nested cache files remain unchanged. The finalization helper’s
+executed SHA256 is <code class="docutils literal notranslate"><span class="pre">29ef5410fcce9908284e970cd18131861d6318ca100ebdaf00d3bc522b1c4523</span></code>.</p>
+<p>The corrected source’s quarantine audit SHA256 is
+<code class="docutils literal notranslate"><span class="pre">28d62147d49735406a35c721db345497c7e044f69f6d723caa0367f996158918</span></code>.
+Finalization changes the empty edge header to canonical columns, producing
+SHA256 <code class="docutils literal notranslate"><span class="pre">1a1f91d2da59ddf2aad7f854f52b7e2b23aaba455918bdd7382980bf6e25079f</span></code>.
+It does not add graph assertions. The historical Madin output has an equivalent
+SPO with its own raw source lineage; graph-wide SPO absence is not the criterion.</p>
+<section id="production-dependency-probes">
+<h2>Production dependency probes<a class="headerlink" href="#production-dependency-probes" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">inspect_bactotraits_dependencies_20261116.py</span></code> inventories only named inputs,
+toolchain records, source sizes and disk availability. Raw <code class="docutils literal notranslate"><span class="pre">release_preflight</span></code>
+passes on the original M5 input root. Fresh completion still requires the whole
+ontologies → BacDive → BactoTraits chain; October fingerprints do not satisfy it.</p>
+<p><code class="docutils literal notranslate"><span class="pre">run_bactotraits_production_unit_20261116.py</span></code> launches one actual CLI source
+with exclusive unit-relative output, private caches/temp and one process. Its
+plan binds all shared non-Python inputs, and its receipt inventories task raw
+side effects as well as unit outputs. The original checks addressed
+<a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1869">#1869</a> and
+the inventory portion of
+<a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1870">#1870</a>, found
+during separate read-only review before the first unit ran. The later review
+below completed the permitted-write enforcement required by #1870.</p>
+<p>The first two RO probes each persisted 880 nodes/85 edges, then correctly
+failed finalization on missing isolated-stage ENVO and FOODON authorities,
+respectively. No completion marker was written. Those authorities exist in
+the retained original inputs; these failures do not prove full-build infeasibility.
+Failed stages and every plan remain preserved. Later production-probe outcomes,
+exact final gate results and publication blockers are recorded in the
+<a class="reference external" href="https://github.com/CultureBotAI/EdgeMech/blob/verify/m5-release-evidence-20261116/docs/validation/m5-bactotraits-release-20261116.md">EdgeMech M5 report</a>.</p>
+</section>
+<section id="publication-boundary">
+<h2>Publication boundary<a class="headerlink" href="#publication-boundary" title="Link to this heading"></a></h2>
+<p>GitHub latest release remained <code class="docutils literal notranslate"><span class="pre">2025-03-07</span></code> at the live inspection. The retained
+canonical M5 archive’s manifest identifies an October 18 build from
+<code class="docutils literal notranslate"><span class="pre">bcfa6bf5b-dirty</span></code>, predating the correction. Its bytes were preserved.
+<a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/887">#887</a> remains
+open concerning retired download URLs in release publication. A fresh corrected
+complete graph, a working publication source, separate human approval and
+verification of the published assets remain necessary.</p>
+<p>The bounded result does not infer trait falsity, a replacement organism,
+neighboring-row quarantine, or graph-wide scientific validation. Six focused
+finalization tests and four production-launcher regression tests passed before
+the final repository gate. Final gate results are recorded separately against
+the committed candidate; a source canary is not a release.</p>
+</section>
+<section id="adversarial-guard-follow-up-2026-11-19">
+<h2>Adversarial guard follow-up, 2026-11-19<a class="headerlink" href="#adversarial-guard-follow-up-2026-11-19" title="Link to this heading"></a></h2>
+<p>The subsequent independent review recorded three additional defects in
+<a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1874">#1874</a>,
+<a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1875">#1875</a> and
+<a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1876">#1876</a>, and
+identified the remaining permitted-write requirement in
+<a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1870">#1870</a>.</p>
+<p>The production launcher now binds the child package and CLI module to its
+selected checkout instead of accepting ambient Python import routing. It copies
+retained inputs privately, verifies their complete identities, then publishes
+them without overwriting a competing target. An interrupted copy retains private
+failure evidence without publishing a truncated canonical input.</p>
+<p>New production plans and receipts use <code class="docutils literal notranslate"><span class="pre">bactotraits-production-unit-v2</span></code>. Declare
+each permitted raw derivative using repeatable <code class="docutils literal notranslate"><span class="pre">--allow-raw-write</span> <span class="pre">PATH</span></code> options;
+paths are exact and relative to the isolated task’s raw directory. The launcher
+inventories nested raw entries and records additions, changes and deletions.
+An undeclared effect fails the unit and retains a failure diagnostic. A permitted
+raw effect does not establish producer finalization, scientific acceptance or
+release readiness.</p>
+<p>The bounded finalizer also checks the preceding candidate’s complete code
+inventory and consumed identity-policy path and SHA256 against the current
+plan. Matching Git revisions alone do not establish matching code or policy
+when a candidate replay permits local changes.</p>
+<p>The original M5 plans, receipts, graph counts and hashes above describe their
+original executions. They remain historical evidence and are not relabeled as
+runs of these new guards. Validate the new helper on one actual unit before a
+larger production run. Source freshness, downstream completion and publication
+gates remain in force.</p>
+</section>
+<section id="preserving-the-verification-checkout-before-removal">
+<h2>Preserving the verification checkout before removal<a class="headerlink" href="#preserving-the-verification-checkout-before-removal" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">scripts/adhoc/preserve_pr1871_worktree_artifacts_20261119.py</span></code> prepares a
+read-only plan, moves one canary, then preserves the remaining untracked and
+ignored artifacts using exclusive same-volume renames. It does not delete
+artifacts or remove Git worktrees. Before applying it, the caller must quiesce
+writers and verify there are no active or outside consumers of the selected
+paths. Preserve the tracked source separately with <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">archive</span></code> and retain a
+Git bundle for recovery.</p>
+<p>The archive must be durable and outside registered worktrees. Plans bind exact
+HEAD, branch and recursive metadata; symlinks are retained as opaque objects.
+Each move has an intent and verification receipt. Completion reconciles the
+remaining source paths and every retained inventory, including resumed runs,
+as required by the independent cleanup review
+<a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1877">#1877</a>.
+Recheck the checkout and consumers immediately before normal Git removal.</p>
+<p>Relocated virtual environments and historical receipts retain their original
+bytes, including absolute paths. Reconstruct and requalify a runtime before
+using it again. Preservation does not reclaim the retained data’s disk space
+or validate old graph outputs against new code.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Harshad Hegde &lt;hhegde@lbl.gov&gt;.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

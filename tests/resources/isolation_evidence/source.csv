@@ -1,0 +1,6 @@
+ID,Species,Culture collection number,Isolation source,Country,Continent,Category 1,Category 2,Category 3
+101,Bacillus example,"DSM 1, ATCC 2","NA###soil, wet",NA,Europe,#Environmental,#Terrestrial,#Soil
+202,"Case ""quoted""",,"first line
+second line",N/A,,#Host,#Human,#mouth
+101,Bacillus example,"DSM 1, ATCC 2","NA###soil, wet",NA,Europe,#Environmental,#Terrestrial,#Soil
+101,Bacillus other,"DSM 1, ATCC 2",description only,NA,Europe,#Condition,#Acidic,#Soil

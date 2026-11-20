@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:kg-microbe:bacdive-isolation-evidence:v1",
+  "title": "BacDive isolation-source evidence, not a biological knowledge graph",
+  "description": "Structural contract for an offline regrouped CSV. Strings and category paths are source evidence, not ontology identities or physical-site assertions. Cross-field conservation is tested by the exporter tests, not established by JSON Schema alone.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["format", "source", "records", "summary"],
+  "properties": {
+    "format": {"const": "bacdive-isolation-evidence-v1"},
+    "source": {
+      "type": "object", "additionalProperties": false,
+      "required": ["path", "sha256", "bytes", "headers", "columns"],
+      "properties": {
+        "path": {"type": "string", "minLength": 1},
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "bytes": {"type": "integer", "minimum": 1},
+        "headers": {"type": "array", "minItems": 9, "maxItems": 9, "uniqueItems": true, "items": {"type": "string"}},
+        "columns": {
+          "type": "object", "additionalProperties": false,
+          "required": ["id", "species", "culture_collection_number", "isolation_source", "country", "continent", "category_1", "category_2", "category_3"],
+          "properties": {
+            "id": {"type": "string"}, "species": {"type": "string"}, "culture_collection_number": {"type": "string"},
+            "isolation_source": {"type": "string"}, "country": {"type": "string"}, "continent": {"type": "string"},
+            "category_1": {"type": "string"}, "category_2": {"type": "string"}, "category_3": {"type": "string"}
+          }
+        }
+      }
+    },
+    "records": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/record"}},
+    "summary": {
+      "type": "object", "additionalProperties": false,
+      "required": ["source_records", "distinct_bacdive_ids", "duplicate_rows", "conflicting_bacdive_ids"],
+      "properties": {
+        "source_records": {"type": "integer", "minimum": 1}, "distinct_bacdive_ids": {"type": "integer", "minimum": 1},
+        "duplicate_rows": {"type": "integer", "minimum": 0}, "conflicting_bacdive_ids": {"type": "integer", "minimum": 0}
+      }
+    }
+  },
+  "$defs": {
+    "strings": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "record": {
+      "type": "object", "additionalProperties": false,
+      "required": ["bacdive_id", "conflicting_fields", "duplicate_rows", "values", "category_paths", "occurrences"],
+      "properties": {
+        "bacdive_id": {"type": "string", "pattern": "^[1-9][0-9]*$"},
+        "conflicting_fields": {"type": "array", "uniqueItems": true, "items": {"enum": ["species", "culture_collection_number"]}},
+        "duplicate_rows": {"type": "integer", "minimum": 0},
+        "values": {
+          "type": "object", "additionalProperties": false,
+          "required": ["species", "culture_collection_number", "isolation_source", "country", "continent"],
+          "properties": {
+            "species": {"$ref": "#/$defs/strings"}, "culture_collection_number": {"$ref": "#/$defs/strings"},
+            "isolation_source": {"$ref": "#/$defs/strings"}, "country": {"$ref": "#/$defs/strings"}, "continent": {"$ref": "#/$defs/strings"}
+          }
+        },
+        "category_paths": {
+          "type": "array", "uniqueItems": true,
+          "items": {
+            "type": "object", "additionalProperties": false, "required": ["category_1", "category_2", "category_3"],
+            "properties": {"category_1": {"type": "string"}, "category_2": {"type": "string"}, "category_3": {"type": "string"}}
+          }
+        },
+        "occurrences": {
+          "type": "array", "minItems": 1,
+          "items": {
+            "type": "object", "additionalProperties": false,
+            "required": ["source_record", "line_start", "line_end", "raw_fields"],
+            "properties": {
+              "source_record": {"type": "integer", "minimum": 1}, "line_start": {"type": "integer", "minimum": 2}, "line_end": {"type": "integer", "minimum": 2},
+              "raw_fields": {"type": "object", "minProperties": 9, "maxProperties": 9, "additionalProperties": {"type": "string"}}
+            }
+          }
+        }
+      }
+    }
+  }
+}

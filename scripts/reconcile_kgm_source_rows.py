@@ -200,6 +200,17 @@ def provider_nodes(inputs, manifest, nodes):
     """Reconcile each original provider case and retain provider-specific full rows."""
     providers = {source: {} for source in SOURCES}
     references = manifest["inputs"]
+    case_reference = references["cases"]
+    cases = inputs.json(case_reference["path"], case_reference)
+    require(len({case["case_id"] for case in cases}) == len(cases), "duplicate original case ID")
+    cases_by_id = defaultdict(list)
+    for case in cases:
+        if case["source"] == "culturemech":
+            continue
+        require(case["source"] in SOURCES, "unknown original case provider")
+        require(case["source_case_id"] == case["original_kg_entry"]["source_id"], "original case source ID differs")
+        cases_by_id[case["source_case_id"]].append(case)
+    require(set(cases_by_id) == {row["source_id"] for _, row in nodes}, "original case source coverage differs")
     originals = {}
     for name in ("mediadive_nodes", "other_nodes", "microbedecoder_nodes"):
         ref = references[name]
@@ -209,9 +220,25 @@ def provider_nodes(inputs, manifest, nodes):
     for _, node in nodes:
         original = document(node["original_node_rows_json"])
         scopes = document(node["providers_json"])
+        require(
+            isinstance(scopes, list) and all(isinstance(item, str) for item in scopes),
+            "providers_json must be a list of strings",
+        )
         require(len(scopes) == len(set(scopes)), "duplicate provider case")
-        require(scopes == [item["provider"] for item in original], "node provider order differs")
-        require(len(document(node["original_case_ids_json"])) == len(scopes), "case count differs")
+        original_scopes = [item["provider"] for item in original]
+        require(len(original_scopes) == len(set(original_scopes)), "duplicate original node provider")
+        require(Counter(scopes) == Counter(original_scopes), "node provider multiplicity differs")
+        case_ids = document(node["original_case_ids_json"])
+        require(
+            isinstance(case_ids, list) and all(isinstance(item, str) for item in case_ids),
+            "original_case_ids_json must be a list of strings",
+        )
+        require(len(case_ids) == len(scopes), "case count differs")
+        require(
+            list(zip(scopes, case_ids, strict=True))
+            == [(case["source"], case["case_id"]) for case in cases_by_id[node["source_id"]]],
+            "ordered original provider/case pair differs",
+        )
         for item in original:
             source, name, position = item["provider"], item["input"], item["position"]
             require(source in providers and name in originals, "unknown source provider")
@@ -273,8 +300,10 @@ def graph_inventory(inputs, root, historical, providers, nodes, occurrences):
                     require(all_compounds == selected_ids, "complete compound node inventory differs")
     for _, node in nodes:
         entries = document(node["current_graph_node_rows_json"])
+        current_scopes = [entry["provider"] for entry in entries]
+        require(len(current_scopes) == len(set(current_scopes)), "duplicate current node provider")
         require(
-            [entry["provider"] for entry in entries] == document(node["providers_json"]),
+            Counter(current_scopes) == Counter(document(node["providers_json"])),
             "current node provider coverage differs",
         )
         for entry in entries:

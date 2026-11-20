@@ -364,6 +364,20 @@ def cohort(tmp_path, monkeypatch):
             },
         },
     )
+    cases = [{"source": "culturemech", "case_id": "CM:fixture"}]
+    for node in nodes:
+        for source, case_id in zip(
+            json.loads(node["providers_json"]), json.loads(node["original_case_ids_json"]), strict=True
+        ):
+            cases.append(
+                {
+                    "source": source,
+                    "case_id": case_id,
+                    "source_case_id": node["source_id"],
+                    "original_kg_entry": {"source_id": node["source_id"]},
+                }
+            )
+    refs["cases"] = _json(kg / "inputs/cases.json", cases)
     kg_ref = _json(kg / "manifest.json", {"files": products, "inputs": refs})
     combined_ref = _json(combined / "manifest.json", {"products": combined_products})
     monkeypatch.setattr(
@@ -623,3 +637,136 @@ def test_csv_field_limit_restored_after_reconciliation_success_or_refusal(cohort
         assert csv.field_size_limit() == 64
     finally:
         csv.field_size_limit(previous)
+
+
+def _replace_shared_node(cohort, update):
+    """Repin full source and combined node transports without altering original provider tables."""
+    kg, combined = cohort["kg_inputs"], cohort["combined_inputs"]
+    nodes = [node for _, node in rows.table(kg / "source-nodes.tsv")]
+    shared = next(node for node in nodes if len(json.loads(node["providers_json"])) == 2)
+    update(shared)
+    ref = _table(kg / "source-nodes.tsv", nodes)
+    _table(combined / "originals/kg_nodes.tsv", nodes)
+    manifest = json.loads((kg / "manifest.json").read_text())
+    manifest["files"]["source-nodes.tsv"] = ref["sha256"]
+    cohort["kg_manifest_sha256"] = _json(kg / "manifest.json", manifest)["sha256"]
+    combined_nodes = [node for _, node in rows.table(combined / "source-nodes.tsv")]
+    updated = [combined_nodes[0]] + [
+        {
+            **node,
+            "assembly_original_table": "originals/kg_nodes.tsv",
+            "assembly_original_position": str(position),
+            "assembly_original_sha256": ref["sha256"],
+        }
+        for position, node in enumerate(nodes, 1)
+    ]
+    combined_ref = _table(combined / "source-nodes.tsv", updated)
+    manifest = json.loads((combined / "manifest.json").read_text())
+    manifest["products"]["source-nodes.tsv"] = combined_ref
+    cohort["combined_manifest_sha256"] = _json(combined / "manifest.json", manifest)["sha256"]
+    return shared
+
+
+def test_independent_provider_array_order_preserves_exact_case_pairs(cohort):
+    """Faithful case-order reversal leaves source-table and current-graph order unchanged."""
+
+    def reverse_case_order(node):
+        """Keep provider and case ID paired while retaining both independent source arrays."""
+        for field in ("providers_json", "original_case_ids_json"):
+            node[field] = rows.compact(list(reversed(json.loads(node[field]))))
+
+    shared = _replace_shared_node(cohort, reverse_case_order)
+    manifest_path = cohort["kg_inputs"] / "manifest.json"
+    manifest = json.loads(manifest_path.read_text())
+    case_path = Path(manifest["inputs"]["cases"]["path"])
+    cases = json.loads(case_path.read_text())
+    selected = [case for case in cases if case.get("source_case_id") == shared["source_id"]]
+    others = [case for case in cases if case.get("source_case_id") != shared["source_id"]]
+    manifest["inputs"]["cases"] = _json(case_path, others + list(reversed(selected)))
+    cohort["kg_manifest_sha256"] = _json(manifest_path, manifest)["sha256"]
+    rows.reconcile(**cohort)
+    emitted = json.loads((cohort["output"] / "full-node-ledger.json").read_text())
+    actual = next(row["node"] for row in emitted if row["node"]["source_id"] == shared["source_id"])
+    assert actual == shared
+    assert json.loads(actual["providers_json"]) == ["metatraits_gtdb", "metatraits"]
+    assert [item["provider"] for item in json.loads(actual["original_node_rows_json"])] == [
+        "metatraits",
+        "metatraits_gtdb",
+    ]
+    assert [item["provider"] for item in json.loads(actual["current_graph_node_rows_json"])] == [
+        "metatraits",
+        "metatraits_gtdb",
+    ]
+
+
+@pytest.mark.parametrize("field", ["original_node_rows_json", "current_graph_node_rows_json"])
+@pytest.mark.parametrize("change", ["missing", "duplicate", "substitute"])
+def test_provider_array_multiplicity_remains_closed(cohort, field, change):
+    """Permitting independent order never permits a missing, duplicated or substituted provider."""
+
+    def alter(node):
+        """Change one provider array without changing its authoritative case pairs."""
+        entries = json.loads(node[field])
+        if change == "missing":
+            entries.pop()
+        elif change == "duplicate":
+            entries.append(dict(entries[0]))
+        else:
+            entries[0]["provider"] = "microbedecoder"
+        node[field] = rows.compact(entries)
+
+    _replace_shared_node(cohort, alter)
+    with pytest.raises(ValueError, match="provider"):
+        rows.reconcile(**cohort)
+    assert not (cohort["output"] / "row-reconciliation.json").exists()
+
+
+def test_case_id_cannot_be_repaired_by_reordering_independent_provider_arrays(cohort):
+    """The paired providers/case IDs must still equal the immutable original case ledger."""
+
+    def reverse_only_case_ids(node):
+        """Create a coherent transport with the wrong provider-to-case pairing."""
+        node["original_case_ids_json"] = rows.compact(list(reversed(json.loads(node["original_case_ids_json"]))))
+
+    _replace_shared_node(cohort, reverse_only_case_ids)
+    with pytest.raises(ValueError, match="ordered original provider/case pair differs"):
+        rows.reconcile(**cohort)
+
+
+@pytest.mark.parametrize("field", ["providers_json", "original_case_ids_json"])
+@pytest.mark.parametrize("shape", ["object", "nonstring_item"])
+def test_provider_case_arrays_have_explicit_string_list_schema(cohort, field, shape):
+    """Object keys cannot impersonate ordered arrays during Counter or zip iteration."""
+
+    def alter(node):
+        """Keep the original keys while replacing the required JSON array shape."""
+        values = json.loads(node[field])
+        if shape == "object":
+            payload = {key: "ignored value" for key in values}
+        else:
+            payload = [1, *values[1:]]
+        node[field] = rows.compact(payload)
+
+    _replace_shared_node(cohort, alter)
+    with pytest.raises(ValueError, match=field + " must be a list of strings"):
+        rows.reconcile(**cohort)
+    assert not (cohort["output"] / "row-reconciliation.json").exists()
+
+
+@pytest.mark.parametrize("change", ["missing", "duplicate"])
+def test_pinned_case_ledger_complete_unique_membership(cohort, change):
+    """Even a coherently repinned case input must retain every unique original case."""
+    path = cohort["kg_inputs"] / "manifest.json"
+    manifest = json.loads(path.read_text())
+    case_path = Path(manifest["inputs"]["cases"]["path"])
+    cases = json.loads(case_path.read_text())
+    selected = next(case for case in cases if case["source"] == "mediadive")
+    if change == "missing":
+        cases.remove(selected)
+    else:
+        cases.append(dict(selected))
+    manifest["inputs"]["cases"] = _json(case_path, cases)
+    cohort["kg_manifest_sha256"] = _json(path, manifest)["sha256"]
+    with pytest.raises(ValueError, match="original case"):
+        rows.reconcile(**cohort)
+    assert not (cohort["output"] / "row-reconciliation.json").exists()

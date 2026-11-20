@@ -10,9 +10,11 @@ import subprocess
 import tarfile
 from copy import deepcopy
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 
+from kg_microbe.utils import stable_source_candidate
 from kg_microbe.utils.ingredient_bundle_contract import canonical_json
 from kg_microbe.utils.stable_source_candidate import (
     CONTRACT,
@@ -776,3 +778,163 @@ def test_native_external_identity_closure_missing_input_refused(native_selection
     assert completed.returncode != 0
     assert f"Permanent identity input missing or changed in review: {missing}" in completed.stderr.decode()
     assert not output.exists()
+
+
+def test_native_candidate_requires_cm_replay_for_integration(native_selection, tmp_path):
+    """Historical native acceptance cannot imply the separate CM integration gate."""
+    _, path, _ = native_selection
+    candidate = StableSourceCandidate(path, selection_sha256=sha(path))
+    assert candidate.native_execution["exit_status"] == 0
+    integration = tmp_path / "integration.json"
+    put(
+        integration,
+        {
+            "contract": "kg-microbe-stable-source-integration/v1",
+            "mode": "diagnostic_only",
+            "culturemech": {},
+            "kgm_source_receipt": {},
+            "current_kgm": {},
+            "reconciliation": {},
+            "expected_counts": {
+                "positive_inventory": 209784,
+                "context_only": 163,
+                "held": 138,
+                "supported_bindings": 623,
+                "withheld_bindings": 4384,
+            },
+            "native_occurrence_payload_column": "cm_occurrence_json",
+        },
+    )
+    with pytest.raises(ValueError, match="native CM source/prepare/review replay capability required"):
+        candidate.verify_integration(integration, selection_sha256=sha(integration))
+    assert candidate.payload()["production_authorized"] is False
+
+
+def test_native_reconstruction_rejects_added_cm_replay_proof(native_selection):
+    """A syntactically valid proof cannot be pasted onto older genuine native output."""
+    from kg_microbe.utils.stable_source_native_bridge import CM_REPLAY_CAPABILITY, CM_REPLAY_COUNTS, CM_REPLAY_INPUTS
+
+    root, path, selection = native_selection
+    manifest_path = root / "candidate/manifest.json"
+    manifest = json.loads(manifest_path.read_bytes())
+    name, digest = next(iter(manifest["inputs"].items()))
+    manifest["required_capabilities"].append(CM_REPLAY_CAPABILITY)
+    manifest["culturemech_intake_replay"] = {
+        **{key: {"path": name, "sha256": digest} for key in CM_REPLAY_INPUTS},
+        "counts": dict.fromkeys(CM_REPLAY_COUNTS, 0),
+    }
+    put(manifest_path, manifest)
+    selection["source_output"]["manifest_sha256"] = sha(manifest_path)
+    put(path, selection)
+    with pytest.raises(ValueError, match=r"(?s)native validation failed:.*candidate bytes differ: manifest\.json"):
+        StableSourceCandidate(path, selection_sha256=sha(path))
+
+
+def _private_candidate_git_environment(monkeypatch, selectors):
+    """Override only this module's environment view, retaining genuine OS primitives."""
+    environment = {**os.environ, **selectors}
+    monkeypatch.setattr(stable_source_candidate, "os", SimpleNamespace(**{**vars(os), "environ": environment}))
+
+
+def _private_empty_git(root):
+    """Create foreign attribution state only inside a test's private directory."""
+    subprocess.run(["git", "init", "-q", str(root)], check=True)  # noqa: S603,S607
+    subprocess.run(  # noqa: S603
+        [  # noqa: S607
+            "git",
+            "-C",
+            str(root),
+            "-c",
+            "user.name=Fixture",
+            "-c",
+            "user.email=fixture.invalid",
+            "commit",
+            "--allow-empty",
+            "-qm",
+            "foreign fixture revision",
+        ],
+        check=True,
+    )
+    return stable_source_candidate._head(root)
+
+
+@pytest.mark.parametrize("borrowed", ["both_revisions", "producer_revision"])
+def test_native_outer_revisions_cannot_borrow_foreign_git_environment(
+    native_selection, tmp_path, monkeypatch, borrowed
+):
+    """Genuine native scientific bytes cannot certify environment-selected outer revisions."""
+    root, path, selection = native_selection
+    if borrowed == "both_revisions":
+        foreign = tmp_path / "foreign-checkout"
+        revision = _private_empty_git(foreign)
+        selection["mim_revision"] = selection["producer_revision"] = revision
+    else:
+        foreign = root
+        assert selection["producer_revision"] != selection["mim_revision"]
+        selection["producer_revision"] = selection["mim_revision"]
+    gitdir = subprocess.check_output(  # noqa: S603
+        ["git", "-C", str(foreign), "rev-parse", "--absolute-git-dir"],  # noqa: S607
+        text=True,
+    ).strip()
+    put(path, selection)
+    _private_candidate_git_environment(monkeypatch, {"GIT_DIR": gitdir, "GIT_WORK_TREE": str(root)})
+    with pytest.raises(ValueError, match="selected Git revision differs"):
+        StableSourceCandidate(path, selection_sha256=sha(path))
+
+
+def test_actual_native_revisions_validate_under_foreign_selectors(native_selection, tmp_path, monkeypatch):
+    """The real constructor and native validators succeed using their actual selected roots."""
+    _, path, _ = native_selection
+    foreign = tmp_path / "unrelated-checkout"
+    _private_empty_git(foreign)
+    _private_candidate_git_environment(
+        monkeypatch,
+        {
+            "GIT_DIR": str(foreign / ".git"),
+            "GIT_WORK_TREE": str(foreign),
+            "GIT_COMMON_DIR": str(foreign / ".git"),
+            "GIT_OBJECT_DIRECTORY": str(foreign / ".git/objects"),
+            "GIT_CONFIG_COUNT": "1",
+            "GIT_CONFIG_KEY_0": "core.worktree",
+            "GIT_CONFIG_VALUE_0": str(foreign),
+        },
+    )
+    candidate = StableSourceCandidate(path, selection_sha256=sha(path))
+    assert candidate.native_execution["exit_status"] == 0
+    assert candidate.payload()["status"] == "PRIVATE_NOT_KG_ACCEPTED"
+
+
+def test_late_actual_native_head_change_survives_foreign_git_selectors(native_selection, tmp_path, monkeypatch):
+    """A later real input revision cannot be hidden behind a preserved old Git directory."""
+    root, path, selection = native_selection
+    candidate = StableSourceCandidate(path, selection_sha256=sha(path))
+    gitdir = Path(
+        subprocess.check_output(  # noqa: S603
+            ["git", "-C", str(root), "rev-parse", "--absolute-git-dir"],  # noqa: S607
+            text=True,
+        ).strip()
+    )
+    borrowed = tmp_path / "borrowed-old.git"
+    shutil.copytree(gitdir, borrowed)
+    subprocess.run(  # noqa: S603
+        [  # noqa: S607
+            "git",
+            "-C",
+            str(root),
+            "-c",
+            "user.name=Fixture",
+            "-c",
+            "user.email=fixture.invalid",
+            "commit",
+            "--allow-empty",
+            "-qm",
+            "changed private fixture head",
+        ],
+        check=True,
+    )
+    actual = stable_source_candidate._head(root)
+    assert actual != selection["mim_revision"]
+    _private_candidate_git_environment(monkeypatch, {"GIT_DIR": str(borrowed), "GIT_WORK_TREE": str(root)})
+    assert stable_source_candidate._head(root) == actual
+    with pytest.raises(ValueError, match="selected Git HEAD changed"):
+        candidate.payload()

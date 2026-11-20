@@ -595,8 +595,9 @@ def collect(
     destination_verification = capture.verify()
     require(head(root) == revision, "selected revision changed before publication")
     result = deepcopy(historical)
-    result.update(
+    current_metadata = dict(
         captured_at=datetime.now(timezone.utc).isoformat(),
+        supersedes_manifest_sha256=historical_sha256,
         destination_verification=destination_verification,
         files=deepcopy(capture.files),
         scope="Four chemical candidates; historical source closure only; PREGO diagnostic-only; no release admission",
@@ -604,6 +605,27 @@ def collect(
         row_reconciliation={"path": "evidence/row-reconciliation.json", "sha256": row_reconciliation_sha256},
         closure_audit={"path": "closure-audit.json", "sha256": capture.files["closure-audit.json"]["sha256"]},
     )
+    current_metadata["capture_execution"] = {
+        "native_helpers_rerun": False,
+        "transforms_rerun": False,
+        "production_admission": False,
+        "performed": [
+            "independent_copy_and_hash_verification",
+            "row_proof_and_ledger_verification",
+            "fingerprint_dependency_verification",
+        ],
+    }
+    current_metadata["inherited_metadata_provenance"] = {}
+    current_metadata["inherited_metadata_provenance"] = {
+        "source_receipt": deepcopy(current_metadata["parent_manifest"]),
+        "original_captured_at": historical.get("captured_at"),
+        "original_supersedes_manifest_sha256": historical.get("supersedes_manifest_sha256"),
+        "fields": sorted(set(historical) - set(current_metadata)),
+        "native_helpers_rerun": False,
+        "meaning": "Named top-level fields retain the selected historical receipt's values; "
+        "helper outcomes and notes do not describe this new capture.",
+    }
+    result.update(current_metadata)
     capture.write("source-manifest.json", result)
     return result
 

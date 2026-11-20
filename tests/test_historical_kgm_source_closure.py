@@ -537,3 +537,38 @@ def test_large_ledger_fields_restore_csv_limit_on_success_and_refusal(tmp_path, 
         assert csv.field_size_limit() == 64
     finally:
         csv.field_size_limit(original)
+
+
+def test_new_receipt_distinguishes_parent_metadata_from_current_capture(selected):
+    """The selected parent supersedes its predecessor without relabeling old helper outcomes."""
+    historical = json.loads(selected["historical_manifest"].read_text())
+    historical.update(
+        captured_at="2026-11-08T02:35:12.708815+00:00",
+        supersedes_manifest_sha256="a" * 64,
+        native_helper_outcomes={"mediadive": {"scanned": 415, "upstream_writes": 0}},
+        notes=["Historical helper observation; no rerun was performed by closure capture."],
+    )
+    parent = put(selected["historical_manifest"], historical)
+    selected["historical_sha256"] = parent["sha256"]
+    proof = json.loads(selected["row_reconciliation"].read_text())
+    proof["historical_manifest_sha256"] = parent["sha256"]
+    proof["inputs_before"] = proof["inputs_after"] = {str(selected["historical_manifest"]): parent}
+    repin_proof(selected, proof)
+    original_bytes = selected["historical_manifest"].read_bytes()
+    result = closure.collect(**selected)
+    assert result["supersedes_manifest_sha256"] == parent["sha256"] == result["parent_manifest"]["sha256"]
+    assert result["supersedes_manifest_sha256"] != historical["supersedes_manifest_sha256"]
+    assert result["captured_at"] != historical["captured_at"]
+    origin = result["inherited_metadata_provenance"]
+    assert origin["source_receipt"] == result["parent_manifest"]
+    assert origin["original_captured_at"] == historical["captured_at"]
+    assert origin["original_supersedes_manifest_sha256"] == historical["supersedes_manifest_sha256"]
+    assert {"native_helper_outcomes", "notes"} <= set(origin["fields"])
+    assert origin["native_helpers_rerun"] is False
+    assert result["capture_execution"]["native_helpers_rerun"] is False
+    assert result["capture_execution"]["transforms_rerun"] is False
+    assert result["capture_execution"]["production_admission"] is False
+    assert result["native_helper_outcomes"] == historical["native_helper_outcomes"]
+    assert result["notes"] == historical["notes"]
+    assert selected["historical_manifest"].read_bytes() == original_bytes
+    assert (selected["output"] / "evidence/parent-source-manifest.json").read_bytes() == original_bytes

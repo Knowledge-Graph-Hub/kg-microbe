@@ -96,6 +96,7 @@ def selected(tmp_path):
     old = {}
 
     def freeze(name):
+        """Retain one exact fixture member in the historical snapshot."""
         path = root / name
         target = frozen / "snapshots" / name
         target.parent.mkdir(parents=True, exist_ok=True)
@@ -358,6 +359,7 @@ def test_late_input_drift_refuses_publication(selected, monkeypatch):
     original = closure.Capture.verify
 
     def drift(capture):
+        """Change a selected input immediately before publication checks."""
         (selected["root"] / "data/raw/authority.tsv").write_text("late drift\n")
         original(capture)
 
@@ -506,6 +508,7 @@ def test_independent_destination_readback_detects_copy_corruption(selected, monk
             self.stream.close()
 
     def corrupt_open(path, *args, **kwargs):
+        """Corrupt only the selected destination while preserving source reads."""
         stream = original_open(path, *args, **kwargs)
         return CorruptWriter(stream) if path == target and args and args[0] == "xb" else stream
 

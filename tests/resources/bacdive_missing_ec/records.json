@@ -1,0 +1,30 @@
+[
+  {
+    "_id": {"$oid": "not-a-bacdive-id"},
+    "General": {"BacDive-ID": 7},
+    "Name and taxonomic classification": {"strain designation": "test\tstrain\nalpha"},
+    "Physiology and metabolism": {
+      "enzymes": [
+        {"value": "enzyme alpha", "activity": "negative", "@ref": 19},
+        {"value": "enzyme alpha", "ec": null, "activity": "positive"},
+        {"value": "enzyme beta", "ec": " \t\n", "activity": "unknown"},
+        {"value": "enzyme gamma", "ec": "1.2.3.4", "activity": "positive"},
+        {"value": "enzyme delta", "ec": false},
+        {"value": "enzyme epsilon", "ec": 0},
+        {"value": "enzyme zeta", "ec": []},
+        {"value": "enzyme eta", "ec": {}, "fraction": 0.12345678901234567890123456789}
+      ]
+    }
+  },
+  {
+    "General": {"BacDive-ID": "7"},
+    "Name and taxonomic classification": [{"strain designation": "test repeat"}],
+    "Physiology and metabolism": {"enzymes": {"value": "enzyme alpha", "activity": "negative", "@ref": [19, 20]}}
+  },
+  {
+    "_id": {"$oid": "also-not-a-bacdive-id"},
+    "Physiology and metabolism": {"enzymes": {"value": "enzyme unicode α", "ec": null}}
+  },
+  {"General": {"BacDive-ID": 8}},
+  {"Physiology and metabolism": {"enzymes": []}}
+]

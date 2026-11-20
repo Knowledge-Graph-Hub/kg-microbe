@@ -1,0 +1,6 @@
+id	category	name	description	provided_by	original_note
+NCBITaxon:1	biolink:OrganismTaxon	Example taxon		CMM-AI	"literal quotes" stay
+kgmicrobe.genome:GCF_000000001.1	biolink:Genome	Example genome	Unreviewed source identity	CMM-AI	retain exactly
+UniprotKB:P00001	biolink:Enzyme	Example protein		CMM-AI	
+kgmicrobe.medium:example	METPO:1004005	Example medium		CMM-AI	
+NCBITaxon:1	biolink:OrganismTaxon	Another source name	Conflicting declaration is evidence	CMM-AI	

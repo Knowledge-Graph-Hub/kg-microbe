@@ -19,9 +19,11 @@ from kg_microbe.transform_utils.constants import PREDICATE_COLUMN, RELATED_TO_PR
 from kg_microbe.utils.ingredient_bundle_contract import canonical_json, read_json
 from kg_microbe.utils.stable_ingredient_kgx import PREDICATES
 from kg_microbe.utils.stable_source_candidate import STATUS, _git, _head, _keys, _path, _require, _root, _Snapshots
-from kg_microbe.utils.stable_source_native_bridge import require_cm_replay
+from kg_microbe.utils.stable_source_native_bridge import require_cm_replay, require_combined_conservation
 
 CONTRACT = "kg-microbe-stable-source-integration/v1"
+FINAL_CONTRACT = "kg-microbe-stable-source-integration/v2"
+FINAL_MODE = "final_combined_candidate"
 LANES = ("positive_inventory", "context_only", "held")
 COUNT_FIELDS = (*LANES, "supported_bindings", "withheld_bindings")
 LEDGER_FIELDS = (
@@ -355,15 +357,23 @@ def _culturemech(guard, selection):
     return mentions, bindings, dict(counts)
 
 
-def _reconcile(guard, selection, payload, mentions, bindings):
+def _reconcile(guard, selection, payload, mentions, bindings, *, cm_source_ids=None, transitions=None):
     """Match complete original rows to actual selected native occurrence positions."""
     native = {}
+    cm_cases = set()
     for decision in payload["source_decisions"]:
+        if cm_source_ids is not None and decision["payload"]["source_id"] in cm_source_ids:
+            case_id = decision["payload"]["source_row"].get("original_case_id")
+            _require(case_id in bindings and case_id not in cm_cases, "combined CM case inventory differs")
+            cm_cases.add(case_id)
+            transitions.check(bindings[case_id], decision)
         claim = decision["payload"]
         for occurrence in claim["occurrences"]:
             key = (claim["source_id"], str(occurrence["position"]))
             _require(key not in native, "duplicate native occurrence coordinate")
             native[key] = (decision, occurrence["row"])
+    if cm_source_ids is not None:
+        _require(cm_cases == set(bindings), "combined CM source omits historical binding cases")
     column = selection["native_occurrence_payload_column"]
     _require(
         isinstance(column, str) and column.strip() == column and column, "explicit native CM payload column required"
@@ -391,25 +401,40 @@ def _reconcile(guard, selection, payload, mentions, bindings):
             "native occurrence loses complete CM context",
         )
         binding = bindings[row["case_id"]]
-        _require(
-            decision["disposition"] == binding["disposition"],
-            "CM binding disposition changed without reviewed reconciliation",
-        )
-        if binding["disposition"] == "SUPPORTED":
+        if cm_source_ids is not None:
             _require(
-                decision["payload"].get("owner_record") == binding["owner_record"]
-                and decision["payload"].get("owner_record_sha256") == binding["owner_record_sha256"],
-                "CM owner transition requires separately reviewed reconciliation",
+                target[0] in cm_source_ids
+                and decision["payload"]["source_row"].get("original_case_id") == row["case_id"],
+                "combined CM occurrence targets another case or provider",
             )
+        else:
+            _require(
+                decision["disposition"] == binding["disposition"],
+                "CM binding disposition changed without reviewed reconciliation",
+            )
+            if binding["disposition"] == "SUPPORTED":
+                _require(
+                    decision["payload"].get("owner_record") == binding["owner_record"]
+                    and decision["payload"].get("owner_record_sha256") == binding["owner_record_sha256"],
+                    "CM owner transition requires separately reviewed reconciliation",
+                )
     _require(seen == set(mentions), "reconciliation omits CM source occurrences")
     _require(
-        {key for key, (_, row) in native.items() if row.get(column) not in (None, "")} == used_native,
+        {
+            key
+            for key, (_, row) in native.items()
+            if (key[0] in cm_source_ids if cm_source_ids is not None else row.get(column) not in (None, ""))
+        }
+        == used_native,
         "unreconciled native CM occurrence cannot be counted as another source",
     )
-    return {"reconciled_cm_occurrences": len(seen), "other_native_occurrences": len(native) - len(used_native)}
+    result = {"reconciled_cm_occurrences": len(seen), "other_native_occurrences": len(native) - len(used_native)}
+    if transitions is not None:
+        result["owner_transitions"] = transitions.finish()
+    return result
 
 
-def verify_integration(candidate, selection_path, *, selection_sha256):
+def verify_integration(candidate, selection_path, *, selection_sha256, _require_final=False):
     """Verify complete selected input accounting, retaining only diagnostic authority."""
     candidate.verify_current()
     payload = candidate.payload()
@@ -419,6 +444,8 @@ def verify_integration(candidate, selection_path, *, selection_sha256):
     )
     guard = _IntegrationGuard(candidate, selection_path, selection_sha256)
     selection = guard.selection
+    final = selection.get("contract") == FINAL_CONTRACT
+    _require(not _require_final or final, "final combined admission cannot use the historical diagnostic route")
     _keys(
         selection,
         {
@@ -430,10 +457,12 @@ def verify_integration(candidate, selection_path, *, selection_sha256):
             "reconciliation",
             "expected_counts",
             "native_occurrence_payload_column",
-        },
+        }
+        | ({"combined_source_scope", "combined_source_declaration", "owner_transitions"} if final else set()),
     )
     _require(
-        selection["contract"] == CONTRACT and selection["mode"] == "diagnostic_only",
+        selection["contract"] == (FINAL_CONTRACT if final else CONTRACT)
+        and selection["mode"] == (FINAL_MODE if final else "diagnostic_only"),
         "unsupported integration selection",
     )
     _keys(selection["expected_counts"], COUNT_FIELDS)
@@ -441,10 +470,28 @@ def verify_integration(candidate, selection_path, *, selection_sha256):
         all(type(value) is int and value >= 0 for value in selection["expected_counts"].values()),
         "invalid selected integration counts",
     )
-    require_cm_replay(payload["provenance"]["source_manifest"], selection)
+    requirement = require_combined_conservation if final else require_cm_replay
+    requirement(payload["provenance"]["source_manifest"], selection)
     kg = _kg_source(guard, selection)
     mentions, bindings, counts = _culturemech(guard, selection)
-    accounting = _reconcile(guard, selection, payload, mentions, bindings)
+    conservation = transitions = cm_ids = None
+    if final:
+        from kg_microbe.utils.stable_source_conservation import verify_conservation
+        from kg_microbe.utils.stable_source_transitions import TransitionReconciliation
+
+        conservation = verify_conservation(guard, selection, payload, kg)
+        cm_ids = set(conservation.pop("cm_source_ids"))
+        conservation["cm_source_count"] = len(cm_ids)
+        conservation["cm_source_ids_sha256"] = _digest(sorted(cm_ids))
+        transitions = TransitionReconciliation(guard, selection, payload, bindings)
+    accounting = _reconcile(
+        guard, selection, payload, mentions, bindings, cm_source_ids=cm_ids, transitions=transitions
+    )
+    if final:
+        _require(
+            accounting["other_native_occurrences"] == conservation["kg_occurrences"],
+            "final combined native occurrence accounting differs",
+        )
     # The existing projector's exact assertion envelopes remain the graph gate.
     # Its only active relations are SKOS identities/mappings; all other lanes
     # are information. Inventory flags cannot authorize a medium-presence edge.
@@ -459,7 +506,8 @@ def verify_integration(candidate, selection_path, *, selection_sha256):
         candidate._integration_current_checks = []
     candidate._integration_current_checks.append(guard)
     return {
-        "contract": CONTRACT,
+        "contract": selection["contract"],
+        "admission_scope": FINAL_MODE if final else "historical_diagnostic",
         "status": STATUS,
         "production_authorized": False,
         "integration_selection_sha256": selection_sha256,
@@ -469,12 +517,24 @@ def verify_integration(candidate, selection_path, *, selection_sha256):
             key: selection["expected_counts"][key] for key in ("supported_bindings", "withheld_bindings")
         },
         "kgm_source": kg,
+        **({"conservation": conservation} if final else {}),
         **accounting,
         "medium_presence_authorized": False,
         "limitations": [
             "Read-only input and graph reconciliation, not a new scientific review, "
             "source production, final artifact canary or release admission",
-            "CM baseline disposition or owner transitions require a separately reviewed reconciliation contract",
+            (
+                "Every changed CM owner/disposition requires exact paired transition review; "
+                "consumer scientific holds remain binding"
+                if final
+                else "CM baseline disposition or owner transitions require a separately reviewed "
+                "reconciliation contract"
+            ),
             "Integration verification is not persisted; a reloaded candidate must repeat the explicit check",
         ],
     }
+
+
+def verify_final_combined(candidate, selection_path, *, selection_sha256):
+    """Require the final-combined contract without fallback to historical replay."""
+    return verify_integration(candidate, selection_path, selection_sha256=selection_sha256, _require_final=True)

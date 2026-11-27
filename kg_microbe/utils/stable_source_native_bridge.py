@@ -21,7 +21,8 @@ from pathlib import Path
 
 SOURCE_CAPABILITY = "reviewed-source-bindings-v1"
 CM_REPLAY_CAPABILITY = "culturemech-intake-v3-replay-v1"
-SOURCE_CAPABILITIES = frozenset({SOURCE_CAPABILITY, CM_REPLAY_CAPABILITY})
+CONSERVATION_CAPABILITY = "cm-v3-kgm-source-conservation-v1"
+SOURCE_CAPABILITIES = frozenset({SOURCE_CAPABILITY, CM_REPLAY_CAPABILITY, CONSERVATION_CAPABILITY})
 CM_REPLAY_INPUTS = frozenset({"source_manifest", "prepared_intake", "reviewed_intake", "binding_review"})
 CM_REPLAY_COUNTS = frozenset({"positive_inventory", "context_only", "held", "supported_bindings", "withheld_bindings"})
 
@@ -55,7 +56,7 @@ def _sha(raw):
 
 
 def source_capabilities(manifest):
-    """Require a KG-owned capability set and native-reconstructed CM replay proof."""
+    """Validate negotiated source capabilities and the CM replay envelope."""
     required = manifest.get("required_capabilities")
     _require(
         isinstance(required, list)
@@ -65,6 +66,10 @@ def source_capabilities(manifest):
     )
     _require(not set(required) - SOURCE_CAPABILITIES, "unsupported source capabilities")
     _require(SOURCE_CAPABILITY in required, "missing native source capability")
+    _require(
+        CONSERVATION_CAPABILITY not in required or CM_REPLAY_CAPABILITY in required,
+        "combined conservation requires CM replay capability",
+    )
     _require(
         (CM_REPLAY_CAPABILITY in required) == ("culturemech_intake_replay" in manifest),
         "CM replay capability and proof differ",
@@ -108,6 +113,20 @@ def require_cm_replay(manifest, selection):
         "selected CM replay inputs differ",
     )
     _require(proof["counts"] == selection["expected_counts"], "selected CM replay counts differ")
+
+
+def require_combined_conservation(manifest, selection):
+    """
+    Require all three contracts after native reconstruction and explicit CM selection.
+
+    Capability membership is not a substitute for the native validator's exact
+    reconstruction or the integration guard's selected combined input closure.
+    """
+    require_cm_replay(manifest, selection)
+    _require(
+        CONSERVATION_CAPABILITY in manifest["required_capabilities"],
+        "native CM/KGM source conservation capability required for final combined integration",
+    )
 
 
 def companion_capabilities(manifest):
@@ -391,9 +410,9 @@ def validate(request):
     # admission, all occurrences/owners, producer capture and strict SSSOM checks.
     source_capabilities(json.loads((output / "manifest.json").read_bytes()))
     claims = native.consumer_claims(root, review_path, output, capabilities=SOURCE_CAPABILITIES)
-    # The producer must reconstruct the proof during validate_candidate. A
-    # locally added flag or proof fails native byte comparison, including on
-    # historical producers that do not implement the CM replay capability.
+    # The producer reconstructs CM replay and any advertised combined source
+    # conservation during validate_candidate. Locally added markers or proof
+    # metadata fail native byte comparison, including on historical producers.
     manifest = json.loads((output / "manifest.json").read_bytes())
     source_capabilities(manifest)
     _require(

@@ -360,3 +360,8 @@ association coverage remain qualifications throughout this run.
 After merge, run KG model/path reviews and release validation on the newly built
 archive. A successful candidate build, green code CI, or a successful merge alone
 does not certify the resulting KG for release.
+
+For the explicit private final-combined native compatibility contract, reviewed
+CM owner transitions and isolated canary command, see
+[STABLE_MIM_FINAL_COMBINED.md](STABLE_MIM_FINAL_COMBINED.md). These checks do not
+grant production installation or release authority.

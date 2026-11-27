@@ -361,6 +361,12 @@ class StableSourceCandidate:
 
         return verify_integration(self, selection_path, selection_sha256=selection_sha256)
 
+    def verify_final_combined(self, selection_path, *, selection_sha256):
+        """Require conserved final inputs and reviewed transitions without release authority."""
+        from kg_microbe.utils.stable_source_integration import verify_final_combined
+
+        return verify_final_combined(self, selection_path, selection_sha256=selection_sha256)
+
     def payload(self):
         """Return isolated full assertions, including all withheld rows and provenance."""
         self.verify_current()

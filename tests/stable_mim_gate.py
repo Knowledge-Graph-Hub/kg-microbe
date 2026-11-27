@@ -4,11 +4,19 @@ from __future__ import annotations
 
 import json
 import os
+from pathlib import Path
 
 import pytest
 
 SELECTORS = ("MIM_STABLE_TEST_PRODUCTS", "MIM_STABLE_TEST_PRODUCER", "MIM_STABLE_TEST_PYTHON")
 _STATE = pytest.StashKey[dict]()
+# The committed pyproject uses these pytest defaults; changing them changes
+# the acceptance inventory and requires an explicit policy update.
+COLLECTION_PATTERNS = {
+    "python_files": ["test_*.py", "*_test.py"],
+    "python_classes": ["Test"],
+    "python_functions": ["test"],
+}
 
 
 def pytest_addoption(parser):
@@ -24,18 +32,50 @@ def pytest_addoption(parser):
 def pytest_configure(config):
     """Reject missing required selectors before any native prerequisite can be skipped."""
     required = config.getoption("--require-stable-mim")
-    config.stash[_STATE] = {"required": required, "discovered": set(), "selected": set(), "outcomes": {}, "xfail": {}}
+    config.addinivalue_line("markers", "native_mim_combined: genuine native combined-source reconstruction control")
+    config.stash[_STATE] = {
+        "required": required,
+        "discovered": set(),
+        "selected": set(),
+        "outcomes": {},
+        "xfail": {},
+        "groups": set(),
+    }
     if required:
         missing = [name for name in SELECTORS if not os.environ.get(name)]
         if missing:
             raise pytest.UsageError("Required native MIM prerequisites missing: " + ", ".join(missing))
+        _require_full_tests_root(config)
+
+
+def _require_full_tests_root(config):
+    """Reject precollection subsets that could hide required native controls."""
+    arguments = config.args
+    expected = (config.rootpath / "tests").resolve()
+    complete = len(arguments) == 1 and (config.invocation_params.dir / Path(arguments[0])).resolve() == expected
+    exclusions = ("ignore", "ignore_glob", "deselect", "lf", "pyargs", "inifilename", "override_ini", "rootdir")
+    default_patterns = all(config.getini(name) == patterns for name, patterns in COLLECTION_PATTERNS.items())
+    if not complete or not default_patterns or any(config.getoption(name, default=None) for name in exclusions):
+        raise pytest.UsageError(
+            "Required native MIM acceptance requires the complete tests root without file/node selection "
+            "or collection/configuration overrides; use ordinary pytest mode for focused checks"
+        )
+
+
+def _native_group(item):
+    """Collect both existing source controls and explicitly marked combined controls."""
+    if item.get_closest_marker("native_mim_combined") is not None:
+        return "combined"
+    if item.path.name == "test_stable_source_candidate.py" and (
+        "native_selection" in item.fixturenames or item.originalname == "test_actual_native_variant_through_consumer"
+    ):
+        return "source"
+    return None
 
 
 def _native(item):
-    """Select existing native-fixture controls, including every parameterized variant."""
-    return item.path.name == "test_stable_source_candidate.py" and (
-        "native_selection" in item.fixturenames or item.originalname == "test_actual_native_variant_through_consumer"
-    )
+    """Identify every required native control without weakening historical coverage."""
+    return _native_group(item) is not None
 
 
 @pytest.hookimpl(tryfirst=True)
@@ -44,6 +84,7 @@ def pytest_collection_modifyitems(config, items):
     state = config.stash[_STATE]
     if state["required"]:
         state["discovered"].update(item.nodeid for item in items if _native(item))
+        state["groups"].update(_native_group(item) for item in items if _native(item))
 
 
 def pytest_collection_finish(session):
@@ -52,8 +93,10 @@ def pytest_collection_finish(session):
     if not state["required"]:
         return
     state["selected"] = {item.nodeid for item in session.items if _native(item)}
-    if not state["selected"] or state["selected"] != state["discovered"]:
-        raise pytest.UsageError("Required native MIM controls were not collected or were deselected")
+    if not state["selected"] or state["selected"] != state["discovered"] or state["groups"] != {"source", "combined"}:
+        raise pytest.UsageError(
+            "Required native MIM source and combined controls were not collected or were deselected"
+        )
 
 
 @pytest.hookimpl(hookwrapper=True)
@@ -75,6 +118,7 @@ def pytest_sessionfinish(session, exitstatus):
         return
     complete = (
         bool(state["selected"])
+        and state["groups"] == {"source", "combined"}
         and not state["xfail"]
         and state["selected"] == state["discovered"]
         and all(
@@ -96,6 +140,7 @@ def pytest_terminal_summary(terminalreporter):
         "status": state.get("status", "INCOMPLETE"),
         "selectors": {name: os.environ.get(name) for name in SELECTORS},
         "discovered": sorted(state["discovered"]),
+        "groups": sorted(state["groups"]),
         "selected": sorted(state["selected"]),
         "outcomes": state["outcomes"],
         "xfail": state["xfail"],

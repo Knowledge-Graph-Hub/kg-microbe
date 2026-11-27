@@ -133,12 +133,26 @@ def test_required_runner_refuses_changed_native_input_before_the_next_gate(candi
 
 
 def synthetic_pytest(
-    tmp_path, *, body="pass", fixture_body="return None", required=True, extra=(), missing=None, module=True, marker=""
+    tmp_path,
+    *,
+    body="pass",
+    fixture_body="return None",
+    required=True,
+    extra=(),
+    missing=None,
+    module=True,
+    marker="",
+    combined=True,
+    combined_body="pass",
+    selection=("tests",),
+    ini_options="",
 ):
     """Run only synthetic plugin controls in a fresh isolated test tree with coverage disabled."""
-    (tmp_path / "pytest.ini").write_text("[pytest]\naddopts =\n")
+    (tmp_path / "pytest.ini").write_text("[pytest]\naddopts =\n" + ini_options)
+    test_root = tmp_path / "tests"
+    test_root.mkdir()
     name = "test_stable_source_candidate.py" if module else "test_unrelated.py"
-    (tmp_path / name).write_text(
+    (test_root / name).write_text(
         "import pytest\n\n@pytest.fixture\ndef native_selection():\n    "
         + fixture_body
         + "\n\n"
@@ -147,6 +161,12 @@ def synthetic_pytest(
         + body
         + "\n\ndef test_actual_native_variant_through_consumer():\n    pass\n"
     )
+    if combined:
+        (test_root / "test_combined_control.py").write_text(
+            "import pytest\npytestmark = pytest.mark.native_mim_combined\n\ndef test_combined():\n    "
+            + combined_body
+            + "\n"
+        )
     environment = dict(
         os.environ,
         PYTHONPATH=str(ROOT),
@@ -163,12 +183,10 @@ def synthetic_pytest(
         "-m",
         "pytest",
         "-q",
-        "-o",
-        "addopts=",
         "-p",
         "no:cov",
         "-p",
-        "no:cacheprovider",
+        "cacheprovider" if "--lf" in extra else "no:cacheprovider",
         "-p",
         "tests.stable_mim_gate",
         "--confcutdir",
@@ -176,6 +194,7 @@ def synthetic_pytest(
     ]
     if required:
         command.append("--require-stable-mim")
+    command.extend(selection)
     command.extend(extra)
     result = subprocess.run(command, cwd=tmp_path, env=environment, capture_output=True, text=True, check=False)  # noqa: S603 - fixed pytest and private synthetic test inputs
     (tmp_path / "child-stdout.txt").write_text(result.stdout)
@@ -192,7 +211,8 @@ def test_required_plugin_records_each_actual_native_phase(tmp_path):
     assert result.returncode == 0, result.stderr
     line = next(line for line in result.stdout.splitlines() if line.startswith("NATIVE_STABLE_MIM_ACCEPTANCE "))
     evidence = json.loads(line.split(" ", 1)[1])
-    assert evidence["status"] == "COMPLETE" and len(evidence["selected"]) == 2
+    assert evidence["status"] == "COMPLETE" and len(evidence["selected"]) == 3
+    assert evidence["groups"] == ["combined", "source"]
     assert evidence["selected"] == evidence["discovered"]
     assert all(
         value == {"setup": "passed", "call": "passed", "teardown": "passed"} for value in evidence["outcomes"].values()
@@ -254,3 +274,96 @@ def test_non_strict_xpass_cannot_count_as_native_acceptance(tmp_path):
     marked = next(nodeid for nodeid in evidence["xfail"] if nodeid.endswith("::test_one"))
     assert evidence["outcomes"][marked]["call"] == "passed"
     assert evidence["xfail"][marked]["call"] == "synthetic expected failure"
+
+
+def test_required_native_gate_refuses_source_only_collection(tmp_path):
+    """Old source controls alone cannot certify the newly required combined contract."""
+    result = synthetic_pytest(tmp_path, combined=False)
+    assert result.returncode != 0
+    assert "source and combined controls" in result.stderr
+    assert '"status": "COMPLETE"' not in result.stdout
+
+
+@pytest.mark.parametrize("body", ["pytest.skip('combined input absent')", "pytest.xfail('combined unresolved')"])
+def test_combined_native_skip_or_xfail_is_not_acceptance(tmp_path, body):
+    """Passing older controls cannot mask a skipped or expected-failing combined canary."""
+    result = synthetic_pytest(tmp_path, combined_body=body)
+    assert result.returncode != 0
+    assert '"status": "INCOMPLETE"' in result.stdout
+    assert '"status": "COMPLETE"' not in result.stdout
+
+
+@pytest.mark.parametrize(
+    "selection",
+    [
+        ("tests/test_stable_source_candidate.py", "tests/test_combined_control.py"),
+        (
+            "tests/test_stable_source_candidate.py::test_one",
+            "tests/test_combined_control.py::test_combined",
+        ),
+        ("tests/test_stable_source_candidate.py::test_one", "tests/test_combined_control.py"),
+        (".",),
+        (),
+        ("tests", "tests"),
+    ],
+)
+def test_required_acceptance_refuses_explicit_file_or_node_subsets(tmp_path, selection):
+    """Both native groups cannot certify acceptance when collection omits controls."""
+    result = synthetic_pytest(tmp_path, selection=selection)
+    assert result.returncode != 0
+    assert "requires the complete tests root" in result.stderr
+    assert '"status": "COMPLETE"' not in result.stdout
+
+
+@pytest.mark.parametrize(
+    "extra",
+    [
+        ("--ignore=tests/omitted_control.py",),
+        ("--ignore-glob=*omitted*",),
+        ("--deselect=tests/test_stable_source_candidate.py::test_one",),
+        ("--lf",),
+        ("--pyargs",),
+        ("-o", "python_functions=test_one test_combined"),
+        ("-o", "python_files=test_stable_source_candidate.py test_combined_control.py"),
+        ("-o", "python_classes=Selected"),
+        ("-c", "pytest.ini"),
+        ("--rootdir=.",),
+    ],
+)
+def test_required_acceptance_refuses_precollection_exclusions(tmp_path, extra):
+    """A full-root argument cannot conceal omitted tests through collection options."""
+    result = synthetic_pytest(tmp_path, extra=extra)
+    assert result.returncode != 0
+    assert "requires the complete tests root" in result.stderr
+    assert '"status": "COMPLETE"' not in result.stdout
+
+
+def test_required_acceptance_allows_the_fixed_full_runner_selection(tmp_path):
+    """The final runner's tests --durations=50 selection remains valid."""
+    result = synthetic_pytest(tmp_path, extra=("--durations=50",))
+    assert result.returncode == 0, result.stderr
+    assert '"status": "COMPLETE"' in result.stdout
+
+
+def test_ordinary_focus_remains_available_without_acceptance_claim(tmp_path):
+    """A developer may still run an exact ordinary node without native acceptance."""
+    result = synthetic_pytest(tmp_path, required=False, selection=("tests/test_stable_source_candidate.py::test_one",))
+    assert result.returncode == 0, result.stderr
+    assert "1 passed" in result.stdout
+    assert "NATIVE_STABLE_MIM_ACCEPTANCE" not in result.stdout
+
+
+@pytest.mark.parametrize(
+    "ini_options",
+    [
+        "python_functions=test_one test_combined\n",
+        "python_files=test_stable_source_candidate.py test_combined_control.py\n",
+        "python_classes=Selected\n",
+    ],
+)
+def test_required_acceptance_refuses_changed_effective_discovery_patterns(tmp_path, ini_options):
+    """Implicit configuration cannot omit controls before the collection inventory."""
+    result = synthetic_pytest(tmp_path, ini_options=ini_options)
+    assert result.returncode != 0
+    assert "requires the complete tests root" in result.stderr
+    assert '"status": "COMPLETE"' not in result.stdout
